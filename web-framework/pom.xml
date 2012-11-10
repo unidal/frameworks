@@ -50,16 +50,16 @@
          <plugin>
             <groupId>org.unidal.maven.plugins</groupId>
             <artifactId>codegen-maven-plugin</artifactId>
-            <version>1.2.3</version>
+            <version>1.2.5</version>
             <executions>
                <execution>
-                  <id>default-cli</id>
+                  <id>generate mvc model</id>
                   <phase>generate-sources</phase>
                   <goals>
-                     <goal>dal-xml</goal>
+                     <goal>dal-model</goal>
                   </goals>
                   <configuration>
-                     <manifest>${basedir}/src/main/resources/META-INF/dal/xml/manifest.xml</manifest>
+                     <manifest>${basedir}/src/main/resources/META-INF/dal/model/mvc-manifest.xml</manifest>
                   </configuration>
                </execution>
             </executions>

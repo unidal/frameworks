@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<model model-package="org.unidal.web.mvc.model">
+	<entity name="domain" class-name="DomainModel" root="true">
+		<entity-ref name="module" type="map" names="modules"/>
+	</entity>
+	<entity name="module" class-name="ModuleModel">
+		<attribute name="moduleName" value-type="String" key="true" />
+		<attribute name="defaultInboundActionName" value-type="String" />
+		<attribute name="defaultTransitionName" value-type="String" />
+		<attribute name="defaultErrorActionName" value-type="String" />
+		<attribute name="defaultModule" value-type="boolean" />
+		<element name="moduleClass" value-type="Class" />
+		<element name="moduleInstance" value-type="Object" render="false"/>
+		<element name="actionResolverInstance" value-type="Object" render="false"/>
+		<entity-ref name="inbound" type="map" names="inbounds" />
+		<entity-ref name="outbound" type="map" names="outbounds" />
+		<entity-ref name="transition" type="map" names="transitions" />
+		<entity-ref name="error" type="map" names="errors" />
+	</entity>
+	<entity name="inbound" class-name="InboundActionModel">
+		<attribute name="actionName" value-type="String" key="true" />
+		<attribute name="transitionName" value-type="String" />
+		<attribute name="errorActionName" value-type="String" />
+		<attribute name="preActionNames" value-type="String[]" render="false"/>
+		<element name="moduleInstance" value-type="Object" render="false"/>
+		<element name="actionMethod" value-type="java.lang.reflect.Method" render="false"/>
+		<element name="transitionMethod" value-type="java.lang.reflect.Method" render="false"/>
+		<element name="errorMethod" value-type="java.lang.reflect.Method" render="false"/>
+		<element name="contextClass" value-type="Class" />
+		<element name="payloadClass" value-type="Class" />
+		<element name="validationClass" value-type="Class" type="list" names="validationClasses" render="false"/>
+	</entity>
+	<entity name="outbound" class-name="OutboundActionModel">
+		<attribute name="actionName" value-type="String" key="true" />
+		<element name="moduleInstance" value-type="Object" render="false"/>
+		<element name="method" value-type="java.lang.reflect.Method" render="false"/>
+	</entity>
+	<entity name="transition" class-name="TransitionModel">
+		<attribute name="transitionName" value-type="String" key="true" />
+		<element name="moduleInstance" value-type="Object" render="false"/>
+		<element name="method" value-type="java.lang.reflect.Method" render="false"/>
+	</entity>
+	<entity name="error" class-name="ErrorModel">
+		<attribute name="actionName" value-type="String" key="true" />
+		<element name="moduleInstance" value-type="Object" render="false"/>
+		<element name="method" value-type="java.lang.reflect.Method" render="false"/>
+	</entity>
+	<!-- following for payload processing -->
+	<entity name="payload" class-name="PayloadModel">
+		<attribute name="payloadClass" value-type="Class" />
+		<entity-ref name="field" type="list" names="fields" />
+		<entity-ref name="path" type="list" names="paths" />
+		<entity-ref name="object" type="list" names="objects" />
+	</entity>
+	<entity name="field" class-name="PayloadFieldModel">
+		<attribute name="name" value-type="String" />
+		<attribute name="format" value-type="String" />
+		<attribute name="file" value-type="boolean" />
+		<attribute name="defaultValue" value-type="String" />
+		<attribute name="multipleValues" value-type="boolean" />
+		<element name="field" value-type="java.lang.reflect.Field" render="false"/>
+		<element name="method" value-type="java.lang.reflect.Method" render="false"/>
+	</entity>
+	<entity name="path" class-name="PayloadPathModel">
+		<attribute name="name" value-type="String" />
+		<element name="field" value-type="java.lang.reflect.Field" render="false"/>
+		<element name="method" value-type="java.lang.reflect.Method" render="false"/>
+	</entity>
+	<entity name="object" class-name="PayloadObjectModel">
+		<attribute name="name" value-type="String" />
+		<element name="field" value-type="java.lang.reflect.Field" render="false"/>
+		<element name="method" value-type="java.lang.reflect.Method" render="false"/>
+	</entity>
+</model>

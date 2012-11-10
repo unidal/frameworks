@@ -6,8 +6,6 @@ import java.lang.reflect.Method;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import com.site.lookup.ComponentTestCase;
 import org.unidal.web.mvc.ActionContext;
 import org.unidal.web.mvc.ActionPayload;
 import org.unidal.web.mvc.NormalAction;
@@ -15,6 +13,8 @@ import org.unidal.web.mvc.Page;
 import org.unidal.web.mvc.annotation.InboundActionMeta;
 import org.unidal.web.mvc.annotation.OutboundActionMeta;
 import org.unidal.web.mvc.annotation.PayloadMeta;
+
+import com.site.lookup.ComponentTestCase;
 
 @RunWith(JUnit4.class)
 public class AnnotationMatrixTest extends ComponentTestCase {

@@ -3,13 +3,14 @@ package org.unidal.web.mvc.model;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import com.site.lookup.ComponentTestCase;
 import org.unidal.web.mvc.ActionContext;
 import org.unidal.web.mvc.annotation.ErrorActionMeta;
 import org.unidal.web.mvc.annotation.InboundActionMeta;
 import org.unidal.web.mvc.annotation.ModuleMeta;
 import org.unidal.web.mvc.annotation.TransitionMeta;
+import org.unidal.web.mvc.model.entity.ModuleModel;
+
+import com.site.lookup.ComponentTestCase;
 
 @RunWith(JUnit4.class)
 public class ModuleManagerTest extends ComponentTestCase {

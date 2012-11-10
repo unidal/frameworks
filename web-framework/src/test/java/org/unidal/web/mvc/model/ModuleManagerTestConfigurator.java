@@ -4,9 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.site.lookup.configuration.Component;
 import org.unidal.web.configuration.AbstractWebComponentsConfigurator;
 import org.unidal.web.test.book.BookModule;
+
+import com.site.lookup.configuration.Component;
 
 public class ModuleManagerTestConfigurator extends AbstractWebComponentsConfigurator {
 	public static void main(String[] args) {
