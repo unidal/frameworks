@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root do-package="org.unidal.web.mvc.model">
+  <element name="domain" class-name="DomainModel" root="true">
+    <element-ref name="module" list="true" list-name="modules" list-type="map"/>
+  </element>
+  <element name="module" class-name="ModuleModel">
+    <attribute name="moduleName" value-type="String" key="true"/>
+    <attribute name="defaultInboundActionName" value-type="String"/>
+    <attribute name="defaultTransitionName" value-type="String"/>
+    <attribute name="defaultErrorActionName" value-type="String"/>
+    <attribute name="defaultModule" value-type="boolean"/>
+    <element name="moduleClass" value-type="Class"/>
+    <element name="moduleInstance" value-type="Object"/>
+    <element name="actionResolverInstance" value-type="Object"/>
+    <element-ref name="inbound" list="true" list-name="inbounds" list-type="map"/>
+    <element-ref name="outbound" list="true" list-name="outbounds" list-type="map"/>
+    <element-ref name="transition" list="true" list-name="transitions" list-type="map"/>
+    <element-ref name="error" list="true" list-name="errors" list-type="map"/>
+  </element>
+  <element name="inbound" class-name="InboundActionModel">
+    <attribute name="actionName" value-type="String" key="true"/>
+    <attribute name="transitionName" value-type="String"/>
+    <attribute name="errorActionName" value-type="String"/>
+    <attribute name="preActionNames" value-type="String[]"/>
+    <element name="moduleInstance" value-type="Object"/>
+    <element name="actionMethod" value-type="java.lang.reflect.Method"/>
+    <element name="transitionMethod" value-type="java.lang.reflect.Method"/>
+    <element name="errorMethod" value-type="java.lang.reflect.Method"/>
+    <element name="contextClass" value-type="Class"/>
+    <element name="payloadClass" value-type="Class"/>
+    <element name="validationClass" value-type="Class" list="true" list-name="validationClasses" list-type="list"/>
+  </element>
+  <element name="outbound" class-name="OutboundActionModel">
+    <attribute name="actionName" value-type="String" key="true"/>
+    <element name="moduleInstance" value-type="Object"/>
+    <element name="method" value-type="java.lang.reflect.Method"/>
+  </element>
+  <element name="transition" class-name="TransitionModel">
+    <attribute name="transitionName" value-type="String" key="true"/>
+    <element name="moduleInstance" value-type="Object"/>
+    <element name="method" value-type="java.lang.reflect.Method"/>
+  </element>
+  <element name="error" class-name="ErrorModel">
+    <attribute name="actionName" value-type="String" key="true"/>
+    <element name="moduleInstance" value-type="Object"/>
+    <element name="method" value-type="java.lang.reflect.Method"/>
+  </element>
+  <!-- next for pay-load processing -->
+  <element name="payload" class-name="PayloadModel">
+    <attribute name="payloadClass" value-type="Class"/>
+    <element-ref name="field" list="true" list-name="fields" list-type="list"/>
+    <element-ref name="path" list="true" list-name="paths" list-type="list"/>
+    <element-ref name="object" list="true" list-name="objects" list-type="list"/>
+  </element>
+  <element name="field" class-name="PayloadFieldModel">
+    <attribute name="name" value-type="String"/>
+    <attribute name="format" value-type="String"/>
+    <attribute name="file" value-type="boolean"/>
+    <attribute name="defaultValue" value-type="String"/>
+    <attribute name="multipleValues" value-type="boolean"/>
+    <element name="field" value-type="java.lang.reflect.Field"/>
+    <element name="method" value-type="java.lang.reflect.Method"/>
+  </element>
+  <element name="path" class-name="PayloadPathModel">
+    <attribute name="name" value-type="String"/>
+    <element name="field" value-type="java.lang.reflect.Field"/>
+    <element name="method" value-type="java.lang.reflect.Method"/>
+  </element>
+  <element name="object" class-name="PayloadObjectModel">
+    <attribute name="name" value-type="String"/>
+    <element name="field" value-type="java.lang.reflect.Field"/>
+    <element name="method" value-type="java.lang.reflect.Method"/>
+  </element>
+</root>
