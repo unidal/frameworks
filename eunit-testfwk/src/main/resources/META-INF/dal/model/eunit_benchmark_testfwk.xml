@@ -1,0 +1,39 @@
+<model model-package="org.unidal.eunit.benchmark.model">
+   <entity name="benchmark" class-name="benchmark-entity" root="true">
+      <entity-ref name="suite" type="list" names="suites" />
+   </entity>
+   <entity name="suite" class-name="suite-entity">
+      <attribute name="type" value-type="Class" key="true" />
+      <entity-ref name="case" type="list" names="cases" />
+      <entity-ref name="cpu" />
+      <entity-ref name="memory" />
+   </entity>
+   <entity name="case" class-name="case-entity">
+      <attribute name="name" value-type="String" key="true" />
+      <attribute name="method" value-type="java.lang.reflect.Method" render="false" />
+      <element name="start-at" value-type="String" />
+      <element name="end-at" value-type="String" />
+      <entity-ref name="cpu" />
+      <entity-ref name="memory" />
+   </entity>
+   <entity name="cpu" class-name="cpu-entity">
+      <attribute name="loops" value-type="int" required="true" primitive="true" />
+      <attribute name="warmups" value-type="int" required="true" primitive="true" />
+      <attribute name="cpu-time" value-type="long" primitive="true" />
+      <attribute name="cpu-first-time" value-type="long" primitive="true" />
+      <attribute name="cpu-total-time" value-type="long" primitive="true" />
+      <attribute name="elapsed-time" value-type="long" primitive="true" />
+      <attribute name="elapsed-first-time" value-type="long" primitive="true" />
+      <attribute name="elapsed-total-time" value-type="long" primitive="true" />
+   </entity>
+   <entity name="memory" class-name="memory-entity">
+      <attribute name="loops" value-type="int" required="true" primitive="true" />
+      <attribute name="warmups" value-type="int" required="true" primitive="true" />
+      <attribute name="footprint" value-type="long" primitive="true" />
+      <attribute name="permanent-footprint" value-type="long" primitive="true" />
+      <attribute name="total-footprint" value-type="long" primitive="true" />
+      <attribute name="gc-count" value-type="long" primitive="true" />
+      <attribute name="gc-amount" value-type="long" primitive="true" />
+      <attribute name="gc-time" value-type="long" primitive="true" />
+   </entity>
+</model>
