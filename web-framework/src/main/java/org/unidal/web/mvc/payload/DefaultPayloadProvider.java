@@ -15,6 +15,9 @@ import java.util.regex.Pattern;
 
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
+import org.unidal.converter.ConverterManager;
+import org.unidal.converter.TypeUtil;
+import org.unidal.formatter.Formatter;
 import org.unidal.web.lifecycle.UrlMapping;
 import org.unidal.web.mvc.Action;
 import org.unidal.web.mvc.ActionPayload;
@@ -29,10 +32,6 @@ import org.unidal.web.mvc.payload.annotation.FieldMeta;
 import org.unidal.web.mvc.payload.annotation.ObjectMeta;
 import org.unidal.web.mvc.payload.annotation.PathMeta;
 
-import com.site.converter.ConverterManager;
-import com.site.converter.TypeUtil;
-import com.site.dal.xml.XmlException;
-import com.site.dal.xml.formatter.Formatter;
 import com.site.lookup.ContainerHolder;
 import com.site.lookup.util.ReflectUtils;
 
@@ -53,7 +52,7 @@ public class DefaultPayloadProvider extends ContainerHolder implements PayloadPr
 
 			try {
 				return formatter.parse(format, text);
-			} catch (XmlException e) {
+			} catch (Exception e) {
 				throw new RuntimeException(e.getMessage(), e);
 			} finally {
 				release(formatter);

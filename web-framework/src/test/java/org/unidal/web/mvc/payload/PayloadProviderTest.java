@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.unidal.formatter.Formatter;
 import org.unidal.web.http.HttpServletRequestWrapper;
 import org.unidal.web.lifecycle.DefaultUrlMapping;
 import org.unidal.web.mvc.ActionContext;
@@ -16,7 +17,6 @@ import org.unidal.web.mvc.payload.annotation.FieldMeta;
 import org.unidal.web.mvc.payload.annotation.ObjectMeta;
 import org.unidal.web.mvc.payload.annotation.PathMeta;
 
-import com.site.dal.xml.formatter.Formatter;
 import com.site.lookup.ComponentTestCase;
 
 public class PayloadProviderTest extends ComponentTestCase {

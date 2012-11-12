@@ -3,11 +3,11 @@ package org.unidal.web;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.unidal.web.mvc.annotation.OutboundActionMeta;
+import org.unidal.web.test.book.BookModule;
 
 import com.site.test.junit.HttpTestCase;
 import com.site.test.server.EmbeddedServer;
-import org.unidal.web.mvc.annotation.OutboundActionMeta;
-import org.unidal.web.test.book.BookModule;
 
 @RunWith(JUnit4.class)
 public class MvcTest extends HttpTestCase {

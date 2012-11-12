@@ -1,0 +1,22 @@
+<plexus>
+	<components>
+		<component>
+			<role>org.unidal.initialization.ModuleManager</role>
+			<implementation>org.unidal.initialization.DefaultModuleManager</implementation>
+		</component>
+		<component>
+			<role>org.unidal.initialization.ModuleInitializer</role>
+			<implementation>org.unidal.initialization.DefaultModuleInitializer</implementation>
+			<requirements>
+				<requirement>
+					<role>org.unidal.initialization.ModuleManager</role>
+				</requirement>
+			</requirements>
+		</component>
+		<component>
+			<role>org.unidal.formatter.Formatter</role>
+			<role-hint>java.util.Date</role-hint>
+			<implementation>org.unidal.formatter.DateFormatter</implementation>
+		</component>
+	</components>
+</plexus>
