@@ -1,6 +1,6 @@
 package org.unidal.web.mvc.lifecycle;
 
-import static com.site.lookup.util.ReflectUtils.invokeMethod;
+import static org.unidal.lookup.util.ReflectUtils.invokeMethod;
 
 import org.unidal.web.mvc.ActionContext;
 import org.unidal.web.mvc.model.entity.ErrorModel;

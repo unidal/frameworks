@@ -10,8 +10,8 @@ import org.codehaus.plexus.component.repository.exception.ComponentLifecycleExce
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.logging.Logger;
 
-import com.site.lookup.ContainerLoader;
-import com.site.lookup.LookupException;
+import org.unidal.lookup.ContainerLoader;
+import org.unidal.lookup.LookupException;
 
 public abstract class AbstractContainerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;

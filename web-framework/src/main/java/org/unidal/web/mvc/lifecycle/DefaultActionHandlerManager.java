@@ -9,7 +9,7 @@ import org.unidal.web.mvc.model.entity.ModuleModel;
 import org.unidal.web.mvc.model.entity.OutboundActionModel;
 import org.unidal.web.mvc.model.entity.TransitionModel;
 
-import com.site.lookup.ContainerHolder;
+import org.unidal.lookup.ContainerHolder;
 
 public class DefaultActionHandlerManager extends ContainerHolder implements ActionHandlerManager {
    private volatile Map<String, InboundActionHandler> m_inboundActionHandlers = new HashMap<String, InboundActionHandler>();

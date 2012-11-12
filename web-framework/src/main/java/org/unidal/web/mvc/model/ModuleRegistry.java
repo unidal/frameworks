@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 
-import com.site.helper.Reflects;
+import org.unidal.helper.Reflects;
 
 public class ModuleRegistry {
 	private List<Class<?>> m_moduleClasses = new ArrayList<Class<?>>();

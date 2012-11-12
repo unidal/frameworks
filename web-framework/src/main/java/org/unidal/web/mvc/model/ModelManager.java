@@ -1,7 +1,7 @@
 package org.unidal.web.mvc.model;
 
-import static com.site.lookup.util.StringUtils.isEmpty;
-import static com.site.lookup.util.StringUtils.isNotEmpty;
+import static org.unidal.lookup.util.StringUtils.isEmpty;
+import static org.unidal.lookup.util.StringUtils.isNotEmpty;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -28,9 +28,9 @@ import org.unidal.web.mvc.model.entity.ModuleModel;
 import org.unidal.web.mvc.model.entity.OutboundActionModel;
 import org.unidal.web.mvc.model.entity.TransitionModel;
 
-import com.site.lookup.ContainerHolder;
-import com.site.lookup.annotation.Inject;
-import com.site.lookup.util.ReflectUtils;
+import org.unidal.lookup.ContainerHolder;
+import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.util.ReflectUtils;
 
 public class ModelManager extends ContainerHolder implements Initializable {
 	@Inject

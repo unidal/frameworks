@@ -1,11 +1,11 @@
 package org.unidal.web.lifecycle;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import com.site.lookup.ComponentTestCase;
-import com.site.test.mock.HttpServletRequestMock;
+import org.unidal.lookup.ComponentTestCase;
+import org.unidal.test.mock.HttpServletRequestMock;
 import org.unidal.web.mvc.payload.UrlEncodedParameterProvider;
 
 @RunWith(JUnit4.class)
@@ -47,7 +47,7 @@ public class ActionResolverTest extends ComponentTestCase {
 		String actualUri = resolver.buildUrl(new UrlEncodedParameterProvider(request), mapping);
 		String expectedUri = (contextPath == null ? "" : contextPath) + uri;
 
-		assertEquals(expectedUri, actualUri);
+		Assert.assertEquals(expectedUri, actualUri);
 	}
 
 	@Test

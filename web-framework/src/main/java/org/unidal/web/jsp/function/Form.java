@@ -2,7 +2,7 @@ package org.unidal.web.jsp.function;
 
 import java.util.List;
 
-import com.site.lookup.util.ReflectUtils;
+import org.unidal.lookup.util.ReflectUtils;
 
 public class Form {
 	public static String showCheckbox(String inputName, Object item, Object selected, String valueName, String textName) {

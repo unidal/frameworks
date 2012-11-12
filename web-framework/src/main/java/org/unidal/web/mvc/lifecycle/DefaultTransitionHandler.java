@@ -1,6 +1,6 @@
 package org.unidal.web.mvc.lifecycle;
 
-import static com.site.lookup.util.ReflectUtils.invokeMethod;
+import static org.unidal.lookup.util.ReflectUtils.invokeMethod;
 
 import org.unidal.web.mvc.ActionContext;
 import org.unidal.web.mvc.ActionException;
@@ -8,7 +8,7 @@ import org.unidal.web.mvc.model.entity.TransitionModel;
 
 import com.dianping.cat.message.MessageProducer;
 import com.dianping.cat.message.Transaction;
-import com.site.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Inject;
 
 public class DefaultTransitionHandler implements TransitionHandler {
    @Inject

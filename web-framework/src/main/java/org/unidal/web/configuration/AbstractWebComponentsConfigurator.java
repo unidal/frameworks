@@ -5,12 +5,12 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.site.helper.Reflects;
-import com.site.helper.Reflects.IMemberFilter;
-import com.site.lookup.annotation.Inject;
-import com.site.lookup.configuration.AbstractResourceConfigurator;
-import com.site.lookup.configuration.Component;
-import com.site.lookup.configuration.Configuration;
+import org.unidal.helper.Reflects;
+import org.unidal.helper.Reflects.IMemberFilter;
+import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.configuration.AbstractResourceConfigurator;
+import org.unidal.lookup.configuration.Component;
+import org.unidal.lookup.configuration.Configuration;
 import org.unidal.web.mvc.AbstractModule;
 import org.unidal.web.mvc.annotation.ModulePagesMeta;
 import org.unidal.web.mvc.model.ModuleRegistry;

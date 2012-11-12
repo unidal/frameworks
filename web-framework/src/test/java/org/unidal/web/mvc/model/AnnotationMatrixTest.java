@@ -3,6 +3,7 @@ package org.unidal.web.mvc.model;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -14,7 +15,7 @@ import org.unidal.web.mvc.annotation.InboundActionMeta;
 import org.unidal.web.mvc.annotation.OutboundActionMeta;
 import org.unidal.web.mvc.annotation.PayloadMeta;
 
-import com.site.lookup.ComponentTestCase;
+import org.unidal.lookup.ComponentTestCase;
 
 @RunWith(JUnit4.class)
 public class AnnotationMatrixTest extends ComponentTestCase {
@@ -42,7 +43,7 @@ public class AnnotationMatrixTest extends ComponentTestCase {
 
 		try {
 			matrix.checkMatrix(method, classes);
-			fail("RuntimeException should be thrown.");
+			Assert.fail("RuntimeException should be thrown.");
 		} catch (Exception e) {
 			// expected
 		}

@@ -48,7 +48,7 @@ public class ContainerHolderTest extends ComponentTestCase {
 			Assert.fail("Component lookup for List must be failed since it's NOT supported!");
 		} catch (Exception e) {
 			String message = toString(e);
-e.printStackTrace();
+
 			Assert.assertTrue(message, message.contains("Unable to find a valid field for "));
 		}
 	}

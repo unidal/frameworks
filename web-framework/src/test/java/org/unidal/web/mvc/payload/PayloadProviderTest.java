@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.Assert;
 import org.unidal.formatter.Formatter;
 import org.unidal.web.http.HttpServletRequestWrapper;
 import org.unidal.web.lifecycle.DefaultUrlMapping;
@@ -17,7 +18,7 @@ import org.unidal.web.mvc.payload.annotation.FieldMeta;
 import org.unidal.web.mvc.payload.annotation.ObjectMeta;
 import org.unidal.web.mvc.payload.annotation.PathMeta;
 
-import com.site.lookup.ComponentTestCase;
+import org.unidal.lookup.ComponentTestCase;
 
 public class PayloadProviderTest extends ComponentTestCase {
 	private void assertArrayEquals(Object... params) {
@@ -45,7 +46,7 @@ public class PayloadProviderTest extends ComponentTestCase {
 				expected.append(params[i]);
 			}
 
-			assertEquals(expected.toString(), actual.toString());
+			Assert.assertEquals(expected.toString(), actual.toString());
 		} else {
 			throw new RuntimeException(last + " is not an array");
 		}
@@ -64,7 +65,7 @@ public class PayloadProviderTest extends ComponentTestCase {
 		List<ErrorObject> errors = provider.process(mapping, new UrlEncodedParameterProvider(request), payload);
 
 		release(DefaultPayloadProvider.class);
-		assertEquals("Errors occured.", "[]", errors.toString());
+		Assert.assertEquals("Errors occured.", "[]", errors.toString());
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -78,7 +79,7 @@ public class PayloadProviderTest extends ComponentTestCase {
 		List<ErrorObject> errors = provider.process(mapping, new UrlEncodedParameterProvider(request), payload);
 
 		release(DefaultPayloadProvider.class);
-		assertEquals("Errors occured.", "[]", errors.toString());
+		Assert.assertEquals("Errors occured.", "[]", errors.toString());
 	}
 
 	public void testComplexValue1() throws Exception {
@@ -110,7 +111,7 @@ public class PayloadProviderTest extends ComponentTestCase {
 		Formatter<Date> formatter = lookup(Formatter.class, Date.class.getName());
 
 		checkQueryString(payload, "date", "2009-03-08");
-		assertEquals("2009-03-08", formatter.format("yyyy-MM-dd", payload.getDateValue()));
+		Assert.assertEquals("2009-03-08", formatter.format("yyyy-MM-dd", payload.getDateValue()));
 	}
 
 	public void testErrorCase() throws Exception {
@@ -125,7 +126,7 @@ public class PayloadProviderTest extends ComponentTestCase {
 		}
 
 		if (failure) {
-			fail("Errors should occur.");
+			Assert.fail("Errors should occur.");
 		}
 	}
 
@@ -135,15 +136,15 @@ public class PayloadProviderTest extends ComponentTestCase {
 		checkQueryString(payload, "int", "1", "long", "2", "boolean", "1", "double", "123.4", "string", "String Value",
 		      "object.name", "it's name", "object.value", "and value.");
 
-		assertEquals(1, payload.getIntValue());
-		assertEquals(2, payload.getLongValue());
-		assertEquals(true, payload.isBooleanValue());
-		assertEquals(123.4d, payload.getDoubleValue());
-		assertEquals("String Value", payload.getStringValue());
-		assertEquals("it's name and value.", payload.getObject().toString());
+		Assert.assertEquals(1, payload.getIntValue());
+		Assert.assertEquals(2, payload.getLongValue());
+		Assert.assertEquals(true, payload.isBooleanValue());
+		Assert.assertEquals(123.4d, payload.getDoubleValue(), 1e-6);
+		Assert.assertEquals("String Value", payload.getStringValue());
+		Assert.assertEquals("it's name and value.", payload.getObject().toString());
 
 		checkPathInfo(payload, "path", "a/b/c");
-		assertEquals("Path Value", "[a, b, c]", Arrays.asList(payload.getPath()).toString());
+		Assert.assertEquals("Path Value", "[a, b, c]", Arrays.asList(payload.getPath()).toString());
 	}
 
 	public static final class ComplexPayload extends DummyActionPayload {

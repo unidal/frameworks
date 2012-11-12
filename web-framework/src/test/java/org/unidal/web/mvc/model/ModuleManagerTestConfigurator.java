@@ -7,7 +7,7 @@ import java.util.List;
 import org.unidal.web.configuration.AbstractWebComponentsConfigurator;
 import org.unidal.web.test.book.BookModule;
 
-import com.site.lookup.configuration.Component;
+import org.unidal.lookup.configuration.Component;
 
 public class ModuleManagerTestConfigurator extends AbstractWebComponentsConfigurator {
 	public static void main(String[] args) {

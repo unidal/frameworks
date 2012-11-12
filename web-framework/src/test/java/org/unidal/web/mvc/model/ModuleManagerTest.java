@@ -1,5 +1,6 @@
 package org.unidal.web.mvc.model;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -10,7 +11,7 @@ import org.unidal.web.mvc.annotation.ModuleMeta;
 import org.unidal.web.mvc.annotation.TransitionMeta;
 import org.unidal.web.mvc.model.entity.ModuleModel;
 
-import com.site.lookup.ComponentTestCase;
+import org.unidal.lookup.ComponentTestCase;
 
 @RunWith(JUnit4.class)
 public class ModuleManagerTest extends ComponentTestCase {
@@ -19,9 +20,9 @@ public class ModuleManagerTest extends ComponentTestCase {
       ModelManager manager = lookup(ModelManager.class);
       ModuleModel module = manager.build(TestModule2.class);
 
-      assertEquals("test2", module.getModuleName());
-      assertEquals("action1", module.getDefaultInboundActionName());
-      assertEquals("default", module.getDefaultErrorActionName());
+      Assert.assertEquals("test2", module.getModuleName());
+      Assert.assertEquals("action1", module.getDefaultInboundActionName());
+      Assert.assertEquals("default", module.getDefaultErrorActionName());
    }
 
    @Test
@@ -31,27 +32,27 @@ public class ModuleManagerTest extends ComponentTestCase {
       registry.register(TestModule1.class);
       registry.register(TestModule2.class);
 
-      assertEquals("test1", registry.getModule("test1").getModuleName());
-      assertEquals("test2", registry.getModule("test2").getModuleName());
-      assertNull(registry.getModule("test"));
+      Assert.assertEquals("test1", registry.getModule("test1").getModuleName());
+      Assert.assertEquals("test2", registry.getModule("test2").getModuleName());
+      Assert.assertNull(registry.getModule("test"));
 
       try {
          registry.register(TestModule3.class);
-         fail("No transition and error methods defined");
+         Assert.fail("No transition and error methods defined");
       } catch (RuntimeException e) {
          // expected
       }
 
       try {
          registry.register(TestModule4.class);
-         fail("Require transition and error methods defined");
+         Assert.fail("Require transition and error methods defined");
       } catch (RuntimeException e) {
          // expected
       }
 
       try {
          registry.register(TestModule2Copy.class);
-         fail("Can't register two modules with same name.");
+         Assert.fail("Can't register two modules with same name.");
       } catch (Exception e) {
          // expected
       }

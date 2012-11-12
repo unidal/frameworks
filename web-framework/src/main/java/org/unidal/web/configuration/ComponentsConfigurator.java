@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dianping.cat.message.MessageProducer;
-import com.site.lookup.configuration.AbstractResourceConfigurator;
-import com.site.lookup.configuration.Component;
+import org.unidal.lookup.configuration.AbstractResourceConfigurator;
+import org.unidal.lookup.configuration.Component;
 import org.unidal.web.lifecycle.ActionResolver;
 import org.unidal.web.lifecycle.DefaultActionResolver;
 import org.unidal.web.lifecycle.RequestLifecycle;

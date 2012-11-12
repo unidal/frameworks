@@ -7,7 +7,7 @@ import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.site.lookup.util.StringUtils;
+import org.unidal.lookup.util.StringUtils;
 
 public class HttpServletRequestWrapper extends javax.servlet.http.HttpServletRequestWrapper {
 	private Map<String, String[]> m_parameters;

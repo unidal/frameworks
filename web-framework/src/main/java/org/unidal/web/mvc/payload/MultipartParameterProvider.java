@@ -23,8 +23,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 
-import com.site.lookup.annotation.Inject;
-import com.site.lookup.util.StringUtils;
+import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.util.StringUtils;
 
 public class MultipartParameterProvider implements ParameterProvider, LogEnabled {
    @Inject

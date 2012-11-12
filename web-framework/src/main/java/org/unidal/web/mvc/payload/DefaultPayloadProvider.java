@@ -32,8 +32,8 @@ import org.unidal.web.mvc.payload.annotation.FieldMeta;
 import org.unidal.web.mvc.payload.annotation.ObjectMeta;
 import org.unidal.web.mvc.payload.annotation.PathMeta;
 
-import com.site.lookup.ContainerHolder;
-import com.site.lookup.util.ReflectUtils;
+import org.unidal.lookup.ContainerHolder;
+import org.unidal.lookup.util.ReflectUtils;
 
 public class DefaultPayloadProvider extends ContainerHolder implements PayloadProvider<Page, Action>, LogEnabled {
 	private Map<Class<?>, PayloadModel> m_payloadModels = new HashMap<Class<?>, PayloadModel>();

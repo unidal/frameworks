@@ -3,7 +3,7 @@ package org.unidal.web.test.book;
 import java.io.IOException;
 import java.util.List;
 
-import com.site.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Inject;
 import org.unidal.web.mvc.AbstractModule;
 import org.unidal.web.mvc.ErrorObject;
 import org.unidal.web.mvc.annotation.ErrorActionMeta;

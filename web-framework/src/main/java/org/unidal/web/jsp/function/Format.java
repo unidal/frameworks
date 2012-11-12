@@ -1,6 +1,6 @@
 package org.unidal.web.jsp.function;
 
-import com.site.helper.Formats;
+import org.unidal.helper.Formats;
 
 public class Format {
 	public static String format(Object data, String pattern) {
