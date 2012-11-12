@@ -11,6 +11,7 @@
 		<module>foundation-service</module>
 		<module>eunit-testfwk</module>
 		<module>java-fragment</module>
+		<module>type-converter</module>
 		<module>test-framework</module>
 		<module>web-framework</module>
 	</modules>
