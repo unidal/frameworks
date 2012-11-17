@@ -2,8 +2,11 @@ package org.unidal.web.jsp.function;
 
 import java.io.UnsupportedEncodingException;
 
-public class Encoder {
-   public static String htmlEncode(String str) {
+import org.unidal.web.jsp.annotation.FunctionMeta;
+
+public class CodecFunction {
+	@FunctionMeta(description = "HTML encode", example = "${a:htmlEncode(str)}")
+	public static String htmlEncode(String str) {
       int len = str == null ? 0 : str.length();
       StringBuilder sb = new StringBuilder(len + 16);
 
@@ -28,8 +31,36 @@ public class Encoder {
 
       return sb.toString();
    }
+	
+	@FunctionMeta(description = "URL decode", example = "${a:urlDecode(str)}")
+	public static String urlDecode(String str) {
+      if (str == null) {
+         return null;
+      }
 
-   public static String urlEncode(String str) {
+      int len = str.length();
+      StringBuilder sb = new StringBuilder(len);
+
+      for (int i = 0; i < len; i++) {
+         char ch = str.charAt(i);
+
+         if (ch == '%') {
+            if (i + 2 < len) {
+               sb.append((char) (Integer.parseInt(str.substring(i + 1, i + 1 + 2), 16)));
+               i += 2;
+            }
+         } else if (ch == '+') {
+            sb.append(' ');
+         } else {
+            sb.append(ch);
+         }
+      }
+
+      return sb.toString();
+   }
+
+	@FunctionMeta(description = "URL encode", example = "${a:urlEncode(str)}")
+	public static String urlEncode(String str) {
       if (str == null) {
          return null;
       }

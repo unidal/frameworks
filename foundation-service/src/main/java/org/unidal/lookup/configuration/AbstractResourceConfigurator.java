@@ -45,29 +45,35 @@ public abstract class AbstractResourceConfigurator {
 		}
 	}
 
-	protected List<Component> defineComponent(Class<?>... classes) {
+	protected List<Component> defineComponent(Class<?> role) {
+		return defineComponent(role, C(role));
+	}
+
+	private List<Component> defineComponent(Class<?> role, Component component) {
 		List<Component> all = new ArrayList<Component>();
 		Map<Class<?>, Component> map = new LinkedHashMap<Class<?>, Component>();
 
-		for (Class<?> clazz : classes) {
-			Component component = C(clazz);
-
-			map.put(clazz, component);
-			processInjectFields(map, clazz, component);
-		}
+		map.put(role, component);
+		processInjectFields(map, role, component);
 
 		all.addAll(map.values());
 		return all;
 	}
 
-	private void defineComponent(Map<Class<?>, Component> map, Class<?>... classes) {
-		for (Class<?> clazz : classes) {
-			if (!map.containsKey(clazz)) {
-				Component component = C(clazz);
+	protected <T> List<Component> defineComponent(Class<T> role, Class<? extends T> implementationClass) {
+		return defineComponent(role, C(role, implementationClass));
+	}
 
-				map.put(clazz, component);
-				processInjectFields(map, clazz, component);
-			}
+	protected <T> List<Component> defineComponent(Class<T> role, Object roleHint, Class<? extends T> implementationClass) {
+		return defineComponent(role, C(role, roleHint, implementationClass));
+	}
+
+	private void defineComponentRequirements(Map<Class<?>, Component> map, Class<?> clazz) {
+		if (!map.containsKey(clazz)) {
+			Component component = C(clazz);
+
+			map.put(clazz, component);
+			processInjectFields(map, clazz, component);
 		}
 	}
 
@@ -83,6 +89,13 @@ public abstract class AbstractResourceConfigurator {
 		}
 	}
 
+	/**
+	 * @return null means not a test class
+	 */
+	protected Class<?> getTestClass() {
+		return null;
+	}
+
 	protected boolean isEnv(String name) {
 		String env = System.getProperty("env");
 
@@ -91,13 +104,6 @@ public abstract class AbstractResourceConfigurator {
 		} else {
 			return false;
 		}
-	}
-
-	/**
-	 * @return null means not a test class
-	 */
-	protected Class<?> getTestClass() {
-		return null;
 	}
 
 	private void processInjectFields(Map<Class<?>, Component> map, Class<?> clazz, Component component) {
@@ -122,7 +128,7 @@ public abstract class AbstractResourceConfigurator {
 					component.req(type);
 
 					if (!type.isInterface() && !Modifier.isAbstract(type.getModifiers())) {
-						defineComponent(map, type);
+						defineComponentRequirements(map, type);
 					}
 				} else {
 					component.req(type, alias);
