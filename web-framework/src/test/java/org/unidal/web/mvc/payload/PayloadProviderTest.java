@@ -6,7 +6,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Test;
 import org.unidal.formatter.Formatter;
+import org.unidal.lookup.ComponentTestCase;
 import org.unidal.web.http.HttpServletRequestWrapper;
 import org.unidal.web.lifecycle.DefaultUrlMapping;
 import org.unidal.web.mvc.ActionContext;
@@ -17,8 +19,6 @@ import org.unidal.web.mvc.Page;
 import org.unidal.web.mvc.payload.annotation.FieldMeta;
 import org.unidal.web.mvc.payload.annotation.ObjectMeta;
 import org.unidal.web.mvc.payload.annotation.PathMeta;
-
-import org.unidal.lookup.ComponentTestCase;
 
 public class PayloadProviderTest extends ComponentTestCase {
 	private void assertArrayEquals(Object... params) {
@@ -82,6 +82,7 @@ public class PayloadProviderTest extends ComponentTestCase {
 		Assert.assertEquals("Errors occured.", "[]", errors.toString());
 	}
 
+	@Test
 	public void testComplexValue1() throws Exception {
 		ComplexPayload payload = new ComplexPayload();
 
@@ -93,6 +94,7 @@ public class PayloadProviderTest extends ComponentTestCase {
 		assertArrayEquals("String Value", payload.getStringValue());
 	}
 
+	@Test
 	public void testComplexValue2() throws Exception {
 		ComplexPayload payload = new ComplexPayload();
 
@@ -105,6 +107,7 @@ public class PayloadProviderTest extends ComponentTestCase {
 		assertArrayEquals("String Value", "String Value", payload.getStringValue());
 	}
 
+	@Test
 	@SuppressWarnings("unchecked")
 	public void testDateValue() throws Exception {
 		DatePayload payload = new DatePayload();
@@ -114,6 +117,7 @@ public class PayloadProviderTest extends ComponentTestCase {
 		Assert.assertEquals("2009-03-08", formatter.format("yyyy-MM-dd", payload.getDateValue()));
 	}
 
+	@Test
 	public void testErrorCase() throws Exception {
 		SimplePayload payload = new SimplePayload();
 		boolean failure = false;
@@ -130,6 +134,7 @@ public class PayloadProviderTest extends ComponentTestCase {
 		}
 	}
 
+	@Test
 	public void testSimpleValue() throws Exception {
 		SimplePayload payload = new SimplePayload();
 

@@ -8,10 +8,11 @@
 	<name>parent</name>
 	<packaging>pom</packaging>
 	<modules>
-		<module>foundation-service</module>
 		<module>eunit-testfwk</module>
 		<module>java-fragment</module>
 		<module>type-converter</module>
+		<module>foundation-service</module>
+		<module>dal-jdbc</module>
 		<module>test-framework</module>
 		<module>web-framework</module>
 	</modules>

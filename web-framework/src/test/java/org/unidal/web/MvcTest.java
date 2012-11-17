@@ -1,15 +1,13 @@
 package org.unidal.web;
 
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.unidal.test.junit.HttpTestCase;
+import org.unidal.test.server.EmbeddedServer;
 import org.unidal.web.mvc.annotation.OutboundActionMeta;
 import org.unidal.web.test.book.BookModule;
 
-import org.unidal.test.junit.HttpTestCase;
-import org.unidal.test.server.EmbeddedServer;
-
-@RunWith(JUnit4.class)
+@Ignore
 public class MvcTest extends HttpTestCase {
 	@Override
 	protected void configure(EmbeddedServer server) {

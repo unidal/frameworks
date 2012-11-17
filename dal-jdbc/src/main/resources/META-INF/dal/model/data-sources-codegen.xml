@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model>
+  <entity name="data-sources" root="true">
+    <entity-ref name="data-source" type="list" names="data-sources" />
+  </entity>
+  <entity name="data-source">
+    <attribute name="id" value-type="String" />
+    <element name="maximum-pool-size" value-type="int" />
+    <element name="connection-timeout" value-type="String" />
+    <element name="idle-timeout" value-type="String" />
+    <element name="statement-cache-size" value-type="int" />
+    <entity-ref name="properties" />
+  </entity>
+  <entity name="properties">
+    <element name="driver" value-type="String" />
+    <element name="url" value-type="String" />
+    <element name="user" value-type="String" />
+    <element name="password" value-type="String" />
+    <element name="connectionProperties" value-type="String" />
+  </entity>
+</model>
+

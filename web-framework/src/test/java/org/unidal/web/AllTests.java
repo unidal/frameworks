@@ -3,7 +3,6 @@ package org.unidal.web;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-
 import org.unidal.web.jsp.function.FormatTest;
 import org.unidal.web.lifecycle.ActionResolverTest;
 import org.unidal.web.mvc.model.AnnotationMatrixTest;

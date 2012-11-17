@@ -1,0 +1,67 @@
+<entities>
+  <entity name="user" table="user" alias="u">
+    <member name="user-id" field="user_id" value-type="int" length="11" nullable="false" key="true" />
+    <member name="full-name" field="full_name" value-type="String" length="30" nullable="false" />
+    <member name="creation-date" field="creation_date" value-type="Date" nullable="false" />
+    <member name="last-modified-date" field="last_modified_date" value-type="Date" nullable="false" />
+    <var name="key-user-id" value-type="int" key-member="user-id" />
+    <primary-key name="PRIMARY" members="user_id" />
+    <readsets>
+      <readset name="FULL" all="true" />
+    </readsets>
+    <updatesets>
+      <updateset name="FULL" all="true" />
+    </updatesets>
+    <query-defs>
+      <query name="find-by-PK" type="SELECT">
+        <param name="key-user-id" />
+        <statement><![CDATA[SELECT <FIELDS/> FROM <TABLE/> WHERE <FIELD name='user-id'/> = ${key-user-id}]]></statement>
+      </query>
+      <query name="insert" type="INSERT">
+        <statement><![CDATA[INSERT INTO <TABLE/>(<FIELDS/>) VALUES(<VALUES/>)]]></statement>
+      </query>
+      <query name="update-by-PK" type="UPDATE">
+        <param name="key-user-id" />
+        <statement><![CDATA[UPDATE <TABLE/> SET <FIELDS/> WHERE <FIELD name='user-id'/> = ${key-user-id}]]></statement>
+      </query>
+      <query name="delete-by-PK" type="DELETE">
+        <param name="key-user-id" />
+        <statement><![CDATA[DELETE FROM <TABLE/> WHERE <FIELD name='user-id'/> = ${key-user-id}]]></statement>
+      </query>
+    </query-defs>
+  </entity>
+  <entity name="user-address" table="user_address" alias="ua">
+    <member name="user-id" field="user_id" value-type="int" length="11" nullable="false" key="true" />
+    <member name="type" field="type" value-type="String" length="1" nullable="false" key="true" />
+    <member name="address" field="address" value-type="String" length="100" nullable="false" />
+    <var name="key-user-id" value-type="int" key-member="user-id" />
+    <var name="key-type" value-type="String" key-member="type" />
+    <primary-key name="PRIMARY" members="user_id, type" />
+    <readsets>
+      <readset name="FULL" all="true" />
+    </readsets>
+    <updatesets>
+      <updateset name="FULL" all="true" />
+    </updatesets>
+    <query-defs>
+      <query name="find-by-PK" type="SELECT">
+        <param name="key-user-id" />
+        <param name="key-type" />
+        <statement><![CDATA[SELECT <FIELDS/> FROM <TABLE/> WHERE <FIELD name='user-id'/> = ${key-user-id} AND <FIELD name='type'/> = ${key-type}]]></statement>
+      </query>
+      <query name="insert" type="INSERT">
+        <statement><![CDATA[INSERT INTO <TABLE/>(<FIELDS/>) VALUES(<VALUES/>)]]></statement>
+      </query>
+      <query name="update-by-PK" type="UPDATE">
+        <param name="key-user-id" />
+        <param name="key-type" />
+        <statement><![CDATA[UPDATE <TABLE/> SET <FIELDS/> WHERE <FIELD name='user-id'/> = ${key-user-id} AND <FIELD name='type'/> = ${key-type}]]></statement>
+      </query>
+      <query name="delete-by-PK" type="DELETE">
+        <param name="key-user-id" />
+        <param name="key-type" />
+        <statement><![CDATA[DELETE FROM <TABLE/> WHERE <FIELD name='user-id'/> = ${key-user-id} AND <FIELD name='type'/> = ${key-type}]]></statement>
+      </query>
+    </query-defs>
+  </entity>
+</entities>

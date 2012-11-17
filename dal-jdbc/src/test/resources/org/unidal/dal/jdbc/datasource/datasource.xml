@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<data-sources>
+	<data-source id="jdbc-dal">
+		<properties>
+			<url><![CDATA[jdbc:mysql://localhost:3306/dal]]></url>
+			<!-- 
+			<connectionProperties><![CDATA[useUnicode=true&autoReconnect=true]]></connectionProperties>
+			<user>root</user>
+			<password></password>
+			 -->
+		</properties>
+	</data-source>
+	<data-source id="user">
+		<maximum-pool-size>3</maximum-pool-size>
+		<connection-timeout>1s</connection-timeout>
+		<idle-timeout>10m</idle-timeout>
+		<statement-cache-size>1000</statement-cache-size>
+		<properties>
+			<driver>com.mysql.jdbc.Driver</driver>
+			<url><![CDATA[jdbc:mysql://localhost:3306/user]]></url>
+			<user>user</user>
+			<password></password>
+			<connectionProperties><![CDATA[useUnicode=true&autoReconnect=true]]></connectionProperties>
+		</properties>
+	</data-source>
+	<data-source id="history">
+		<maximum-pool-size>3</maximum-pool-size>
+		<connection-timeout>1s</connection-timeout>
+		<idle-timeout>10m</idle-timeout>
+		<statement-cache-size>1000</statement-cache-size>
+		<properties>
+			<driver>com.mysql.jdbc.Driver</driver>
+			<url><![CDATA[jdbc:mysql://localhost:3306/history]]></url>
+			<user>history</user>
+			<password></password>
+			<connectionProperties><![CDATA[useUnicode=true&autoReconnect=true]]></connectionProperties>
+		</properties>
+	</data-source>
+</data-sources>

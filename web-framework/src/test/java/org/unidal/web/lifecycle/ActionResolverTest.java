@@ -2,13 +2,10 @@ package org.unidal.web.lifecycle;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.unidal.lookup.ComponentTestCase;
 import org.unidal.test.mock.HttpServletRequestMock;
 import org.unidal.web.mvc.payload.UrlEncodedParameterProvider;
 
-@RunWith(JUnit4.class)
 public class ActionResolverTest extends ComponentTestCase {
 	private void assertResolve(ActionResolver resolver, String uri) {
 		final int pos = uri.indexOf('?');
@@ -33,9 +30,9 @@ public class ActionResolverTest extends ComponentTestCase {
 			}
 
 			@Override
-         public String getRequestURI() {
-	         return pathInfo;
-         }
+			public String getRequestURI() {
+				return pathInfo;
+			}
 
 			@Override
 			public String getQueryString() {

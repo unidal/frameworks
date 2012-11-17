@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<model model-package="org.unidal.dal.jdbc.datasource.model" enable-sax-parser="true">
+   <entity name="data-sources" root="true" class-name="DataSourcesDef">
+      <entity-ref name="data-source" type="map" names="data-sources-map" />
+   </entity>
+   <entity name="data-source" class-name="DataSourceDef">
+      <attribute name="id" value-type="String" key="true" />
+      <element name="maximum-pool-size" value-type="int" default-value="20"/>
+      <element name="connection-timeout" value-type="String" default-value="1s" />
+      <element name="idle-timeout" value-type="String" default-value="30m" />
+      <element name="statement-cache-size" value-type="int" default-value="100" />
+      <entity-ref name="properties" />
+   </entity>
+   <entity name="properties" class-name="PropertiesDef">
+      <element name="driver" value-type="String" />
+      <element name="url" value-type="String" />
+      <element name="user" value-type="String" />
+      <element name="password" value-type="String" />
+      <element name="connectionProperties" value-type="String" />
+   </entity>
+</model>
+
