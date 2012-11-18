@@ -14,6 +14,16 @@ import org.unidal.web.jsp.annotation.FunctionMeta;
 import org.unidal.web.jsp.annotation.TagMeta;
 import org.unidal.web.jsp.annotation.TaglibMeta;
 
+/**
+ * Abstract tag library class to generate .tld file automatically.
+ * <p>
+ * 
+ * Sub class should be annotated with @TaglibMeta. For example:
+ * 
+ * @TaglibMeta(uri = "http://www.unidal.org/my", shortName = "m", name =
+ *                 "my", description = "my JSP tag library",
+ *                 funcitons = { MyFunction.class }, tagFiles = { "layout.tag" })
+ */
 public abstract class AbstractTagLibrary {
 	protected void buildFunctions(XmlPlexusConfiguration taglib, Class<?> clazz) {
 		Method[] methods = clazz.getMethods();
@@ -121,7 +131,35 @@ public abstract class AbstractTagLibrary {
 		}
 	}
 
-	protected XmlPlexusConfiguration buildTaglib(TaglibMeta meta) {
+	protected void buildTagFile(XmlPlexusConfiguration taglib, String tagFileName, File baseDir) {
+		String path;
+		File file;
+
+		if (isWarProject()) {
+			path = "/WEB-INF/tags/" + tagFileName;
+			file = new File(baseDir, "src/main/webapp/" + path);
+		} else {
+			path = "/META-INF/tags/" + tagFileName;
+			file = new File(baseDir, "src/main/resources/" + path);
+		}
+
+		if (!file.exists()) {
+			throw new RuntimeException(String.format("Tag file(%s) is not found!", file.getPath()));
+		} else if (!tagFileName.endsWith(".tag")) {
+			throw new RuntimeException(String.format("Tag file(%s) should be ending with '.tag'!", file.getPath()));
+		}
+
+		String fileName = file.getName();
+		String name = fileName.substring(0, fileName.length() - 4);
+
+		XmlPlexusConfiguration tagFile = new XmlPlexusConfiguration("tag-file");
+
+		taglib.addChild(tagFile);
+		tagFile.addChild("name", name);
+		tagFile.addChild("path", path);
+	}
+
+	protected XmlPlexusConfiguration buildTaglib(File baseDir, TaglibMeta meta) {
 		XmlPlexusConfiguration taglib = new XmlPlexusConfiguration("taglib");
 
 		taglib.setAttribute("xmlns", "http://java.sun.com/xml/ns/javaee");
@@ -135,6 +173,10 @@ public abstract class AbstractTagLibrary {
 		taglib.addChild("tlib-version", "1.2");
 		taglib.addChild("short-name", meta.shortName());
 		taglib.addChild("uri", meta.uri());
+
+		for (String tagFile : meta.tagFiles()) {
+			buildTagFile(taglib, tagFile, baseDir);
+		}
 
 		for (Class<?> tag : meta.tags()) {
 			buildTag(taglib, tag);
@@ -155,8 +197,15 @@ public abstract class AbstractTagLibrary {
 			      TaglibMeta.class.getName()));
 		}
 
-		File taglibFile = new File(baseDir, "src/main/resources/META-INF/" + meta.name() + ".tld");
-		XmlPlexusConfiguration taglib = buildTaglib(meta);
+		File taglibFile;
+
+		if (isWarProject()) {
+			taglibFile = new File(baseDir, "src/main/webapp/WEB-INF/" + meta.name() + ".tld");
+		} else {
+			taglibFile = new File(baseDir, "src/main/resources/META-INF/" + meta.name() + ".tld");
+		}
+
+		XmlPlexusConfiguration taglib = buildTaglib(baseDir, meta);
 
 		try {
 			saveToFile(taglibFile, taglib);
@@ -167,6 +216,15 @@ public abstract class AbstractTagLibrary {
 			System.err.println(String.format("Error when generating %s file.", taglibFile));
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Should the generted .tld file be stored as war project or jar project.
+	 * 
+	 * @return true if it's a war project, false otherwise.
+	 */
+	protected boolean isWarProject() {
+		return false;
 	}
 
 	protected void saveToFile(File file, XmlPlexusConfiguration taglib) throws IOException {

@@ -13,10 +13,10 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 public @interface TagMeta {
 	String name();
 
+	String description();
+
 	// available values: 'JSP', 'emtpy', 'tagdependent', 'scriptless'
 	String bodyContent() default "JSP";
-
-	String description();
 
 	boolean dynamicAttributes() default false;
 

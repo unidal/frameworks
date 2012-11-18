@@ -23,7 +23,7 @@ public class CalculatorFunction {
 		throw new IllegalArgumentException("No getter method for " + fieldName + " in " + clazz);
 	}
 
-	@FunctionMeta(description = "Max value of field value of list elements", example = "${a:max(list, 'count')}")
+	@FunctionMeta(description = "Max value of field value of list elements", example = "${w:max(list, 'count')}")
 	public static int max(List<?> list, String fieldName) {
 		int max = Integer.MIN_VALUE;
 
@@ -59,7 +59,7 @@ public class CalculatorFunction {
 		}
 	}
 
-	@FunctionMeta(description = "Min value of field value of list elements", example = "${a:min(list, 'count')}")
+	@FunctionMeta(description = "Min value of field value of list elements", example = "${w:min(list, 'count')}")
 	public static int min(List<?> list, String fieldName) {
 		int min = Integer.MAX_VALUE;
 
@@ -95,7 +95,7 @@ public class CalculatorFunction {
 		}
 	}
 
-	@FunctionMeta(description = "Sum of field value of list elements", example = "${a:sum(list, 'amount')}")
+	@FunctionMeta(description = "Sum of field value of list elements", example = "${w:sum(list, 'amount')}")
 	public static double sum(List<?> list, String fieldName) {
 		double sum = 0;
 

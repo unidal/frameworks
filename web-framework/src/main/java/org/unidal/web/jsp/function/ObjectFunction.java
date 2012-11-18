@@ -8,7 +8,7 @@ import org.unidal.helper.Reflects;
 import org.unidal.web.jsp.annotation.FunctionMeta;
 
 public class ObjectFunction {
-	@FunctionMeta(description = "Length of String, or array", example = "${a:length(obj)}")
+	@FunctionMeta(description = "Length of String, or array", example = "${w:length(obj)}")
 	public static Object length(Object obj) {
 		if (obj == null) {
 			return null;
@@ -21,7 +21,7 @@ public class ObjectFunction {
 		}
 	}
 
-	@FunctionMeta(description = "size of colection, or map", example = "${a:size(obj)}")
+	@FunctionMeta(description = "size of colection, or map", example = "${w:size(obj)}")
 	public static Object size(Object obj) {
 		if (obj == null) {
 			return null;

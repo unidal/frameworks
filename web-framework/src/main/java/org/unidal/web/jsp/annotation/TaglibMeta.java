@@ -20,4 +20,6 @@ public @interface TaglibMeta {
 	Class<?>[] funcitons() default {};
 
 	Class<?>[] tags() default {};
+
+	String[] tagFiles() default {};
 }

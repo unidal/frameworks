@@ -5,7 +5,7 @@ import java.io.UnsupportedEncodingException;
 import org.unidal.web.jsp.annotation.FunctionMeta;
 
 public class CodecFunction {
-	@FunctionMeta(description = "HTML encode", example = "${a:htmlEncode(str)}")
+	@FunctionMeta(description = "HTML encode", example = "${w:htmlEncode(str)}")
 	public static String htmlEncode(String str) {
       int len = str == null ? 0 : str.length();
       StringBuilder sb = new StringBuilder(len + 16);
@@ -32,7 +32,7 @@ public class CodecFunction {
       return sb.toString();
    }
 	
-	@FunctionMeta(description = "URL decode", example = "${a:urlDecode(str)}")
+	@FunctionMeta(description = "URL decode", example = "${w:urlDecode(str)}")
 	public static String urlDecode(String str) {
       if (str == null) {
          return null;
@@ -59,7 +59,7 @@ public class CodecFunction {
       return sb.toString();
    }
 
-	@FunctionMeta(description = "URL encode", example = "${a:urlEncode(str)}")
+	@FunctionMeta(description = "URL encode", example = "${w:urlEncode(str)}")
 	public static String urlEncode(String str) {
       if (str == null) {
          return null;
