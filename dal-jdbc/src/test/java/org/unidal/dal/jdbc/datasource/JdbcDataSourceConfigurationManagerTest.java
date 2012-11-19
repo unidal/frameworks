@@ -1,10 +1,12 @@
 package org.unidal.dal.jdbc.datasource;
 
 import org.junit.Assert;
+import org.junit.Test;
 import org.unidal.lookup.ComponentTestCase;
 
 public class JdbcDataSourceConfigurationManagerTest extends ComponentTestCase {
-   public void testMarshal() throws Exception {
+	@Test
+	public void testMarshal() throws Exception {
       JdbcDataSourceConfigurationManager manager = lookup(JdbcDataSourceConfigurationManager.class);
       JdbcDataSourceConfiguration userConfig = manager.getConfiguration("user");
       JdbcDataSourceConfiguration historyConfig = manager.getConfiguration("history");

@@ -27,6 +27,14 @@ public class UserAddress extends DataObject {
       return m_address;
    }
 
+   public String getKeyType() {
+      return m_keyType;
+   }
+
+   public int getKeyUserId() {
+      return m_keyUserId;
+   }
+
    public String getType() {
       return m_type;
    }
@@ -40,6 +48,16 @@ public class UserAddress extends DataObject {
       m_address = address;
    }
 
+   public void setKeyType(String keyType) {
+      setFieldUsed(KEY_TYPE, true);
+      m_keyType = keyType;
+   }
+
+   public void setKeyUserId(int keyUserId) {
+      setFieldUsed(KEY_USER_ID, true);
+      m_keyUserId = keyUserId;
+   }
+
    public void setType(String type) {
       setFieldUsed(TYPE, true);
       m_type = type;
@@ -48,24 +66,6 @@ public class UserAddress extends DataObject {
    public void setUserId(int userId) {
       setFieldUsed(USER_ID, true);
       m_userId = userId;
-   }
-
-   public String getKeyType() {
-      return m_keyType;
-   }
-
-   public void setKeyType(String keyType) {
-      setFieldUsed(KEY_TYPE, true);
-      m_keyType = keyType;
-   }
-
-   public int getKeyUserId() {
-      return m_keyUserId;
-   }
-
-   public void setKeyUserId(int keyUserId) {
-      setFieldUsed(KEY_USER_ID, true);
-      m_keyUserId = keyUserId;
    }
 
 }

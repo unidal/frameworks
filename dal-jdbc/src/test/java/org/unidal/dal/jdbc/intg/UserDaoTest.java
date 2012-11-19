@@ -1,4 +1,4 @@
-package org.unidal.dal.jdbc;
+package org.unidal.dal.jdbc.intg;
 
 import org.junit.Assert;
 import org.junit.Test;

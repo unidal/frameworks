@@ -118,7 +118,7 @@ public class DefaultDataObjectAccessor implements DataObjectAccessor, LogEnabled
 
    public void setFieldValue(DataObject dataObject, DataField dataField, Object value) {
       if (dataObject instanceof RawDataObject) {
-         ((RawDataObject) dataObject).setFieldUsed(dataField, true);
+      	((RawDataObject) dataObject).setFieldUsed(dataField, true);
          ((RawDataObject) dataObject).setFieldValue(dataField.getName(), value);
          return;
       }

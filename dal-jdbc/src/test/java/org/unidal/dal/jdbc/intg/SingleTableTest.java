@@ -1,9 +1,10 @@
-package org.unidal.dal.jdbc;
+package org.unidal.dal.jdbc.intg;
 
 import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.unidal.dal.jdbc.QueryEngine;
 import org.unidal.dal.jdbc.datasource.DataSourceException;
 import org.unidal.dal.jdbc.entity.EntityInfoManager;
 import org.unidal.lookup.ComponentTestCase;

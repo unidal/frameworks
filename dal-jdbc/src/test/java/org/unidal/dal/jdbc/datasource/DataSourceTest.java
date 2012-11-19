@@ -1,9 +1,11 @@
 package org.unidal.dal.jdbc.datasource;
 
 import org.junit.Assert;
+import org.junit.Test;
 import org.unidal.lookup.ComponentTestCase;
 
 public class DataSourceTest extends ComponentTestCase {
+	@Test
 	public void testJdbcDataSource() throws Exception {
 		try {
 			DataSource dataSource = lookup(DataSource.class, "jdbc-dal");
@@ -18,6 +20,7 @@ public class DataSourceTest extends ComponentTestCase {
 		}
 	}
 
+	@Test
 	public void testJndiDataSource() throws Exception {
 		try {
 			DataSource dataSource = lookup(DataSource.class, "jndi-dal");
