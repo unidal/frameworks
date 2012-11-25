@@ -63,6 +63,20 @@
 		<example>${w:showCheckboxes('groupBy', groupBys, payload.groupBy, 'name', 'description')}</example>
 	</function>
 	<function>
+		<description>Show select option from an object's properties in a form</description>
+		<name>showOption</name>
+		<function-class>org.unidal.web.jsp.function.FormFunction</function-class>
+		<function-signature>java.lang.String showOption(java.lang.Object, java.lang.Object, java.lang.String, java.lang.String)</function-signature>
+		<example>${w:showOption(groupBy, payload.groupBy, 'name', 'description')}</example>
+	</function>
+	<function>
+		<description>Show multiple select options from a list or array object's properties in a form</description>
+		<name>showOptions</name>
+		<function-class>org.unidal.web.jsp.function.FormFunction</function-class>
+		<function-signature>java.lang.String showOptions(java.lang.Object, java.lang.Object, java.lang.String, java.lang.String)</function-signature>
+		<example>${w:showOptions(groupBys, payload.groupBy, 'name', 'description')}</example>
+	</function>
+	<function>
 		<description>Show radio from an object's properties in a form</description>
 		<name>showRadio</name>
 		<function-class>org.unidal.web.jsp.function.FormFunction</function-class>
@@ -79,28 +93,28 @@
 	<function>
 		<description>Format object using message pattern</description>
 		<name>format</name>
-		<function-class>org.unidal.web.jsp.function.FormatterFunction</function-class>
+		<function-class>org.unidal.web.jsp.function.FormatFunction</function-class>
 		<function-signature>java.lang.String format(java.lang.Object, java.lang.String)</function-signature>
 		<example>${w:format(payload.dateFrom,'yyyy-MM-dd')}</example>
 	</function>
 	<function>
 		<description>Format number with message pattern with auto scaling</description>
 		<name>formatNumber</name>
-		<function-class>org.unidal.web.jsp.function.FormatterFunction</function-class>
+		<function-class>org.unidal.web.jsp.function.FormatFunction</function-class>
 		<function-signature>java.lang.String formatNumber(java.lang.Number, java.lang.String, java.lang.String)</function-signature>
 		<example>${w:formatNumber(12345, '0.#', 'B')}</example>
 	</function>
 	<function>
 		<description>Format number in percentage</description>
 		<name>percentage</name>
-		<function-class>org.unidal.web.jsp.function.FormatterFunction</function-class>
+		<function-class>org.unidal.web.jsp.function.FormatFunction</function-class>
 		<function-signature>java.lang.String percentage(int, int, int)</function-signature>
 		<example>${w:percentage(4, 11, 2)}</example>
 	</function>
 	<function>
 		<description>Shorten a message</description>
 		<name>shorten</name>
-		<function-class>org.unidal.web.jsp.function.FormatterFunction</function-class>
+		<function-class>org.unidal.web.jsp.function.FormatFunction</function-class>
 		<function-signature>java.lang.String shorten(java.lang.String, int)</function-signature>
 		<example>${w:shorten('123456789', 5)} will be '1...9'</example>
 	</function>

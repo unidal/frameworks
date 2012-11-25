@@ -64,6 +64,20 @@ public class RequestContext {
       return m_module;
    }
 
+   public String getModuleUri(String module, String action) {
+      return getModuleUri(module, action, null);
+   }
+
+   public String getModuleUri(String module, String action, String pathInfo) {
+      DefaultUrlMapping urlMapping = new DefaultUrlMapping(m_urlMapping);
+
+      urlMapping.setModule(module);
+      urlMapping.setAction(action);
+      urlMapping.setPathInfo(pathInfo);
+      urlMapping.setQueryString(null);
+      return m_actionResolver.buildUrl(m_parameterProvider, urlMapping);
+   }
+
    public OutboundActionModel getOutboundAction() {
       return m_outboundAction;
    }

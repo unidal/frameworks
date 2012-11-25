@@ -3,7 +3,7 @@ package org.unidal.web.jsp.function;
 import org.unidal.helper.Formats;
 import org.unidal.web.jsp.annotation.FunctionMeta;
 
-public class FormatterFunction {
+public class FormatFunction {
 	@FunctionMeta(description = "Format object using message pattern", example = "${w:format(payload.dateFrom,'yyyy-MM-dd')}")
 	public static String format(Object obj, String pattern) {
 		return Formats.forObject().format(obj, pattern);

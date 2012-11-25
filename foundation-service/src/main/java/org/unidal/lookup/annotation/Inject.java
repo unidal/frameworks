@@ -9,10 +9,12 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Target({ FIELD })
 public @interface Inject {
-	Class<?> type() default Default.class;
+   Class<?> type() default Default.class;
 
-	String value() default "";
+   String value() default "";
 
-	public static final class Default {
-	}
+   String instantiationStrategy() default "";
+
+   public static final class Default {
+   }
 }

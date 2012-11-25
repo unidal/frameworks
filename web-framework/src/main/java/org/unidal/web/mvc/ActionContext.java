@@ -12,138 +12,142 @@ import javax.servlet.http.HttpServletResponse;
 import org.unidal.web.mvc.lifecycle.RequestContext;
 
 public abstract class ActionContext<T extends ActionPayload<? extends Page, ? extends Action>> {
-	private ActionContext<?> m_parent;
+   private ActionContext<?> m_parent;
 
-	private RequestContext m_requestContext;
+   private RequestContext m_requestContext;
 
-	private HttpServletRequest m_httpServletRequest;
+   private HttpServletRequest m_httpServletRequest;
 
-	private HttpServletResponse m_httpServletResponse;
+   private HttpServletResponse m_httpServletResponse;
 
-	private String m_inboundPage;
+   private String m_inboundPage;
 
-	private String m_outboundPage;
+   private String m_outboundPage;
 
-	private T m_payload;
+   private T m_payload;
 
-	private boolean m_processStopped;
+   private boolean m_processStopped;
 
-	private boolean m_skipAction;
+   private boolean m_skipAction;
 
-	private List<ErrorObject> m_errors = new ArrayList<ErrorObject>();
+   private List<ErrorObject> m_errors = new ArrayList<ErrorObject>();
 
-	private Throwable m_exception;
+   private Throwable m_exception;
 
-	private ServletContext m_servletContext;
+   private ServletContext m_servletContext;
 
-	public void addError(ErrorObject error) {
-		m_errors.add(error);
-	}
+   public void addError(ErrorObject error) {
+      m_errors.add(error);
+   }
 
-	public List<ErrorObject> getErrors() {
-		return m_errors;
-	}
+   public void addError(String id, Exception e) {
+      m_errors.add(new ErrorObject(id, e));
+   }
 
-	public Throwable getException() {
-		return m_exception;
-	}
+   public List<ErrorObject> getErrors() {
+      return m_errors;
+   }
 
-	public HttpServletRequest getHttpServletRequest() {
-		return m_httpServletRequest;
-	}
+   public Throwable getException() {
+      return m_exception;
+   }
 
-	public HttpServletResponse getHttpServletResponse() {
-		return m_httpServletResponse;
-	}
+   public HttpServletRequest getHttpServletRequest() {
+      return m_httpServletRequest;
+   }
 
-	public String getInboundAction() {
-		return m_inboundPage;
-	}
+   public HttpServletResponse getHttpServletResponse() {
+      return m_httpServletResponse;
+   }
 
-	public String getOutboundAction() {
-		return m_outboundPage;
-	}
+   public String getInboundAction() {
+      return m_inboundPage;
+   }
 
-	public ActionContext<?> getParent() {
-		return m_parent;
-	}
+   public String getOutboundAction() {
+      return m_outboundPage;
+   }
 
-	public T getPayload() {
-		return m_payload;
-	}
+   public ActionContext<?> getParent() {
+      return m_parent;
+   }
 
-	public RequestContext getRequestContext() {
-		return m_requestContext;
-	}
+   public T getPayload() {
+      return m_payload;
+   }
 
-	public ServletContext getServletContext() {
-		return m_servletContext;
-	}
+   public RequestContext getRequestContext() {
+      return m_requestContext;
+   }
 
-	public boolean hasErrors() {
-		return !m_errors.isEmpty();
-	}
+   public ServletContext getServletContext() {
+      return m_servletContext;
+   }
 
-	public void initialize(HttpServletRequest request, HttpServletResponse response) {
-		m_httpServletRequest = request;
-		m_httpServletResponse = response;
-	}
+   public boolean hasErrors() {
+      return !m_errors.isEmpty();
+   }
 
-	public boolean isProcessStopped() {
-		return m_processStopped;
-	}
+   public void initialize(HttpServletRequest request, HttpServletResponse response) {
+      m_httpServletRequest = request;
+      m_httpServletResponse = response;
+   }
 
-	public boolean isSkipAction() {
-		return m_skipAction;
-	}
+   public boolean isProcessStopped() {
+      return m_processStopped;
+   }
 
-	public void redirect(String uri) {
-		HttpServletResponse response = getHttpServletResponse();
+   public boolean isSkipAction() {
+      return m_skipAction;
+   }
 
-		response.setHeader("location", uri);
-		response.setStatus(HttpServletResponse.SC_FOUND);
-		stopProcess();
-	}
+   public void redirect(String uri) {
+      HttpServletResponse response = getHttpServletResponse();
 
-	public void setException(Throwable exception) {
-		m_exception = exception;
-	}
+      response.setHeader("location", uri);
+      response.setStatus(HttpServletResponse.SC_FOUND);
+      stopProcess();
+   }
 
-	public void setInboundPage(String inboundPage) {
-		m_inboundPage = inboundPage;
-	}
+   public void setException(Throwable exception) {
+      m_exception = exception;
+   }
 
-	public void setOutboundPage(String outboundPage) {
-		m_outboundPage = outboundPage;
-	}
+   public void setInboundPage(String inboundPage) {
+      m_inboundPage = inboundPage;
+   }
 
-	public void setParent(ActionContext<?> parent) {
-		m_parent = parent;
-	}
+   public void setOutboundPage(String outboundPage) {
+      m_outboundPage = outboundPage;
+   }
 
-	public void setPayload(T payload) {
-		m_payload = payload;
-	}
+   public void setParent(ActionContext<?> parent) {
+      m_parent = parent;
+   }
 
-	public void setRequestContext(RequestContext requestContext) {
-		m_requestContext = requestContext;
-	}
+   public void setPayload(T payload) {
+      m_payload = payload;
+   }
 
-	public void setServletContext(ServletContext servletContext) {
-		m_servletContext = servletContext;
-	}
+   public void setRequestContext(RequestContext requestContext) {
+      m_requestContext = requestContext;
+   }
 
-	public void skipAction() {
-		m_skipAction = true;
-	}
+   public void setServletContext(ServletContext servletContext) {
+      m_servletContext = servletContext;
+   }
 
-	public void stopProcess() {
-		m_processStopped = true;
-	}
+   public void skipAction() {
+      m_skipAction = true;
+   }
 
-	public void write(String data) throws IOException {
-		Writer writer = m_httpServletResponse.getWriter();
+   public void stopProcess() {
+      m_processStopped = true;
+   }
 
-		writer.write(data);
-	}
+   public void write(String data) throws IOException {
+      Writer writer = m_httpServletResponse.getWriter();
+
+      writer.write(data);
+   }
 }

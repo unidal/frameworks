@@ -16,114 +16,119 @@ import org.unidal.web.mvc.annotation.ModulePagesMeta;
 import org.unidal.web.mvc.model.ModuleRegistry;
 
 public abstract class AbstractWebComponentsConfigurator extends AbstractResourceConfigurator {
-	protected void defineInjectableComponent(List<Component> all, Class<?> clazz) {
-		Component component = C(clazz);
+   protected void defineInjectableComponent(List<Component> all, Class<?> clazz) {
+      Component component = C(clazz);
 
-		if (!isAutoConfigurable(clazz) || all.contains(component)) {
-			return;
-		}
+      if (!isAutoConfigurable(clazz) || all.contains(component)) {
+         return;
+      }
 
-		all.add(component);
+      all.add(component);
 
-		for (Field field : getInjectableFields(clazz)) {
-			Class<?> type = field.getType();
-			Inject inject = field.getAnnotation(Inject.class);
+      for (Field field : getInjectableFields(clazz)) {
+         Class<?> type = field.getType();
+         Inject inject = field.getAnnotation(Inject.class);
 
-			if (inject != null) {
-				Class<?> role = inject.type();
-				String roleHint = inject.value();
-				String fieldName = null;
+         if (inject != null) {
+            Class<?> role = inject.type();
+            String roleHint = inject.value();
+            String is = inject.instantiationStrategy();
+            String fieldName = null;
 
-				if (role == Inject.Default.class) {
-					role = type;
-				} else {
-					fieldName = field.getName();
-				}
+            if (role == Inject.Default.class) {
+               role = type;
+            } else {
+               fieldName = field.getName();
+            }
 
-				if (roleHint.length() == 0) {
-					component.req(role);
-				} else if (fieldName == null) {
-					component.req(role, roleHint);
-				} else {
-					component.req(role, roleHint, fieldName);
-				}
-			}
+            if (is.length() > 0) {
+               component.is(is);
+            }
 
-			if (!type.isArray() && !type.getName().startsWith("java")) {
-				defineInjectableComponent(all, type);
-			}
-		}
-	}
+            if (roleHint.length() == 0) {
+               component.req(role);
+            } else if (fieldName == null) {
+               component.req(role, roleHint);
+            } else {
+               component.req(role, roleHint, fieldName);
+            }
+         }
 
-	protected void defineModule(List<Component> all, Class<?> moduleClass) {
-		Component module = C(moduleClass);
-		List<Class<?>> injectableClasses = new ArrayList<Class<?>>();
-		ModulePagesMeta pagesMeta = moduleClass.getAnnotation(ModulePagesMeta.class);
+         if (!type.isArray() && !type.getName().startsWith("java")) {
+            defineInjectableComponent(all, type);
+         }
+      }
+   }
 
-		if (pagesMeta != null) {
-			for (Class<?> handlerClass : pagesMeta.value()) {
-				injectableClasses.add(handlerClass);
-			}
-		}
+   protected void defineModule(List<Component> all, Class<?> moduleClass) {
+      Component module = C(moduleClass);
+      List<Class<?>> injectableClasses = new ArrayList<Class<?>>();
+      ModulePagesMeta pagesMeta = moduleClass.getAnnotation(ModulePagesMeta.class);
 
-		for (Field field : getInjectableFields(moduleClass)) {
-			Class<?> type = field.getType();
-			Inject inject = field.getAnnotation(Inject.class);
+      if (pagesMeta != null) {
+         for (Class<?> handlerClass : pagesMeta.value()) {
+            injectableClasses.add(handlerClass);
+         }
+      }
 
-			if (inject != null) {
-				module.req(type);
-				injectableClasses.add((Class<?>) type);
-			}
-		}
+      for (Field field : getInjectableFields(moduleClass)) {
+         Class<?> type = field.getType();
+         Inject inject = field.getAnnotation(Inject.class);
 
-		all.add(module);
+         if (inject != null) {
+            module.req(type);
+            injectableClasses.add((Class<?>) type);
+         }
+      }
 
-		for (Class<?> injectableClass : injectableClasses) {
-			defineInjectableComponent(all, injectableClass);
-		}
-	}
+      all.add(module);
 
-	protected void defineModuleRegistry(List<Component> all, Class<? extends AbstractModule> defaultModuleClass,
-	      Class<? extends AbstractModule>... moduleClasses) {
-		Configuration modules = E("modules");
+      for (Class<?> injectableClass : injectableClasses) {
+         defineInjectableComponent(all, injectableClass);
+      }
+   }
 
-		for (Class<?> moduleClass : moduleClasses) {
-			if (moduleClass == defaultModuleClass) {
-				modules.add(E("module", "default", "true").value(moduleClass.getName()));
-			} else {
-				modules.add(E("module").value(moduleClass.getName()));
-			}
-		}
+   protected void defineModuleRegistry(List<Component> all, Class<? extends AbstractModule> defaultModuleClass,
+         Class<? extends AbstractModule>... moduleClasses) {
+      Configuration modules = E("modules");
 
-		all.add(C(ModuleRegistry.class).config(modules));
+      for (Class<?> moduleClass : moduleClasses) {
+         if (moduleClass == defaultModuleClass) {
+            modules.add(E("module", "default", "true").value(moduleClass.getName()));
+         } else {
+            modules.add(E("module").value(moduleClass.getName()));
+         }
+      }
 
-		for (Class<?> moduleClass : moduleClasses) {
-			defineModule(all, moduleClass);
-		}
-	}
+      all.add(C(ModuleRegistry.class).config(modules));
 
-	protected List<Field> getInjectableFields(Class<?> clazz) {
-		List<Field> fields = Reflects.forField().getAllDeclaredFields(clazz, new IMemberFilter<Field>() {
-			@Override
-			public boolean filter(Field field) {
-				return field.getAnnotation(Inject.class) != null;
-			}
-		});
+      for (Class<?> moduleClass : moduleClasses) {
+         defineModule(all, moduleClass);
+      }
+   }
 
-		return fields;
-	}
+   protected List<Field> getInjectableFields(Class<?> clazz) {
+      List<Field> fields = Reflects.forField().getAllDeclaredFields(clazz, new IMemberFilter<Field>() {
+         @Override
+         public boolean filter(Field field) {
+            return field.getAnnotation(Inject.class) != null;
+         }
+      });
 
-	protected boolean isAutoConfigurable(Class<?> clazz) {
-		if (clazz.isPrimitive() || clazz.isArray() || clazz.isInterface() || clazz.isMemberClass()) {
-			return false;
-		} else {
-			int modifiers = clazz.getModifiers();
+      return fields;
+   }
 
-			if (!Modifier.isPublic(modifiers) || Modifier.isAbstract(modifiers)) {
-				return false;
-			}
-		}
+   protected boolean isAutoConfigurable(Class<?> clazz) {
+      if (clazz.isPrimitive() || clazz.isArray() || clazz.isInterface() || clazz.isMemberClass()) {
+         return false;
+      } else {
+         int modifiers = clazz.getModifiers();
 
-		return true;
-	}
+         if (!Modifier.isPublic(modifiers) || Modifier.isAbstract(modifiers)) {
+            return false;
+         }
+      }
+
+      return true;
+   }
 }
