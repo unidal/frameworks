@@ -6,6 +6,41 @@
 	<tlib-version>1.2</tlib-version>
 	<short-name>w</short-name>
 	<uri>http://www.unidal.org/web/core</uri>
+	<tag>
+		<name>errors</name>
+		<description>Errors tag of MVC framework.</description>
+		<tag-class>org.unidal.web.jsp.tag.ErrorsTag</tag-class>
+		<body-content>JSP</body-content>
+		<dynamic-attributes>false</dynamic-attributes>
+		<attribute>
+			<name>bundle</name>
+			<description></description>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>class java.lang.String</type>
+		</attribute>
+	</tag>
+	<tag>
+		<name>error</name>
+		<description>Error tag of MVC framework.</description>
+		<tag-class>org.unidal.web.jsp.tag.ErrorTag</tag-class>
+		<body-content>JSP</body-content>
+		<dynamic-attributes>false</dynamic-attributes>
+		<attribute>
+			<name>code</name>
+			<description></description>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>class java.lang.String</type>
+		</attribute>
+		<attribute>
+			<name>enabled</name>
+			<description></description>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>boolean</type>
+		</attribute>
+	</tag>
 	<function>
 		<description>Min value of field value of list elements</description>
 		<name>min</name>

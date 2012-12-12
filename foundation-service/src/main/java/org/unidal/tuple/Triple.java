@@ -11,98 +11,102 @@ package org.unidal.tuple;
  *           last
  */
 public class Triple<F, M, L> {
-	private F m_first;
+   private F m_first;
 
-	private M m_middle;
+   private M m_middle;
 
-	private L m_last;
+   private L m_last;
 
-	public Triple() {
-	}
+   public Triple() {
+   }
 
-	public Triple(F first, M middle, L last) {
-		m_first = first;
-		m_middle = middle;
-		m_last = last;
-	}
+   public Triple(F first, M middle, L last) {
+      m_first = first;
+      m_middle = middle;
+      m_last = last;
+   }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
+   public static <F, M, L> Triple<F, M, L> from(F first, M middle, L last) {
+      return new Triple<F, M, L>(first, middle, last);
+   }
 
-		if (obj instanceof Triple) {
-			Triple<Object, Object, Object> o = (Triple<Object, Object, Object>) obj;
+   @Override
+   @SuppressWarnings("unchecked")
+   public boolean equals(Object obj) {
+      if (this == obj) {
+         return true;
+      }
 
-			if (m_first == null) {
-				if (o.m_first != null) {
-					return false;
-				}
-			} else if (!m_first.equals(o.m_first)) {
-				return false;
-			}
+      if (obj instanceof Triple) {
+         Triple<Object, Object, Object> o = (Triple<Object, Object, Object>) obj;
 
-			if (m_middle == null) {
-				if (o.m_middle != null) {
-					return false;
-				}
-			} else if (!m_middle.equals(o.m_middle)) {
-				return false;
-			}
+         if (m_first == null) {
+            if (o.m_first != null) {
+               return false;
+            }
+         } else if (!m_first.equals(o.m_first)) {
+            return false;
+         }
 
-			if (m_last == null) {
-				if (o.m_last != null) {
-					return false;
-				}
-			} else if (!m_last.equals(o.m_last)) {
-				return false;
-			}
+         if (m_middle == null) {
+            if (o.m_middle != null) {
+               return false;
+            }
+         } else if (!m_middle.equals(o.m_middle)) {
+            return false;
+         }
 
-			return true;
-		}
+         if (m_last == null) {
+            if (o.m_last != null) {
+               return false;
+            }
+         } else if (!m_last.equals(o.m_last)) {
+            return false;
+         }
 
-		return false;
-	}
+         return true;
+      }
 
-	public F getFirst() {
-		return m_first;
-	}
+      return false;
+   }
 
-	public L getLast() {
-		return m_last;
-	}
+   public F getFirst() {
+      return m_first;
+   }
 
-	public M getMiddle() {
-		return m_middle;
-	}
+   public L getLast() {
+      return m_last;
+   }
 
-	@Override
-	public int hashCode() {
-		int hash = 0;
+   public M getMiddle() {
+      return m_middle;
+   }
 
-		hash = hash * 31 + (m_first == null ? 0 : m_first.hashCode());
-		hash = hash * 31 + (m_middle == null ? 0 : m_middle.hashCode());
-		hash = hash * 31 + (m_last == null ? 0 : m_last.hashCode());
+   @Override
+   public int hashCode() {
+      int hash = 0;
 
-		return hash;
-	}
+      hash = hash * 31 + (m_first == null ? 0 : m_first.hashCode());
+      hash = hash * 31 + (m_middle == null ? 0 : m_middle.hashCode());
+      hash = hash * 31 + (m_last == null ? 0 : m_last.hashCode());
 
-	public void setFirst(F first) {
-		m_first = first;
-	}
+      return hash;
+   }
 
-	public void setLast(L last) {
-		m_last = last;
-	}
+   public void setFirst(F first) {
+      m_first = first;
+   }
 
-	public void setMiddle(M middle) {
-		m_middle = middle;
-	}
+   public void setLast(L last) {
+      m_last = last;
+   }
 
-	@Override
-	public String toString() {
-		return String.format("Triple[first=%s, middle=%s, last=%s]", m_first, m_middle, m_last);
-	}
+   public void setMiddle(M middle) {
+      m_middle = middle;
+   }
+
+   @Override
+   public String toString() {
+      return String.format("Triple[first=%s, middle=%s, last=%s]", m_first, m_middle, m_last);
+   }
 }

@@ -20,6 +20,10 @@ public class HttpServletResponseWrapper extends javax.servlet.http.HttpServletRe
 
    private PrintWriter m_printWriter;
 
+   public HttpServletResponseWrapper() {
+      this(new HttpServletResponseMock(), false);
+   }
+
    public HttpServletResponseWrapper(HttpServletResponse response) {
       this(response, false);
    }

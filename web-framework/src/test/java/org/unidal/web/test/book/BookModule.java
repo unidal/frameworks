@@ -20,7 +20,7 @@ public class BookModule extends AbstractModule {
    private BookManager m_bookManager;
 
    @PayloadMeta(BookPayload.class)
-   @ValidationMeta( { SigninValidator.class, PermissionValidator.class })
+   @ValidationMeta({ SigninValidator.class, PermissionValidator.class })
    @InboundActionMeta(name = "add")
    public void doAdd(BookContext ctx) throws IOException {
       if (!ctx.hasErrors()) {
@@ -34,7 +34,9 @@ public class BookModule extends AbstractModule {
 
             m_bookManager.add(book);
          } else {
-            ctx.addError(new ErrorObject("missing id or name").setArguments(payload.getId(), payload.getName()));
+            ctx.addError(new ErrorObject("missing.idOrName") //
+                  .addArgument("id", payload.getId()) //
+                  .addArgument("name", payload.getName()));
          }
       }
 

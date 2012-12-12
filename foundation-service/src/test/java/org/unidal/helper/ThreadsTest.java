@@ -9,7 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.unidal.helper.Threads.DefaultThreadListener;
+import org.unidal.helper.Threads.AbstractThreadListener;
 import org.unidal.helper.Threads.Task;
 import org.unidal.helper.Threads.ThreadGroupManager;
 
@@ -152,7 +152,7 @@ public class ThreadsTest {
 		}
 	}
 
-	static class MockThreadListener extends DefaultThreadListener {
+	static class MockThreadListener extends AbstractThreadListener {
 		private StringBuilder m_sb = new StringBuilder();
 
 		public String getResult() {

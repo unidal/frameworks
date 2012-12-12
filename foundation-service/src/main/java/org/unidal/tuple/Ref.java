@@ -7,50 +7,54 @@ package org.unidal.tuple;
  *           value
  */
 public class Ref<T> {
-	private T m_value;
+   private T m_value;
 
-	public Ref() {
-	}
+   public Ref() {
+   }
 
-	public Ref(T value) {
-		m_value = value;
-	}
+   public Ref(T value) {
+      m_value = value;
+   }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
+   public static <T> Ref<T> from(T value) {
+      return new Ref<T>(value);
+   }
 
-		if (obj instanceof Ref) {
-			Ref<Object> o = (Ref<Object>) obj;
+   @Override
+   @SuppressWarnings("unchecked")
+   public boolean equals(Object obj) {
+      if (this == obj) {
+         return true;
+      }
 
-			if (m_value == null) {
-				return o.m_value == null;
-			} else {
-				return m_value.equals(o.m_value);
-			}
-		}
+      if (obj instanceof Ref) {
+         Ref<Object> o = (Ref<Object>) obj;
 
-		return false;
-	}
+         if (m_value == null) {
+            return o.m_value == null;
+         } else {
+            return m_value.equals(o.m_value);
+         }
+      }
 
-	public T getValue() {
-		return m_value;
-	}
+      return false;
+   }
 
-	@Override
-	public int hashCode() {
-		return m_value == null ? 0 : m_value.hashCode();
-	}
+   public T getValue() {
+      return m_value;
+   }
 
-	public void setValue(T value) {
-		m_value = value;
-	}
+   @Override
+   public int hashCode() {
+      return m_value == null ? 0 : m_value.hashCode();
+   }
 
-	@Override
-	public String toString() {
-		return String.format("Ref[value=%s]", m_value);
-	}
+   public void setValue(T value) {
+      m_value = value;
+   }
+
+   @Override
+   public String toString() {
+      return String.format("Ref[value=%s]", m_value);
+   }
 }

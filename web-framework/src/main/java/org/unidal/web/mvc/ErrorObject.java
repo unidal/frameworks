@@ -1,56 +1,66 @@
 package org.unidal.web.mvc;
 
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class ErrorObject {
-	private String m_id;
+   private String m_code;
 
-	private Object[] m_arguments;
+   private Map<String, Object> m_arguments;
 
-	private Exception m_exception;
+   private Exception m_exception;
 
-	public ErrorObject(String id) {
-		m_id = id;
-	}
+   public ErrorObject(String id) {
+      m_code = id;
+   }
 
-	public ErrorObject(String id, Exception exception) {
-		m_id = id;
-		m_exception = exception;
-	}
+   public ErrorObject(String id, Exception exception) {
+      m_code = id;
+      m_exception = exception;
+   }
 
-	public Object[] getArguments() {
-		return m_arguments;
-	}
+   public ErrorObject addArgument(String name, Object value) {
+      if (m_arguments == null) {
+         m_arguments = new LinkedHashMap<String, Object>(); // keep the order
+      }
 
-	public Exception getException() {
-		return m_exception;
-	}
+      m_arguments.put(name, value);
+      return this;
+   }
 
-	public String getId() {
-		return m_id;
-	}
+   public Object getArgument(String name) {
+      return m_arguments == null ? null : m_arguments.get(name);
+   }
 
-	public ErrorObject setArguments(Object... arguments) {
-		m_arguments = arguments;
-		return this;
-	}
+   public Map<String, Object> getArguments() {
+      return m_arguments == null ? Collections.<String, Object> emptyMap() : m_arguments;
+   }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder(64);
+   public Exception getException() {
+      return m_exception;
+   }
 
-		sb.append("ErrorObject[id=").append(m_id);
+   public String getCode() {
+      return m_code;
+   }
 
-		if (m_arguments != null) {
-			sb.append(",arguments=").append(Arrays.asList(m_arguments));
-		}
+   @Override
+   public String toString() {
+      StringBuilder sb = new StringBuilder(64);
 
-		if (m_exception != null) {
-			sb.append(",exception=").append(m_exception.toString());
-		}
+      sb.append("ErrorObject[code=").append(m_code);
 
-		sb.append("]");
+      if (m_arguments != null) {
+         sb.append(",arguments=").append(m_arguments);
+      }
 
-		return sb.toString();
-	}
+      if (m_exception != null) {
+         sb.append(",exception=").append(m_exception.toString());
+      }
+
+      sb.append("]");
+
+      return sb.toString();
+   }
 }

@@ -226,7 +226,7 @@ public class DefaultPayloadProvider extends ContainerHolder implements PayloadPr
 				String name = field.getName();
 				ErrorObject error = new ErrorObject("payload.field", e);
 
-				error.setArguments(name, provider.getParameter(name));
+				error.addArgument(name, provider.getParameter(name));
 				errors.add(error);
 			}
 		}
@@ -238,7 +238,7 @@ public class DefaultPayloadProvider extends ContainerHolder implements PayloadPr
 				String name = object.getName();
 				ErrorObject error = new ErrorObject("payload.object", e);
 
-				error.setArguments(name, provider.getParameter(name));
+				error.addArgument(name, provider.getParameter(name));
 				errors.add(error);
 			}
 		}
@@ -250,7 +250,7 @@ public class DefaultPayloadProvider extends ContainerHolder implements PayloadPr
 				String name = path.getName();
 				ErrorObject error = new ErrorObject("payload.path");
 
-				error.setArguments(name, mapping.getPathInfo());
+				error.addArgument(name, mapping.getPathInfo());
 				errors.add(error);
 			}
 		}

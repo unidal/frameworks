@@ -9,78 +9,82 @@ package org.unidal.tuple;
  *           value
  */
 public class Pair<K, V> {
-	private K m_key;
+   private K m_key;
 
-	private V m_value;
+   private V m_value;
 
-	public Pair() {
-	}
+   public Pair() {
+   }
 
-	public Pair(K key, V value) {
-		m_key = key;
-		m_value = value;
-	}
+   public Pair(K key, V value) {
+      m_key = key;
+      m_value = value;
+   }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
+   public static <K, V> Pair<K, V> from(K key, V value) {
+      return new Pair<K, V>(key, value);
+   }
 
-		if (obj instanceof Pair) {
-			Pair<Object, Object> o = (Pair<Object, Object>) obj;
+   @Override
+   @SuppressWarnings("unchecked")
+   public boolean equals(Object obj) {
+      if (this == obj) {
+         return true;
+      }
 
-			if (m_key == null) {
-				if (o.m_key != null) {
-					return false;
-				}
-			} else if (!m_key.equals(o.m_key)) {
-				return false;
-			}
+      if (obj instanceof Pair) {
+         Pair<Object, Object> o = (Pair<Object, Object>) obj;
 
-			if (m_value == null) {
-				if (o.m_value != null) {
-					return false;
-				}
-			} else if (!m_value.equals(o.m_value)) {
-				return false;
-			}
+         if (m_key == null) {
+            if (o.m_key != null) {
+               return false;
+            }
+         } else if (!m_key.equals(o.m_key)) {
+            return false;
+         }
 
-			return true;
-		}
+         if (m_value == null) {
+            if (o.m_value != null) {
+               return false;
+            }
+         } else if (!m_value.equals(o.m_value)) {
+            return false;
+         }
 
-		return false;
-	}
+         return true;
+      }
 
-	public K getKey() {
-		return m_key;
-	}
+      return false;
+   }
 
-	public V getValue() {
-		return m_value;
-	}
+   public K getKey() {
+      return m_key;
+   }
 
-	@Override
-	public int hashCode() {
-		int hash = 0;
+   public V getValue() {
+      return m_value;
+   }
 
-		hash = hash * 31 + (m_key == null ? 0 : m_key.hashCode());
-		hash = hash * 31 + (m_value == null ? 0 : m_value.hashCode());
+   @Override
+   public int hashCode() {
+      int hash = 0;
 
-		return hash;
-	}
+      hash = hash * 31 + (m_key == null ? 0 : m_key.hashCode());
+      hash = hash * 31 + (m_value == null ? 0 : m_value.hashCode());
 
-	public void setKey(K key) {
-		m_key = key;
-	}
+      return hash;
+   }
 
-	public void setValue(V value) {
-		m_value = value;
-	}
+   public void setKey(K key) {
+      m_key = key;
+   }
 
-	@Override
-	public String toString() {
-		return String.format("Pair[key=%s, value=%s]", m_key, m_value);
-	}
+   public void setValue(V value) {
+      m_value = value;
+   }
+
+   @Override
+   public String toString() {
+      return String.format("Pair[key=%s, value=%s]", m_key, m_value);
+   }
 }
