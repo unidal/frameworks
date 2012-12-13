@@ -26,28 +26,25 @@ import org.unidal.web.mvc.ErrorObject;
  * 
  * <%@ taglib prefix="w" uri="http://www.unidal.org/web/core"%>
  * 
- * <xmp> 
- * <w:errors> 
- *    <w:error code="dal.user.add">Error while inserting user(\${userId}) to database. Exception: \${exception}</w:error>
- *    <w:error code="biz.user.add">Error while adding user(\${userId}).</w:error>
- *    <w:error code="*" enabled="true">Error(\${code}) occurred.<br></w:error>
- * </w:errors>
+ * <xmp> <w:errors> <w:error code="dal.user.add">Error while inserting user(\${userId}) to database. Exception:
+ * \${exception}</w:error> <w:error code="biz.user.add">Error while adding user(\${userId}).</w:error> <w:error code="*"
+ * enabled="true">Error(\${code}) occurred.<br>
+ * </w:error> </w:errors>
  * 
- * <w:errors bundle="/META-INF/error_en_US.properties"> 
- *    <w:error code="*" enabled="true"/>
- * </w:errors>
- * </xmp>
+ * <w:errors bundle="/META-INF/error_en_US.properties"> <w:error code="*" enabled="true"/> </w:errors> </xmp>
  * 
  * @see ErrorTag
  */
 @TagMeta(name = "errors", description = "Errors tag of MVC framework.")
 public class ErrorsTag extends AbstractBodyTag {
+   private static final String DEFAULT_ERROR_PROPERTIES = "/META-INF/error.properties";
+
    private static final long serialVersionUID = 1L;
 
    // key bundle => value properties
    private static Map<String, Properties> s_cache = new HashMap<String, Properties>();
 
-   private String m_bundle = "/META-INF/error.properties";
+   private String m_bundle = DEFAULT_ERROR_PROPERTIES;
 
    // used to keep coordinate data of child error tags, so that we can have chance to handle unprocessed errors.
    private Set<String> m_processedErrors = new HashSet<String>();
@@ -67,7 +64,7 @@ public class ErrorsTag extends AbstractBodyTag {
    }
 
    @Override
-   protected void handleBody() throws JspException {
+   public int doStartTag() throws JspException {
       if (m_bundle != null) {
          if (!s_cache.containsKey(m_bundle)) {
             Properties properties = new Properties();
@@ -81,12 +78,17 @@ public class ErrorsTag extends AbstractBodyTag {
                } catch (IOException e) {
                   throw new RuntimeException(String.format("Error when loading resource bundle(%s)!", m_bundle), e);
                }
-            } else {
+            } else if (!DEFAULT_ERROR_PROPERTIES.equals(m_bundle)) {
                throw new RuntimeException(String.format("No resource bundle(%s) is found!", m_bundle));
             }
          }
       }
 
+      return super.doStartTag();
+   }
+
+   @Override
+   protected void handleBody() throws JspException {
       boolean hasError = hasErrors();
 
       if (hasError) {

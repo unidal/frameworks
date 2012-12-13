@@ -23,13 +23,10 @@ import org.unidal.web.mvc.ErrorObject;
  * 
  * <%@ taglib prefix="w" uri="http://www.unidal.org/web/core"%>
  * 
- * <xmp> 
- * <w:errors> 
- *    <w:error code="dal.user.add">Error while inserting user(\${userId}) to database. Exception: \${exception}</w:error> 
- *    <w:error code="biz.user.add">Error while adding user(\${userId}).</w:error> 
- *    <w:error code="*" enabled="true">Error(\${code}) occurred.<br></w:error> 
- * </w:errors> 
- * </xmp>
+ * <xmp> <w:errors> <w:error code="dal.user.add">Error while inserting user(\${userId}) to database. Exception:
+ * \${exception}</w:error> <w:error code="biz.user.add">Error while adding user(\${userId}).</w:error> <w:error code="*"
+ * enabled="true">Error(\${code}) occurred.<br>
+ * </w:error> </w:errors> </xmp>
  * 
  * @see ErrorsTag
  */
@@ -82,28 +79,35 @@ public class ErrorTag extends AbstractBodyTag {
    @Override
    protected void handleBody() throws JspException {
       if (m_enabled) {
-         ErrorsTag parent = (ErrorsTag) super.findAncestorWithClass(getParent(), ErrorsTag.class);
+         ErrorsTag parent = (ErrorsTag) super.findAncestorWithClass(this, ErrorsTag.class);
          ErrorObject error = findError(m_code);
          String body = findMessagePattern(m_code, parent);
 
-         if (body != null) {
-            if (error != null) {
-               String result = processBody(body, error);
+         if (body != null && error != null) {
+            String result = processBody(body, error);
 
-               out(result);
+            out(result);
 
-               if (parent != null) {
-                  parent.getProcessedErrors().add(error.getCode()); // register itself to parent for '*' case
-               }
-            } else if (m_code.equals("*")) { // all others
-               Set<String> processedErrors = parent == null ? Collections.<String> emptySet() : parent.getProcessedErrors();
+            if (parent != null) {
+               parent.getProcessedErrors().add(error.getCode()); // register itself to parent for '*' case
+            }
+         } else if ("*".equals(m_code)) { // all others
+            Set<String> processedErrors = parent == null ? Collections.<String> emptySet() : parent.getProcessedErrors();
+            boolean first = true;
 
-               for (ErrorObject e : getErrors()) {
-                  if (!processedErrors.contains(e.getCode())) {
-                     String result = processBody(body, e);
+            for (ErrorObject e : getErrors()) {
+               String pattern = findMessagePattern(e.getCode(), parent);
 
-                     out(result);
+               if (!processedErrors.contains(e.getCode())) {
+                  String result = processBody(pattern == null ? "${code}" : pattern, e);
+
+                  if (first) {
+                     first = false;
+                  } else {
+                     out(",");
                   }
+
+                  out(result);
                }
             }
          }

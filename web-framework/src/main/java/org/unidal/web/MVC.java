@@ -16,6 +16,8 @@ import org.unidal.web.lifecycle.RequestLifecycle;
 import com.dianping.cat.Cat;
 
 public class MVC extends AbstractContainerServlet {
+   public static final String ID = "mvc-servlet";
+   
    private static final long serialVersionUID = 1L;
 
    private RequestLifecycle m_handler;
@@ -33,6 +35,7 @@ public class MVC extends AbstractContainerServlet {
       m_handler = lookup(RequestLifecycle.class, "mvc");
       m_handler.setServletContext(config.getServletContext());
 
+      config.getServletContext().setAttribute(ID, this);
       getLogger().info("MVC started at " + config.getServletContext().getContextPath());
    }
 

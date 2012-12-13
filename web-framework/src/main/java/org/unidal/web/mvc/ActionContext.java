@@ -40,8 +40,11 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
       m_errors.add(error);
    }
 
-   public void addError(String id, Exception e) {
-      m_errors.add(new ErrorObject(id, e));
+   public ErrorObject addError(String id, Exception e) {
+      ErrorObject error = new ErrorObject(id, e);
+      
+      m_errors.add(error);
+      return error;
    }
 
    public List<ErrorObject> getErrors() {
