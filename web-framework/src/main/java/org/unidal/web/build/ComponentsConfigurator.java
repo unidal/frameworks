@@ -1,4 +1,4 @@
-package org.unidal.web.configuration;
+package org.unidal.web.build;
 
 import java.util.ArrayList;
 import java.util.List;

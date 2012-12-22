@@ -200,6 +200,12 @@ public class ErrorTag extends AbstractBodyTag {
 
             return sw.toString();
          }
+      } else if (name.equals("exception.message")) {
+         Exception exception = error.getException();
+
+         if (exception != null) {
+            return exception.getMessage();
+         }
       } else if (name.equals("code")) {
          return error.getCode();
       } else {
