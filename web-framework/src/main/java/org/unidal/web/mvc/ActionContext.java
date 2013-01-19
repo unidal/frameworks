@@ -36,15 +36,21 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
 
    private ServletContext m_servletContext;
 
+   private int m_htmlId;
+
    public void addError(ErrorObject error) {
       m_errors.add(error);
    }
 
    public ErrorObject addError(String id, Exception e) {
       ErrorObject error = new ErrorObject(id, e);
-      
+
       m_errors.add(error);
       return error;
+   }
+
+   public String getCurrentHtmlId() {
+      return "id-" + m_htmlId;
    }
 
    public List<ErrorObject> getErrors() {
@@ -65,6 +71,10 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
 
    public String getInboundAction() {
       return m_inboundPage;
+   }
+
+   public String getNextHtmlId() {
+      return "id-" + (++m_htmlId);
    }
 
    public String getOutboundAction() {
@@ -102,6 +112,16 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
 
    public boolean isSkipAction() {
       return m_skipAction;
+   }
+
+   public void redirect(Page page, String queryString) {
+      String pageUri = m_requestContext.getActionUri(page.getPath());
+
+      if (queryString == null) {
+         redirect(pageUri);
+      } else {
+         redirect(pageUri + "?" + queryString);
+      }
    }
 
    public void redirect(String uri) {

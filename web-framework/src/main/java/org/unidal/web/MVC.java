@@ -17,7 +17,7 @@ import com.dianping.cat.Cat;
 
 public class MVC extends AbstractContainerServlet {
    public static final String ID = "mvc-servlet";
-   
+
    private static final long serialVersionUID = 1L;
 
    private RequestLifecycle m_handler;
@@ -25,10 +25,13 @@ public class MVC extends AbstractContainerServlet {
    @Override
    protected void initComponents(ServletConfig config) throws Exception {
       String catClientXml = config.getInitParameter("cat-client-xml");
+      String initModules = config.getInitParameter("init-modules");
 
       getLogger().info("MVC is starting at " + config.getServletContext().getContextPath());
 
-      initializeModules();
+      if (!"false".equals(initModules)) {
+         initializeModules();
+      }
 
       Cat.initialize(getContainer(), catClientXml == null ? null : new File(catClientXml));
 

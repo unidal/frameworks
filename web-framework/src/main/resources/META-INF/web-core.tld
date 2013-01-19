@@ -7,39 +7,39 @@
 	<short-name>w</short-name>
 	<uri>http://www.unidal.org/web/core</uri>
 	<tag>
-		<name>errors</name>
 		<description>Errors tag of MVC framework.</description>
+		<name>errors</name>
 		<tag-class>org.unidal.web.jsp.tag.ErrorsTag</tag-class>
 		<body-content>JSP</body-content>
-		<dynamic-attributes>false</dynamic-attributes>
 		<attribute>
-			<name>bundle</name>
 			<description></description>
+			<name>bundle</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 			<type>class java.lang.String</type>
 		</attribute>
+		<dynamic-attributes>false</dynamic-attributes>
 	</tag>
 	<tag>
-		<name>error</name>
 		<description>Error tag of MVC framework.</description>
+		<name>error</name>
 		<tag-class>org.unidal.web.jsp.tag.ErrorTag</tag-class>
 		<body-content>JSP</body-content>
-		<dynamic-attributes>false</dynamic-attributes>
 		<attribute>
-			<name>code</name>
 			<description></description>
+			<name>code</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 			<type>class java.lang.String</type>
 		</attribute>
 		<attribute>
-			<name>enabled</name>
 			<description></description>
+			<name>enabled</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 			<type>boolean</type>
 		</attribute>
+		<dynamic-attributes>false</dynamic-attributes>
 	</tag>
 	<function>
 		<description>Min value of field value of list elements</description>
@@ -126,6 +126,13 @@
 		<example>${w:showRadios('groupBy', groupBys, payload.groupBy, 'name', 'description')}</example>
 	</function>
 	<function>
+		<description>Show selected result of checkbox, radio or option from an object's properties in a form</description>
+		<name>showResult</name>
+		<function-class>org.unidal.web.jsp.function.FormFunction</function-class>
+		<function-signature>java.lang.Object showResult(java.lang.Object, java.lang.Object, java.lang.String, java.lang.String)</function-signature>
+		<example>${w:showResult(groupBys, payload.groupBy, 'name', 'description')}</example>
+	</function>
+	<function>
 		<description>Format object using message pattern</description>
 		<name>format</name>
 		<function-class>org.unidal.web.jsp.function.FormatFunction</function-class>
@@ -152,6 +159,13 @@
 		<function-class>org.unidal.web.jsp.function.FormatFunction</function-class>
 		<function-signature>java.lang.String shorten(java.lang.String, int)</function-signature>
 		<example>${w:shorten('123456789', 5)} will be '1...9'</example>
+	</function>
+	<function>
+		<description>Translate code based on a mapping table</description>
+		<name>translate</name>
+		<function-class>org.unidal.web.jsp.function.MappingFunction</function-class>
+		<function-signature>java.lang.String translate(java.lang.String, java.lang.String, java.lang.String, java.lang.String)</function-signature>
+		<example>${w:translate('2', '1|2|3', 'one|two|three', 'not found')}</example>
 	</function>
 	<function>
 		<description>Length of String, or array</description>

@@ -12,7 +12,7 @@ public class FormatFunctionTest {
 		Assert.assertEquals("12345", FormatFunction.format(12345, "0.#"));
 		Assert.assertEquals("12345.0", FormatFunction.format(12345, "0.0"));
 		Assert.assertEquals("12,345.0", FormatFunction.format(12345, "#,##0.0"));
-		Assert.assertEquals("2012", FormatFunction.format(new Date(), "yyyy"));
+		Assert.assertEquals("2013", FormatFunction.format(new Date(), "yyyy"));
 	}
 
 	@Test

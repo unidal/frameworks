@@ -80,13 +80,13 @@ public abstract class AbstractTagLibrary {
 			XmlPlexusConfiguration tag = new XmlPlexusConfiguration("tag");
 
 			taglib.addChild(tag);
-			tag.addChild("name", meta.name());
 			tag.addChild("description", meta.description());
+			tag.addChild("name", meta.name());
 			tag.addChild("tag-class", clazz.getName());
 			tag.addChild("body-content", meta.bodyContent());
-			tag.addChild("dynamic-attributes", String.valueOf(meta.dynamicAttributes()));
 
 			buildTagAttributes(tag, clazz);
+			tag.addChild("dynamic-attributes", String.valueOf(meta.dynamicAttributes()));
 		} else {
 			throw new RuntimeException(String.format("Class(%s) should be annotated by %s!", clazz.getName(),
 			      TagMeta.class));
@@ -108,6 +108,7 @@ public abstract class AbstractTagLibrary {
 						XmlPlexusConfiguration attribute = new XmlPlexusConfiguration("attribute");
 
 						tag.addChild(attribute);
+						attribute.addChild("description", meta.description());
 
 						if (meta.name().length() > 0) {
 							attribute.addChild("name", meta.name());
@@ -115,7 +116,6 @@ public abstract class AbstractTagLibrary {
 							attribute.addChild("name", Character.toLowerCase(name.charAt(3)) + name.substring(4));
 						}
 
-						attribute.addChild("description", meta.description());
 						attribute.addChild("required", String.valueOf(meta.required()));
 						attribute.addChild("rtexprvalue", String.valueOf(meta.rtexprvalue()));
 						attribute.addChild("type", method.getParameterTypes()[0].toString());

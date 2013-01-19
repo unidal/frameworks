@@ -58,7 +58,7 @@ public class FormFunction {
             sb.append("\r\n");
          }
       } else if (items != null) {
-         throw new RuntimeException("Object[] or List expected, but was: " + items);
+         throw new RuntimeException("Object[] or List expected, but was: " + items.getClass());
       }
 
       return sb.toString();
@@ -92,7 +92,7 @@ public class FormFunction {
             sb.append("\r\n");
          }
       } else if (items != null) {
-         throw new RuntimeException("Object[] or List expected, but was: " + items);
+         throw new RuntimeException("Object[] or List expected, but was: " + items.getClass());
       }
 
       return sb.toString();
@@ -128,7 +128,40 @@ public class FormFunction {
             sb.append("\r\n");
          }
       } else if (items != null) {
-         throw new RuntimeException("Object[] or List expected, but was: " + items);
+         throw new RuntimeException("Object[] or List expected, but was: " + items.getClass());
+      }
+
+      return sb.toString();
+   }
+
+   @FunctionMeta(description = "Show selected result of checkbox, radio or option from an object's properties in a form", example = "${w:showResult(groupBys, payload.groupBy, 'name', 'description')}")
+   public static Object showResult(Object items, Object selected, String valueName, String textName) {
+      StringBuilder sb = new StringBuilder();
+
+      if (selected != null) {
+         if (items instanceof Object[]) {
+            for (Object item : (Object[]) items) {
+               Object value = ReflectUtils.invokeGetter(item, valueName);
+
+               if (value != null && value.toString().equals(selected.toString())) {
+                  Object text = ReflectUtils.invokeGetter(item, textName);
+
+                  return text;
+               }
+            }
+         } else if (items instanceof List) {
+            for (Object item : (List<?>) items) {
+               Object value = ReflectUtils.invokeGetter(item, valueName);
+
+               if (value != null && value.toString().equals(selected.toString())) {
+                  Object text = ReflectUtils.invokeGetter(item, textName);
+
+                  return text;
+               }
+            }
+         } else if (items != null) {
+            throw new RuntimeException("Object[] or List expected, but was: " + items.getClass());
+         }
       }
 
       return sb.toString();
