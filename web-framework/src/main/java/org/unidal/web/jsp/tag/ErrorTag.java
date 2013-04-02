@@ -23,10 +23,17 @@ import org.unidal.web.mvc.ErrorObject;
  * 
  * <%@ taglib prefix="w" uri="http://www.unidal.org/web/core"%>
  * 
- * <xmp> <w:errors> <w:error code="dal.user.add">Error while inserting user(\${userId}) to database. Exception:
- * \${exception}</w:error> <w:error code="biz.user.add">Error while adding user(\${userId}).</w:error> <w:error code="*"
- * enabled="true">Error(\${code}) occurred.<br>
- * </w:error> </w:errors> </xmp>
+ * <xmp>
+ * <w:errors> 
+ *    <w:error code="dal.user.add">Error while inserting user(\${userId}) to database. Exception: \${exception}</w:error> 
+ *    <w:error code="biz.user.add">Error while adding user(\${userId}).</w:error> 
+ *    <w:error code="*" enabled="true">Error(\${code}) occurred.<br></w:error> 
+ * </w:errors>
+ * 
+ * <w:errors bundle="/META-INF/error_en_US.properties"> 
+ *    <w:error code="*" enabled="true"/> 
+ * </w:errors> 
+ * </xmp>
  * 
  * @see ErrorsTag
  */

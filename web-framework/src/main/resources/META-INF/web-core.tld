@@ -181,4 +181,11 @@
 		<function-signature>java.lang.Object size(java.lang.Object)</function-signature>
 		<example>${w:size(obj)}</example>
 	</function>
+	<function>
+		<description>Check if the value is equal or is one of value in the given values.</description>
+		<name>in</name>
+		<function-class>org.unidal.web.jsp.function.ObjectFunction</function-class>
+		<function-signature>boolean in(java.lang.Object, java.lang.Object)</function-signature>
+		<example>${w:in(values, value)}</example>
+	</function>
 </taglib>

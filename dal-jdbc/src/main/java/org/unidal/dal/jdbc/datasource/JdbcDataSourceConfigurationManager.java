@@ -5,7 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
@@ -16,126 +18,133 @@ import org.unidal.dal.jdbc.datasource.model.entity.PropertiesDef;
 import org.unidal.dal.jdbc.datasource.model.transform.DefaultSaxParser;
 
 public class JdbcDataSourceConfigurationManager implements Initializable {
-	private String m_datasourceFile;
+   private String m_datasourceFile;
 
-	private DataSourcesDef m_dataSources;
+   private DataSourcesDef m_dataSources;
 
-	protected JdbcDataSourceConfiguration getConfiguration(DataSourceDef ds) {
-		JdbcDataSourceConfiguration configuration = new JdbcDataSourceConfiguration();
-		PropertiesDef properties = ds.getProperties();
+   private Map<String, JdbcDataSourceConfiguration> m_configurations = new HashMap<String, JdbcDataSourceConfiguration>();
 
-		configuration.setId(ds.getId());
-		configuration.setConnectionTimeout(toTime(ds.getConnectionTimeout()));
-		configuration.setIdleTimeout(toTime(ds.getIdleTimeout()));
-		configuration.setMaximumPoolSize(ds.getMaximumPoolSize());
-		configuration.setStatementCacheSize(ds.getStatementCacheSize());
-		configuration.setDriver(properties.getDriver());
+   protected JdbcDataSourceConfiguration getConfiguration(DataSourceDef ds) {
+      JdbcDataSourceConfiguration configuration = new JdbcDataSourceConfiguration();
+      PropertiesDef properties = ds.getProperties();
 
-		String connectionProperties = properties.getConnectionProperties();
+      configuration.setId(ds.getId());
+      configuration.setConnectionTimeout(toTime(ds.getConnectionTimeout()));
+      configuration.setIdleTimeout(toTime(ds.getIdleTimeout()));
+      configuration.setMaximumPoolSize(ds.getMaximumPoolSize());
+      configuration.setStatementCacheSize(ds.getStatementCacheSize());
+      configuration.setDriver(properties.getDriver());
 
-		if (connectionProperties != null && connectionProperties.length() > 0) {
-			configuration.setUrl(properties.getUrl() + "?" + connectionProperties);
-		} else {
-			configuration.setUrl(properties.getUrl());
-		}
+      String connectionProperties = properties.getConnectionProperties();
 
-		configuration.setUser(properties.getUser());
-		configuration.setPassword(properties.getPassword());
+      if (connectionProperties != null && connectionProperties.length() > 0) {
+         configuration.setUrl(properties.getUrl() + "?" + connectionProperties);
+      } else {
+         configuration.setUrl(properties.getUrl());
+      }
 
-		return configuration;
-	}
+      configuration.setUser(properties.getUser());
+      configuration.setPassword(properties.getPassword());
 
-	public JdbcDataSourceConfiguration getConfiguration(String id) {
-		if (m_dataSources != null && id != null) {
-			DataSourceDef ds = m_dataSources.findDataSource(id);
+      return configuration;
+   }
 
-			if (ds != null) {
-				return getConfiguration(ds);
-			}
-		}
+   public JdbcDataSourceConfiguration getConfiguration(String id) {
+      JdbcDataSourceConfiguration configuration = m_configurations.get(id);
 
-		return null;
-	}
+      if (configuration == null) {
+         if (m_dataSources != null && id != null) {
+            DataSourceDef ds = m_dataSources.findDataSource(id);
 
-	public List<String> getDataSourceNames() {
-		List<String> names = new ArrayList<String>();
+            if (ds != null) {
+               configuration = getConfiguration(ds);
+               m_configurations.put(id, configuration);
+            }
+         }
+      }
 
-		for (DataSourceDef ds : m_dataSources.getDataSourcesMap().values()) {
-			names.add(ds.getId());
-		}
+      return configuration;
+   }
 
-		return names;
-	}
+   public List<String> getDataSourceNames() {
+      List<String> names = new ArrayList<String>();
 
-	public void initialize() throws InitializationException {
-		if (m_datasourceFile != null) {
-			InputStream is = null;
+      for (DataSourceDef ds : m_dataSources.getDataSourcesMap().values()) {
+         names.add(ds.getId());
+      }
 
-			// check configuration file from file system for most case
-			if (new File(m_datasourceFile).canRead()) {
-				try {
-					is = new FileInputStream(m_datasourceFile);
-				} catch (FileNotFoundException e) {
-					// ignore it
-				}
-			} else {
-				// check configuration file from classpath for hadoop map-reduce job
-				// since it's distributed everywhere
-				is = Thread.currentThread().getContextClassLoader().getResourceAsStream(m_datasourceFile);
+      return names;
+   }
 
-				if (is == null) {
-					is = getClass().getResourceAsStream(m_datasourceFile);
-				}
-			}
+   public void initialize() throws InitializationException {
+      if (m_datasourceFile != null) {
+         InputStream is = null;
 
-			if (is != null) {
-				try {
-					m_dataSources = DefaultSaxParser.parse(is);
-				} catch (Exception e) {
-					throw new InitializationException("Error when loading data source file: " + m_datasourceFile, e);
-				}
-			}
-		}
-	}
+         // check configuration file from file system for most case
+         if (new File(m_datasourceFile).canRead()) {
+            try {
+               is = new FileInputStream(m_datasourceFile);
+            } catch (FileNotFoundException e) {
+               // ignore it
+            }
+         } else {
+            // check configuration file from classpath for hadoop map-reduce job
+            // since it's distributed everywhere
+            is = Thread.currentThread().getContextClassLoader().getResourceAsStream(m_datasourceFile);
 
-	public void setDatasourceFile(String datasourceFile) {
-		m_datasourceFile = datasourceFile;
-	}
+            if (is == null) {
+               is = getClass().getResourceAsStream(m_datasourceFile);
+            }
+         }
 
-	protected int toTime(String source) {
-		int time = 0;
-		int len = source == null ? 0 : source.length();
+         if (is != null) {
+            try {
+               m_dataSources = DefaultSaxParser.parse(is);
+            } catch (Exception e) {
+               throw new InitializationException("Error when loading data source file: " + m_datasourceFile, e);
+            }
+         }
+      }
+   }
 
-		int num = 0;
-		for (int i = 0; i < len; i++) {
-			char ch = source.charAt(i);
+   public void setDatasourceFile(String datasourceFile) {
+      m_datasourceFile = datasourceFile;
+   }
 
-			switch (ch) {
-			case 'd':
-				time += num * 24 * 60 * 60;
-				num = 0;
-				break;
-			case 'h':
-				time += num * 60 * 60;
-				num = 0;
-				break;
-			case 'm':
-				time += num * 60;
-				num = 0;
-				break;
-			case 's':
-				time += num;
-				num = 0;
-				break;
-			default:
-				if (ch >= '0' && ch <= '9') {
-					num = num * 10 + (ch - '0');
-				} else {
-					throw new IllegalArgumentException("Invalid character found: " + ch + ", should be one of [0-9][dhms]");
-				}
-			}
-		}
+   protected int toTime(String source) {
+      int time = 0;
+      int len = source == null ? 0 : source.length();
 
-		return time;
-	}
+      int num = 0;
+      for (int i = 0; i < len; i++) {
+         char ch = source.charAt(i);
+
+         switch (ch) {
+         case 'd':
+            time += num * 24 * 60 * 60;
+            num = 0;
+            break;
+         case 'h':
+            time += num * 60 * 60;
+            num = 0;
+            break;
+         case 'm':
+            time += num * 60;
+            num = 0;
+            break;
+         case 's':
+            time += num;
+            num = 0;
+            break;
+         default:
+            if (ch >= '0' && ch <= '9') {
+               num = num * 10 + (ch - '0');
+            } else {
+               throw new IllegalArgumentException("Invalid character found: " + ch + ", should be one of [0-9][dhms]");
+            }
+         }
+      }
+
+      return time;
+   }
 }

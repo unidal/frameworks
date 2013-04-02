@@ -27,7 +27,7 @@ public class FormFunction {
 
       return "";
    }
-
+   
    @FunctionMeta(description = "Show checkbox from an object's properties in a form", example = "${w:showCheckbox('groupBy', groupBy, payload.groupBy, 'name', 'description')}")
    public static String showCheckbox(String inputName, Object item, Object selected, String valueName, String textName) {
       StringBuilder sb = new StringBuilder(256);
