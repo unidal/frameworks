@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wizard package="org.unidal.dal.jdbc">
+   <jdbc package="org.unidal.dal.jdbc.cat" name="cat">
+      <datasource>
+         <driver>com.mysql.jdbc.Driver</driver>
+         <url>jdbc:mysql://192.168.7.43:3306/cat</url>
+         <user>dpcom_cat</user>
+         <password>password</password>
+         <properties>useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true</properties>
+      </datasource>
+      <group name="metrics" package="org.unidal.dal.jdbc.cat.metrics">
+         <table name="businessReport"/>
+      </group>
+   </jdbc>
+</wizard>

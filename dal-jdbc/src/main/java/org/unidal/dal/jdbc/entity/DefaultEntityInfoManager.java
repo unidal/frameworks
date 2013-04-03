@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
-
 import org.unidal.dal.jdbc.DalRuntimeException;
 import org.unidal.dal.jdbc.DataField;
 import org.unidal.dal.jdbc.Readset;
@@ -17,132 +16,144 @@ import org.unidal.dal.jdbc.annotation.Entity;
 import org.unidal.dal.jdbc.annotation.Relation;
 import org.unidal.dal.jdbc.annotation.SubObjects;
 import org.unidal.dal.jdbc.annotation.Variable;
+import org.unidal.dal.jdbc.query.ReservedKeyword;
 import org.unidal.dal.jdbc.raw.RawEntity;
+import org.unidal.lookup.annotation.Inject;
 
 public class DefaultEntityInfoManager implements EntityInfoManager, LogEnabled {
-	private Map<String, Class<?>> m_logicalNameToEntityClass = new HashMap<String, Class<?>>();
+   @Inject
+   private ReservedKeyword m_reservedKeyword;
 
-	private Map<Class<?>, EntityInfo> m_entityClassToEntityInfo = new HashMap<Class<?>, EntityInfo>();
+   private Map<String, Class<?>> m_logicalNameToEntityClass = new HashMap<String, Class<?>>();
 
-	private Logger m_logger;
+   private Map<Class<?>, EntityInfo> m_entityClassToEntityInfo = new HashMap<Class<?>, EntityInfo>();
 
-	public void enableLogging(Logger logger) {
-		m_logger = logger;
-	}
+   private Logger m_logger;
 
-	public synchronized void register(Class<?> entityClass) {
-		if (m_entityClassToEntityInfo.containsKey(entityClass)) {
-			m_logger.debug(entityClass + " is already initialized yet");
-			return;
-		}
+   public void enableLogging(Logger logger) {
+      m_logger = logger;
+   }
 
-		Entity entity = (Entity) entityClass.getAnnotation(Entity.class);
+   public EntityInfo getEntityInfo(Class<?> entityClass) {
+      EntityInfo info = m_entityClassToEntityInfo.get(entityClass);
 
-		if (entity == null) {
-			throw new DalRuntimeException(entityClass + " should be annotated by Entity");
-		}
+      if (info == null) {
+         throw new IllegalStateException(entityClass + " is not registered yet");
+      } else {
+         return info;
+      }
+   }
 
-		Map<DataField, Relation> relations = new HashMap<DataField, Relation>();
-		Map<DataField, Attribute> attributes = new LinkedHashMap<DataField, Attribute>();
-		Map<DataField, Variable> variables = new HashMap<DataField, Variable>();
-		Map<Readset<?>, SubObjects> subobjects = new HashMap<Readset<?>, SubObjects>();
-		Field[] fields = entityClass.getFields();
-		int index = 0;
+   public EntityInfo getEntityInfo(String logicalName) {
+      Class<?> entityClass = m_logicalNameToEntityClass.get(logicalName);
+      EntityInfo info = m_entityClassToEntityInfo.get(entityClass);
 
-		for (Field field : fields) {
-			Class<?> type = field.getType();
+      if (info == null) {
+         throw new IllegalStateException("No Entity is registered with logical name(" + logicalName + ")");
+      } else {
+         return info;
+      }
+   }
 
-			if (type == DataField.class) {
-				if (!Modifier.isStatic(field.getModifiers())) {
-					throw new DalRuntimeException("Field " + field.getName() + " of " + entityClass
-					      + " should be modified as static");
-				}
+   @Override
+   public String getQuotedName(String name) {
+      if (m_reservedKeyword.isKeyword(name)) {
+         return "`" + name + "`"; // for mysql only
+      } else {
+         return name;
+      }
+   }
 
-				Relation relation = field.getAnnotation(Relation.class);
-				Attribute attribute = field.getAnnotation(Attribute.class);
-				Variable variable = field.getAnnotation(Variable.class);
-				DataField dataField;
+   public synchronized void register(Class<?> entityClass) {
+      if (m_entityClassToEntityInfo.containsKey(entityClass)) {
+         m_logger.debug(entityClass + " is already initialized yet");
+         return;
+      }
 
-				try {
-					dataField = (DataField) field.get(null);
-				} catch (Exception e) {
-					throw new DalRuntimeException("Can't get value of Field " + field.getName() + " of " + entityClass);
-				}
+      Entity entity = (Entity) entityClass.getAnnotation(Entity.class);
 
-				if (attribute != null) {
-					attributes.put(dataField, attribute);
-				} else if (variable != null) {
-					variables.put(dataField, variable);
-				} else if (relation != null) {
-					relations.put(dataField, relation);
-				} else {
-					m_logger.warn("Field " + field.getName() + " of " + entityClass + " should be annotated by "
-					      + "Attribute or Relation");
-				}
+      if (entity == null) {
+         throw new DalRuntimeException(entityClass + " should be annotated by Entity");
+      }
 
-				if (dataField != null) {
-					dataField.setEntityClass(entityClass);
-					dataField.setIndex(index);
-				}
+      Map<DataField, Relation> relations = new HashMap<DataField, Relation>();
+      Map<DataField, Attribute> attributes = new LinkedHashMap<DataField, Attribute>();
+      Map<DataField, Variable> variables = new HashMap<DataField, Variable>();
+      Map<Readset<?>, SubObjects> subobjects = new HashMap<Readset<?>, SubObjects>();
+      Field[] fields = entityClass.getFields();
+      int index = 0;
 
-				index++;
-			} else if (type == Readset.class) {
-				if (!Modifier.isStatic(field.getModifiers())) {
-					throw new DalRuntimeException("Readset " + field.getName() + " of " + entityClass
-					      + " should be modified as static");
-				}
+      for (Field field : fields) {
+         Class<?> type = field.getType();
 
-				SubObjects subobject = field.getAnnotation(SubObjects.class);
-				Readset<?> readset;
+         if (type == DataField.class) {
+            if (!Modifier.isStatic(field.getModifiers())) {
+               throw new DalRuntimeException("Field " + field.getName() + " of " + entityClass + " should be modified as static");
+            }
 
-				try {
-					readset = (Readset<?>) field.get(null);
-				} catch (Exception e) {
-					throw new DalRuntimeException("Can't get value of Field " + field.getName() + " of " + entityClass);
-				}
+            Relation relation = field.getAnnotation(Relation.class);
+            Attribute attribute = field.getAnnotation(Attribute.class);
+            Variable variable = field.getAnnotation(Variable.class);
+            DataField dataField;
 
-				if (subobject != null) {
-					subobjects.put(readset, subobject);
-				}
-			}
-		}
+            try {
+               dataField = (DataField) field.get(null);
+            } catch (Exception e) {
+               throw new DalRuntimeException("Can't get value of Field " + field.getName() + " of " + entityClass);
+            }
 
-		if (attributes.size() == 0 && entityClass != RawEntity.class) {
-			m_logger.warn("No fields defined with type DataField in " + entityClass);
-		}
+            if (attribute != null) {
+               attributes.put(dataField, attribute);
+            } else if (variable != null) {
+               variables.put(dataField, variable);
+            } else if (relation != null) {
+               relations.put(dataField, relation);
+            } else {
+               m_logger.warn("Field " + field.getName() + " of " + entityClass + " should be annotated by "
+                     + "Attribute or Relation");
+            }
 
-		Class<?> otherClass = m_logicalNameToEntityClass.get(entity.logicalName());
+            if (dataField != null) {
+               dataField.setEntityClass(entityClass);
+               dataField.setIndex(index);
+            }
 
-		if (otherClass != null) {
-			throw new DalRuntimeException("Logical name(" + entity.logicalName() + ") has been used by " + otherClass
-			      + ", can't use it in " + entityClass);
-		} else {
-			m_logicalNameToEntityClass.put(entity.logicalName(), entityClass);
-		}
+            index++;
+         } else if (type == Readset.class) {
+            if (!Modifier.isStatic(field.getModifiers())) {
+               throw new DalRuntimeException("Readset " + field.getName() + " of " + entityClass + " should be modified as static");
+            }
 
-		EntityInfo info = new EntityInfo(entity, relations, attributes, variables, subobjects);
+            SubObjects subobject = field.getAnnotation(SubObjects.class);
+            Readset<?> readset;
 
-		m_entityClassToEntityInfo.put(entityClass, info);
-	}
+            try {
+               readset = (Readset<?>) field.get(null);
+            } catch (Exception e) {
+               throw new DalRuntimeException("Can't get value of Field " + field.getName() + " of " + entityClass);
+            }
 
-	public EntityInfo getEntityInfo(Class<?> entityClass) {
-		EntityInfo info = m_entityClassToEntityInfo.get(entityClass);
+            if (subobject != null) {
+               subobjects.put(readset, subobject);
+            }
+         }
+      }
 
-		if (info == null) {
-			throw new IllegalStateException(entityClass + " is not registered yet");
-		} else {
-			return info;
-		}
-	}
+      if (attributes.size() == 0 && entityClass != RawEntity.class) {
+         m_logger.warn("No fields defined with type DataField in " + entityClass);
+      }
 
-	public EntityInfo getEntityInfo(String logicalName) {
-		Class<?> entityClass = m_logicalNameToEntityClass.get(logicalName);
-		EntityInfo info = m_entityClassToEntityInfo.get(entityClass);
+      Class<?> otherClass = m_logicalNameToEntityClass.get(entity.logicalName());
 
-		if (info == null) {
-			throw new IllegalStateException("No Entity is registered with logical name(" + logicalName + ")");
-		} else {
-			return info;
-		}
-	}
+      if (otherClass != null) {
+         throw new DalRuntimeException("Logical name(" + entity.logicalName() + ") has been used by " + otherClass
+               + ", can't use it in " + entityClass);
+      } else {
+         m_logicalNameToEntityClass.put(entity.logicalName(), entityClass);
+      }
+
+      EntityInfo info = new EntityInfo(entity, relations, attributes, variables, subobjects);
+
+      m_entityClassToEntityInfo.put(entityClass, info);
+   }
 }

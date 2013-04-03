@@ -17,14 +17,19 @@ import org.unidal.dal.jdbc.query.QueryExecutor;
 import org.unidal.dal.jdbc.query.QueryResolver;
 import org.unidal.dal.jdbc.transaction.TransactionManager;
 import org.unidal.lookup.ContainerHolder;
+import org.unidal.lookup.annotation.Inject;
 
 public class DefaultQueryEngine extends ContainerHolder implements QueryEngine {
+   @Inject
 	private EntityInfoManager m_entityManager;
 
+   @Inject
 	private QueryResolver m_queryResolver;
 
+   @Inject
 	private QueryExecutor m_queryExecutor;
 
+   @Inject
 	private TransactionManager m_transactionManager;
 
 	public static final String HINT_QUERY_TYPE = "QUERY_TYPE";

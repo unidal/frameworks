@@ -1,11 +1,12 @@
 package org.unidal.dal.jdbc.entity;
 
 public interface EntityInfoManager {
+   public EntityInfo getEntityInfo(Class<?> entityClass);
 
-	public void register(Class<?> entityClass);
+   public EntityInfo getEntityInfo(String logicalName);
 
-	public EntityInfo getEntityInfo(Class<?> entityClass);
+   public String getQuotedName(String name);
 
-	public EntityInfo getEntityInfo(String logicalName);
+   public void register(Class<?> entityClass);
 
 }

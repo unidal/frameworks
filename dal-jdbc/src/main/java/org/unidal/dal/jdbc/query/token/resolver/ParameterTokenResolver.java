@@ -31,7 +31,7 @@ public class ParameterTokenResolver implements TokenResolver {
       if (parameter.isIn()) { // IN
          Object value = m_accessor.getFieldValue(ctx.getProto(), dataField);
 
-         if (value != null && value.getClass().isArray()) {
+         if (ctx.isWithinInToken() && value != null && value.getClass().isArray()) {
             int length = Array.getLength(value);
             StringBuilder sb = new StringBuilder();
 
@@ -46,13 +46,11 @@ public class ParameterTokenResolver implements TokenResolver {
                   sb.append('?');
                }
             } else {
-               if (ctx.isWithinInToken()) {
-                  sb.append("null"); // to avoid SQL exception
-               }
+               sb.append("null"); // to avoid SQL exception
             }
 
             return sb.toString();
-         } else if (value instanceof Iterable) {
+         } else if (ctx.isWithinInToken() && value instanceof Iterable) {
             Iterable<?> iterable = (Iterable<?>) value;
             Iterator<?> i = iterable.iterator();
             StringBuilder sb = new StringBuilder();
@@ -68,9 +66,7 @@ public class ParameterTokenResolver implements TokenResolver {
                   sb.append('?');
                }
             } else {
-               if (ctx.isWithinInToken()) {
-                  sb.append("null"); // to avoid SQL exception
-               }
+               sb.append("null"); // to avoid SQL exception
             }
 
             return sb.toString();
@@ -81,14 +77,12 @@ public class ParameterTokenResolver implements TokenResolver {
       } else if (parameter.isInOut()) { // IN_OUT
          Variable variable = ctx.getEntityInfo().getVariable(dataField);
 
-         ctx.addParameter(new Parameter(dataField, variable.sqlType(), variable.scale(), true)
-               .setType(Parameter.TYPE_SINGLE_VALUE));
+         ctx.addParameter(new Parameter(dataField, variable.sqlType(), variable.scale(), true).setType(Parameter.TYPE_SINGLE_VALUE));
          return "?";
       } else { // OUT
          Variable variable = ctx.getEntityInfo().getVariable(dataField);
 
-         ctx.addParameter(new Parameter(dataField, variable.sqlType(), variable.scale())
-               .setType(Parameter.TYPE_SINGLE_VALUE));
+         ctx.addParameter(new Parameter(dataField, variable.sqlType(), variable.scale()).setType(Parameter.TYPE_SINGLE_VALUE));
          return "?";
       }
    }

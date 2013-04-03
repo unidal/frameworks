@@ -1,6 +1,19 @@
 <plexus>
 	<components>
 		<component>
+			<role>org.unidal.dal.jdbc.query.ReservedKeyword</role>
+			<implementation>org.unidal.dal.jdbc.msyql.MysqlReservedKeyword</implementation>
+		</component>
+		<component>
+			<role>org.unidal.dal.jdbc.query.QueryResolver</role>
+			<implementation>org.unidal.dal.jdbc.msyql.MysqlQueryResolver</implementation>
+			<requirements>
+				<requirement>
+					<role>org.unidal.dal.jdbc.query.token.TokenParser</role>
+				</requirement>
+			</requirements>
+		</component>
+		<component>
 			<role>org.unidal.dal.jdbc.QueryEngine</role>
 			<implementation>org.unidal.dal.jdbc.engine.DefaultQueryEngine</implementation>
 			<requirements>
@@ -15,7 +28,6 @@
 				</requirement>
 				<requirement>
 					<role>org.unidal.dal.jdbc.query.QueryResolver</role>
-					<role-hint>MySql</role-hint>
 				</requirement>
 			</requirements>
 		</component>
@@ -36,6 +48,11 @@
 		<component>
 			<role>org.unidal.dal.jdbc.entity.EntityInfoManager</role>
 			<implementation>org.unidal.dal.jdbc.entity.DefaultEntityInfoManager</implementation>
+			<requirements>
+				<requirement>
+					<role>org.unidal.dal.jdbc.query.ReservedKeyword</role>
+				</requirement>
+			</requirements>
 		</component>
 		<component>
 			<role>org.unidal.dal.jdbc.entity.DataObjectAccessor</role>
@@ -65,16 +82,6 @@
 		<component>
 			<role>org.unidal.dal.jdbc.mapping.TableProviderManager</role>
 			<implementation>org.unidal.dal.jdbc.mapping.DefaultTableProviderManager</implementation>
-		</component>
-		<component>
-			<role>org.unidal.dal.jdbc.query.QueryResolver</role>
-			<role-hint>MySql</role-hint>
-			<implementation>org.unidal.dal.jdbc.query.MySqlQueryResolver</implementation>
-			<requirements>
-				<requirement>
-					<role>org.unidal.dal.jdbc.query.token.TokenParser</role>
-				</requirement>
-			</requirements>
 		</component>
 		<component>
 			<role>org.unidal.dal.jdbc.query.QueryExecutor</role>
@@ -234,6 +241,49 @@
 		<component>
 			<role>org.unidal.dal.jdbc.raw.RawDao</role>
 			<implementation>org.unidal.dal.jdbc.raw.RawDao</implementation>
+			<requirements>
+				<requirement>
+					<role>org.unidal.dal.jdbc.QueryEngine</role>
+				</requirement>
+			</requirements>
+		</component>
+		<component>
+			<role>org.unidal.dal.jdbc.datasource.DataSource</role>
+			<role-hint>cat</role-hint>
+			<implementation>org.unidal.dal.jdbc.datasource.JdbcDataSource</implementation>
+			<configuration>
+				<id>cat</id>
+				<maximum-pool-size>3</maximum-pool-size>
+				<connection-timeout>1s</connection-timeout>
+				<idle-timeout>10m</idle-timeout>
+				<statement-cache-size>1000</statement-cache-size>
+				<properties>
+					<driver>com.mysql.jdbc.Driver</driver>
+					<URL>jdbc:mysql://localhost:3306/cat</URL>
+					<user>cat</user>
+					<password>cat</password>
+					<connectionProperties><![CDATA[useUnicode=true&characterEncoding=UTF-8&autoReconnect=true]]></connectionProperties>
+				</properties>
+			</configuration>
+			<requirements>
+				<requirement>
+					<role>org.unidal.dal.jdbc.datasource.JdbcDataSourceConfigurationManager</role>
+				</requirement>
+			</requirements>
+		</component>
+		<component>
+			<role>org.unidal.dal.jdbc.mapping.TableProvider</role>
+			<role-hint>business-report</role-hint>
+			<implementation>org.unidal.dal.jdbc.mapping.SimpleTableProvider</implementation>
+			<configuration>
+				<logical-table-name>business-report</logical-table-name>
+				<physical-table-name>businessReport</physical-table-name>
+				<data-source-name>cat</data-source-name>
+			</configuration>
+		</component>
+		<component>
+			<role>org.unidal.dal.jdbc.cat.metrics.BusinessReportDao</role>
+			<implementation>org.unidal.dal.jdbc.cat.metrics.BusinessReportDao</implementation>
 			<requirements>
 				<requirement>
 					<role>org.unidal.dal.jdbc.QueryEngine</role>

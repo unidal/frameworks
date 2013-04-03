@@ -1,4 +1,4 @@
-package org.unidal.dal.jdbc.query;
+package org.unidal.dal.jdbc.msyql;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -7,18 +7,20 @@ import java.util.Map;
 
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
-
 import org.unidal.dal.jdbc.DalRuntimeException;
 import org.unidal.dal.jdbc.QueryType;
 import org.unidal.dal.jdbc.engine.QueryContext;
+import org.unidal.dal.jdbc.query.QueryResolver;
 import org.unidal.dal.jdbc.query.token.SimpleTagToken;
 import org.unidal.dal.jdbc.query.token.Token;
 import org.unidal.dal.jdbc.query.token.TokenParser;
 import org.unidal.dal.jdbc.query.token.TokenType;
 import org.unidal.dal.jdbc.query.token.resolver.TokenResolver;
 import org.unidal.lookup.ContainerHolder;
+import org.unidal.lookup.annotation.Inject;
 
-public class MySqlQueryResolver extends ContainerHolder implements QueryResolver, Initializable {
+public class MysqlQueryResolver extends ContainerHolder implements QueryResolver, Initializable {
+   @Inject
    private TokenParser m_tokenParser;
 
    private Map<TokenType, TokenResolver> m_map = new HashMap<TokenType, TokenResolver>();
@@ -65,8 +67,7 @@ public class MySqlQueryResolver extends ContainerHolder implements QueryResolver
       }
 
       // add tag <FIELDS/> on the fly for Store Proceduce Query
-      if (ctx.getQuery().isStoreProcedure() && ctx.getQuery().getType() == QueryType.SELECT
-            && ctx.getOutFields().isEmpty()) {
+      if (ctx.getQuery().isStoreProcedure() && ctx.getQuery().getType() == QueryType.SELECT && ctx.getOutFields().isEmpty()) {
          TokenResolver resolver = m_map.get(TokenType.FIELDS);
          Map<String, String> attributes = Collections.emptyMap();
 

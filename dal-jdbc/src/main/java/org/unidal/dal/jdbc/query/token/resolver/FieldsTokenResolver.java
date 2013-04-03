@@ -84,7 +84,7 @@ public class FieldsTokenResolver implements TokenResolver {
                   if (attribute.selectExpr().length() > 0) {
                      sb.append(m_expressionResolver.resolve(ctx, attribute.selectExpr()));
                   } else {
-                     sb.append(alias).append('.').append(attribute.field());
+                     sb.append(alias).append('.').append(m_manager.getQuotedName(attribute.field()));
                   }
 
                   if ("true".equals(output)) {
@@ -108,7 +108,7 @@ public class FieldsTokenResolver implements TokenResolver {
                      sb.append(',');
                   }
 
-                  sb.append(attribute.field());
+                  sb.append(m_manager.getQuotedName(attribute.field()));
                }
             } else {
                throw new DalRuntimeException("Internal error: No Attribute annotation defined for field: " + field);
