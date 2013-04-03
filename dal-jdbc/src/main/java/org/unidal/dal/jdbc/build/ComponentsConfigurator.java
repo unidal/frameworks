@@ -111,7 +111,6 @@ public final class ComponentsConfigurator extends AbstractResourceConfigurator {
             .config(E("logical-table-name").value("raw")));
       all.add(C(RawDao.class).req(QueryEngine.class));
 
-      all.addAll(new CatDatabaseConfigurator().defineComponents());
       return all;
    }
 
