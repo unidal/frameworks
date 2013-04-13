@@ -91,5 +91,21 @@
 			<implementation>org.unidal.web.mvc.payload.MultipartParameterProvider</implementation>
 			<instantiation-strategy>per-lookup</instantiation-strategy>
 		</component>
+		<component>
+			<role>org.unidal.web.mvc.view.model.ModelHandler</role>
+			<implementation>org.unidal.web.mvc.view.model.DefaultModelHandler</implementation>
+			<requirements>
+				<requirement>
+					<role>org.unidal.web.mvc.view.model.ModelBuilder</role>
+					<role-hint>xml</role-hint>
+					<field-name>m_xmlBuilder</field-name>
+				</requirement>
+			</requirements>
+		</component>
+		<component>
+			<role>org.unidal.web.mvc.view.model.ModelBuilder</role>
+			<role-hint>xml</role-hint>
+			<implementation>org.unidal.web.mvc.view.model.XmlModelBuilder</implementation>
+		</component>
 	</components>
 </plexus>

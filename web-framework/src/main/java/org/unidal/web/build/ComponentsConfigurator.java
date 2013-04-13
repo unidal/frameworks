@@ -3,7 +3,6 @@ package org.unidal.web.build;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dianping.cat.message.MessageProducer;
 import org.unidal.lookup.configuration.AbstractResourceConfigurator;
 import org.unidal.lookup.configuration.Component;
 import org.unidal.web.lifecycle.ActionResolver;
@@ -27,6 +26,12 @@ import org.unidal.web.mvc.payload.DefaultPayloadProvider;
 import org.unidal.web.mvc.payload.MultipartParameterProvider;
 import org.unidal.web.mvc.payload.ParameterProvider;
 import org.unidal.web.mvc.payload.UrlEncodedParameterProvider;
+import org.unidal.web.mvc.view.model.DefaultModelHandler;
+import org.unidal.web.mvc.view.model.ModelBuilder;
+import org.unidal.web.mvc.view.model.ModelHandler;
+import org.unidal.web.mvc.view.model.XmlModelBuilder;
+
+import com.dianping.cat.message.MessageProducer;
 
 class ComponentsConfigurator extends AbstractResourceConfigurator {
    @Override
@@ -52,6 +57,10 @@ class ComponentsConfigurator extends AbstractResourceConfigurator {
             .is(PER_LOOKUP));
       all.add(C(ParameterProvider.class, "multipart/form-data", MultipartParameterProvider.class) //
             .is(PER_LOOKUP));
+
+      all.add(C(ModelHandler.class, DefaultModelHandler.class) //
+            .req(ModelBuilder.class, "xml", "m_xmlBuilder"));
+      all.add(C(ModelBuilder.class, "xml", XmlModelBuilder.class));
 
       return all;
    }

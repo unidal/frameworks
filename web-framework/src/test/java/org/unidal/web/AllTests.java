@@ -12,6 +12,7 @@ import org.unidal.web.lifecycle.ActionResolverTest;
 import org.unidal.web.mvc.model.AnnotationMatrixTest;
 import org.unidal.web.mvc.model.ModuleManagerTest;
 import org.unidal.web.mvc.payload.PayloadProviderTest;
+import org.unidal.web.mvc.view.model.ModelHandlerTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
@@ -34,7 +35,9 @@ AnnotationMatrixTest.class,
 
 ModuleManagerTest.class,
 
-PayloadProviderTest.class
+PayloadProviderTest.class,
+
+ModelHandlerTest.class
 
 })
 public class AllTests {

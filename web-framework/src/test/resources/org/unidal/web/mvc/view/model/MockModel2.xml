@@ -1,0 +1,9 @@
+<model2 attribute1="attribute 1">
+<element1>element 1</element1>
+<e1>...</e1>
+<e2s>
+<e2>one</e2>
+<e2>two</e2>
+<e2>three</e2>
+</e2s>
+</model2>

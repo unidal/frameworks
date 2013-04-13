@@ -1,0 +1,10 @@
+<model1 name="Alex" last="Bob" int1="123" int2="12,345" int3="-12,345,678" double1="123.45" double2="12,345.67" integer="123" date="2009-02-14 07:31:30">
+<e1>v1</e1>
+<e2>v2</e2>
+<e3>first</e3>
+<e3>second</e3>
+<e4s>
+<e4>first</e4>
+<e4>second</e4>
+</e4s>
+</model1>
