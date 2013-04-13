@@ -7,7 +7,7 @@ import org.unidal.lookup.ComponentTestCase;
 public class QueryResolverTest extends ComponentTestCase {
 	@Test
    public void testResolve() throws Exception {
-      QueryResolver resolver = lookup(QueryResolver.class, "MySql");
+      QueryResolver resolver = lookup(QueryResolver.class);
       Assert.assertNotNull(resolver);
    }
 }

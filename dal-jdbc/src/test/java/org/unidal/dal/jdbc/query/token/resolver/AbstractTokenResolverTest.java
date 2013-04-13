@@ -27,7 +27,7 @@ public abstract class AbstractTokenResolverTest extends ComponentTestCase {
       super.setUp();
 
       m_entityManager = lookup(EntityInfoManager.class);
-      m_queryResolver = lookup(QueryResolver.class, "MySql");
+      m_queryResolver = lookup(QueryResolver.class);
       m_dataObjectAccessor = lookup(DataObjectAccessor.class);
 
       m_entityManager.register(UserEntity.class);
