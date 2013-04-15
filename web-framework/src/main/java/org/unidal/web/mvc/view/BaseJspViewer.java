@@ -18,7 +18,7 @@ import org.unidal.web.mvc.view.model.ModelHandler;
 public abstract class BaseJspViewer<P extends Page, A extends Action, S extends ActionContext<?>, T extends ViewModel<P, A, S>>
       implements Viewer<P, A, S, T> {
    @Inject
-   private ModelHandler m_viewHandler;
+   private ModelHandler m_modelHandler;
 
    public void view(S ctx, T model) throws ServletException, IOException {
       HttpServletRequest req = ctx.getHttpServletRequest();
@@ -28,8 +28,8 @@ public abstract class BaseJspViewer<P extends Page, A extends Action, S extends 
       req.setAttribute("payload", ctx.getPayload());
       req.setAttribute("model", model);
 
-      if (m_viewHandler != null) {
-         m_viewHandler.handle(req, res);
+      if (m_modelHandler != null) {
+         m_modelHandler.handle(req, res);
       }
 
       if (!ctx.isProcessStopped()) {
