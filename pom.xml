@@ -15,6 +15,7 @@
 		<module>dal-jdbc</module>
 		<module>test-framework</module>
 		<module>web-framework</module>
+		<module>spring-support</module>
 	</modules>
 	<build>
 		<pluginManagement>
@@ -103,11 +104,11 @@ org.eclipse.jdt.core.compiler.compliance=1.6
 	<distributionManagement>
 		<repository>
 			<id>dianping.repo</id>
-			<url>http://192.168.8.45:8080/artifactory/dianping-releases</url>
+			<url>http://mvn.dianpingoa.com/dianping-releases</url>
 		</repository>
 		<snapshotRepository>
 			<id>dianping.repo.snapshots</id>
-			<url>http://192.168.8.45:8080/artifactory/dianping-snapshots</url>
+			<url>http://mvn.dianpingoa.com/dianping-snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 	<properties>

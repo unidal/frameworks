@@ -33,7 +33,17 @@ public class MVC extends AbstractContainerServlet {
          initializeModules();
       }
 
-      Cat.initialize(getContainer(), catClientXml == null ? null : new File(catClientXml));
+      File clientXmlFile = null;
+
+      if (catClientXml == null) {
+         clientXmlFile = new File(Cat.getCatHome(), "config/client.xml");
+      } else if (catClientXml.startsWith("/")) {
+         clientXmlFile = new File(catClientXml);
+      } else {
+         clientXmlFile = new File(Cat.getCatHome(), catClientXml);
+      }
+
+      Cat.initialize(getContainer(), clientXmlFile);
 
       m_handler = lookup(RequestLifecycle.class, "mvc");
       m_handler.setServletContext(config.getServletContext());

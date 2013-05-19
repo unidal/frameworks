@@ -92,4 +92,24 @@ public abstract class ContainerHolder implements Contextualizable {
          }
       }
    }
+
+   protected void releaseAll(List<Object> components) throws LookupException {
+      if (components != null) {
+         try {
+            m_container.releaseAll(components);
+         } catch (ComponentLifecycleException e) {
+            throw new LookupException("Can't release components: " + components, e);
+         }
+      }
+   }
+
+   protected void releaseAll(Map<String, Object> components) throws LookupException {
+      if (components != null) {
+         try {
+            m_container.releaseAll(components);
+         } catch (ComponentLifecycleException e) {
+            throw new LookupException("Can't release components: " + components, e);
+         }
+      }
+   }
 }

@@ -9,20 +9,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.plexus.logging.LogEnabled;
+import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
-
 import org.unidal.dal.jdbc.datasource.model.entity.DataSourceDef;
 import org.unidal.dal.jdbc.datasource.model.entity.DataSourcesDef;
 import org.unidal.dal.jdbc.datasource.model.entity.PropertiesDef;
 import org.unidal.dal.jdbc.datasource.model.transform.DefaultSaxParser;
+import org.unidal.helper.Properties;
 
-public class JdbcDataSourceConfigurationManager implements Initializable {
+public class JdbcDataSourceConfigurationManager implements Initializable, LogEnabled {
    private String m_datasourceFile;
 
    private DataSourcesDef m_dataSources;
 
    private Map<String, JdbcDataSourceConfiguration> m_configurations = new HashMap<String, JdbcDataSourceConfiguration>();
+
+   private String m_baseDirRef;
+
+   private Logger m_logger;
+
+   private String m_defaultBaseDir;
+
+   @Override
+   public void enableLogging(Logger logger) {
+      m_logger = logger;
+   }
 
    protected JdbcDataSourceConfiguration getConfiguration(DataSourceDef ds) {
       JdbcDataSourceConfiguration configuration = new JdbcDataSourceConfiguration();
@@ -81,34 +94,65 @@ public class JdbcDataSourceConfigurationManager implements Initializable {
          InputStream is = null;
 
          // check configuration file from file system for most case
-         if (new File(m_datasourceFile).canRead()) {
+         File file;
+
+         if (m_datasourceFile.startsWith("/")) {
+            file = new File(m_datasourceFile);
+         } else {
+            String baseDir = Properties.forString().fromEnv().fromSystem().getProperty(m_baseDirRef, m_defaultBaseDir);
+
+            if (baseDir != null) {
+               file = new File(baseDir, m_datasourceFile);
+            } else {
+               file = new File(m_datasourceFile);
+            }
+         }
+
+         if (file.canRead()) {
+            m_logger.info(String.format("Loading data sources from %s", file));
+
             try {
-               is = new FileInputStream(m_datasourceFile);
+               is = new FileInputStream(file);
             } catch (FileNotFoundException e) {
                // ignore it
             }
          } else {
-            // check configuration file from classpath for hadoop map-reduce job
-            // since it's distributed everywhere
+            m_logger.warn(String.format("Data source configuration(%s) is not found!", file, m_datasourceFile));
+
+            // check configuration file from classpath for hadoop map-reduce jobs etc.
+            // since it's distributed everywhere and no configuration file during runtime environment
             is = Thread.currentThread().getContextClassLoader().getResourceAsStream(m_datasourceFile);
 
             if (is == null) {
                is = getClass().getResourceAsStream(m_datasourceFile);
+            }
+
+            if (is != null) {
+               m_logger.info(String.format("Loading data sources from resource(%s)", m_datasourceFile));
             }
          }
 
          if (is != null) {
             try {
                m_dataSources = DefaultSaxParser.parse(is);
+
             } catch (Exception e) {
-               throw new InitializationException("Error when loading data source file: " + m_datasourceFile, e);
+               throw new InitializationException("Error when loading data source file: " + file, e);
             }
          }
       }
    }
 
+   public void setBaseDirRef(String baseDirRef) {
+      m_baseDirRef = baseDirRef;
+   }
+
    public void setDatasourceFile(String datasourceFile) {
       m_datasourceFile = datasourceFile;
+   }
+
+   public void setDefaultBaseDir(String defaultBaseDir) {
+      m_defaultBaseDir = defaultBaseDir;
    }
 
    protected int toTime(String source) {

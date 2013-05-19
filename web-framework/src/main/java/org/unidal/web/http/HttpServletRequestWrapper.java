@@ -7,7 +7,7 @@ import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.unidal.lookup.util.StringUtils;
+import org.unidal.helper.Joiners;
 
 public class HttpServletRequestWrapper extends javax.servlet.http.HttpServletRequestWrapper {
 	private Map<String, String[]> m_parameters;
@@ -76,7 +76,7 @@ public class HttpServletRequestWrapper extends javax.servlet.http.HttpServletReq
 		} else if (values.length == 1) {
 			return values[0];
 		} else {
-			return StringUtils.join(values, ",");
+			return Joiners.by(',').join(values);
 		}
 	}
 

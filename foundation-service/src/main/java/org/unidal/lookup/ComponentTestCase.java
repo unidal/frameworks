@@ -8,110 +8,117 @@ import java.util.Map;
 import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.MutablePlexusContainer;
+import org.codehaus.plexus.lifecycle.LifecycleHandler;
+import org.codehaus.plexus.lifecycle.UndefinedLifecycleHandlerException;
 import org.junit.After;
 import org.junit.Before;
+import org.unidal.lookup.phase.PostConstructionPhase;
 
 public abstract class ComponentTestCase {
-	private MutablePlexusContainer m_container;
+   private MutablePlexusContainer m_container;
 
-	private Map<Object, Object> m_context;
+   private Map<Object, Object> m_context;
 
-	private String m_basedir;
+   private String m_basedir;
 
-	protected String getBaseDir() {
-		if (m_basedir != null) {
-			return m_basedir;
-		}
+   protected String getBaseDir() {
+      if (m_basedir != null) {
+         return m_basedir;
+      }
 
-		m_basedir = System.getProperty("basedir");
+      m_basedir = System.getProperty("basedir");
 
-		if (m_basedir == null) {
-			try {
-				m_basedir = new File(".").getCanonicalPath();
-			} catch (IOException e) {
-				m_basedir = "";
-			}
-		}
+      if (m_basedir == null) {
+         try {
+            m_basedir = new File(".").getCanonicalPath();
+         } catch (IOException e) {
+            m_basedir = "";
+         }
+      }
 
-		return m_basedir;
-	}
+      return m_basedir;
+   }
 
-	protected MutablePlexusContainer getContainer() {
-		return m_container;
-	}
+   protected DefaultContainerConfiguration getConfiguration() throws Exception, UndefinedLifecycleHandlerException {
+      String customConfigurationName = getCustomConfigurationName();
+      DefaultContainerConfiguration configuration = new DefaultContainerConfiguration();
 
-	protected String getCustomConfigurationName() {
-		return null;
-	}
+      configuration.setName("test").setContext(m_context);
 
-	protected String getDefaultConfigurationName() throws Exception {
-		return getClass().getName().replace('.', '/') + ".xml";
-	}
+      if (customConfigurationName != null) {
+         configuration.setContainerConfiguration(customConfigurationName);
+      } else {
+         String defaultConfigurationName = getDefaultConfigurationName();
 
-	// ----------------------------------------------------------------------
-	// Container access
-	// ----------------------------------------------------------------------
-	protected <T> T lookup(Class<T> role) throws Exception {
-		return (T) getContainer().lookup(role);
-	}
+         configuration.setContainerConfiguration(defaultConfigurationName);
+      }
 
-	protected <T> T lookup(Class<T> role, Object roleHint) throws Exception {
-		return (T) getContainer().lookup(role, roleHint == null ? null : roleHint.toString());
-	}
+      LifecycleHandler plexus = configuration.getLifecycleHandlerManager().getLifecycleHandler("plexus");
 
-	protected <T> void release(T component) throws Exception {
-		getContainer().release(component);
-	}
+      plexus.addBeginSegment(new PostConstructionPhase());
 
-	@Before
-	public void setUp() throws Exception {
-		m_basedir = getBaseDir();
+      return configuration;
+   }
 
-		// ----------------------------------------------------------------------------
-		// Context Setup
-		// ----------------------------------------------------------------------------
+   protected MutablePlexusContainer getContainer() {
+      return m_container;
+   }
 
-		m_context = new HashMap<Object, Object>();
+   protected String getCustomConfigurationName() {
+      return null;
+   }
 
-		m_context.put("basedir", m_basedir);
+   protected String getDefaultConfigurationName() throws Exception {
+      return getClass().getName().replace('.', '/') + ".xml";
+   }
 
-		boolean hasPlexusHome = m_context.containsKey("plexus.home");
+   // ----------------------------------------------------------------------
+   // Container access
+   // ----------------------------------------------------------------------
+   protected <T> T lookup(Class<T> role) throws Exception {
+      return (T) getContainer().lookup(role);
+   }
 
-		if (!hasPlexusHome) {
-			File f = new File(m_basedir, "target/plexus-home");
+   protected <T> T lookup(Class<T> role, Object roleHint) throws Exception {
+      return (T) getContainer().lookup(role, roleHint == null ? null : roleHint.toString());
+   }
 
-			if (!f.isDirectory()) {
-				f.mkdir();
-			}
+   protected <T> void release(T component) throws Exception {
+      getContainer().release(component);
+   }
 
-			m_context.put("plexus.home", f.getAbsolutePath());
-		}
+   @Before
+   public void setUp() throws Exception {
+      m_basedir = getBaseDir();
 
-		// ----------------------------------------------------------------------------
-		// Configuration
-		// ----------------------------------------------------------------------------
+      // ----------------------------------------------------------------------------
+      // Context Setup
+      // ----------------------------------------------------------------------------
 
-		String customConfigurationName = getCustomConfigurationName();
-		DefaultContainerConfiguration configuration = new DefaultContainerConfiguration();
+      m_context = new HashMap<Object, Object>();
 
-		configuration.setName("test").setContext(m_context);
+      m_context.put("basedir", m_basedir);
 
-		if (customConfigurationName != null) {
-			configuration.setContainerConfiguration(customConfigurationName);
-		} else {
-			String defaultConfigurationName = getDefaultConfigurationName();
+      boolean hasPlexusHome = m_context.containsKey("plexus.home");
 
-			configuration.setContainerConfiguration(defaultConfigurationName);
-		}
+      if (!hasPlexusHome) {
+         File f = new File(m_basedir, "target/plexus-home");
 
-		m_container = new DefaultPlexusContainer(configuration);
-	}
+         if (!f.isDirectory()) {
+            f.mkdir();
+         }
 
-	@After
-	public void tearDown() throws Exception {
-		if (m_container != null) {
-			m_container.dispose();
-			m_container = null;
-		}
-	}
+         m_context.put("plexus.home", f.getAbsolutePath());
+      }
+
+      m_container = new DefaultPlexusContainer(getConfiguration());
+   }
+
+   @After
+   public void tearDown() throws Exception {
+      if (m_container != null) {
+         m_container.dispose();
+         m_container = null;
+      }
+   }
 }

@@ -10,7 +10,6 @@ import junit.framework.Assert;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.unidal.script.ScriptProber;
 
 public class JavaFragmentEngineTest {
@@ -30,8 +29,9 @@ public class JavaFragmentEngineTest {
    public void testBadSyntax() throws ScriptException {
       ScriptEngineManager mgr = new ScriptEngineManager();
       ScriptEngine engine = mgr.getEngineByExtension("java");
+      String message = "how are you?";
 
-      engine.eval("how are you?");
+      Assert.assertEquals(message, engine.eval(message));
    }
 
    @Test

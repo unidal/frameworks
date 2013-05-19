@@ -4,6 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.unidal.helper.FormatsTest;
+import org.unidal.helper.PropertiesTest;
 import org.unidal.helper.StringizersTest;
 import org.unidal.helper.ThreadsTest;
 import org.unidal.lookup.ComponentTestCaseTest;
@@ -20,6 +21,8 @@ FormatsTest.class,
 StringizersTest.class,
 
 ThreadsTest.class,
+
+PropertiesTest.class,
 
 ComponentTestCaseTest.class,
 

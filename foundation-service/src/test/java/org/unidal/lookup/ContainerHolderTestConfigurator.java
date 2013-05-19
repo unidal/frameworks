@@ -16,41 +16,46 @@ import org.unidal.lookup.ContainerHolderTest.MockInterface;
 import org.unidal.lookup.ContainerHolderTest.MockObject;
 import org.unidal.lookup.ContainerHolderTest.MockObject2;
 import org.unidal.lookup.ContainerHolderTest.MockObject3;
+import org.unidal.lookup.ContainerHolderTest.MockRoleHintObject;
 import org.unidal.lookup.configuration.AbstractResourceConfigurator;
 import org.unidal.lookup.configuration.Component;
 
 public class ContainerHolderTestConfigurator extends AbstractResourceConfigurator {
-	public static void main(String[] args) {
-		generatePlexusComponentsXmlFile(new ContainerHolderTestConfigurator());
-	}
+   public static void main(String[] args) {
+      generatePlexusComponentsXmlFile(new ContainerHolderTestConfigurator());
+   }
 
-	@Override
-	public List<Component> defineComponents() {
-		List<Component> all = new ArrayList<Component>();
+   @Override
+   public List<Component> defineComponents() {
+      List<Component> all = new ArrayList<Component>();
 
-		all.add(C(MockContainer.class));
+      all.add(C(MockContainer.class));
 
-		// for normal cases
-		all.add(C(MockInterface.class, MockObject.class));
-		all.add(C(MockInterface.class, "secondary", MockObject2.class));
-		all.add(C(MockInterface.class, "third", MockObject3.class));
+      // for normal cases
+      all.add(C(MockInterface.class, MockObject.class));
+      all.add(C(MockInterface.class, "secondary", MockObject2.class));
+      all.add(C(MockInterface.class, "third", MockObject3.class));
 
-		// for exception cases
-		all.add(C(BadObject.class));
-		all.add(C(BadObjectHolder.class).req(BadObject.class));
+      all.add(C(MockRoleHintObject.class, "a", MockRoleHintObject.class));
+      all.add(C(MockRoleHintObject.class, "b", MockRoleHintObject.class));
+      all.add(C(MockRoleHintObject.class, "c", MockRoleHintObject.class));
 
-		all.add(C(Queue.class, "non-blocking", LinkedList.class));
-		all.add(C(Queue.class, "blocking", LinkedBlockingQueue.class));
-		all.add(C(List.class, "array", ArrayList.class));
-		all.add(C(Map.class, "hash", HashMap.class));
+      // for exception cases
+      all.add(C(BadObject.class));
+      all.add(C(BadObjectHolder.class).req(BadObject.class));
 
-		all.addAll(defineComponent(BadCollectionHolder.class));
+      all.add(C(Queue.class, "non-blocking", LinkedList.class));
+      all.add(C(Queue.class, "blocking", LinkedBlockingQueue.class));
+      all.add(C(List.class, "array", ArrayList.class));
+      all.add(C(Map.class, "hash", HashMap.class));
 
-		return all;
-	}
+      all.addAll(defineComponent(BadCollectionHolder.class));
 
-	@Override
-	protected Class<?> getTestClass() {
-		return ContainerHolderTest.class;
-	}
+      return all;
+   }
+
+   @Override
+   protected Class<?> getTestClass() {
+      return ContainerHolderTest.class;
+   }
 }

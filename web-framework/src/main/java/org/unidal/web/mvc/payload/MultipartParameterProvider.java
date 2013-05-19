@@ -15,16 +15,15 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.FileUploadBase.SizeLimitExceededException;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
-
+import org.unidal.helper.Joiners;
 import org.unidal.lookup.annotation.Inject;
-import org.unidal.lookup.util.StringUtils;
 
 public class MultipartParameterProvider implements ParameterProvider, LogEnabled {
    @Inject
@@ -61,7 +60,7 @@ public class MultipartParameterProvider implements ParameterProvider, LogEnabled
       if (values == null) {
          return null;
       } else {
-         return StringUtils.join(values, ",");
+         return Joiners.by(',').join(values);
       }
    }
 

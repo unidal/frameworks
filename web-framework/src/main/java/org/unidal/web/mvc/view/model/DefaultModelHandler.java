@@ -1,6 +1,7 @@
 package org.unidal.web.mvc.view.model;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,30 +28,34 @@ public class DefaultModelHandler implements ModelHandler {
 
    @Override
    public void handle(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-      String forceXmlDownload = req.getParameter("forceXmlDownload");
+      String forceDownload = req.getParameter("forceDownload");
 
-      if ("true".equals(forceXmlDownload)) {
-         ViewModel<?, ?, ?> model = (ViewModel<?, ?, ?>) req.getAttribute("model");
-         Class<?> clazz = model.getClass();
-         ModelDescriptor descriptor = m_map.get(clazz);
+      if ("xml".equals(forceDownload)) {
+         handleXmlDownload(req, res);
+      }
+   }
 
-         if (descriptor == null) {
-            descriptor = new AnnotationModelDescriptor(clazz);
-            m_map.put(clazz, descriptor);
-         }
+   private void handleXmlDownload(HttpServletRequest req, HttpServletResponse res) throws UnsupportedEncodingException, IOException {
+      ViewModel<?, ?, ?> model = (ViewModel<?, ?, ?>) req.getAttribute("model");
+      Class<?> clazz = model.getClass();
+      ModelDescriptor descriptor = m_map.get(clazz);
 
-         if (descriptor.getModelName() != null) {
-            String xml = m_xmlBuilder.build(descriptor, model);
-            byte[] data = xml.getBytes("utf-8");
+      if (descriptor == null) {
+         descriptor = new AnnotationModelDescriptor(clazz);
+         m_map.put(clazz, descriptor);
+      }
 
-            res.setContentType("text/xml; charset=utf-8");
-            res.setContentLength(data.length);
-            res.getOutputStream().write(data);
+      if (descriptor.getModelName() != null) {
+         String xml = m_xmlBuilder.build(descriptor, model);
+         byte[] data = xml.getBytes("utf-8");
 
-            ActionContext<?> ctx = (ActionContext<?>) req.getAttribute("ctx");
+         res.setContentType("text/xml; charset=utf-8");
+         res.setContentLength(data.length);
+         res.getOutputStream().write(data);
 
-            ctx.stopProcess();
-         }
+         ActionContext<?> ctx = (ActionContext<?>) req.getAttribute("ctx");
+
+         ctx.stopProcess();
       }
    }
 

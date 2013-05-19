@@ -21,7 +21,7 @@
       <dependency>
          <groupId>com.dianping.cat</groupId>
          <artifactId>cat-core</artifactId>
-         <version>0.5.2.10</version>
+         <version>0.6.0</version>
          <exclusions>
             <exclusion>
                <groupId>aspectj</groupId>
