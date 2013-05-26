@@ -2,6 +2,7 @@ package org.unidal.lookup;
 
 import java.lang.reflect.Field;
 
+import org.codehaus.plexus.ContainerConfiguration;
 import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
@@ -52,7 +53,7 @@ public class ContainerLoader {
       return getDefaultContainer(configuration);
    }
 
-   public static PlexusContainer getDefaultContainer(DefaultContainerConfiguration configuration) {
+   public static PlexusContainer getDefaultContainer(ContainerConfiguration configuration) {
       if (s_container == null) {
          // Two ContainerLoaders should share the same PlexusContainer
          Class<?> loaderClass = findLoaderClass();

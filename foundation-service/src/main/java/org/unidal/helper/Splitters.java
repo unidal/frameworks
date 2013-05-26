@@ -104,7 +104,7 @@ public class Splitters {
 
       public List<String> split(String str, List<String> list) {
          if (str == null) {
-            return null;
+            return list;
          }
 
          if (m_charDelimiter > 0) {
