@@ -7,10 +7,12 @@ import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.lifecycle.LifecycleHandler;
-import org.unidal.lookup.phase.PostConstructionPhase;
+import org.codehaus.plexus.lifecycle.UndefinedLifecycleHandlerException;
+import org.unidal.lookup.extension.EnumComponentManagerFactory;
+import org.unidal.lookup.extension.PostConstructionPhase;
 
 public class ContainerLoader {
-   private static volatile PlexusContainer s_container;
+   private static volatile DefaultPlexusContainer s_container;
 
    private static Class<?> findLoaderClass() {
       String loaderClassName = "com.site.lookup.ContainerLoader";
@@ -32,12 +34,12 @@ public class ContainerLoader {
    }
 
    // for back compatible
-   private static PlexusContainer getContainerFromLookupLibrary(Class<?> loaderClass) {
+   private static DefaultPlexusContainer getContainerFromLookupLibrary(Class<?> loaderClass) {
       try {
          Field field = loaderClass.getDeclaredField("s_container");
 
          field.setAccessible(true);
-         return (PlexusContainer) field.get(null);
+         return (DefaultPlexusContainer) field.get(null);
       } catch (Exception e) {
          // ignore it
          e.printStackTrace();
@@ -65,11 +67,11 @@ public class ContainerLoader {
 
             if (s_container == null) {
                try {
-                  LifecycleHandler plexus = configuration.getLifecycleHandlerManager().getLifecycleHandler("plexus");
-
-                  plexus.addBeginSegment(new PostConstructionPhase());
+                  preConstruction(configuration);
 
                   s_container = new DefaultPlexusContainer(configuration);
+
+                  postConstruction(s_container);
 
                   if (loaderClass != null) {
                      setContainerToLookupLibrary(loaderClass, s_container);
@@ -82,6 +84,16 @@ public class ContainerLoader {
       }
 
       return s_container;
+   }
+
+   private static void postConstruction(DefaultPlexusContainer container) {
+      container.getComponentRegistry().registerComponentManagerFactory(new EnumComponentManagerFactory());
+   }
+
+   private static void preConstruction(ContainerConfiguration configuration) throws UndefinedLifecycleHandlerException {
+      LifecycleHandler plexus = configuration.getLifecycleHandlerManager().getLifecycleHandler("plexus");
+
+      plexus.addBeginSegment(new PostConstructionPhase());
    }
 
    private static void setContainerToLookupLibrary(Class<?> loaderClass, PlexusContainer container) {

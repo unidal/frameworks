@@ -12,6 +12,7 @@ import org.unidal.lookup.ContainerHolderTest.BadCollectionHolder;
 import org.unidal.lookup.ContainerHolderTest.BadObject;
 import org.unidal.lookup.ContainerHolderTest.BadObjectHolder;
 import org.unidal.lookup.ContainerHolderTest.MockContainer;
+import org.unidal.lookup.ContainerHolderTest.MockEnum;
 import org.unidal.lookup.ContainerHolderTest.MockInterface;
 import org.unidal.lookup.ContainerHolderTest.MockObject;
 import org.unidal.lookup.ContainerHolderTest.MockObject2;
@@ -39,6 +40,12 @@ public class ContainerHolderTestConfigurator extends AbstractResourceConfigurato
       all.add(C(MockRoleHintObject.class, "a", MockRoleHintObject.class));
       all.add(C(MockRoleHintObject.class, "b", MockRoleHintObject.class));
       all.add(C(MockRoleHintObject.class, "c", MockRoleHintObject.class));
+
+      // for enum component factory
+      for (MockEnum value : MockEnum.values()) {
+         all.add(C(MockInterface.class, value.name(), MockEnum.class).is(ENUM) //
+               .req(MockInterface.class));
+      }
 
       // for exception cases
       all.add(C(BadObject.class));

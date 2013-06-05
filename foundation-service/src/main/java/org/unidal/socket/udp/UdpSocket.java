@@ -19,6 +19,7 @@ import org.jboss.netty.channel.Channels;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelHandler;
+import org.jboss.netty.channel.socket.DatagramChannel;
 import org.jboss.netty.channel.socket.oio.OioDatagramChannelFactory;
 import org.jboss.netty.handler.codec.frame.FrameDecoder;
 import org.unidal.helper.Threads;
@@ -83,6 +84,10 @@ public class UdpSocket implements SocketClient, SocketServer {
       m_inQueue = new LinkedBlockingQueue<ChannelBuffer>(m_queueCapacity);
       m_outQueue = new LinkedBlockingQueue<Entry>(m_queueCapacity);
       m_channel = bootstrap.bind(new InetSocketAddress(address.getPort()));
+
+      if (address.getAddress().isMulticastAddress()) {
+         ((DatagramChannel) m_channel).joinGroup(address.getAddress());
+      }
 
       Threads.forGroup(m_name).start(new AsynchronousMessageSender());
 
@@ -163,6 +168,8 @@ public class UdpSocket implements SocketClient, SocketServer {
       public void run() {
          try {
             while (m_active) {
+               boolean sent = false;
+
                if (checkWritable()) {
                   Entry entry = m_outQueue.poll();
 
@@ -177,6 +184,7 @@ public class UdpSocket implements SocketClient, SocketServer {
                         }
 
                         entry.onSent();
+                        sent = true;
                      } catch (Throwable t) {
                         if (m_listener != null) {
                            m_listener.onSendingFailure(message, t);
@@ -185,7 +193,9 @@ public class UdpSocket implements SocketClient, SocketServer {
                         entry.onError(t);
                      }
                   }
-               } else {
+               }
+
+               if (!sent) {
                   TimeUnit.MILLISECONDS.sleep(5);
                }
             }

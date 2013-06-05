@@ -14,6 +14,8 @@ import org.unidal.lookup.annotation.Inject;
 
 public abstract class AbstractResourceConfigurator {
 	protected static final String PER_LOOKUP = "per-lookup";
+	
+	protected static final String ENUM = "enum";
 
 	protected static <T> Component C(Class<T> role) {
 		return new Component(role);

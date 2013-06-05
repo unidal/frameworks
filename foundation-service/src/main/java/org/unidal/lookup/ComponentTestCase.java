@@ -12,7 +12,8 @@ import org.codehaus.plexus.lifecycle.LifecycleHandler;
 import org.codehaus.plexus.lifecycle.UndefinedLifecycleHandlerException;
 import org.junit.After;
 import org.junit.Before;
-import org.unidal.lookup.phase.PostConstructionPhase;
+import org.unidal.lookup.extension.EnumComponentManagerFactory;
+import org.unidal.lookup.extension.PostConstructionPhase;
 
 public abstract class ComponentTestCase {
    private MutablePlexusContainer m_container;
@@ -112,6 +113,7 @@ public abstract class ComponentTestCase {
       }
 
       m_container = new DefaultPlexusContainer(getConfiguration());
+      m_container.getComponentRegistry().registerComponentManagerFactory(new EnumComponentManagerFactory());
    }
 
    @After

@@ -1,4 +1,4 @@
-package org.unidal.lookup.phase;
+package org.unidal.lookup.extension;
 
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.manager.ComponentManager;

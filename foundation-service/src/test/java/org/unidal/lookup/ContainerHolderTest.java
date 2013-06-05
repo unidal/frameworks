@@ -17,7 +17,7 @@ import junit.framework.Assert;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.junit.Test;
 import org.unidal.lookup.annotation.Inject;
-import org.unidal.lookup.phase.RoleHintEnabled;
+import org.unidal.lookup.extension.RoleHintEnabled;
 
 public class ContainerHolderTest extends ComponentTestCase {
    @Test
@@ -71,6 +71,20 @@ public class ContainerHolderTest extends ComponentTestCase {
    }
 
    @Test
+   public void testLookupEnum() throws Exception {
+      MockInterface o0 = lookup(MockInterface.class);
+      MockEnum o1 = (MockEnum) lookup(MockInterface.class, MockEnum.FIELD1.name());
+      MockEnum o2 = (MockEnum) lookup(MockInterface.class, MockEnum.FIELD2.name());
+
+      Assert.assertSame(MockEnum.FIELD1, o1);
+      Assert.assertEquals(MockEnum.FIELD1.name(), o1.getRoleHint());
+      Assert.assertSame(MockEnum.FIELD2, o2);
+      Assert.assertEquals(MockEnum.FIELD2.name(), o2.getRoleHint());
+
+      Assert.assertSame(o0, MockEnum.FIELD2.getDefaultOne());
+   }
+
+   @Test
    public void testLookupForCollection() throws Exception {
       Assert.assertEquals(LinkedList.class, lookup(Queue.class, "non-blocking").getClass());
       Assert.assertEquals(LinkedBlockingQueue.class, lookup(Queue.class, "blocking").getClass());
@@ -101,7 +115,7 @@ public class ContainerHolderTest extends ComponentTestCase {
       List<MockInterface> list = container.lookupList(MockInterface.class);
       int index = 0;
 
-      Assert.assertEquals("[MockObject, MockObject2, MockObject3]", list.toString());
+      Assert.assertEquals("[MockObject, MockObject2, MockObject3, FIELD1, FIELD2]", list.toString());
       Assert.assertSame(o1, list.get(index++));
       Assert.assertSame(o2, list.get(index++));
       Assert.assertSame(o3, list.get(index++));
@@ -122,7 +136,8 @@ public class ContainerHolderTest extends ComponentTestCase {
       MockInterface o3 = container.lookup(MockInterface.class, "third");
       Map<String, MockInterface> map = container.lookupMap(MockInterface.class);
 
-      Assert.assertEquals("{default=MockObject, secondary=MockObject2, third=MockObject3}", map.toString());
+      Assert.assertEquals("{FIELD1=FIELD1, FIELD2=FIELD2, default=MockObject, secondary=MockObject2, third=MockObject3}",
+            map.toString());
       Assert.assertSame(o1, map.get("default"));
       Assert.assertSame(o2, map.get("secondary"));
       Assert.assertSame(o3, map.get("third"));
@@ -178,6 +193,30 @@ public class ContainerHolderTest extends ComponentTestCase {
    }
 
    public static class MockContainer extends ContainerHolder {
+   }
+
+   public static enum MockEnum implements MockInterface, RoleHintEnabled {
+      FIELD1,
+
+      FIELD2;
+
+      private String m_roleHint;
+
+      @Inject
+      private MockInterface m_defaultOne;
+
+      @Override
+      public void enableRoleHint(String roleHint) {
+         m_roleHint = roleHint;
+      }
+
+      public MockInterface getDefaultOne() {
+         return m_defaultOne;
+      }
+
+      public String getRoleHint() {
+         return m_roleHint;
+      }
    }
 
    public static interface MockInterface {

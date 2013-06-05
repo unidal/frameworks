@@ -44,6 +44,9 @@ public class TcpSocketClient implements SocketClient {
 
    @Inject
    private int m_queueCapacity = 10000;
+   
+   @Inject
+   private long m_connectTimeoutMillis = 1000;
 
    private BlockingQueue<Entry> m_queue;
 
@@ -65,6 +68,8 @@ public class TcpSocketClient implements SocketClient {
 
       bootstrap.setOption("tcpNoDelay", true);
       bootstrap.setOption("keepAlive", true);
+      bootstrap.setOption("reuseAddress", true);
+      bootstrap.setOption("connectTimeoutMillis", m_connectTimeoutMillis);
 
       m_manager = new FailoverChannelManager(bootstrap, Arrays.asList(addresses));
       m_queue = new LinkedBlockingQueue<Entry>(m_queueCapacity);

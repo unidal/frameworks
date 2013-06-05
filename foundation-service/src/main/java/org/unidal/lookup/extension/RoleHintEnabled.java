@@ -1,4 +1,4 @@
-package org.unidal.lookup.phase;
+package org.unidal.lookup.extension;
 
 public interface RoleHintEnabled {
    public void enableRoleHint(String roleHint);

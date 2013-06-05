@@ -34,6 +34,28 @@
 			<implementation>org.unidal.lookup.ContainerHolderTest$MockRoleHintObject</implementation>
 		</component>
 		<component>
+			<role>org.unidal.lookup.ContainerHolderTest$MockInterface</role>
+			<role-hint>FIELD1</role-hint>
+			<implementation>org.unidal.lookup.ContainerHolderTest$MockEnum</implementation>
+			<instantiation-strategy>enum</instantiation-strategy>
+			<requirements>
+				<requirement>
+					<role>org.unidal.lookup.ContainerHolderTest$MockInterface</role>
+				</requirement>
+			</requirements>
+		</component>
+		<component>
+			<role>org.unidal.lookup.ContainerHolderTest$MockInterface</role>
+			<role-hint>FIELD2</role-hint>
+			<implementation>org.unidal.lookup.ContainerHolderTest$MockEnum</implementation>
+			<instantiation-strategy>enum</instantiation-strategy>
+			<requirements>
+				<requirement>
+					<role>org.unidal.lookup.ContainerHolderTest$MockInterface</role>
+				</requirement>
+			</requirements>
+		</component>
+		<component>
 			<role>org.unidal.lookup.ContainerHolderTest$BadObject</role>
 			<implementation>org.unidal.lookup.ContainerHolderTest$BadObject</implementation>
 		</component>
