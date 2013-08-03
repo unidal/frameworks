@@ -51,7 +51,7 @@ class ComponentsConfigurator extends AbstractResourceConfigurator {
       all.add(C(DefaultPayloadProvider.class));
       all.add(C(ActionHandlerManager.class, DefaultActionHandlerManager.class));
       all.add(C(RequestLifecycle.class, "mvc", DefaultRequestLifecycle.class) //
-            .req(ModelManager.class, ActionHandlerManager.class, MessageProducer.class));
+            .req(ModelManager.class, ActionHandlerManager.class));
 
       all.add(C(ParameterProvider.class, "application/x-www-form-urlencoded", UrlEncodedParameterProvider.class) //
             .is(PER_LOOKUP));

@@ -3,12 +3,11 @@
 <data-sources>
 	<data-source id="jdbc-dal">
 		<properties>
+            <driver>com.mysql.jdbc.Driver</driver>
 			<url><![CDATA[jdbc:mysql://localhost:3306/dal]]></url>
-			<!-- 
 			<connectionProperties><![CDATA[useUnicode=true&autoReconnect=true]]></connectionProperties>
 			<user>root</user>
 			<password></password>
-			 -->
 		</properties>
 	</data-source>
 	<data-source id="user">

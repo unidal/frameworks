@@ -6,7 +6,7 @@ import org.unidal.dal.jdbc.QueryEngine;
 import org.unidal.dal.jdbc.annotation.Entity;
 import org.unidal.dal.jdbc.datasource.DataSource;
 import org.unidal.dal.jdbc.datasource.JdbcDataSource;
-import org.unidal.dal.jdbc.datasource.JdbcDataSourceConfigurationManager;
+import org.unidal.dal.jdbc.datasource.JdbcDataSourceDescriptorManager;
 import org.unidal.dal.jdbc.mapping.SimpleTableProvider;
 import org.unidal.dal.jdbc.mapping.TableProvider;
 import org.unidal.lookup.configuration.AbstractResourceConfigurator;
@@ -21,19 +21,19 @@ public abstract class AbstractJdbcResourceConfigurator extends AbstractResourceC
 
 	protected Component defineJdbcDataSourceComponent(String dataSource, String driver, String url, String user,
 	      String password, String connectionProperties) {
-		return C(DataSource.class, dataSource, JdbcDataSource.class).req(JdbcDataSourceConfigurationManager.class)
+		return C(DataSource.class, dataSource, JdbcDataSource.class).req(JdbcDataSourceDescriptorManager.class)
 		      .config(
 		            E("id").value(dataSource),
 		            E("maximum-pool-size").value("3"),
 		            E("connection-timeout").value("1s"),
 		            E("idle-timeout").value("10m"),
 		            E("statement-cache-size").value("1000"),
-		            E("properties").add(E("driver").value(driver), E("URL").value(url), E("user").value(user),
+		            E("properties").add(E("driver").value(driver), E("url").value(url), E("user").value(user),
 		                  E("password").value(password), E("connectionProperties").value(connectionProperties)));
 	}
 
 	protected Component defineJdbcDataSourceConfigurationManagerComponent(String datasourceFile) {
-		return C(JdbcDataSourceConfigurationManager.class).config(E("datasourceFile").value(datasourceFile));
+		return C(JdbcDataSourceDescriptorManager.class).config(E("datasourceFile").value(datasourceFile));
 	}
 
 	protected Component defineSimpleTableProviderComponent(String dataSource, String logicalTableName) {

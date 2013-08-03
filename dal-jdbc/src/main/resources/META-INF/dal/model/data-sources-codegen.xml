@@ -5,6 +5,8 @@
   </entity>
   <entity name="data-source">
     <attribute name="id" value-type="String" />
+    <attribute name="type" value-type="String" />
+    <element name="minimum-pool-size" value-type="int" />
     <element name="maximum-pool-size" value-type="int" />
     <element name="connection-timeout" value-type="String" />
     <element name="idle-timeout" value-type="String" />

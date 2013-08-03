@@ -19,12 +19,12 @@ import org.unidal.dal.jdbc.datasource.model.entity.PropertiesDef;
 import org.unidal.dal.jdbc.datasource.model.transform.DefaultSaxParser;
 import org.unidal.helper.Properties;
 
-public class JdbcDataSourceConfigurationManager implements Initializable, LogEnabled {
+public class JdbcDataSourceDescriptorManager implements Initializable, LogEnabled {
    private String m_datasourceFile;
 
    private DataSourcesDef m_dataSources;
 
-   private Map<String, JdbcDataSourceConfiguration> m_configurations = new HashMap<String, JdbcDataSourceConfiguration>();
+   private Map<String, JdbcDataSourceDescriptor> m_descriptors = new HashMap<String, JdbcDataSourceDescriptor>();
 
    private String m_baseDirRef;
 
@@ -37,41 +37,41 @@ public class JdbcDataSourceConfigurationManager implements Initializable, LogEna
       m_logger = logger;
    }
 
-   protected JdbcDataSourceConfiguration getConfiguration(DataSourceDef ds) {
-      JdbcDataSourceConfiguration configuration = new JdbcDataSourceConfiguration();
+   protected JdbcDataSourceDescriptor getDescriptor(DataSourceDef ds) {
+      JdbcDataSourceDescriptor d = new JdbcDataSourceDescriptor();
       PropertiesDef properties = ds.getProperties();
-
-      configuration.setId(ds.getId());
-      configuration.setConnectionTimeout(toTime(ds.getConnectionTimeout()));
-      configuration.setIdleTimeout(toTime(ds.getIdleTimeout()));
-      configuration.setMaximumPoolSize(ds.getMaximumPoolSize());
-      configuration.setStatementCacheSize(ds.getStatementCacheSize());
-      configuration.setDriver(properties.getDriver());
-
+      String url = properties.getUrl();
       String connectionProperties = properties.getConnectionProperties();
 
       if (connectionProperties != null && connectionProperties.length() > 0) {
-         configuration.setUrl(properties.getUrl() + "?" + connectionProperties);
+         d.setProperty("url", url + "?" + connectionProperties);
       } else {
-         configuration.setUrl(properties.getUrl());
+         d.setProperty("url", url);
       }
 
-      configuration.setUser(properties.getUser());
-      configuration.setPassword(properties.getPassword());
+      d.setId(ds.getId());
+      d.setType(ds.getType());
+      d.setProperty("driver", properties.getDriver());
+      d.setProperty("user", properties.getUser());
+      d.setProperty("password", properties.getPassword());
+      d.setProperty("login-timeout", toTime(ds.getConnectionTimeout()));
+      d.setProperty("max-idle-time", toTime(ds.getIdleTimeout()));
+      d.setProperty("min-pool-size", ds.getMinimumPoolSize());
+      d.setProperty("max-pool-size", ds.getMaximumPoolSize());
 
-      return configuration;
+      return d;
    }
 
-   public JdbcDataSourceConfiguration getConfiguration(String id) {
-      JdbcDataSourceConfiguration configuration = m_configurations.get(id);
+   public JdbcDataSourceDescriptor getDescriptor(String id) {
+      JdbcDataSourceDescriptor configuration = m_descriptors.get(id);
 
       if (configuration == null) {
          if (m_dataSources != null && id != null) {
             DataSourceDef ds = m_dataSources.findDataSource(id);
 
             if (ds != null) {
-               configuration = getConfiguration(ds);
-               m_configurations.put(id, configuration);
+               configuration = getDescriptor(ds);
+               m_descriptors.put(id, configuration);
             }
          }
       }
@@ -109,7 +109,7 @@ public class JdbcDataSourceConfigurationManager implements Initializable, LogEna
          }
 
          if (file.canRead()) {
-            m_logger.info(String.format("Loading data sources from %s", file));
+            m_logger.info(String.format("Loading data sources from %s ...", file));
 
             try {
                is = new FileInputStream(file);
@@ -135,7 +135,6 @@ public class JdbcDataSourceConfigurationManager implements Initializable, LogEna
          if (is != null) {
             try {
                m_dataSources = DefaultSaxParser.parse(is);
-
             } catch (Exception e) {
                throw new InitializationException("Error when loading data source file: " + file, e);
             }

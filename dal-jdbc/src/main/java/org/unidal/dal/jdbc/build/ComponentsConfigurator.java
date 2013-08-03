@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.unidal.dal.jdbc.QueryEngine;
+import org.unidal.dal.jdbc.datasource.DataSource;
 import org.unidal.dal.jdbc.datasource.DataSourceManager;
 import org.unidal.dal.jdbc.datasource.DefaultDataSourceManager;
-import org.unidal.dal.jdbc.datasource.JdbcDataSourceConfigurationManager;
+import org.unidal.dal.jdbc.datasource.JdbcDataSource;
+import org.unidal.dal.jdbc.datasource.JdbcDataSourceDescriptorManager;
 import org.unidal.dal.jdbc.engine.DefaultQueryContext;
 import org.unidal.dal.jdbc.engine.DefaultQueryEngine;
 import org.unidal.dal.jdbc.engine.QueryContext;
@@ -53,6 +55,10 @@ import org.unidal.lookup.configuration.Component;
 import com.dianping.cat.message.MessageProducer;
 
 public final class ComponentsConfigurator extends AbstractResourceConfigurator {
+   public static void main(String[] args) {
+      generatePlexusComponentsXmlFile(new ComponentsConfigurator());
+   }
+
    @Override
    public List<Component> defineComponents() {
       List<Component> all = new ArrayList<Component>();
@@ -64,8 +70,6 @@ public final class ComponentsConfigurator extends AbstractResourceConfigurator {
       all.add(C(QueryEngine.class, DefaultQueryEngine.class) //
             .req(EntityInfoManager.class, QueryExecutor.class, TransactionManager.class) //
             .req(QueryResolver.class));
-      all.add(C(DataSourceManager.class, DefaultDataSourceManager.class) //
-            .req(JdbcDataSourceConfigurationManager.class));
       all.add(C(QueryContext.class, DefaultQueryContext.class) //
             .is(PER_LOOKUP));
       all.add(C(EntityInfoManager.class, DefaultEntityInfoManager.class) //
@@ -87,6 +91,23 @@ public final class ComponentsConfigurator extends AbstractResourceConfigurator {
       all.add(C(ExpressionResolver.class) //
             .req(TokenParser.class));
 
+      defineDataSourceComponents(all);
+      defineTokenResolverComponents(all);
+
+      all.add(C(TableProvider.class, "raw", RawTableProvider.class) //
+            .config(E("logical-table-name").value("raw")));
+      all.add(C(RawDao.class).req(QueryEngine.class));
+
+      return all;
+   }
+
+   private void defineDataSourceComponents(List<Component> all) {
+      all.add(C(DataSource.class, "jdbc", JdbcDataSource.class).is(PER_LOOKUP));
+      all.add(C(DataSourceManager.class, DefaultDataSourceManager.class) //
+            .req(JdbcDataSourceDescriptorManager.class));
+   }
+
+   private void defineTokenResolverComponents(List<Component> all) {
       all.add(C(TokenResolver.class, TokenType.STRING, StringTokenResolver.class));
       all.add(C(TokenResolver.class, TokenType.PARAM, ParameterTokenResolver.class) //
             .req(DataObjectAccessor.class));
@@ -106,15 +127,5 @@ public final class ComponentsConfigurator extends AbstractResourceConfigurator {
             .req(DataObjectAccessor.class));
       all.add(C(TokenResolver.class, TokenType.VALUE, ValueTokenResolver.class) //
             .req(ExpressionResolver.class));
-
-      all.add(C(TableProvider.class, "raw", RawTableProvider.class) //
-            .config(E("logical-table-name").value("raw")));
-      all.add(C(RawDao.class).req(QueryEngine.class));
-
-      return all;
-   }
-
-   public static void main(String[] args) {
-      generatePlexusComponentsXmlFile(new ComponentsConfigurator());
    }
 }

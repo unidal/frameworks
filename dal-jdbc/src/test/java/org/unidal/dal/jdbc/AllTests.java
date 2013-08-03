@@ -4,7 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.unidal.dal.jdbc.datasource.DataSourceTest;
-import org.unidal.dal.jdbc.datasource.JdbcDataSourceConfigurationManagerTest;
+import org.unidal.dal.jdbc.datasource.JdbcDataSourceDescriptorManagerTest;
 import org.unidal.dal.jdbc.entity.EntityManagerTest;
 import org.unidal.dal.jdbc.intg.MultipleTablesTest;
 import org.unidal.dal.jdbc.intg.SingleTableTest;
@@ -36,7 +36,7 @@ UserDaoTest.class,
 
 DataSourceTest.class,
 
-JdbcDataSourceConfigurationManagerTest.class,
+JdbcDataSourceDescriptorManagerTest.class,
 
 EntityManagerTest.class,
 

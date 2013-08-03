@@ -9,7 +9,6 @@ import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.lifecycle.LifecycleHandler;
 import org.codehaus.plexus.lifecycle.UndefinedLifecycleHandlerException;
 import org.unidal.lookup.extension.EnumComponentManagerFactory;
-import org.unidal.lookup.extension.PostConstructionPhase;
 
 public class ContainerLoader {
    private static volatile DefaultPlexusContainer s_container;
@@ -93,7 +92,7 @@ public class ContainerLoader {
    private static void preConstruction(ContainerConfiguration configuration) throws UndefinedLifecycleHandlerException {
       LifecycleHandler plexus = configuration.getLifecycleHandlerManager().getLifecycleHandler("plexus");
 
-      plexus.addBeginSegment(new PostConstructionPhase());
+      plexus.addBeginSegment(new org.unidal.lookup.extension.PostConstructionPhase());
    }
 
    private static void setContainerToLookupLibrary(Class<?> loaderClass, PlexusContainer container) {

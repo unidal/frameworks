@@ -32,15 +32,6 @@
 			</requirements>
 		</component>
 		<component>
-			<role>org.unidal.dal.jdbc.datasource.DataSourceManager</role>
-			<implementation>org.unidal.dal.jdbc.datasource.DefaultDataSourceManager</implementation>
-			<requirements>
-				<requirement>
-					<role>org.unidal.dal.jdbc.datasource.JdbcDataSourceConfigurationManager</role>
-				</requirement>
-			</requirements>
-		</component>
-		<component>
 			<role>org.unidal.dal.jdbc.engine.QueryContext</role>
 			<implementation>org.unidal.dal.jdbc.engine.DefaultQueryContext</implementation>
 			<instantiation-strategy>per-lookup</instantiation-strategy>
@@ -126,6 +117,21 @@
 			<requirements>
 				<requirement>
 					<role>org.unidal.dal.jdbc.query.token.TokenParser</role>
+				</requirement>
+			</requirements>
+		</component>
+		<component>
+			<role>org.unidal.dal.jdbc.datasource.DataSource</role>
+			<role-hint>jdbc</role-hint>
+			<implementation>org.unidal.dal.jdbc.datasource.JdbcDataSource</implementation>
+			<instantiation-strategy>per-lookup</instantiation-strategy>
+		</component>
+		<component>
+			<role>org.unidal.dal.jdbc.datasource.DataSourceManager</role>
+			<implementation>org.unidal.dal.jdbc.datasource.DefaultDataSourceManager</implementation>
+			<requirements>
+				<requirement>
+					<role>org.unidal.dal.jdbc.datasource.JdbcDataSourceDescriptorManager</role>
 				</requirement>
 			</requirements>
 		</component>

@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.unidal.dal.jdbc.configuration.AbstractJdbcResourceConfigurator;
-import org.unidal.dal.jdbc.datasource.DataSource;
-import org.unidal.dal.jdbc.datasource.JndiDataSource;
 import org.unidal.dal.jdbc.mapping.SimpleTableProvider;
 import org.unidal.dal.jdbc.mapping.TableProvider;
 import org.unidal.lookup.configuration.Component;
@@ -25,12 +23,6 @@ public class PlexusConfigurator extends AbstractJdbcResourceConfigurator {
 
 		all.add(defineJdbcDataSourceConfigurationManagerComponent(getClass().getResource(datasourceFile).getFile()
 		      .toString()));
-
-		all.add(defineJdbcDataSourceComponent("jdbc-dal", "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/dal",
-		      "root", "", "<![CDATA[useUnicode=true&autoReconnect=true]]>"));
-
-		all.add(C(DataSource.class, "jndi-dal", JndiDataSource.class).config(
-		      E("jndi-name").value("java:comp/env/jdbc/dal")));
 
 		all.add(C(TableProvider.class, "user", SimpleTableProvider.class).config(E("data-source-name").value("jdbc-dal"),
 		      E("logical-table-name").value("user")));

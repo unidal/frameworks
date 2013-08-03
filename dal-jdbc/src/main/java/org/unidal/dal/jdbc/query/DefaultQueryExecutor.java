@@ -18,9 +18,8 @@ import org.unidal.dal.jdbc.QueryDef;
 import org.unidal.dal.jdbc.QueryType;
 import org.unidal.dal.jdbc.annotation.Attribute;
 import org.unidal.dal.jdbc.datasource.DataSource;
+import org.unidal.dal.jdbc.datasource.DataSourceException;
 import org.unidal.dal.jdbc.datasource.DataSourceManager;
-import org.unidal.dal.jdbc.datasource.JdbcDataSource;
-import org.unidal.dal.jdbc.datasource.JdbcDataSourceConfiguration;
 import org.unidal.dal.jdbc.engine.QueryContext;
 import org.unidal.dal.jdbc.entity.DataObjectAccessor;
 import org.unidal.dal.jdbc.entity.DataObjectAssembly;
@@ -102,6 +101,12 @@ public class DefaultQueryExecutor implements QueryExecutor {
 
          t.setStatus(Transaction.SUCCESS);
          return rows;
+      } catch (DataSourceException e) {
+         t.setStatus(e.getClass().getSimpleName());
+         m_cat.logError(e);
+         m_transactionManager.reset();
+
+         throw e;
       } catch (Throwable e) {
          t.setStatus(e.getClass().getSimpleName());
          m_cat.logError(e);
@@ -156,6 +161,12 @@ public class DefaultQueryExecutor implements QueryExecutor {
 
          t.setStatus(Transaction.SUCCESS);
          return rowCount;
+      } catch (DataSourceException e) {
+         t.setStatus(e.getClass().getSimpleName());
+         m_cat.logError(e);
+         m_transactionManager.reset();
+
+         throw e;
       } catch (Throwable e) {
          t.setStatus(e.getClass().getSimpleName());
          m_cat.logError(e);
@@ -249,6 +260,12 @@ public class DefaultQueryExecutor implements QueryExecutor {
 
          t.setStatus(Transaction.SUCCESS);
          return rowCounts;
+      } catch (DataSourceException e) {
+         t.setStatus(e.getClass().getSimpleName());
+         m_cat.logError(e);
+         m_transactionManager.reset();
+
+         throw e;
       } catch (Throwable e) {
          if (!inTransaction && updated) {
             try {
@@ -289,25 +306,12 @@ public class DefaultQueryExecutor implements QueryExecutor {
    }
 
    protected void logCatEvent(QueryContext ctx) {
-      String url = null;
-      JdbcDataSourceConfiguration config = m_dataSourceManager.getDataSourceConfiguration(ctx.getDataSourceName());
-
-      if (config != null) {
-         url = config.getUrl();
-      }
-
-      if (url == null) {
-         DataSource ds = m_dataSourceManager.getDataSource(ctx.getDataSourceName());
-
-         if (ds instanceof JdbcDataSource) {
-            url = ((JdbcDataSource) ds).getUrl();
-         }
-      }
-
+      DataSource ds = m_dataSourceManager.getDataSource(ctx.getDataSourceName());
+      String url = ds.getDescriptor().getProperty("url", "no-url");
       String params = ctx.getParameterValues() == null ? null : Stringizers.forJson().from(ctx.getParameterValues());
 
       m_cat.logEvent("SQL.Method", ctx.getQuery().getType().name(), Message.SUCCESS, params);
-      m_cat.logEvent("SQL.Database", url == null ? "no-url" : url, Message.SUCCESS, null);
+      m_cat.logEvent("SQL.Database", url, Message.SUCCESS, null);
    }
 
    protected void retrieveGeneratedKeys(QueryContext ctx, PreparedStatement ps, DataObject proto) throws SQLException {

@@ -5,34 +5,20 @@ import org.junit.Test;
 import org.unidal.lookup.ComponentTestCase;
 
 public class DataSourceTest extends ComponentTestCase {
-	@Test
-	public void testJdbcDataSource() throws Exception {
-		try {
-			DataSource dataSource = lookup(DataSource.class, "jdbc-dal");
+   @Test
+   public void testJdbcDataSource() throws Exception {
+      try {
+         DataSourceManager manager = lookup(DataSourceManager.class);
+         DataSource ds = manager.getDataSource("jdbc-dal");
 
-			Assert.assertNotNull(dataSource.getConnection());
-		} catch (DataSourceException e) {
-			if (e.isDataSourceDown()) {
-				System.out.println("Can't connect to database via JDBC, gave up");
-			} else {
-				throw e;
-			}
-		}
-	}
-
-	@Test
-	public void testJndiDataSource() throws Exception {
-		try {
-			DataSource dataSource = lookup(DataSource.class, "jndi-dal");
-
-			Assert.assertNotNull(dataSource.getConnection());
-		} catch (DataSourceException e) {
-			if (e.isDataSourceDown()) {
-				// ignore it since we don't have an InitialContext setup
-				System.out.println("Can't connect to database via JNDI, gave up");
-			} else {
-				throw e;
-			}
-		}
-	}
+         System.out.println(ds.getDescriptor());
+         Assert.assertNotNull(ds.getConnection());
+      } catch (DataSourceException e) {
+         if (e.isDataSourceDown()) {
+            System.out.println("Can't connect to database via JDBC, gave up");
+         } else {
+            throw e;
+         }
+      }
+   }
 }

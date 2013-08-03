@@ -16,13 +16,24 @@ public class TimedConsoleLoggerManager extends ConsoleLoggerManager {
 
    private String m_defaultBaseDir;
 
+   private Logger m_logger;
+
    @Override
    public Logger createLogger(int threshold, String name) {
-      TimedConsoleLogger logger = new TimedConsoleLogger(threshold, name, m_dateFormat, m_logFilePattern, m_showClass, m_devMode);
+      if (m_logger == null) {
+         synchronized (this) {
+            if (m_logger == null) {
+               TimedConsoleLogger logger = new TimedConsoleLogger(threshold, name, m_dateFormat, m_logFilePattern, m_showClass,
+                     m_devMode);
 
-      logger.setBaseDirRef(m_baseDirRef);
-      logger.setDefaultBaseDir(m_defaultBaseDir);
-      return logger;
+               logger.setBaseDirRef(m_baseDirRef);
+               logger.setDefaultBaseDir(m_defaultBaseDir);
+               m_logger = logger;
+            }
+         }
+      }
+
+      return m_logger;
    }
 
    public void setBaseDirRef(String baseDirRef) {

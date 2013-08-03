@@ -57,7 +57,7 @@ public class EnumComponentManagerFactory implements ComponentManagerFactory {
                   ObjectRecipe recipe = builder.createObjectRecipe((T) factory, descriptor, getRealm());
 
                   EnumValueHolder.put(value);
-                  recipe.setFactoryMethod("create");
+                  recipe.setFactoryMethod("get");
                   recipe.create(Object.class, false);
 
                   start(value);
@@ -81,7 +81,7 @@ public class EnumComponentManagerFactory implements ComponentManagerFactory {
    public static class EnumValueHolder {
       private static ThreadLocal<Object> m_threadLocal = new ThreadLocal<Object>();
 
-      public static Object create() {
+      public static Object get() {
          return m_threadLocal.get();
       }
 

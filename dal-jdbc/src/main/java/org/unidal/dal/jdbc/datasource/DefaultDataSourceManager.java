@@ -10,38 +10,42 @@ import org.unidal.lookup.ContainerHolder;
 import org.unidal.lookup.annotation.Inject;
 
 public class DefaultDataSourceManager extends ContainerHolder implements DataSourceManager {
-	@Inject
-	private JdbcDataSourceConfigurationManager m_configurationManager;
+   @Inject
+   private JdbcDataSourceDescriptorManager m_manager;
 
-	private Map<String, DataSource> m_dataSources = new HashMap<String, DataSource>();
+   private Map<String, DataSource> m_dataSources = new HashMap<String, DataSource>();
 
-	public JdbcDataSourceConfiguration getDataSourceConfiguration(String dataSourceName) {
-		return m_configurationManager.getConfiguration(dataSourceName);
-	}
+   @Override
+   public DataSource getDataSource(String name) {
+      DataSource dataSource = m_dataSources.get(name);
 
-	@Override
-	public DataSource getDataSource(String dataSourceName) {
-		DataSource dataSource = m_dataSources.get(dataSourceName);
+      if (dataSource == null) {
+         synchronized (m_dataSources) {
+            dataSource = m_dataSources.get(name);
 
-		if (dataSource == null) {
-			synchronized (m_dataSources) {
-				dataSource = m_dataSources.get(dataSourceName);
+            if (dataSource == null) {
+               DataSourceDescriptor descriptor = m_manager.getDescriptor(name);
 
-				if (dataSource == null) {
-					dataSource = lookup(DataSource.class, dataSourceName);
-					m_dataSources.put(dataSourceName, dataSource);
-				}
-			}
-		}
+               if (descriptor == null) {
+                  throw new RuntimeException(String.format("No data source(%s) defined!", name));
+               }
 
-		return dataSource;
-	}
+               dataSource = lookup(DataSource.class, descriptor.getType());
+               dataSource.initialize(descriptor);
 
-	@Override
-	public List<String> getActiveDataSourceNames() {
-		List<String> list = new ArrayList<String>(m_dataSources.keySet());
+               m_dataSources.put(name, dataSource);
+            }
+         }
+      }
 
-		Collections.sort(list);
-		return list;
-	}
+      return dataSource;
+   }
+
+   @Override
+   public List<String> getDataSourceNames() {
+      List<String> list = new ArrayList<String>(m_dataSources.keySet());
+
+      Collections.sort(list);
+      return list;
+   }
 }

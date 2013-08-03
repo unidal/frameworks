@@ -1,4 +1,4 @@
-package org.unidal.helper;
+package com.site.helper;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -12,9 +12,6 @@ import java.util.List;
 import java.util.Properties;
 
 public class Reflects {
-   private Reflects() {
-   }
-
    public static ClassReflector forClass() {
       return ClassReflector.INSTANCE;
    }
@@ -37,6 +34,9 @@ public class Reflects {
 
    public static ResourceReflector forResource() {
       return ResourceReflector.INSTANCE;
+   }
+
+   private Reflects() {
    }
 
    public static enum ClassReflector {
@@ -211,20 +211,6 @@ public class Reflects {
          return list;
       }
 
-      public Field getDeclaredField(Class<?> clazz, String fieldName) {
-         if (clazz != null) {
-            try {
-               Field field = clazz.getDeclaredField(fieldName);
-
-               return field;
-            } catch (Exception e) {
-               // ignore
-            }
-         }
-
-         return null;
-      }
-
       public List<Field> getDeclaredFields(Class<?> clazz, IMemberFilter<Field> filter) {
          List<Field> list = new ArrayList<Field>();
          Field[] fields = clazz.getDeclaredFields();
@@ -240,10 +226,10 @@ public class Reflects {
 
       @SuppressWarnings("unchecked")
       public <T> T getDeclaredFieldValue(Class<?> clazz, String fieldName, Object instance) {
-         Field field = getDeclaredField(clazz, fieldName);
-
-         if (field != null) {
+         if (clazz != null) {
             try {
+               Field field = clazz.getDeclaredField(fieldName);
+
                if (!field.isAccessible()) {
                   field.setAccessible(true);
                }
@@ -255,25 +241,6 @@ public class Reflects {
          }
 
          return null;
-      }
-
-      public boolean setDeclaredFieldValue(Class<?> clazz, String fieldName, Object instance, Object value) {
-         Field field = getDeclaredField(clazz, fieldName);
-
-         if (field != null) {
-            try {
-               if (!field.isAccessible()) {
-                  field.setAccessible(true);
-               }
-
-               field.set(instance, value);
-               return true;
-            } catch (Exception e) {
-               // ignore
-            }
-         }
-
-         return false;
       }
 
       public List<Field> getFields(Class<?> clazz, IMemberFilter<Field> filter) {
@@ -332,21 +299,6 @@ public class Reflects {
          }
 
          return null;
-      }
-
-      @SuppressWarnings("unchecked")
-      public <T> T getDeclaredFieldValue(Object instance, String... fields) {
-         Object value = instance;
-
-         for (String field : fields) {
-            value = getDeclaredFieldValue(value.getClass(), field, value);
-
-            if (value == null) {
-               break;
-            }
-         }
-
-         return (T) value;
       }
    }
 
@@ -418,19 +370,6 @@ public class Reflects {
          sb.append(propertyName.substring(1));
 
          return sb.toString();
-      }
-
-      public String getGetterName(Method method) {
-         String name = method.getName();
-         int length = name.length();
-
-         if (length > 3 && name.startsWith("get")) {
-            return Character.toLowerCase(name.charAt(3)) + name.substring(4);
-         } else if (length > 2 && name.startsWith("is")) {
-            return Character.toLowerCase(name.charAt(2)) + name.substring(3);
-         } else {
-            return name;
-         }
       }
 
       public Method getMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
@@ -545,6 +484,19 @@ public class Reflects {
             return true;
          } else {
             return false;
+         }
+      }
+
+      public String getGetterName(Method method) {
+         String name = method.getName();
+         int length = name.length();
+
+         if (length > 3 && name.startsWith("get")) {
+            return Character.toLowerCase(name.charAt(3)) + name.substring(4);
+         } else if (length > 2 && name.startsWith("is")) {
+            return Character.toLowerCase(name.charAt(2)) + name.substring(3);
+         } else {
+            return name;
          }
       }
    }

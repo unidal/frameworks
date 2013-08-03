@@ -1,42 +1,10 @@
 <plexus>
 	<components>
 		<component>
-			<role>org.unidal.dal.jdbc.datasource.JdbcDataSourceConfigurationManager</role>
-			<implementation>org.unidal.dal.jdbc.datasource.JdbcDataSourceConfigurationManager</implementation>
+			<role>org.unidal.dal.jdbc.datasource.JdbcDataSourceDescriptorManager</role>
+			<implementation>org.unidal.dal.jdbc.datasource.JdbcDataSourceDescriptorManager</implementation>
 			<configuration>
 				<datasourceFile>/Users/qmwu/project/frameworks/dal-jdbc/target/test-classes/org/unidal/dal/jdbc/datasource/datasource.xml</datasourceFile>
-			</configuration>
-		</component>
-		<component>
-			<role>org.unidal.dal.jdbc.datasource.DataSource</role>
-			<role-hint>jdbc-dal</role-hint>
-			<implementation>org.unidal.dal.jdbc.datasource.JdbcDataSource</implementation>
-			<configuration>
-				<id>jdbc-dal</id>
-				<maximum-pool-size>3</maximum-pool-size>
-				<connection-timeout>1s</connection-timeout>
-				<idle-timeout>10m</idle-timeout>
-				<statement-cache-size>1000</statement-cache-size>
-				<properties>
-					<driver>com.mysql.jdbc.Driver</driver>
-					<URL>jdbc:mysql://localhost:3306/dal</URL>
-					<user>root</user>
-					<password></password>
-					<connectionProperties><![CDATA[useUnicode=true&autoReconnect=true]]></connectionProperties>
-				</properties>
-			</configuration>
-			<requirements>
-				<requirement>
-					<role>org.unidal.dal.jdbc.datasource.JdbcDataSourceConfigurationManager</role>
-				</requirement>
-			</requirements>
-		</component>
-		<component>
-			<role>org.unidal.dal.jdbc.datasource.DataSource</role>
-			<role-hint>jndi-dal</role-hint>
-			<implementation>org.unidal.dal.jdbc.datasource.JndiDataSource</implementation>
-			<configuration>
-				<jndi-name>java:comp/env/jdbc/dal</jndi-name>
 			</configuration>
 		</component>
 		<component>

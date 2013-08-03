@@ -4,16 +4,23 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
 
 import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.MutablePlexusContainer;
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.classworlds.realm.ClassRealm;
+import org.codehaus.plexus.component.repository.ComponentDescriptor;
 import org.codehaus.plexus.lifecycle.LifecycleHandler;
 import org.codehaus.plexus.lifecycle.UndefinedLifecycleHandlerException;
 import org.junit.After;
 import org.junit.Before;
+import org.unidal.helper.Reflects;
 import org.unidal.lookup.extension.EnumComponentManagerFactory;
 import org.unidal.lookup.extension.PostConstructionPhase;
+
+import com.google.common.collect.Multimap;
 
 public abstract class ComponentTestCase {
    private MutablePlexusContainer m_container;
@@ -21,6 +28,36 @@ public abstract class ComponentTestCase {
    private Map<Object, Object> m_context;
 
    private String m_basedir;
+
+   protected <T> void defineComponent(Class<T> role) throws Exception {
+      defineComponent(role, null, role);
+   }
+   
+   protected <T> void defineComponent(Class<T> role, Class<? extends T> implementation) throws Exception {
+      defineComponent(role, null, implementation);
+   }
+
+   @SuppressWarnings("unchecked")
+   protected <T> void defineComponent(Class<T> role, String roleHint, Class<? extends T> implementation) throws Exception {
+      if (roleHint == null) {
+         roleHint = PlexusConstants.PLEXUS_DEFAULT_HINT;
+      }
+      
+      ComponentDescriptor<T> descriptor = new ComponentDescriptor<T>((Class<T>) implementation, m_container.getContainerRealm());
+
+      descriptor.setRoleClass(role);
+      descriptor.setRoleHint(roleHint);
+
+      Map<ClassRealm, SortedMap<String, Multimap<String, ComponentDescriptor<?>>>> index = Reflects.forField()
+            .getDeclaredFieldValue(m_container, "componentRegistry", "repository", "index");
+      for (SortedMap<String, Multimap<String, ComponentDescriptor<?>>> roleIndex : index.values()) {
+         Multimap<String, ComponentDescriptor<?>> roleHintIndex = roleIndex.get(role.getName());
+
+         roleHintIndex.removeAll(roleHint);
+      }
+
+      m_container.addComponentDescriptor(descriptor);
+   }
 
    protected String getBaseDir() {
       if (m_basedir != null) {
@@ -54,7 +91,7 @@ public abstract class ComponentTestCase {
          configuration.setContainerConfiguration(defaultConfigurationName);
       }
 
-      LifecycleHandler plexus = configuration.getLifecycleHandlerManager().getLifecycleHandler("plexus");
+      LifecycleHandler plexus = configuration.getLifecycleHandlerManager().getLifecycleHandler(PlexusConstants.PLEXUS_KEY);
 
       plexus.addBeginSegment(new PostConstructionPhase());
 

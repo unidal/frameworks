@@ -20,9 +20,11 @@ import org.unidal.test.browser.BrowserManager;
 public abstract class JettyServer extends ContainerHolder {
    private Server m_server;
 
+   @SuppressWarnings("unchecked")
    protected void configure(WebAppContext context) {
       File warRoot = getWarRoot();
 
+      context.getInitParams().put("org.mortbay.jetty.servlet.Default.dirAllowed", "false");
       context.setContextPath(getContextPath());
       context.setDescriptor(new File(warRoot, "WEB-INF/web.xml").getPath());
       context.setResourceBase(warRoot.getPath());
@@ -98,7 +100,7 @@ public abstract class JettyServer extends ContainerHolder {
       WebAppContext context = new WebAppContext();
 
       configure(context);
-      server.setHandler(context);
+      server.addHandler(context);
       server.start();
       postConfigure(context);
 

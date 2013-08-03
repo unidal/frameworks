@@ -38,7 +38,7 @@ public class DefaultDataObjectNaming implements DataObjectNaming {
          if (method.getName().equals(methodName)) {
             Class<?>[] parameterTypes = method.getParameterTypes();
 
-            if (parameterTypes.length == 1 && method.getReturnType() == Void.TYPE) {
+            if (parameterTypes.length == 1) {
                return method;
             }
          }
