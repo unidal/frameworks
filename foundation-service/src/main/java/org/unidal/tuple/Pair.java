@@ -8,7 +8,7 @@ package org.unidal.tuple;
  * @param <V>
  *           value
  */
-public class Pair<K, V> {
+public class Pair<K, V> implements Tuple {
    private K m_key;
 
    private V m_value;
@@ -57,6 +57,19 @@ public class Pair<K, V> {
       return false;
    }
 
+   @Override
+   @SuppressWarnings("unchecked")
+   public <T> T get(int index) {
+      switch (index) {
+      case 0:
+         return (T) m_key;
+      case 1:
+         return (T) m_value;
+      default:
+         throw new IndexOutOfBoundsException(String.format("Index from 0 to %s, but was %s!", size(), index));
+      }
+   }
+
    public K getKey() {
       return m_key;
    }
@@ -81,6 +94,11 @@ public class Pair<K, V> {
 
    public void setValue(V value) {
       m_value = value;
+   }
+
+   @Override
+   public int size() {
+      return 2;
    }
 
    @Override

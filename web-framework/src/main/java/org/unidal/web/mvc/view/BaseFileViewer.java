@@ -57,7 +57,7 @@ public abstract class BaseFileViewer<P extends Page, A extends Action, S extends
 	public void view(S ctx, T model) throws ServletException, IOException {
 		HttpServletRequest req = ctx.getHttpServletRequest();
 		HttpServletResponse response = ctx.getHttpServletResponse();
-		HttpServletResponseWrapper res = new HttpServletResponseWrapper(response, true);
+		HttpServletResponseWrapper res = new HttpServletResponseWrapper(null, true);
 
 		req.setAttribute("payload", ctx.getPayload());
 		req.setAttribute("model", model);

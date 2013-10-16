@@ -10,93 +10,104 @@ import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.LoggerManager;
 
 public class DefaultModuleContext implements ModuleContext {
-	private PlexusContainer m_container;
+   private PlexusContainer m_container;
 
-	private Map<String, Object> m_attributes;
+   private Map<String, Object> m_attributes;
 
-	private Logger m_logger;
+   private Logger m_logger;
 
-	public DefaultModuleContext(PlexusContainer container) {
-		m_container = container;
-		m_attributes = new HashMap<String, Object>();
+   public DefaultModuleContext(PlexusContainer container) {
+      m_container = container;
+      m_attributes = new HashMap<String, Object>();
 
-		try {
-			LoggerManager loggerManager = container.lookup(LoggerManager.class);
+      try {
+         LoggerManager loggerManager = container.lookup(LoggerManager.class);
 
-			m_logger = loggerManager.getLoggerForComponent(PlexusContainer.class.getName());
-		} catch (Exception e) {
-			throw new RuntimeException("Unable to get instance of Logger, "
-			      + "please make sure the environment was setup correctly!", e);
-		}
-	}
+         m_logger = loggerManager.getLoggerForComponent(PlexusContainer.class.getName());
+      } catch (Exception e) {
+         throw new RuntimeException("Unable to get instance of Logger, " + "please make sure the environment was setup correctly!",
+               e);
+      }
+   }
 
-	@Override
-	public void error(String message) {
-		m_logger.error(message);
-	}
+   @Override
+   public void error(String message) {
+      m_logger.error(message);
+   }
 
-	@Override
-	public void error(String message, Throwable e) {
-		m_logger.error(message, e);
-	}
+   @Override
+   public void error(String message, Throwable e) {
+      m_logger.error(message, e);
+   }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T getAttribute(String name) {
-		return (T) m_attributes.get(name);
-	}
+   @Override
+   public <T> T getAttribute(String name) {
+      return getAttribute(name, null);
+   }
 
-	public PlexusContainer getContainer() {
-		return m_container;
-	}
+   @SuppressWarnings("unchecked")
+   @Override
+   public <T> T getAttribute(String name, T defaultValue) {
+      Object value = m_attributes.get(name);
 
-	@Override
-	public Module[] getModules(String... names) {
-		Module[] modules = new Module[names.length];
-		int index = 0;
+      if (value != null) {
+         return (T) value;
+      } else {
+         return defaultValue;
+      }
+   }
 
-		for (String name : names) {
-			modules[index++] = lookup(Module.class, name);
-		}
+   public PlexusContainer getContainer() {
+      return m_container;
+   }
 
-		return modules;
-	}
+   @Override
+   public Module[] getModules(String... names) {
+      Module[] modules = new Module[names.length];
+      int index = 0;
 
-	@Override
-	public void info(String message) {
-		m_logger.info(message);
-	}
+      for (String name : names) {
+         modules[index++] = lookup(Module.class, name);
+      }
 
-	@Override
-	public <T> T lookup(Class<T> role) {
-		return lookup(role, null);
-	}
+      return modules;
+   }
 
-	@Override
-	public <T> T lookup(Class<T> role, String roleHint) {
-		try {
-			return m_container.lookup(role, roleHint);
-		} catch (ComponentLookupException e) {
-			throw new RuntimeException("Unable to get component: " + role + ".", e);
-		}
-	}
+   @Override
+   public void info(String message) {
+      m_logger.info(message);
+   }
 
-	@Override
-	public void release(Object component) {
-		try {
-			m_container.release(component);
-		} catch (ComponentLifecycleException e) {
-			throw new RuntimeException("Unable to release component: " + component + ".", e);
-		}
-	}
+   @Override
+   public <T> T lookup(Class<T> role) {
+      return lookup(role, null);
+   }
 
-	@Override
-	public void setAttribute(String name, Object value) {
-		m_attributes.put(name, value);
-	}
+   @Override
+   public <T> T lookup(Class<T> role, String roleHint) {
+      try {
+         return m_container.lookup(role, roleHint);
+      } catch (ComponentLookupException e) {
+         throw new RuntimeException("Unable to get component: " + role + ".", e);
+      }
+   }
 
-	@Override
-	public void warn(String message) {
-		m_logger.warn(message);
-	}
+   @Override
+   public void release(Object component) {
+      try {
+         m_container.release(component);
+      } catch (ComponentLifecycleException e) {
+         throw new RuntimeException("Unable to release component: " + component + ".", e);
+      }
+   }
+
+   @Override
+   public void setAttribute(String name, Object value) {
+      m_attributes.put(name, value);
+   }
+
+   @Override
+   public void warn(String message) {
+      m_logger.warn(message);
+   }
 }

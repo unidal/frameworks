@@ -238,7 +238,11 @@ public class XmlModelBuilder implements ModelBuilder {
          off = pos1;
       }
 
-      return "<" + name + model.substring(off, pos3 + 1) + name + ">";
+      if (off >= 0) {
+         return "<" + name + model.substring(off, pos3 + 1) + name + ">";
+      } else {
+         return "<" + name + ">" + model + "</" + name + ">";
+      }
    }
 
    private String getNormalizedName(String name, Field field) {

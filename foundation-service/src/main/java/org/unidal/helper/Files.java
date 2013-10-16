@@ -63,6 +63,10 @@ public class Files {
       INSTANCE;
 
       public void copyDir(File from, File to) throws IOException {
+         copyDir(from, to, null);
+      }
+
+      public void copyDir(File from, File to, Policy policy) throws IOException {
          String[] names = from.list();
 
          createDir(to);
@@ -70,10 +74,12 @@ public class Files {
          for (String name : names) {
             File file = new File(from, name);
 
-            if (file.isDirectory()) {
-               copyDir(file, new File(to, name));
-            } else {
-               copyFile(file, new File(to, name));
+            if (policy == null || policy.apply(file.getPath())) {
+               if (file.isDirectory()) {
+                  copyDir(file, new File(to, name));
+               } else {
+                  copyFile(file, new File(to, name));
+               }
             }
          }
       }
@@ -226,10 +232,18 @@ public class Files {
       }
    }
 
+   public interface Policy {
+      public boolean apply(String path);
+   }
+
    public static enum Zip {
       INSTANCE;
 
       public List<String> copyDir(ZipInputStream zis, File baseDir) throws IOException {
+         return copyDir(zis, baseDir, null);
+      }
+
+      public List<String> copyDir(ZipInputStream zis, File baseDir, Policy policy) throws IOException {
          List<String> entryNames = new ArrayList<String>();
 
          if (!baseDir.exists()) {
@@ -243,10 +257,12 @@ public class Files {
                break;
             }
 
-            if (entry.isDirectory()) {
-               Dir.INSTANCE.createDir(new File(baseDir, entry.getName()));
-            } else {
-               IO.INSTANCE.copy(zis, new FileOutputStream(new File(baseDir, entry.getName())), AutoClose.OUTPUT);
+            if (policy == null || policy.apply(entry.getName())) {
+               if (entry.isDirectory()) {
+                  Dir.INSTANCE.createDir(new File(baseDir, entry.getName()));
+               } else {
+                  IO.INSTANCE.copy(zis, new FileOutputStream(new File(baseDir, entry.getName())), AutoClose.OUTPUT);
+               }
             }
          }
 

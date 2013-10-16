@@ -1,23 +1,25 @@
 package org.unidal.initialization;
 
 public interface ModuleContext {
-	public <T> T getAttribute(String name);
+   public <T> T getAttribute(String name);
 
-	public void info(String message);
+   public <T> T getAttribute(String name, T defaultValue);
 
-	public void warn(String message);
+   public void info(String message);
 
-	public void error(String message);
+   public void warn(String message);
 
-	public void error(String message, Throwable t);
+   public void error(String message);
 
-	public <T> T lookup(Class<T> role);
+   public void error(String message, Throwable t);
 
-	public <T> T lookup(Class<T> role, String roleHint);
+   public <T> T lookup(Class<T> role);
 
-	public void release(Object component);
+   public <T> T lookup(Class<T> role, String roleHint);
 
-	public void setAttribute(String name, Object value);
+   public void release(Object component);
 
-	public Module[] getModules(String... modules);
+   public void setAttribute(String name, Object value);
+
+   public Module[] getModules(String... modules);
 }

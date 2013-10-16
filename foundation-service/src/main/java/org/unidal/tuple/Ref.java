@@ -6,7 +6,7 @@ package org.unidal.tuple;
  * @param <T>
  *           value
  */
-public class Ref<T> {
+public class Ref<T> implements Tuple {
    private T m_value;
 
    public Ref() {
@@ -40,6 +40,17 @@ public class Ref<T> {
       return false;
    }
 
+   @Override
+   @SuppressWarnings("unchecked")
+   public T get(int index) {
+      switch (index) {
+      case 0:
+         return m_value;
+      default:
+         throw new IndexOutOfBoundsException(String.format("Index from 0 to %s, but was %s!", size(), index));
+      }
+   }
+
    public T getValue() {
       return m_value;
    }
@@ -51,6 +62,11 @@ public class Ref<T> {
 
    public void setValue(T value) {
       m_value = value;
+   }
+
+   @Override
+   public int size() {
+      return 1;
    }
 
    @Override

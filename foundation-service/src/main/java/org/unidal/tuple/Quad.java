@@ -12,7 +12,7 @@ package org.unidal.tuple;
  * @param <N>
  *           north
  */
-public class Quad<E, S, W, N> {
+public class Quad<E, S, W, N> implements Tuple {
    private E m_east;
 
    private S m_south;
@@ -83,6 +83,23 @@ public class Quad<E, S, W, N> {
       return false;
    }
 
+   @Override
+   @SuppressWarnings("unchecked")
+   public <T> T get(int index) {
+      switch (index) {
+      case 0:
+         return (T) m_east;
+      case 1:
+         return (T) m_south;
+      case 2:
+         return (T) m_west;
+      case 3:
+         return (T) m_north;
+      default:
+         throw new IndexOutOfBoundsException(String.format("Index from 0 to %s, but was %s!", size(), index));
+      }
+   }
+
    public E getEast() {
       return m_east;
    }
@@ -125,6 +142,11 @@ public class Quad<E, S, W, N> {
 
    public void setWest(W west) {
       m_west = west;
+   }
+
+   @Override
+   public int size() {
+      return 4;
    }
 
    @Override

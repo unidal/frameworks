@@ -12,4 +12,6 @@ public interface UrlMapping {
    public String getQueryString();
 
    public String getServletPath();
+
+   public void setModule(String module);
 }

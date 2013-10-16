@@ -77,6 +77,7 @@ public class DefaultRequestLifecycle extends ContainerHolder implements RequestL
 
       RequestContext context = new RequestContext();
 
+      urlMapping.setModule(module.getModuleName());
       context.setActionResolver(actionResolver);
       context.setParameterProvider(parameterProvider);
       context.setUrlMapping(urlMapping);
@@ -121,15 +122,15 @@ public class DefaultRequestLifecycle extends ContainerHolder implements RequestL
    }
 
    private String getModuleName(HttpServletRequest request) {
-      final String pathInfo = getPathInfo(request);
+      final String path = request.getServletPath();
 
-      if (pathInfo != null) {
-         int index = pathInfo.indexOf('/', 1);
+      if (path != null && path.length() > 0) {
+         int index = path.indexOf('/', 1);
 
          if (index > 0) {
-            return pathInfo.substring(1, index);
+            return path.substring(1, index);
          } else {
-            return pathInfo.substring(1);
+            return path.substring(1);
          }
       }
 
@@ -143,17 +144,6 @@ public class DefaultRequestLifecycle extends ContainerHolder implements RequestL
 
       provider.setRequest(request);
       return provider;
-   }
-
-   private String getPathInfo(HttpServletRequest request) {
-      String requestUri = request.getRequestURI();
-      String contextPath = request.getContextPath();
-
-      if (contextPath == null) {
-         return requestUri;
-      } else {
-         return requestUri.substring(contextPath.length());
-      }
    }
 
    public void handle(final HttpServletRequest request, final HttpServletResponse response) throws IOException {

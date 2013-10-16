@@ -10,7 +10,7 @@ package org.unidal.tuple;
  * @param <L>
  *           last
  */
-public class Triple<F, M, L> {
+public class Triple<F, M, L> implements Tuple {
    private F m_first;
 
    private M m_middle;
@@ -70,6 +70,21 @@ public class Triple<F, M, L> {
       return false;
    }
 
+   @Override
+   @SuppressWarnings("unchecked")
+   public <T> T get(int index) {
+      switch (index) {
+      case 0:
+         return (T) m_first;
+      case 1:
+         return (T) m_middle;
+      case 2:
+         return (T) m_last;
+      default:
+         throw new IndexOutOfBoundsException(String.format("Index from 0 to %s, but was %s!", size(), index));
+      }
+   }
+
    public F getFirst() {
       return m_first;
    }
@@ -103,6 +118,11 @@ public class Triple<F, M, L> {
 
    public void setMiddle(M middle) {
       m_middle = middle;
+   }
+
+   @Override
+   public int size() {
+      return 3;
    }
 
    @Override

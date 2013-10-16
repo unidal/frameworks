@@ -1,8 +1,0 @@
-[04-30 15:31:43.759] [INFO] [TimedConsoleLoggerTest] first
-[04-30 15:31:43.760] [WARN] [TimedConsoleLoggerTest] second
-[04-30 15:31:43.760] [INFO] [TimedConsoleLoggerTest] first
-[04-30 15:31:43.760] [WARN] [TimedConsoleLoggerTest] second
-[04-30 15:33:29.075] [INFO] [TimedConsoleLoggerTest] first
-[04-30 15:33:29.078] [WARN] [TimedConsoleLoggerTest] second
-[04-30 15:33:29.078] [INFO] [TimedConsoleLoggerTest] first
-[04-30 15:33:29.078] [WARN] [TimedConsoleLoggerTest] second

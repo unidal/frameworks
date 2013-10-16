@@ -63,6 +63,7 @@ public class DefaultUrlMapping implements UrlMapping {
       m_contextPath = contextPath;
    }
 
+   @Override
    public void setModule(String module) {
       m_module = module;
    }
