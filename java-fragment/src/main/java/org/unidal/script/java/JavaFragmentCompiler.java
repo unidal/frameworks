@@ -27,8 +27,6 @@ import javax.tools.ToolProvider;
 public class JavaFragmentCompiler implements Compilable {
    private JavaFragmentEngine m_engine;
 
-   private boolean m_forceCompile = false;
-
    public JavaFragmentCompiler(JavaFragmentEngine engine) {
       m_engine = engine;
    }
@@ -80,9 +78,7 @@ public class JavaFragmentCompiler implements Compilable {
       CompiledJavaFragment compiledScript = new CompiledJavaFragment(m_engine);
       JavaSourceFromString source = new JavaSourceFromString(outputDir, script);
 
-      if (m_forceCompile || !source.getClassFile().exists()) {
-         compileInternal(script, outputDir, classpath, source);
-      }
+      compileInternal(script, outputDir, classpath, source);
 
       URL[] urls = buildUrls(outputDir);
       ClassLoader parent = Thread.currentThread().getContextClassLoader();
@@ -138,9 +134,5 @@ public class JavaFragmentCompiler implements Compilable {
       }
 
       return files;
-   }
-
-   public void setForceCompile(boolean forceCompile) {
-      m_forceCompile = forceCompile;
    }
 }
