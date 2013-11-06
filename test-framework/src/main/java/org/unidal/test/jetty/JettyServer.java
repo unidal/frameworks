@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 
-import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.context.DefaultContext;
 import org.mortbay.jetty.Server;
@@ -81,12 +79,7 @@ public abstract class JettyServer extends ContainerHolder {
    }
 
    protected void setupContainer() throws Exception {
-      DefaultContainerConfiguration configuration = new DefaultContainerConfiguration();
-      String defaultConfigurationName = getClass().getName().replace('.', '/') + ".xml";
-
-      configuration.setName("Test").setContext(new HashMap<Object, Object>());
-      configuration.setContainerConfiguration(defaultConfigurationName);
-      PlexusContainer container = ContainerLoader.getDefaultContainer(configuration);
+      PlexusContainer container = ContainerLoader.getDefaultContainer();
       DefaultContext context = new DefaultContext();
 
       context.put("plexus", container);

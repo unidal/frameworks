@@ -27,6 +27,7 @@ import org.unidal.web.mvc.model.entity.TransitionModel;
 import org.unidal.web.mvc.payload.ParameterProvider;
 
 import com.dianping.cat.Cat;
+import com.dianping.cat.CatConstants;
 import com.dianping.cat.message.Transaction;
 import com.dianping.cat.message.internal.NullMessage;
 
@@ -175,7 +176,7 @@ public class DefaultRequestLifecycle extends ContainerHolder implements RequestL
       }
 
       if (!actionContext.isProcessStopped()) {
-         request.setAttribute("cat-state", e.getClass().getSimpleName());
+         request.setAttribute(CatConstants.CAT_STATE, e.getClass().getSimpleName());
          Cat.logError(e);
          throw new RuntimeException(e.getMessage(), e);
       }
@@ -251,7 +252,7 @@ public class DefaultRequestLifecycle extends ContainerHolder implements RequestL
          t = NullMessage.TRANSACTION;
       }
 
-      request.setAttribute("cat-page-uri", actionContext.getRequestContext().getActionUri(inboundAction.getActionName()));
+      request.setAttribute(CatConstants.CAT_PAGE_URI, actionContext.getRequestContext().getActionUri(inboundAction.getActionName()));
 
       try {
          if (!handlePreActions(request, response, module, requestContext, inboundAction, actionContext)) {
