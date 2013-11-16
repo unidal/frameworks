@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.runner.JUnitCore;
-
-import org.unidal.eunit.helper.Files;
+import org.unidal.helper.Files;
 
 public class EunitLauncher {
    private static double M = 1024 * 1024;

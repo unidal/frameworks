@@ -7,7 +7,7 @@ import java.lang.management.ManagementFactory;
 import java.text.MessageFormat;
 import java.text.ParseException;
 
-import org.unidal.eunit.helper.Files;
+import org.unidal.helper.Files;
 
 public enum GarbageCollectorHelper {
    INSTANCE;

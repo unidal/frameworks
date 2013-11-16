@@ -1,11 +1,15 @@
 package org.unidal.web.mvc;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Formattable;
 import java.util.List;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -38,6 +42,10 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
 
    private int m_htmlId;
 
+   public void addCookie(Cookie cookie) {
+      m_httpServletResponse.addCookie(cookie);
+   }
+
    public void addError(ErrorObject error) {
       m_errors.add(error);
    }
@@ -47,6 +55,20 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
 
       m_errors.add(error);
       return error;
+   }
+
+   public Cookie getCookie(String name) {
+      Cookie[] cookies = m_httpServletRequest.getCookies();
+
+      if (cookies != null) {
+         for (Cookie cookie : cookies) {
+            if (cookie.getName().equals(name)) {
+               return cookie;
+            }
+         }
+      }
+
+      return null;
    }
 
    public String getCurrentHtmlId() {
@@ -114,6 +136,56 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
       return m_skipAction;
    }
 
+   private ActionContext<T> jsonKey(StringBuilder sb, String name) {
+      sb.append('"').append(name).append("\": ");
+      return this;
+   }
+
+   private ActionContext<T> jsonValue(StringBuilder sb, Object obj) {
+      if (obj == null) {
+         sb.append("null");
+      } else {
+         String str;
+
+         if (obj instanceof Formattable) {
+            str = String.format("%2.0s", obj);
+         } else {
+            str = obj.toString();
+         }
+
+         int len = str.length();
+
+         sb.append('"');
+
+         for (int i = 0; i < len; i++) {
+            char ch = str.charAt(i);
+
+            switch (ch) {
+            case '\t':
+               sb.append('\\').append('t');
+               break;
+            case '\r':
+               sb.append('\\').append('r');
+               break;
+            case '\n':
+               sb.append('\\').append('n');
+               break;
+            case '\\':
+            case '"':
+               sb.append('\\').append(ch);
+               break;
+            default:
+               sb.append(ch);
+               break;
+            }
+         }
+
+         sb.append('"');
+      }
+
+      return this;
+   }
+
    public void redirect(Page page, String queryString) {
       String pageUri = m_requestContext.getActionUri(page.getPath());
 
@@ -130,6 +202,62 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
       response.setHeader("location", uri);
       response.setStatus(HttpServletResponse.SC_FOUND);
       stopProcess();
+   }
+
+   public void sendJsonResponse(String status, Object data, Object message) throws IOException {
+      StringBuilder sb = new StringBuilder(2048);
+
+      sb.append('{');
+
+      if (status != null) {
+         jsonKey(sb, "status").jsonValue(sb, status);
+         sb.append(',');
+      }
+
+      if (data != null) {
+         jsonKey(sb, "data").jsonValue(sb, data);
+         sb.append(',');
+      }
+
+      if (message != null) {
+         if (message instanceof Throwable) {
+            Throwable t = (Throwable) message;
+            StringWriter writer = new StringWriter(1024);
+
+            jsonKey(sb, "exception");
+            sb.append('{');
+            jsonKey(sb, "name").jsonValue(sb, t.getClass().getName());
+
+            if (t.getMessage() != null) {
+               sb.append(',');
+               jsonKey(sb, "message").jsonValue(sb, t.getMessage());
+            }
+
+            if (t.getStackTrace() != null) {
+               sb.append(',');
+               t.printStackTrace(new PrintWriter(writer));
+               jsonKey(sb, "stackTrace").jsonValue(sb, writer.toString());
+            }
+
+            sb.append('}');
+         } else {
+            jsonKey(sb, "message").jsonValue(sb, message);
+         }
+
+         sb.append(',');
+      }
+
+      int len = sb.length();
+
+      if (len >= 1 && sb.charAt(len - 1) == ',') {
+         sb.setLength(len - 1); // remove trail comma
+      }
+
+      sb.append('}');
+
+      m_httpServletResponse.setContentType("application/json");
+      m_httpServletResponse.getWriter().write(sb.toString());
+      m_processStopped = true;
    }
 
    public void setException(Throwable exception) {
