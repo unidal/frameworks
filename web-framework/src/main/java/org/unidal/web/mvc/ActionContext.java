@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Formattable;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -13,6 +12,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.unidal.helper.Objects;
 import org.unidal.web.mvc.lifecycle.RequestContext;
 
 public abstract class ActionContext<T extends ActionPayload<? extends Page, ? extends Action>> {
@@ -142,47 +142,7 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
    }
 
    private ActionContext<T> jsonValue(StringBuilder sb, Object obj) {
-      if (obj == null) {
-         sb.append("null");
-      } else {
-         String str;
-
-         if (obj instanceof Formattable) {
-            str = String.format("%2.0s", obj);
-         } else {
-            str = obj.toString();
-         }
-
-         int len = str.length();
-
-         sb.append('"');
-
-         for (int i = 0; i < len; i++) {
-            char ch = str.charAt(i);
-
-            switch (ch) {
-            case '\t':
-               sb.append('\\').append('t');
-               break;
-            case '\r':
-               sb.append('\\').append('r');
-               break;
-            case '\n':
-               sb.append('\\').append('n');
-               break;
-            case '\\':
-            case '"':
-               sb.append('\\').append(ch);
-               break;
-            default:
-               sb.append(ch);
-               break;
-            }
-         }
-
-         sb.append('"');
-      }
-
+      sb.append(Objects.forJson().from(obj));
       return this;
    }
 
