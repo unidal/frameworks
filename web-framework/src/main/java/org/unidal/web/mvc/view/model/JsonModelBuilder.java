@@ -9,31 +9,30 @@ import java.util.Date;
 import java.util.Map;
 
 import org.unidal.helper.Objects;
+import org.unidal.helper.Objects.JsonBuilder;
 import org.unidal.web.mvc.view.annotation.AttributeMeta;
 import org.unidal.web.mvc.view.annotation.ElementMeta;
 import org.unidal.web.mvc.view.annotation.EntityMeta;
 import org.unidal.web.mvc.view.annotation.PojoMeta;
 
-public class XmlModelBuilder implements ModelBuilder {
+public class JsonModelBuilder implements ModelBuilder {
    @Override
    public String build(ModelDescriptor descriptor, Object model) {
-      StringBuilder sb = new StringBuilder(8192);
-      String name = descriptor.getModelName();
+      JsonBuilder sb = Objects.newJsonBuilder(8192);
 
-      sb.append('<').append(name);
+      sb.raw("{");
       buildAttributes(sb, descriptor, model);
-      sb.append(">\r\n");
-
       buildElements(sb, descriptor, model);
       buildEntities(sb, descriptor, model);
       buildPojos(sb, descriptor, model);
 
-      sb.append("</").append(name).append(">\r\n");
+      sb.trimComma();
+      sb.raw("}\r\n");
 
       return sb.toString();
    }
 
-   private void buildAttributes(StringBuilder sb, ModelDescriptor descriptor, Object model) {
+   private void buildAttributes(JsonBuilder sb, ModelDescriptor descriptor, Object model) {
       for (Field field : descriptor.getAttributeFields()) {
          AttributeMeta attribute = field.getAnnotation(AttributeMeta.class);
          Object value = getFieldValue(field, model);
@@ -42,13 +41,13 @@ public class XmlModelBuilder implements ModelBuilder {
             String name = getNormalizedName(attribute.value(), field);
             String str = getString(value, attribute.format());
 
-            sb.append(' ').append(name).append("=\"").append(escape(str)).append("\"");
+            sb.key(name).colon().value(str).comma();
          }
       }
    }
 
    @SuppressWarnings("unchecked")
-   private void buildElements(StringBuilder sb, ModelDescriptor descriptor, Object model) {
+   private void buildElements(JsonBuilder sb, ModelDescriptor descriptor, Object model) {
       for (Field field : descriptor.getElementFields()) {
          ElementMeta element = field.getAnnotation(ElementMeta.class);
          Object value = getFieldValue(field, model);
@@ -56,19 +55,17 @@ public class XmlModelBuilder implements ModelBuilder {
          if (value != null) {
             String name = getNormalizedName(element.value(), field);
 
-            if (element.multiple()) {
-               String names = getNormalizedName(element.names(), field);
+            sb.key(name).colon();
 
-               if (names.length() > 0) {
-                  sb.append('<').append(names).append(">\r\n");
-               }
+            if (element.multiple()) {
+               sb.raw("[");
 
                if (value instanceof Collection) {
                   for (Object item : (Collection<Object>) value) {
                      if (item != null) {
                         String str = getString(item, element.format());
 
-                        sb.append('<').append(name).append('>').append(escape(str)).append("</").append(name).append(">\r\n");
+                        sb.value(str).comma();
                      }
                   }
                } else if (value.getClass().isArray()) {
@@ -80,7 +77,7 @@ public class XmlModelBuilder implements ModelBuilder {
                      if (item != null) {
                         String str = getString(item, element.format());
 
-                        sb.append('<').append(name).append('>').append(escape(str)).append("</").append(name).append(">\r\n");
+                        sb.value(str).comma();
                      }
                   }
                } else if (value instanceof Map) {
@@ -88,7 +85,7 @@ public class XmlModelBuilder implements ModelBuilder {
                      if (item != null) {
                         String str = getString(item, element.format());
 
-                        sb.append('<').append(name).append('>').append(escape(str)).append("</").append(name).append(">\r\n");
+                        sb.value(str).comma();
                      }
                   }
                } else {
@@ -96,20 +93,19 @@ public class XmlModelBuilder implements ModelBuilder {
                         ElementMeta.class.getSimpleName(), value.getClass()));
                }
 
-               if (names.length() > 0) {
-                  sb.append("</").append(names).append(">\r\n");
-               }
+               sb.trimComma();
+               sb.raw("]").comma();
             } else {
                String str = getString(value, element.format());
 
-               sb.append('<').append(name).append('>').append(escape(str)).append("</").append(name).append(">\r\n");
+               sb.value(str).comma();
             }
          }
       }
    }
 
    @SuppressWarnings("unchecked")
-   private void buildEntities(StringBuilder sb, ModelDescriptor descriptor, Object model) {
+   private void buildEntities(JsonBuilder sb, ModelDescriptor descriptor, Object model) {
       for (Field field : descriptor.getEntityFields()) {
          EntityMeta entity = field.getAnnotation(EntityMeta.class);
          Object value = getFieldValue(field, model);
@@ -117,19 +113,15 @@ public class XmlModelBuilder implements ModelBuilder {
          if (value != null) {
             String name = getNormalizedName(entity.value(), field);
 
-            if (entity.multiple()) {
-               String names = getNormalizedName(entity.names(), field);
+            sb.key(name).colon();
 
-               if (names.length() > 0) {
-                  sb.append('<').append(names).append(">\r\n");
-               }
+            if (entity.multiple()) {
+               sb.raw("[");
 
                if (value instanceof Collection) {
                   for (Object item : (Collection<Object>) value) {
                      if (item != null) {
-                        String str = getModel(item, name);
-
-                        sb.append(str).append("\r\n");
+                        sb.raw(String.format("%#s", item)).comma();
                      }
                   }
                } else if (value.getClass().isArray()) {
@@ -139,17 +131,13 @@ public class XmlModelBuilder implements ModelBuilder {
                      Object item = Array.get(value, i);
 
                      if (item != null) {
-                        String str = getModel(item, name);
-
-                        sb.append(str).append("\r\n");
+                        sb.raw(String.format("%#s", item)).comma();
                      }
                   }
                } else if (value instanceof Map) {
                   for (Object item : ((Map<Object, Object>) value).values()) {
                      if (item != null) {
-                        String str = getModel(item, name);
-
-                        sb.append(str).append("\r\n");
+                        sb.raw(String.format("%#s", item)).comma();
                      }
                   }
                } else {
@@ -157,70 +145,27 @@ public class XmlModelBuilder implements ModelBuilder {
                         EntityMeta.class.getSimpleName(), value.getClass()));
                }
 
-               if (names.length() > 0) {
-                  sb.append("</").append(names).append(">\r\n");
-               }
+               sb.trimComma();
+               sb.raw("]");
             } else {
-               String str = getModel(value, name);
-
-               sb.append(str).append("\r\n");
+               sb.raw(String.format("%#s", value)).comma();
             }
          }
       }
    }
 
-   private void buildPojos(StringBuilder sb, ModelDescriptor descriptor, Object model) {
+   private void buildPojos(JsonBuilder sb, ModelDescriptor descriptor, Object model) {
       for (Field field : descriptor.getPojoFields()) {
          PojoMeta entity = field.getAnnotation(PojoMeta.class);
          Object value = getFieldValue(field, model);
 
          if (value != null) {
             String name = getNormalizedName(entity.value(), field);
-            String str = Objects.forXml().build(name, value);
+            String str = Objects.forJson().from(value);
 
-            sb.append(str).append("\r\n");
+            sb.key(name).colon().value(str).comma();
          }
       }
-   }
-
-   private String escape(Object value) {
-      return escape(value, false);
-   }
-
-   private String escape(Object value, boolean text) {
-      if (value == null) {
-         return null;
-      }
-
-      String str = value.toString();
-      int len = str.length();
-      StringBuilder sb = new StringBuilder(len + 16);
-
-      for (int i = 0; i < len; i++) {
-         final char ch = str.charAt(i);
-
-         switch (ch) {
-         case '<':
-            sb.append("&lt;");
-            break;
-         case '>':
-            sb.append("&gt;");
-            break;
-         case '&':
-            sb.append("&amp;");
-            break;
-         case '"':
-            if (!text) {
-               sb.append("&quot;");
-               break;
-            }
-         default:
-            sb.append(ch);
-            break;
-         }
-      }
-
-      return sb.toString();
    }
 
    private Object getFieldValue(Field field, Object instance) {
@@ -233,32 +178,6 @@ public class XmlModelBuilder implements ModelBuilder {
       } catch (Exception e) {
          throw new RuntimeException(String.format("Error when getting value of field(%s) of %s", field.getName(),
                instance.getClass()));
-      }
-   }
-
-   private String getModel(Object value, String name) {
-      String model = value.toString();
-      String prefix = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n";
-
-      if (model.startsWith(prefix)) {
-         model = model.substring(prefix.length());
-      }
-
-      int pos1 = model.indexOf('>');
-      int pos2 = model.indexOf(' ');
-      int pos3 = model.lastIndexOf('/');
-      int off;
-
-      if (pos2 > 0 && pos2 < pos1) {
-         off = pos2;
-      } else {
-         off = pos1;
-      }
-
-      if (off >= 0) {
-         return "<" + name + model.substring(off, pos3 + 1) + name + ">";
-      } else {
-         return "<" + name + ">" + model + "</" + name + ">";
       }
    }
 

@@ -97,12 +97,22 @@
 					<role-hint>xml</role-hint>
 					<field-name>m_xmlBuilder</field-name>
 				</requirement>
+				<requirement>
+					<role>org.unidal.web.mvc.view.model.ModelBuilder</role>
+					<role-hint>json</role-hint>
+					<field-name>m_jsonBuilder</field-name>
+				</requirement>
 			</requirements>
 		</component>
 		<component>
 			<role>org.unidal.web.mvc.view.model.ModelBuilder</role>
 			<role-hint>xml</role-hint>
 			<implementation>org.unidal.web.mvc.view.model.XmlModelBuilder</implementation>
+		</component>
+		<component>
+			<role>org.unidal.web.mvc.view.model.ModelBuilder</role>
+			<role-hint>json</role-hint>
+			<implementation>org.unidal.web.mvc.view.model.JsonModelBuilder</implementation>
 		</component>
 	</components>
 </plexus>

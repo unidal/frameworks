@@ -11,4 +11,6 @@ public interface ModelDescriptor {
    public List<Field> getElementFields();
 
    public List<Field> getEntityFields();
+   
+   public List<Field> getPojoFields();
 }

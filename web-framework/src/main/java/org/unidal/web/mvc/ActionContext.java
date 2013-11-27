@@ -215,7 +215,7 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
 
       sb.append('}');
 
-      m_httpServletResponse.setContentType("application/json");
+      m_httpServletResponse.setContentType("application/json; charset=utf-8");
       m_httpServletResponse.getWriter().write(sb.toString());
       m_processStopped = true;
    }

@@ -19,10 +19,14 @@ import org.unidal.web.mvc.view.annotation.AttributeMeta;
 import org.unidal.web.mvc.view.annotation.ElementMeta;
 import org.unidal.web.mvc.view.annotation.EntityMeta;
 import org.unidal.web.mvc.view.annotation.ModelMeta;
+import org.unidal.web.mvc.view.annotation.PojoMeta;
 
 public class DefaultModelHandler implements ModelHandler {
    @Inject("xml")
    private ModelBuilder m_xmlBuilder;
+
+   @Inject("json")
+   private ModelBuilder m_jsonBuilder;
 
    private Map<Class<?>, ModelDescriptor> m_map = new HashMap<Class<?>, ModelDescriptor>();
 
@@ -32,6 +36,8 @@ public class DefaultModelHandler implements ModelHandler {
 
       if ("xml".equals(forceDownload)) {
          handleXmlDownload(req, res);
+      } else if ("json".equals(forceDownload)) {
+         handleJsonDownload(req, res);
       }
    }
 
@@ -58,6 +64,29 @@ public class DefaultModelHandler implements ModelHandler {
          ctx.stopProcess();
       }
    }
+   private void handleJsonDownload(HttpServletRequest req, HttpServletResponse res) throws UnsupportedEncodingException, IOException {
+      ViewModel<?, ?, ?> model = (ViewModel<?, ?, ?>) req.getAttribute("model");
+      Class<?> clazz = model.getClass();
+      ModelDescriptor descriptor = m_map.get(clazz);
+      
+      if (descriptor == null) {
+         descriptor = new AnnotationModelDescriptor(clazz);
+         m_map.put(clazz, descriptor);
+      }
+      
+      if (descriptor.getModelName() != null) {
+         String json = m_jsonBuilder.build(descriptor, model);
+         byte[] data = json.getBytes("utf-8");
+         
+         res.setContentType("application/json; charset=utf-8");
+         res.setContentLength(data.length);
+         res.getOutputStream().write(data);
+         
+         ActionContext<?> ctx = (ActionContext<?>) req.getAttribute("ctx");
+         
+         ctx.stopProcess();
+      }
+   }
 
    static class AnnotationModelDescriptor implements ModelDescriptor {
       private Class<?> m_clazz;
@@ -69,6 +98,8 @@ public class DefaultModelHandler implements ModelHandler {
       private List<Field> m_elementFields = new ArrayList<Field>();
 
       private List<Field> m_entityFields = new ArrayList<Field>();
+
+      private List<Field> m_pojoFields = new ArrayList<Field>();
 
       public AnnotationModelDescriptor(Class<?> clazz) {
          m_clazz = clazz;
@@ -91,6 +122,11 @@ public class DefaultModelHandler implements ModelHandler {
       }
 
       @Override
+      public List<Field> getPojoFields() {
+         return m_pojoFields;
+      }
+
+      @Override
       public String getModelName() {
          return m_modelName;
       }
@@ -108,13 +144,14 @@ public class DefaultModelHandler implements ModelHandler {
                   AttributeMeta attribute = field.getAnnotation(AttributeMeta.class);
                   ElementMeta element = field.getAnnotation(ElementMeta.class);
                   EntityMeta entity = field.getAnnotation(EntityMeta.class);
-                  int count = (attribute == null ? 0 : 1) + (element == null ? 0 : 1) + (entity == null ? 0 : 1);
+                  PojoMeta pojo = field.getAnnotation(PojoMeta.class);
+                  int count = (attribute == null ? 0 : 1) + (element == null ? 0 : 1) + (entity == null ? 0 : 1)
+                        + (pojo == null ? 0 : 1);
 
                   if (count > 1) {
-                     throw new RuntimeException(
-                           String.format("Only one of %s, %s or %s could be annotated to a model field!",
-                                 AttributeMeta.class.getSimpleName(), ElementMeta.class.getSimpleName(),
-                                 EntityMeta.class.getSimpleName()));
+                     throw new RuntimeException(String.format("Only one of %s, %s, %s or %s could be annotated to a model field!",
+                           AttributeMeta.class.getSimpleName(), ElementMeta.class.getSimpleName(),
+                           EntityMeta.class.getSimpleName(), PojoMeta.class.getSimpleName()));
                   }
 
                   if (attribute != null) {
@@ -123,6 +160,8 @@ public class DefaultModelHandler implements ModelHandler {
                      m_elementFields.add(field);
                   } else if (entity != null) {
                      m_entityFields.add(field);
+                  } else if (pojo != null) {
+                     m_pojoFields.add(field);
                   }
                }
 

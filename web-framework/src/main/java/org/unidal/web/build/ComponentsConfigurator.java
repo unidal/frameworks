@@ -27,6 +27,7 @@ import org.unidal.web.mvc.payload.MultipartParameterProvider;
 import org.unidal.web.mvc.payload.ParameterProvider;
 import org.unidal.web.mvc.payload.UrlEncodedParameterProvider;
 import org.unidal.web.mvc.view.model.DefaultModelHandler;
+import org.unidal.web.mvc.view.model.JsonModelBuilder;
 import org.unidal.web.mvc.view.model.ModelBuilder;
 import org.unidal.web.mvc.view.model.ModelHandler;
 import org.unidal.web.mvc.view.model.XmlModelBuilder;
@@ -59,8 +60,10 @@ class ComponentsConfigurator extends AbstractResourceConfigurator {
             .is(PER_LOOKUP));
 
       all.add(C(ModelHandler.class, DefaultModelHandler.class) //
-            .req(ModelBuilder.class, "xml", "m_xmlBuilder"));
+            .req(ModelBuilder.class, "xml", "m_xmlBuilder") //
+            .req(ModelBuilder.class, "json", "m_jsonBuilder"));
       all.add(C(ModelBuilder.class, "xml", XmlModelBuilder.class));
+      all.add(C(ModelBuilder.class, "json", JsonModelBuilder.class));
 
       return all;
    }

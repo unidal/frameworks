@@ -20,6 +20,96 @@ public class Objects {
       return JsonObject.COMPACT;
    }
 
+   public static XmlObject forXml() {
+      return XmlObject.DEFAULT;
+   }
+
+   public static JsonBuilder newJsonBuilder(int capacity) {
+      return new JsonBuilder(new StringBuilder(capacity));
+   }
+
+   public static class JsonBuilder {
+      private StringBuilder m_sb;
+
+      public JsonBuilder(StringBuilder sb) {
+         m_sb = sb;
+      }
+
+      public JsonBuilder colon() {
+         m_sb.append(':');
+         return this;
+      }
+
+      public JsonBuilder comma() {
+         m_sb.append(',');
+         return this;
+      }
+
+      public JsonBuilder key(String key) {
+         m_sb.append('"').append(key).append('"');
+         return this;
+      }
+
+      public JsonBuilder raw(String rawString) {
+         m_sb.append(rawString);
+         return this;
+      }
+
+      @Override
+      public String toString() {
+         return m_sb.toString();
+      }
+
+      public JsonBuilder trimComma() {
+         int len = m_sb.length();
+
+         if (len > 0 && m_sb.charAt(len - 1) == ',') {
+            m_sb.setLength(len - 1);
+         }
+
+         return this;
+      }
+
+      public JsonBuilder value(String value) {
+         if (value == null) {
+            m_sb.append("null");
+         } else {
+            String str = value.toString();
+
+            int len = str.length();
+
+            m_sb.append('"');
+
+            for (int i = 0; i < len; i++) {
+               char ch = str.charAt(i);
+
+               switch (ch) {
+               case '\t':
+                  m_sb.append('\\').append('t');
+                  break;
+               case '\r':
+                  m_sb.append('\\').append('r');
+                  break;
+               case '\n':
+                  m_sb.append('\\').append('n');
+                  break;
+               case '\\':
+               case '"':
+                  m_sb.append('\\').append(ch);
+                  break;
+               default:
+                  m_sb.append(ch);
+                  break;
+               }
+            }
+
+            m_sb.append('"');
+         }
+
+         return this;
+      }
+   }
+
    public static enum JsonObject {
       COMPACT;
 
@@ -200,76 +290,13 @@ public class Objects {
          return false;
       }
 
-      static class JsonBuilder {
-         private StringBuilder m_sb;
+   }
 
-         public JsonBuilder(StringBuilder sb) {
-            m_sb = sb;
-         }
+   public static enum XmlObject {
+      DEFAULT;
 
-         public JsonBuilder colon() {
-            m_sb.append(':');
-            return this;
-         }
-
-         public JsonBuilder comma() {
-            m_sb.append(',');
-            return this;
-         }
-
-         public JsonBuilder key(String key) {
-            m_sb.append('"').append(key).append('"');
-            return this;
-         }
-
-         public JsonBuilder raw(String rawString) {
-            m_sb.append(rawString);
-            return this;
-         }
-
-         @Override
-         public String toString() {
-            return m_sb.toString();
-         }
-
-         public JsonBuilder value(String value) {
-            if (value == null) {
-               m_sb.append("null");
-            } else {
-               String str = value.toString();
-
-               int len = str.length();
-
-               m_sb.append('"');
-
-               for (int i = 0; i < len; i++) {
-                  char ch = str.charAt(i);
-
-                  switch (ch) {
-                  case '\t':
-                     m_sb.append('\\').append('t');
-                     break;
-                  case '\r':
-                     m_sb.append('\\').append('r');
-                     break;
-                  case '\n':
-                     m_sb.append('\\').append('n');
-                     break;
-                  case '\\':
-                  case '"':
-                     m_sb.append('\\').append(ch);
-                     break;
-                  default:
-                     m_sb.append(ch);
-                     break;
-                  }
-               }
-
-               m_sb.append('"');
-            }
-
-            return this;
-         }
+      public String build(String name, Object pojo) {
+         return null;
       }
    }
 }
