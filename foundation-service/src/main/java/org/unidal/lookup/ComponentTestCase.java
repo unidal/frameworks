@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.SortedMap;
 
 import org.codehaus.plexus.DefaultContainerConfiguration;
-import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.MutablePlexusContainer;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
@@ -22,7 +21,7 @@ import org.unidal.lookup.extension.PostConstructionPhase;
 
 import com.google.common.collect.Multimap;
 
-public abstract class ComponentTestCase {
+public abstract class ComponentTestCase extends ContainerHolder {
    private MutablePlexusContainer m_container;
 
    private Map<Object, Object> m_context;
@@ -32,7 +31,7 @@ public abstract class ComponentTestCase {
    protected <T> void defineComponent(Class<T> role) throws Exception {
       defineComponent(role, null, role);
    }
-   
+
    protected <T> void defineComponent(Class<T> role, Class<? extends T> implementation) throws Exception {
       defineComponent(role, null, implementation);
    }
@@ -42,7 +41,7 @@ public abstract class ComponentTestCase {
       if (roleHint == null) {
          roleHint = PlexusConstants.PLEXUS_DEFAULT_HINT;
       }
-      
+
       ComponentDescriptor<T> descriptor = new ComponentDescriptor<T>((Class<T>) implementation, m_container.getContainerRealm());
 
       descriptor.setRoleClass(role);
@@ -98,8 +97,9 @@ public abstract class ComponentTestCase {
       return configuration;
    }
 
-   protected MutablePlexusContainer getContainer() {
-      return m_container;
+   @Override
+   public MutablePlexusContainer getContainer() {
+      return (MutablePlexusContainer) super.getContainer();
    }
 
    protected String getCustomConfigurationName() {
@@ -108,21 +108,6 @@ public abstract class ComponentTestCase {
 
    protected String getDefaultConfigurationName() throws Exception {
       return getClass().getName().replace('.', '/') + ".xml";
-   }
-
-   // ----------------------------------------------------------------------
-   // Container access
-   // ----------------------------------------------------------------------
-   protected <T> T lookup(Class<T> role) throws Exception {
-      return (T) getContainer().lookup(role);
-   }
-
-   protected <T> T lookup(Class<T> role, Object roleHint) throws Exception {
-      return (T) getContainer().lookup(role, roleHint == null ? null : roleHint.toString());
-   }
-
-   protected <T> void release(T component) throws Exception {
-      getContainer().release(component);
    }
 
    @Before
@@ -149,15 +134,14 @@ public abstract class ComponentTestCase {
          m_context.put("plexus.home", f.getAbsolutePath());
       }
 
-      m_container = new DefaultPlexusContainer(getConfiguration());
+      m_container = (MutablePlexusContainer) ContainerLoader.getDefaultContainer(getConfiguration());
       m_container.getComponentRegistry().registerComponentManagerFactory(new EnumComponentManagerFactory());
+
+      super.setContainer(m_container);
    }
 
    @After
    public void tearDown() throws Exception {
-      if (m_container != null) {
-         m_container.dispose();
-         m_container = null;
-      }
+      ContainerLoader.destroyDefaultContainer();
    }
 }

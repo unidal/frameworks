@@ -43,6 +43,20 @@ public abstract class ContainerHolder implements Contextualizable {
       }
    }
 
+   protected <T> T lookupById(Class<T> role, String id) throws LookupException {
+      return lookupById(role, null, id);
+   }
+
+   protected <T> T lookupById(Class<T> role, String roleHint, String id) throws LookupException {
+      try {
+         return ContainerLoader.lookupById(role, roleHint, id);
+      } catch (ComponentLookupException e) {
+         String key = role.getName() + ":" + (roleHint == null ? "default" : roleHint.toString()) + "@" + id;
+
+         throw new LookupException("Component(" + key + ") lookup failure. Details: " + e.getMessage(), e);
+      }
+   }
+
    protected <T> List<T> lookupList(Class<T> role) throws LookupException {
       try {
          return (List<T>) m_container.lookupList(role);
@@ -112,4 +126,9 @@ public abstract class ContainerHolder implements Contextualizable {
          }
       }
    }
+
+   protected void setContainer(PlexusContainer container) {
+      m_container = container;
+   }
+
 }

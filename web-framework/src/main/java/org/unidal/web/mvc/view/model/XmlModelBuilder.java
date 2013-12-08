@@ -57,7 +57,7 @@ public class XmlModelBuilder implements ModelBuilder {
             String name = getNormalizedName(element.value(), field);
 
             if (element.multiple()) {
-               String names = getNormalizedName(element.names(), field);
+               String names = element.names();
 
                if (names.length() > 0) {
                   sb.append('<').append(names).append(">\r\n");
@@ -118,7 +118,7 @@ public class XmlModelBuilder implements ModelBuilder {
             String name = getNormalizedName(entity.value(), field);
 
             if (entity.multiple()) {
-               String names = getNormalizedName(entity.names(), field);
+               String names = entity.names();
 
                if (names.length() > 0) {
                   sb.append('<').append(names).append(">\r\n");
