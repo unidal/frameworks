@@ -28,6 +28,10 @@ public abstract class ComponentTestCase extends ContainerHolder {
 
    private String m_basedir;
 
+   protected void browse(String url) throws IOException {
+      java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
+   }
+
    protected <T> void defineComponent(Class<T> role) throws Exception {
       defineComponent(role, null, role);
    }
