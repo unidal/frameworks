@@ -85,6 +85,8 @@ public class Files {
       }
 
       public void copyFile(File from, File to) throws IOException {
+         createDir(to.getParentFile());
+
          IO.INSTANCE.copy(new FileInputStream(from), new FileOutputStream(to), AutoClose.INPUT_OUTPUT);
          to.setLastModified(from.lastModified());
       }
@@ -205,10 +207,7 @@ public class Files {
             throw new IOException(String.format("Can't write to an existing directory(%s)", file));
          }
 
-         File parent = file.getCanonicalFile().getParentFile();
-         if (!parent.exists() && !parent.mkdirs()) {
-            throw new IOException(String.format("Can't create directory(%s)!", parent));
-         }
+         Dir.INSTANCE.createDir(file.getParentFile());
 
          FileOutputStream fos = new FileOutputStream(file);
 
@@ -261,7 +260,10 @@ public class Files {
                if (entry.isDirectory()) {
                   Dir.INSTANCE.createDir(new File(baseDir, entry.getName()));
                } else {
-                  IO.INSTANCE.copy(zis, new FileOutputStream(new File(baseDir, entry.getName())), AutoClose.OUTPUT);
+                  File target = new File(baseDir, entry.getName());
+
+                  target.getParentFile().mkdirs();
+                  IO.INSTANCE.copy(zis, new FileOutputStream(target), AutoClose.OUTPUT);
                }
             }
          }
