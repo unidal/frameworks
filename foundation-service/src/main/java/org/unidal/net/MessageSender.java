@@ -81,7 +81,7 @@ class MessageSender implements Task {
 
       private ChannelFuture m_activeFuture;
 
-      private int m_activeIndex;
+      private int m_activeIndex = -1;
 
       private ChannelFuture m_lastFuture;
 
@@ -164,7 +164,7 @@ class MessageSender implements Task {
 
       @Override
       public String getName() {
-         return "MessageSender-ChannelManager";
+         return MessageSender.this.getClass().getSimpleName() + "-" + getClass().getSimpleName();
       }
 
       @Override
@@ -172,7 +172,7 @@ class MessageSender implements Task {
          try {
             while (m_active) {
                try {
-                  if (m_activeFuture != null && !m_activeFuture.getChannel().isOpen()) {
+                  if (m_activeIndex == -1 || m_activeFuture != null && !m_activeFuture.getChannel().isOpen()) {
                      m_activeIndex = m_serverAddresses.size();
                   }
 

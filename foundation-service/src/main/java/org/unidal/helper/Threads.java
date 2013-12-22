@@ -16,7 +16,7 @@ import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 
 public class Threads {
-   private static Manager s_manager = new Manager();
+   private static volatile Manager s_manager = new Manager();
 
    public static void addListener(ThreadListener listener) {
       s_manager.addListener(listener);

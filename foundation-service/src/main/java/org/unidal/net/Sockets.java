@@ -20,16 +20,16 @@ public class Sockets {
 
 		private String m_threadNamePrefix;
 
+      private MessageDelegate m_delegate;
+
 		public SocketClient connectTo(int port, String... servers) {
 			m_port = port;
 			m_servers = servers;
 			return this;
 		}
 
-		public SocketClient threads(String threadNamePrefix, int maxThreads) {
-			m_threadNamePrefix = threadNamePrefix;
-			m_maxThreads = maxThreads;
-			return this;
+		public MessageDelegate getMessageDelegate() {
+		   return m_delegate;
 		}
 
 		public void shutdown() {
@@ -37,10 +37,17 @@ public class Sockets {
 		}
 
 		public SocketClient start(MessageDelegate delegate) {
+		   m_delegate = delegate;
 			m_sender = new MessageSender(delegate, m_port, m_servers);
 			m_sender.setThreadNamePrefix(m_threadNamePrefix);
 			m_sender.setMaxThreads(m_maxThreads);
 			m_sender.startClient();
+			return this;
+		}
+		
+		public SocketClient threads(String threadNamePrefix, int maxThreads) {
+			m_threadNamePrefix = threadNamePrefix;
+			m_maxThreads = maxThreads;
 			return this;
 		}
 	}
@@ -67,12 +74,6 @@ public class Sockets {
 			return this;
 		}
 
-		public SocketServer threads(String threadNamePrefix, int maxThreads) {
-			m_threadNamePrefix = threadNamePrefix;
-			m_maxThreads = maxThreads;
-			return this;
-		}
-
 		public void shutdown() {
 			if (m_receiver == null) {
 				throw new IllegalStateException("Socket server is not started yet!");
@@ -86,6 +87,12 @@ public class Sockets {
 			m_receiver.setThreadNamePrefix(m_threadNamePrefix);
 			m_receiver.setMaxThreads(m_maxThreads);
 			m_receiver.startServer();
+			return this;
+		}
+
+		public SocketServer threads(String threadNamePrefix, int maxThreads) {
+			m_threadNamePrefix = threadNamePrefix;
+			m_maxThreads = maxThreads;
 			return this;
 		}
 	}
