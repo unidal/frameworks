@@ -1,7 +1,10 @@
 package org.unidal.net;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.codehaus.plexus.logging.Logger;
 import org.jboss.netty.bootstrap.ServerBootstrap;
@@ -42,11 +45,36 @@ class MessageReceiver {
 
    private Logger m_logger = LoggerFactory.getLogger(MessageReceiver.class);
 
+   private static ConcurrentMap<String, AtomicInteger> m_indexes = new ConcurrentHashMap<String, AtomicInteger>();
+
    public MessageReceiver(MessageDelegate delegate, int port, String host) {
       m_delegate = delegate;
       m_port = port;
       m_host = host;
       m_threadNamePrefix = delegate.getClass().getSimpleName();
+   }
+
+   private String getUniquePrefix() {
+      String name;
+
+      if (m_threadNamePrefix == null) {
+         String className = new Exception().getStackTrace()[2].getClassName();
+         int pos = className.lastIndexOf('.');
+
+         name = className.substring(pos + 1);
+      } else {
+         name = m_threadNamePrefix;
+      }
+
+      m_indexes.putIfAbsent(name, new AtomicInteger(1));
+
+      AtomicInteger index = m_indexes.get(name);
+
+      if (index.getAndIncrement() > 1) {
+         name += index.get();
+      }
+
+      return name;
    }
 
    public void setMaxThreads(int maxThreads) {
@@ -74,25 +102,16 @@ class MessageReceiver {
          address = new InetSocketAddress(m_host, m_port);
       }
 
-      String name;
-
-      if (m_threadNamePrefix == null) {
-         String className = new Exception().getStackTrace()[2].getClassName();
-         int pos = className.lastIndexOf('.');
-
-         name = className.substring(pos + 1);
-      } else {
-         name = m_threadNamePrefix;
-      }
+      String name = getUniquePrefix();
 
       if (m_maxThreads > 0) {
-         ExecutorService bossExecutor = Threads.forPool().getFixedThreadPool(name + "Boss" + address, m_maxThreads);
-         ExecutorService workerExecutor = Threads.forPool().getFixedThreadPool(name + "Worker", m_maxThreads);
+         ExecutorService bossExecutor = Threads.forPool().getFixedThreadPool(name + "-Boss-" + address, m_maxThreads);
+         ExecutorService workerExecutor = Threads.forPool().getFixedThreadPool(name + "-Worker", m_maxThreads);
 
          factory = new NioServerSocketChannelFactory(bossExecutor, workerExecutor);
       } else {
-         ExecutorService bossExecutor = Threads.forPool().getCachedThreadPool(name + "Boss-" + address);
-         ExecutorService workerExecutor = Threads.forPool().getCachedThreadPool(name + "Worker");
+         ExecutorService bossExecutor = Threads.forPool().getCachedThreadPool(name + "-Boss-" + address);
+         ExecutorService workerExecutor = Threads.forPool().getCachedThreadPool(name + "-Worker");
 
          factory = new NioServerSocketChannelFactory(bossExecutor, workerExecutor);
       }

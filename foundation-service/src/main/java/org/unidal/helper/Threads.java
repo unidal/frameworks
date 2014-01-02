@@ -181,6 +181,11 @@ public class Threads {
             synchronized (this) {
                groupManager = m_groupManagers.get(name);
 
+               if (groupManager != null && !groupManager.isActive()) {
+                  m_groupManagers.remove(name);
+                  groupManager = null;
+               }
+
                if (groupManager == null) {
                   groupManager = new ThreadGroupManager(this, name);
                   m_groupManagers.put(name, groupManager);
@@ -309,10 +314,17 @@ public class Threads {
 
       private ThreadGroup m_threadGroup;
 
+      private boolean m_active;
+
       public ThreadGroupManager(UncaughtExceptionHandler handler, String name) {
          m_threadGroup = new ThreadGroup(name);
          m_factory = new DefaultThreadFactory(m_threadGroup);
          m_factory.setUncaughtExceptionHandler(handler);
+         m_active = true;
+      }
+
+      public boolean isActive() {
+         return m_active;
       }
 
       public void awaitTermination(long time, TimeUnit unit) {
@@ -367,6 +379,8 @@ public class Threads {
                thread.interrupt();
             }
          }
+
+         m_active = false;
       }
 
       public Thread start(Runnable runnable) {
@@ -435,6 +449,11 @@ public class Threads {
             synchronized (this) {
                service = m_services.get(name);
 
+               if (service != null && service.isShutdown()) {
+                  m_services.remove(name);
+                  service = null;
+               }
+
                if (service == null) {
                   DefaultThreadFactory factory = newThreadFactory(name);
                   service = Executors.newCachedThreadPool(factory);
@@ -454,6 +473,11 @@ public class Threads {
          if (service == null) {
             synchronized (this) {
                service = m_services.get(name);
+
+               if (service != null && service.isShutdown()) {
+                  m_services.remove(name);
+                  service = null;
+               }
 
                if (service == null) {
                   DefaultThreadFactory factory = newThreadFactory(name);
