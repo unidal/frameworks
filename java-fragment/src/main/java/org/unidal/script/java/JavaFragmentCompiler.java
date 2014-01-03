@@ -7,10 +7,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.script.Compilable;
@@ -29,6 +29,27 @@ public class JavaFragmentCompiler implements Compilable {
 
    public JavaFragmentCompiler(JavaFragmentEngine engine) {
       m_engine = engine;
+   }
+
+   private void buildClasspathEntries(ClassLoader loader, Set<File> files) {
+      if (loader instanceof URLClassLoader) {
+         URL[] urLs = ((URLClassLoader) loader).getURLs();
+
+         for (URL url : urLs) {
+            files.add(new File(url.getPath()));
+         }
+
+         buildClasspathEntries(loader.getParent(), files);
+      } else if (loader == null) {
+         String classpath = System.getProperty("java.class.path", "");
+         String[] entries = classpath.split(Pattern.quote(File.pathSeparator));
+
+         for (String entry : entries) {
+            if (entry.length() > 0) {
+               files.add(new File(entry));
+            }
+         }
+      }
    }
 
    private URL[] buildUrls(File outputDir) {
@@ -74,11 +95,10 @@ public class JavaFragmentCompiler implements Compilable {
    @Override
    public CompiledScript compile(String script) throws ScriptException {
       File outputDir = getOutputDirectory();
-      String classpath = System.getProperty("java.class.path");
       CompiledJavaFragment compiledScript = new CompiledJavaFragment(m_engine);
       JavaSourceFromString source = new JavaSourceFromString(outputDir, script);
 
-      compileInternal(script, outputDir, classpath, source);
+      compileInternal(script, outputDir, source);
 
       URL[] urls = buildUrls(outputDir);
       ClassLoader parent = Thread.currentThread().getContextClassLoader();
@@ -89,8 +109,7 @@ public class JavaFragmentCompiler implements Compilable {
       return compiledScript;
    }
 
-   private void compileInternal(String script, File outputDir, String classpath, JavaSourceFromString source)
-         throws ScriptException {
+   private void compileInternal(String script, File outputDir, JavaSourceFromString source) throws ScriptException {
       Locale locale = Locale.getDefault();
       Charset charset = Charset.defaultCharset();
       JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -100,7 +119,7 @@ public class JavaFragmentCompiler implements Compilable {
       outputDir.mkdirs();
 
       try {
-         manager.setLocation(StandardLocation.CLASS_PATH, toClassFiles(classpath));
+         manager.setLocation(StandardLocation.CLASS_PATH, getClasspathEntries());
          manager.setLocation(StandardLocation.CLASS_OUTPUT, Arrays.asList(outputDir.getCanonicalFile()));
 
          Boolean result = compiler.getTask(null, manager, diagnostics, null, null, Arrays.asList(source)).call();
@@ -120,19 +139,14 @@ public class JavaFragmentCompiler implements Compilable {
       }
    }
 
-   private File getOutputDirectory() {
-      return new File("target/tmp-classes");
+   private Set<File> getClasspathEntries() {
+      Set<File> files = new HashSet<File>(64);
+
+      buildClasspathEntries(Thread.currentThread().getContextClassLoader(), files);
+      return files;
    }
 
-   private List<File> toClassFiles(String classpath) {
-      String[] paths = classpath.split(Pattern.quote(File.pathSeparator));
-      int len = paths.length;
-      List<File> files = new ArrayList<File>(len);
-
-      for (String path : paths) {
-         files.add(new File(path));
-      }
-
-      return files;
+   private File getOutputDirectory() {
+      return new File("target/tmp-classes");
    }
 }
