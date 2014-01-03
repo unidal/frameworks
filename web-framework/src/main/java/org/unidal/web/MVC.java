@@ -2,6 +2,7 @@ package org.unidal.web;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Enumeration;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -24,15 +25,20 @@ public class MVC extends AbstractContainerServlet {
 
    @Override
    protected void initComponents(ServletConfig config) throws Exception {
-      String catClientXml = config.getInitParameter("cat-client-xml");
-      String initModules = config.getInitParameter("init-modules");
-
       getLogger().info("MVC is starting at " + config.getServletContext().getContextPath());
 
-      if (!"false".equals(initModules)) {
-         initializeModules();
-      }
+      initializeCat(config);
+      initializeModules(config);
 
+      m_handler = lookup(RequestLifecycle.class, "mvc");
+      m_handler.setServletContext(config.getServletContext());
+
+      config.getServletContext().setAttribute(ID, this);
+      getLogger().info("MVC started at " + config.getServletContext().getContextPath());
+   }
+
+   private void initializeCat(ServletConfig config) {
+      String catClientXml = config.getInitParameter("cat-client-xml");
       File clientXmlFile = null;
 
       if (catClientXml == null) {
@@ -44,28 +50,38 @@ public class MVC extends AbstractContainerServlet {
       }
 
       Cat.initialize(getContainer(), clientXmlFile);
-
-      m_handler = lookup(RequestLifecycle.class, "mvc");
-      m_handler.setServletContext(config.getServletContext());
-
-      config.getServletContext().setAttribute(ID, this);
-      getLogger().info("MVC started at " + config.getServletContext().getContextPath());
    }
 
-   private void initializeModules() throws ServletException {
-      try {
-         ModuleContext ctx = new DefaultModuleContext(getContainer());
-         ModuleInitializer initializer = ctx.lookup(ModuleInitializer.class);
+   @SuppressWarnings("unchecked")
+   private void initializeModules(ServletConfig config) throws ServletException {
+      String initModules = config.getInitParameter("init-modules");
 
-         initializer.execute(ctx);
-      } catch (Exception e) {
-         throw new ServletException(e);
+      if (!"false".equals(initModules)) {
+         try {
+            ModuleContext ctx = new DefaultModuleContext(getContainer());
+            ModuleInitializer initializer = ctx.lookup(ModuleInitializer.class);
+            Enumeration<String> names = config.getInitParameterNames();
+
+            while (names.hasMoreElements()) {
+               String name = names.nextElement();
+               String value = config.getInitParameter(name);
+
+               ctx.setAttribute(name, value);
+            }
+
+            initializer.execute(ctx);
+         } catch (Exception e) {
+            throw new ServletException(e);
+         }
       }
    }
 
    @Override
    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-      request.setCharacterEncoding("UTF-8");
+      if (request.getCharacterEncoding() == null) {
+         request.setCharacterEncoding("UTF-8");
+      }
+
       response.setContentType("text/html;charset=UTF-8");
 
       try {
