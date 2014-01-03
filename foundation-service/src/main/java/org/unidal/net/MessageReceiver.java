@@ -135,6 +135,20 @@ class MessageReceiver {
 
    class ChannelHandler extends SimpleChannelHandler {
       @Override
+      public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent event) throws Exception {
+         super.channelConnected(ctx, event);
+
+         m_logger.info(String.format("Socket client(%s) connected!", event.getChannel().getRemoteAddress()));
+      }
+
+      @Override
+      public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent event) throws Exception {
+         super.channelDisconnected(ctx, event);
+
+         m_logger.info(String.format("Socket client(%s) disconnected!", event.getChannel().getRemoteAddress()));
+      }
+
+      @Override
       public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent event) throws Exception {
          m_channelGroup.add(event.getChannel());
       }

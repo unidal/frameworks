@@ -37,7 +37,7 @@ class MessageSender implements Task {
 
    private String m_threadNamePrefix;
 
-   private FailoverChannelManager m_manager;
+   private ChannelManager m_manager;
 
    private Logger m_logger = LoggerFactory.getLogger(MessageReceiver.class);
 
@@ -149,31 +149,13 @@ class MessageSender implements Task {
       String name = getUniquePrefix();
 
       m_active = true;
-      m_manager = new FailoverChannelManager();
+      m_manager = new ChannelManager();
 
       Threads.forGroup(name).start(this);
       Threads.forGroup(name).start(m_manager);
    }
 
-   static class ExceptionHandler extends SimpleChannelHandler {
-      private Logger m_logger;
-
-      public ExceptionHandler(Logger logger) {
-         m_logger = logger;
-      }
-
-      @Override
-      public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
-         m_logger.warn("Channel disconnected by remote address: " + e.getChannel().getRemoteAddress());
-      }
-
-      @Override
-      public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
-         e.getChannel().close();
-      }
-   }
-
-   class FailoverChannelManager implements Task {
+   class ChannelManager implements Task {
       private List<InetSocketAddress> m_serverAddresses;
 
       private ClientBootstrap m_bootstrap;
@@ -186,16 +168,17 @@ class MessageSender implements Task {
 
       private AtomicInteger m_reconnects = new AtomicInteger(999);
 
-      public FailoverChannelManager() {
+      public ChannelManager() {
          NioClientSocketChannelFactory factory;
+         String name = getUniquePrefix();
 
          if (m_maxThreads > 0) {
-            ExecutorService bossExecutor = Threads.forPool().getFixedThreadPool(m_threadNamePrefix + "-Boss", 10);
-            ExecutorService workerExecutor = Threads.forPool().getFixedThreadPool(m_threadNamePrefix + "-Worker", 10);
+            ExecutorService bossExecutor = Threads.forPool().getFixedThreadPool(name + "-Boss", 10);
+            ExecutorService workerExecutor = Threads.forPool().getFixedThreadPool(name + "-Worker", m_maxThreads);
             factory = new NioClientSocketChannelFactory(bossExecutor, workerExecutor);
          } else {
-            ExecutorService bossExecutor = Threads.forPool().getCachedThreadPool(m_threadNamePrefix + "-Boss");
-            ExecutorService workerExecutor = Threads.forPool().getCachedThreadPool(m_threadNamePrefix + "-Worker");
+            ExecutorService bossExecutor = Threads.forPool().getCachedThreadPool(name + "-Boss");
+            ExecutorService workerExecutor = Threads.forPool().getCachedThreadPool(name + "-Worker");
             factory = new NioClientSocketChannelFactory(bossExecutor, workerExecutor);
          }
 
@@ -307,6 +290,24 @@ class MessageSender implements Task {
          }
 
          m_bootstrap.getFactory().releaseExternalResources();
+      }
+   }
+
+   static class ExceptionHandler extends SimpleChannelHandler {
+      private Logger m_logger;
+
+      public ExceptionHandler(Logger logger) {
+         m_logger = logger;
+      }
+
+      @Override
+      public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
+         m_logger.warn("Socket disconnected from " + e.getChannel().getRemoteAddress());
+      }
+
+      @Override
+      public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
+         e.getChannel().close();
       }
    }
 }
