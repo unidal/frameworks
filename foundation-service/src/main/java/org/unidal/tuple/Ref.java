@@ -7,7 +7,7 @@ package org.unidal.tuple;
  *           value
  */
 public class Ref<T> implements Tuple {
-   private T m_value;
+   private volatile T m_value;
 
    public Ref() {
    }

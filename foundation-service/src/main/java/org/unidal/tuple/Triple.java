@@ -11,11 +11,11 @@ package org.unidal.tuple;
  *           last
  */
 public class Triple<F, M, L> implements Tuple {
-   private F m_first;
+   private volatile F m_first;
 
-   private M m_middle;
+   private volatile M m_middle;
 
-   private L m_last;
+   private volatile L m_last;
 
    public Triple() {
    }

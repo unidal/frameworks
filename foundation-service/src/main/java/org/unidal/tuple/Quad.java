@@ -13,13 +13,13 @@ package org.unidal.tuple;
  *           north
  */
 public class Quad<E, S, W, N> implements Tuple {
-   private E m_east;
+   private volatile E m_east;
 
-   private S m_south;
+   private volatile S m_south;
 
-   private W m_west;
+   private volatile W m_west;
 
-   private N m_north;
+   private volatile N m_north;
 
    public Quad() {
    }

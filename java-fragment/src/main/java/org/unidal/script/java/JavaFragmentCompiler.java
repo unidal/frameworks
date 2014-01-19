@@ -147,6 +147,12 @@ public class JavaFragmentCompiler implements Compilable {
    }
 
    private File getOutputDirectory() {
-      return new File("target/tmp-classes");
+      Object outputDirectory = m_engine.get(JavaFragmentEngine.OUTPUT_DIRECTORY);
+
+      if (outputDirectory == null) {
+         return new File("target/tmp-classes");
+      } else {
+         return new File(String.valueOf(outputDirectory));
+      }
    }
 }

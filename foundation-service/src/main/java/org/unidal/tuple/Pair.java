@@ -9,9 +9,9 @@ package org.unidal.tuple;
  *           value
  */
 public class Pair<K, V> implements Tuple {
-   private K m_key;
+   private volatile K m_key;
 
-   private V m_value;
+   private volatile V m_value;
 
    public Pair() {
    }

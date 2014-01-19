@@ -1,5 +1,7 @@
 package org.unidal.script.java;
 
+import java.io.File;
+
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
@@ -51,6 +53,7 @@ public class JavaFragmentEngineTest {
    public void testJavaClass() throws Exception {
       ScriptEngineManager mgr = new ScriptEngineManager();
       ScriptEngine engine = mgr.getEngineByExtension("java");
+
       Invocable inv = (Invocable) engine.eval( //
             "public class A {\t\n" + //
                   "public String hello(String name) { return \"Hello, \"+name+\"!\"; }\r\n" + //
@@ -153,5 +156,21 @@ public class JavaFragmentEngineTest {
       String expected = "Hello, Scripting";
 
       Assert.assertEquals(expected, actual);
+   }
+
+   /**
+    * Test executing o a piece of java code directly, use System.out as result.
+    */
+   @Test
+   public void testOutputDirectory() throws Exception {
+      ScriptEngineManager mgr = new ScriptEngineManager();
+      ScriptEngine engine = mgr.getEngineByExtension("java");
+
+      engine.put(JavaFragmentEngine.OUTPUT_DIRECTORY, "target/out");
+      Invocable inv = (Invocable) engine
+            .eval("public class HelloWorld {public String hello() {return \"Hello, world!\";}}");
+
+      Assert.assertEquals("Hello, world!", inv.invokeFunction("hello"));
+      Assert.assertTrue("Output directory does not work!", new File("target/out/HelloWorld.class").exists());
    }
 }

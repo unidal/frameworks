@@ -36,7 +36,7 @@ public class DefaultActionResolver implements ActionResolver {
 		return sb.toString();
 	}
 
-	private String getPathInfo(HttpServletRequest request) {
+	protected String getPathInfo(HttpServletRequest request) {
 		String requestUri = request.getRequestURI();
 		String contextPath = request.getContextPath();
 
@@ -48,8 +48,8 @@ public class DefaultActionResolver implements ActionResolver {
 	}
 
 	public UrlMapping parseUrl(ParameterProvider provider) {
-		HttpServletRequest request = provider.getRequest();
-		String[] sections = new String[6];
+	   HttpServletRequest request = provider.getRequest();
+	   String[] sections = new String[6];
 		String pathInfo = getPathInfo(request);
 
 		sections[0] = request.getContextPath();

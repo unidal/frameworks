@@ -7,7 +7,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import org.unidal.web.lifecycle.ActionResolver;
-import org.unidal.web.lifecycle.DefaultActionResolver;
 
 @Retention(RUNTIME)
 @Target(TYPE)
@@ -20,5 +19,5 @@ public @interface ModuleMeta {
 
    String defaultErrorAction() default "";
 
-   Class<? extends ActionResolver> actionResolver() default DefaultActionResolver.class;
+   Class<? extends ActionResolver> actionResolver() default ActionResolver.class;
 }

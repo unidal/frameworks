@@ -25,6 +25,8 @@ import javax.script.SimpleBindings;
  * @version 0.1.0
  */
 public class JavaFragmentEngine extends AbstractScriptEngine {
+   public static final String OUTPUT_DIRECTORY = "java.fragment.output.directory";
+   
    private ScriptEngineFactory m_factory;
 
    private JavaFragmentCompiler m_compiler;

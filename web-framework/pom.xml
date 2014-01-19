@@ -10,13 +10,13 @@
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.unidal.framework</groupId>
    <artifactId>web-framework</artifactId>
-   <version>2.0.6</version>
+   <version>2.0.7</version>
    <name>Web Framework</name>
    <dependencies>
       <dependency>
          <groupId>org.unidal.framework</groupId>
          <artifactId>foundation-service</artifactId>
-         <version>2.0.6</version>
+         <version>2.0.7</version>
       </dependency>
       <dependency>
          <groupId>com.dianping.cat</groupId>
