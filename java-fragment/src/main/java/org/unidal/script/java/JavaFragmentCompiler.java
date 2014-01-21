@@ -3,6 +3,7 @@ package org.unidal.script.java;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -24,27 +25,28 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
-import org.unidal.helper.Reflects;
-
 public class JavaFragmentCompiler implements Compilable {
-   private JavaFragmentEngine m_engine;
+	private JavaFragmentEngine m_engine;
 
-   public JavaFragmentCompiler(JavaFragmentEngine engine) {
-      m_engine = engine;
-   }
+	public JavaFragmentCompiler(JavaFragmentEngine engine) {
+		m_engine = engine;
+	}
 
-   private void buildClasspathEntries(ClassLoader loader, Set<File> files) {
-      if (loader instanceof URLClassLoader) {
-         URL[] urLs = ((URLClassLoader) loader).getURLs();
+	private void buildClasspathEntries(ClassLoader loader, Set<File> files) {
+		if (loader instanceof URLClassLoader) {
+			URL[] urLs = ((URLClassLoader) loader).getURLs();
 
-      	if (urLs.length > 0) {
+			if (urLs.length > 0) {
 				for (URL url : urLs) {
 					files.add(new File(url.getPath()));
 				}
 			} else if (loader.getClass().getName().equals("org.jboss.mx.loading.UnifiedClassLoader3")) {
 				// work around for JBoss 4.2.2 GA
 				try {
-					urLs = Reflects.forMethod().invokeMethod(loader, "getAllURLs");
+					Method method = loader.getClass().getMethod("getAllURLs", new Class[] {});
+					if (method != null) {
+						urLs = (URL[]) method.invoke(loader, new Object[] {});
+					}
 
 					for (URL url : urLs) {
 						files.add(new File(url.getPath()));
@@ -54,120 +56,120 @@ public class JavaFragmentCompiler implements Compilable {
 				}
 			}
 
-         buildClasspathEntries(loader.getParent(), files);
-      } else if (loader == null) {
-         String classpath = System.getProperty("java.class.path", "");
-         String[] entries = classpath.split(Pattern.quote(File.pathSeparator));
+			buildClasspathEntries(loader.getParent(), files);
+		} else if (loader == null) {
+			String classpath = System.getProperty("java.class.path", "");
+			String[] entries = classpath.split(Pattern.quote(File.pathSeparator));
 
-         for (String entry : entries) {
-            if (entry.length() > 0) {
-               files.add(new File(entry));
-            }
-         }
-      }
-   }
+			for (String entry : entries) {
+				if (entry.length() > 0) {
+					files.add(new File(entry));
+				}
+			}
+		}
+	}
 
-   private URL[] buildUrls(File outputDir) {
-      URL[] urls = new URL[1];
+	private URL[] buildUrls(File outputDir) {
+		URL[] urls = new URL[1];
 
-      try {
-         urls[0] = outputDir.toURI().toURL();
-      } catch (MalformedURLException e) {
-         throw new RuntimeException("Error when building URLs for class loader!", e);
-      }
+		try {
+			urls[0] = outputDir.toURI().toURL();
+		} catch (MalformedURLException e) {
+			throw new RuntimeException("Error when building URLs for class loader!", e);
+		}
 
-      return urls;
-   }
+		return urls;
+	}
 
-   @Override
-   public CompiledScript compile(Reader reader) throws ScriptException {
-      StringBuilder sb = new StringBuilder(4096);
-      char[] buf = new char[2048];
+	@Override
+	public CompiledScript compile(Reader reader) throws ScriptException {
+		StringBuilder sb = new StringBuilder(4096);
+		char[] buf = new char[2048];
 
-      try {
-         while (true) {
-            int size = reader.read(buf);
+		try {
+			while (true) {
+				int size = reader.read(buf);
 
-            if (size < 0) {
-               break;
-            }
+				if (size < 0) {
+					break;
+				}
 
-            sb.append(buf, 0, size);
-         }
-      } catch (IOException e) {
-         throw new RuntimeException("Error when reading script from " + reader + "!");
-      } finally {
-         try {
-            reader.close();
-         } catch (IOException e) {
-            // ignore it
-         }
-      }
+				sb.append(buf, 0, size);
+			}
+		} catch (IOException e) {
+			throw new RuntimeException("Error when reading script from " + reader + "!");
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException e) {
+				// ignore it
+			}
+		}
 
-      return compile(sb.toString());
-   }
+		return compile(sb.toString());
+	}
 
-   @Override
-   public CompiledScript compile(String script) throws ScriptException {
-      File outputDir = getOutputDirectory();
-      CompiledJavaFragment compiledScript = new CompiledJavaFragment(m_engine);
-      JavaSourceFromString source = new JavaSourceFromString(outputDir, script);
+	@Override
+	public CompiledScript compile(String script) throws ScriptException {
+		File outputDir = getOutputDirectory();
+		CompiledJavaFragment compiledScript = new CompiledJavaFragment(m_engine);
+		JavaSourceFromString source = new JavaSourceFromString(outputDir, script);
 
-      compileInternal(script, outputDir, source);
+		compileInternal(script, outputDir, source);
 
-      URL[] urls = buildUrls(outputDir);
-      ClassLoader parent = Thread.currentThread().getContextClassLoader();
-      URLClassLoader classloader = new URLClassLoader(urls, parent);
+		URL[] urls = buildUrls(outputDir);
+		ClassLoader parent = Thread.currentThread().getContextClassLoader();
+		URLClassLoader classloader = new URLClassLoader(urls, parent);
 
-      compiledScript.setClassLoader(classloader);
-      compiledScript.setSource(source);
-      return compiledScript;
-   }
+		compiledScript.setClassLoader(classloader);
+		compiledScript.setSource(source);
+		return compiledScript;
+	}
 
-   private void compileInternal(String script, File outputDir, JavaSourceFromString source) throws ScriptException {
-      Locale locale = Locale.getDefault();
-      Charset charset = Charset.defaultCharset();
-      JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-      DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
-      StandardJavaFileManager manager = compiler.getStandardFileManager(diagnostics, locale, charset);
+	private void compileInternal(String script, File outputDir, JavaSourceFromString source) throws ScriptException {
+		Locale locale = Locale.getDefault();
+		Charset charset = Charset.defaultCharset();
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
+		StandardJavaFileManager manager = compiler.getStandardFileManager(diagnostics, locale, charset);
 
-      outputDir.mkdirs();
+		outputDir.mkdirs();
 
-      try {
-         manager.setLocation(StandardLocation.CLASS_PATH, getClasspathEntries());
-         manager.setLocation(StandardLocation.CLASS_OUTPUT, Arrays.asList(outputDir.getCanonicalFile()));
+		try {
+			manager.setLocation(StandardLocation.CLASS_PATH, getClasspathEntries());
+			manager.setLocation(StandardLocation.CLASS_OUTPUT, Arrays.asList(outputDir.getCanonicalFile()));
 
-         Boolean result = compiler.getTask(null, manager, diagnostics, null, null, Arrays.asList(source)).call();
+			Boolean result = compiler.getTask(null, manager, diagnostics, null, null, Arrays.asList(source)).call();
 
-         if (!Boolean.TRUE.equals(result)) {
-            for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
-               throw new ScriptException(diagnostic.getMessage(locale), script, (int) diagnostic.getLineNumber()
-                     - source.getLineOffset(), (int) diagnostic.getColumnNumber());
-            }
-         }
+			if (!Boolean.TRUE.equals(result)) {
+				for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
+					throw new ScriptException(diagnostic.getMessage(locale), script, (int) diagnostic.getLineNumber()
+					      - source.getLineOffset(), (int) diagnostic.getColumnNumber());
+				}
+			}
 
-         manager.close();
-      } catch (ScriptException e) {
-         throw e;
-      } catch (Exception e) {
-         e.printStackTrace();
-      }
-   }
+			manager.close();
+		} catch (ScriptException e) {
+			throw e;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-   private Set<File> getClasspathEntries() {
-      Set<File> files = new HashSet<File>(64);
+	private Set<File> getClasspathEntries() {
+		Set<File> files = new HashSet<File>(64);
 
-      buildClasspathEntries(Thread.currentThread().getContextClassLoader(), files);
-      return files;
-   }
+		buildClasspathEntries(Thread.currentThread().getContextClassLoader(), files);
+		return files;
+	}
 
-   private File getOutputDirectory() {
-      Object outputDirectory = m_engine.get(JavaFragmentEngine.OUTPUT_DIRECTORY);
+	private File getOutputDirectory() {
+		Object outputDirectory = m_engine.get(JavaFragmentEngine.OUTPUT_DIRECTORY);
 
-      if (outputDirectory == null) {
-         return new File("target/tmp-classes");
-      } else {
-         return new File(String.valueOf(outputDirectory));
-      }
-   }
+		if (outputDirectory == null) {
+			return new File("target/tmp-classes");
+		} else {
+			return new File(String.valueOf(outputDirectory));
+		}
+	}
 }
