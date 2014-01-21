@@ -24,6 +24,8 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
+import org.unidal.helper.Reflects;
+
 public class JavaFragmentCompiler implements Compilable {
    private JavaFragmentEngine m_engine;
 
@@ -35,9 +37,22 @@ public class JavaFragmentCompiler implements Compilable {
       if (loader instanceof URLClassLoader) {
          URL[] urLs = ((URLClassLoader) loader).getURLs();
 
-         for (URL url : urLs) {
-            files.add(new File(url.getPath()));
-         }
+      	if (urLs.length > 0) {
+				for (URL url : urLs) {
+					files.add(new File(url.getPath()));
+				}
+			} else if (loader.getClass().getName().equals("org.jboss.mx.loading.UnifiedClassLoader3")) {
+				// work around for JBoss 4.2.2 GA
+				try {
+					urLs = Reflects.forMethod().invokeMethod(loader, "getAllURLs");
+
+					for (URL url : urLs) {
+						files.add(new File(url.getPath()));
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 
          buildClasspathEntries(loader.getParent(), files);
       } else if (loader == null) {
