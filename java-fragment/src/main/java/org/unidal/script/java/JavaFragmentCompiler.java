@@ -3,6 +3,7 @@ package org.unidal.script.java;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -35,6 +36,20 @@ public class JavaFragmentCompiler implements Compilable {
       if (loader instanceof URLClassLoader) {
          URL[] urLs = ((URLClassLoader) loader).getURLs();
 
+         if (urLs.length == 0) {
+            // work around for JBoss 4.2.2 GA
+            if (loader.getClass().getName().equals("org.jboss.mx.loading.UnifiedClassLoader3")) {
+               try {
+                  Method method = loader.getClass().getMethod("getAllURLs");
+
+                  urLs = (URL[]) method.invoke(loader);
+               } catch (Throwable e) {
+                  System.err.println("[ERROR] Error when invoking method getAllURLs of " + loader.getClass() + "!");
+                  e.printStackTrace();
+               }
+            }
+         }
+
          for (URL url : urLs) {
             files.add(new File(url.getPath()));
          }
@@ -49,6 +64,8 @@ public class JavaFragmentCompiler implements Compilable {
                files.add(new File(entry));
             }
          }
+      } else {
+         System.err.println("[WARN] Unrecognized classloader: "+loader.getClass().getName());
       }
    }
 
