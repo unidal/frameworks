@@ -44,14 +44,12 @@ public class JavaFragmentCompiler implements Compilable {
 				// work around for JBoss 4.2.2 GA
 				try {
 					Method method = loader.getClass().getMethod("getAllURLs", new Class[] {});
-					if (method != null) {
-						urLs = (URL[]) method.invoke(loader, new Object[] {});
-					}
-
+					urLs = (URL[]) method.invoke(loader, new Object[] {});
+					
 					for (URL url : urLs) {
 						files.add(new File(url.getPath()));
 					}
-				} catch (Exception e) {
+				} catch (Throwable e) {
 					e.printStackTrace();
 				}
 			}
