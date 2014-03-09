@@ -6,6 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.unidal.helper.DatesTest;
 import org.unidal.helper.FormatsTest;
 import org.unidal.helper.PropertiesTest;
+import org.unidal.helper.SplittersTest;
 import org.unidal.helper.StringizersTest;
 import org.unidal.helper.ThreadsTest;
 import org.unidal.lookup.ComponentTestCaseTest;
@@ -23,6 +24,8 @@ DatesTest.class,
 FormatsTest.class,
 
 StringizersTest.class,
+
+SplittersTest.class,
 
 ThreadsTest.class,
 

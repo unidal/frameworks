@@ -1,17 +1,36 @@
 package org.unidal.lookup;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.net.URL;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.codehaus.plexus.ContainerConfiguration;
 import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.classworlds.ClassWorld;
+import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.lifecycle.LifecycleHandler;
 import org.codehaus.plexus.lifecycle.UndefinedLifecycleHandlerException;
 import org.unidal.lookup.extension.EnumComponentManagerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class ContainerLoader {
    private static volatile DefaultPlexusContainer s_container;
@@ -36,6 +55,7 @@ public class ContainerLoader {
 
    public static void destroyDefaultContainer() {
       if (s_container != null) {
+         m_components.clear();
          s_container.dispose();
          s_container = null;
       }
@@ -120,6 +140,12 @@ public class ContainerLoader {
    private static void preConstruction(ContainerConfiguration configuration) throws UndefinedLifecycleHandlerException {
       LifecycleHandler plexus = configuration.getLifecycleHandlerManager().getLifecycleHandler("plexus");
 
+      try {
+         new ContainerConfigurationDecorator().process(configuration);
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
+
       plexus.addBeginSegment(new org.unidal.lookup.extension.PostConstructionPhase());
    }
 
@@ -132,6 +158,65 @@ public class ContainerLoader {
       } catch (Exception e) {
          // ignore it
          e.printStackTrace();
+      }
+   }
+
+   static class ContainerConfigurationDecorator {
+      private String m_defaultPath = "META-INF/plexus/plexus.xml";
+
+      public void process(ContainerConfiguration configuration) throws Exception {
+         DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+         DocumentBuilder builder = builderFactory.newDocumentBuilder();
+         Document doc = builder.newDocument();
+         String path = configuration.getContainerConfiguration();
+         ClassRealm realm = new ClassWorld("plexus.core", Thread.currentThread().getContextClassLoader()).getRealm("plexus.core");
+         Enumeration<URL> resources = realm.getResources(m_defaultPath);
+         Element root = doc.createElement("plexus");
+
+         root.appendChild(doc.createElement("components"));
+         doc.appendChild(root);
+         doc.setXmlStandalone(true);
+
+         if (path != null && !path.endsWith(m_defaultPath)) {
+            URL url = realm.getResource(path);
+
+            if (url != null) {
+               fillFrom(doc, builder, url);
+            }
+         }
+
+         for (URL url : Collections.list(resources)) {
+            fillFrom(doc, builder, url);
+         }
+
+         if (doc.getDocumentElement().hasChildNodes()) {
+            // Use a Transformer for output
+            TransformerFactory transforerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transforerFactory.newTransformer();
+            File tmp = File.createTempFile("plexus-", ".xml");
+            StreamResult result = new StreamResult(new FileOutputStream(tmp));
+
+            tmp.deleteOnExit();
+            transformer.transform(new DOMSource(doc), result);
+
+            configuration.setContainerConfigurationURL(tmp.toURI().toURL());
+         }
+      }
+
+      private void fillFrom(Document to, DocumentBuilder builder, URL url) throws Exception {
+         InputStream in = url.openStream();
+         Document from = builder.parse(in);
+
+         in.close();
+
+         Node source = from.getDocumentElement().getElementsByTagName("components").item(0);
+         Node target = to.getDocumentElement().getFirstChild();
+         NodeList list = source.getChildNodes();
+         int len = list.getLength();
+
+         for (int i = 0; i < len; i++) {
+            target.appendChild(to.importNode(list.item(i), true));
+         }
       }
    }
 

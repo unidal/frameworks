@@ -10,6 +10,7 @@ import org.unidal.formatter.Formatter;
 import org.unidal.formatter.FormatterException;
 import org.unidal.initialization.ModuleInitializer;
 import org.unidal.initialization.ModuleManager;
+import org.unidal.lookup.annotation.Inject;
 
 public class ComponentTestCaseTest extends ComponentTestCase {
    @Test
@@ -17,6 +18,11 @@ public class ComponentTestCaseTest extends ComponentTestCase {
       defineComponent(Formatter.class, Date.class.getName(), MockFormatter.class);
 
       Assert.assertEquals(MockFormatter.class, lookup(Formatter.class, Date.class.getName()).getClass());
+
+      defineComponent(MockComponent.class) //
+            .req(Formatter.class, Date.class.getName());
+
+      Assert.assertEquals(MockFormatter.class, lookup(MockComponent.class).getFormatter().getClass());
    }
 
    @Test
@@ -48,6 +54,15 @@ public class ComponentTestCaseTest extends ComponentTestCase {
       @Override
       public Date parse(String format, String text) throws FormatterException {
          return null;
+      }
+   }
+
+   public static class MockComponent {
+      @Inject
+      private Formatter<Date> m_formatter;
+
+      public Formatter<Date> getFormatter() {
+         return m_formatter;
       }
    }
 }

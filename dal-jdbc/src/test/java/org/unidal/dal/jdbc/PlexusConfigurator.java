@@ -42,6 +42,6 @@ public class PlexusConfigurator extends AbstractJdbcResourceConfigurator {
 
 	@Override
 	protected File getConfigurationFile() {
-		return new File("src/test/resources/META-INF/plexus/plexus.xml");
+		return new File("src/test/resources/META-INF/plexus/components.xml");
 	}
 }

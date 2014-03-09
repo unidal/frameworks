@@ -27,6 +27,18 @@ public class JavaFragmentEngineTest {
       }
    }
 
+   @Test
+   public void test() throws ScriptException {
+      ScriptEngineManager mgr = new ScriptEngineManager();
+      ScriptEngine engine = mgr.getEngineByExtension("js");
+      String json = "{\"status\":1,\"list\":{\"1\":{\"id\":\"111868\",\"name\":\"\\u989c\\u826f\",\"quality\":\"1\",\"level\":\"23\",\"exp\":\"41976\",\"levelupexp\":\"42320\",\"image\":\"21\",\"type\":\"1\",\"turn\":\"2\",\"isturn\":0,\"ratio\":1,\"pid\":\"76053\",\"ispractice\":1},\"2\":{\"id\":\"133789\",\"name\":\"\\u6587\\u4e11\",\"quality\":\"1\",\"level\":\"19\",\"exp\":\"2492\",\"levelupexp\":\"28880\",\"image\":\"18\",\"type\":\"1\",\"turn\":\"1\",\"isturn\":0,\"ratio\":1,\"pid\":0,\"ispractice\":0},\"3\":{\"id\":\"150693\",\"name\":\"\\u7530\\u4e30\",\"quality\":\"1\",\"level\":\"19\",\"exp\":\"2462\",\"levelupexp\":\"28880\",\"image\":\"17\",\"type\":\"2\",\"turn\":\"1\",\"isturn\":0,\"ratio\":1,\"pid\":0,\"ispractice\":0},\"4\":{\"id\":\"228506\",\"name\":\"\\u8881\\u7ecd\",\"quality\":\"1\",\"level\":\"5\",\"exp\":\"1134\",\"levelupexp\":\"2000\",\"image\":\"22\",\"type\":\"1\",\"turn\":\"1\",\"isturn\":0,\"ratio\":1,\"pid\":0,\"ispractice\":0},\"5\":{\"id\":\"204208\",\"name\":\"\\u8521\\u6587\\u59ec\",\"quality\":\"1\",\"level\":\"44\",\"exp\":\"108954\",\"levelupexp\":\"154880\",\"image\":\"5\",\"type\":\"2\",\"turn\":\"0\",\"isturn\":0,\"ratio\":1,\"pid\":0,\"ispractice\":0}},\"rule\":{\"1\":{\"paytype\":1,\"hour\":8,\"cost\":6300},\"2\":{\"paytype\":1,\"hour\":24,\"cost\":16065},\"3\":{\"paytype\":2,\"hour\":24,\"cost\":2},\"4\":{\"paytype\":2,\"hour\":72,\"cost\":20}},\"place\":{\"1\":{\"id\":\"76053\",\"gid\":\"111868\",\"image\":\"21\",\"squence\":\"1\",\"level\":\"1\",\"type\":\"2\",\"quality\":\"1\",\"cd\":84210},\"2\":{\"id\":\"76054\",\"gid\":\"0\",\"image\":0,\"squence\":\"2\",\"level\":\"1\",\"type\":\"0\",\"quality\":0,\"cd\":0},\"3\":{\"id\":\"128898\",\"gid\":\"0\",\"image\":0,\"squence\":\"3\",\"level\":\"1\",\"type\":\"0\",\"quality\":0,\"cd\":0},\"4\":{\"id\":\"188678\",\"gid\":\"0\",\"image\":0,\"squence\":\"4\",\"level\":\"1\",\"type\":\"0\",\"quality\":0,\"cd\":0}},\"leap\":0,\"mop\":[],\"freetimes\":\"12\"}";
+      String script = "var gs='',ps=''; for (var i in o.list) gs+=o.list[i].id+','; for (var i in o.place) ps+=o.place[i].id+':'+o.place[i].gid+','; gs+'|'+ps;";
+
+      Object result = engine.eval("var o=" + json + ";" + script);
+
+      System.out.println(result);
+   }
+
    @Test(expected = ScriptException.class)
    public void testBadSyntax() throws ScriptException {
       ScriptEngineManager mgr = new ScriptEngineManager();
@@ -167,8 +179,7 @@ public class JavaFragmentEngineTest {
       ScriptEngine engine = mgr.getEngineByExtension("java");
 
       engine.put(JavaFragmentEngine.OUTPUT_DIRECTORY, "target/out");
-      Invocable inv = (Invocable) engine
-            .eval("public class HelloWorld {public String hello() {return \"Hello, world!\";}}");
+      Invocable inv = (Invocable) engine.eval("public class HelloWorld {public String hello() {return \"Hello, world!\";}}");
 
       Assert.assertEquals("Hello, world!", inv.invokeFunction("hello"));
       Assert.assertTrue("Output directory does not work!", new File("target/out/HelloWorld.class").exists());

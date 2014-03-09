@@ -1,15 +1,92 @@
 package org.unidal.helper;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Splitters {
    public static StringSplitter by(char delimiter) {
       return new StringSplitter(delimiter);
    }
 
+   public static MapSplitter by(char pairSeparator, char keyValueSeparator) {
+      return new MapSplitter(pairSeparator, keyValueSeparator);
+   }
+
    public static StringSplitter by(String delimiter) {
       return new StringSplitter(delimiter);
+   }
+
+   public static class MapSplitter {
+      private char m_pairSeparator;
+
+      private char m_keyValueSeparator;
+
+      private boolean m_trim;
+
+      MapSplitter(char pairSeparator, char keyValueSeparator) {
+         m_pairSeparator = pairSeparator;
+         m_keyValueSeparator = keyValueSeparator;
+      }
+
+      protected void doCharSplit(String str, Map<String, String> map) {
+         int len = str.length();
+         StringBuilder key = new StringBuilder(len);
+         StringBuilder value = new StringBuilder(len);
+         boolean inKey = true;
+
+         for (int i = 0; i < len; i++) {
+            char ch = str.charAt(i);
+
+            if (ch == m_keyValueSeparator && inKey) {
+               inKey = false;
+            } else if (ch == m_pairSeparator) {
+               if (key.length() > 0) {
+                  if (m_trim) {
+                     map.put(key.toString().trim(), value.toString().trim());
+                  } else {
+                     map.put(key.toString(), value.toString());
+                  }
+               }
+
+               key.setLength(0);
+               value.setLength(0);
+               inKey = true;
+            } else {
+               if (inKey) {
+                  key.append(ch);
+               } else {
+                  value.append(ch);
+               }
+            }
+         }
+
+         if (!inKey && key.length() > 0) {
+            if (m_trim) {
+               map.put(key.toString().trim(), value.toString().trim());
+            } else {
+               map.put(key.toString(), value.toString());
+            }
+         }
+      }
+
+      public Map<String, String> split(String str) {
+         return split(str, new LinkedHashMap<String, String>());
+      }
+
+      public Map<String, String> split(String str, Map<String, String> map) {
+         if (str != null) {
+            doCharSplit(str, map);
+         }
+
+         return map;
+      }
+
+      public MapSplitter trim() {
+         m_trim = true;
+         return this;
+      }
    }
 
    public static class StringSplitter {
@@ -17,7 +94,7 @@ public class Splitters {
 
       private String m_stringDelimiter;
 
-      private boolean m_trimmed;
+      private boolean m_trim;
 
       private boolean m_noEmptyItem;
 
@@ -29,7 +106,7 @@ public class Splitters {
          m_stringDelimiter = delimiter;
       }
 
-      protected List<String> doCharSplit(String str, List<String> list) {
+      protected void doCharSplit(String str, List<String> list) {
          char delimiter = m_charDelimiter;
          int len = str.length();
          StringBuilder sb = new StringBuilder(len);
@@ -42,7 +119,7 @@ public class Splitters {
 
                sb.setLength(0);
 
-               if (m_trimmed) {
+               if (m_trim) {
                   item = item.trim();
                }
 
@@ -55,11 +132,9 @@ public class Splitters {
                sb.append(ch);
             }
          }
-
-         return list;
       }
 
-      protected List<String> doStringSplit(String source, List<String> list) {
+      protected void doStringSplit(String source, List<String> list) {
          String delimiter = m_stringDelimiter;
          int len = delimiter.length();
          int offset = 0;
@@ -74,7 +149,7 @@ public class Splitters {
                part = source.substring(offset, index);
             }
 
-            if (m_trimmed) {
+            if (m_trim) {
                part = part.trim();
             }
 
@@ -89,8 +164,6 @@ public class Splitters {
                index = source.indexOf(delimiter, offset);
             }
          }
-
-         return list;
       }
 
       public StringSplitter noEmptyItem() {
@@ -103,21 +176,19 @@ public class Splitters {
       }
 
       public List<String> split(String str, List<String> list) {
-         if (str == null) {
-            return list;
+         if (str != null) {
+            if (m_charDelimiter > 0) {
+               doCharSplit(str, list);
+            } else if (m_stringDelimiter != null) {
+               doStringSplit(str, list);
+            }
          }
 
-         if (m_charDelimiter > 0) {
-            return doCharSplit(str, list);
-         } else if (m_stringDelimiter != null) {
-            return doStringSplit(str, list);
-         }
-
-         throw new UnsupportedOperationException();
+         return list;
       }
 
       public StringSplitter trim() {
-         m_trimmed = true;
+         m_trim = true;
          return this;
       }
    }

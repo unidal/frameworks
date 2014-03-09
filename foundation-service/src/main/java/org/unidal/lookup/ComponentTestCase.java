@@ -11,6 +11,7 @@ import org.codehaus.plexus.MutablePlexusContainer;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.repository.ComponentDescriptor;
+import org.codehaus.plexus.component.repository.ComponentRequirement;
 import org.codehaus.plexus.lifecycle.LifecycleHandler;
 import org.codehaus.plexus.lifecycle.UndefinedLifecycleHandlerException;
 import org.junit.After;
@@ -32,16 +33,17 @@ public abstract class ComponentTestCase extends ContainerHolder {
       java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
    }
 
-   protected <T> void defineComponent(Class<T> role) throws Exception {
-      defineComponent(role, null, role);
+   protected <T> ComponentDefinition<T> defineComponent(Class<T> role) throws Exception {
+      return defineComponent(role, null, role);
    }
 
-   protected <T> void defineComponent(Class<T> role, Class<? extends T> implementation) throws Exception {
-      defineComponent(role, null, implementation);
+   protected <T> ComponentDefinition<T> defineComponent(Class<T> role, Class<? extends T> implementation) throws Exception {
+      return defineComponent(role, null, implementation);
    }
 
    @SuppressWarnings("unchecked")
-   protected <T> void defineComponent(Class<T> role, String roleHint, Class<? extends T> implementation) throws Exception {
+   protected <T> ComponentDefinition<T> defineComponent(Class<T> role, String roleHint, Class<? extends T> implementation)
+         throws Exception {
       if (roleHint == null) {
          roleHint = PlexusConstants.PLEXUS_DEFAULT_HINT;
       }
@@ -56,10 +58,14 @@ public abstract class ComponentTestCase extends ContainerHolder {
       for (SortedMap<String, Multimap<String, ComponentDescriptor<?>>> roleIndex : index.values()) {
          Multimap<String, ComponentDescriptor<?>> roleHintIndex = roleIndex.get(role.getName());
 
-         roleHintIndex.removeAll(roleHint);
+         if (roleHintIndex != null) {
+            roleHintIndex.removeAll(roleHint);
+         }
       }
 
       m_container.addComponentDescriptor(descriptor);
+
+      return new ComponentDefinition<T>(descriptor);
    }
 
    protected String getBaseDir() {
@@ -147,5 +153,37 @@ public abstract class ComponentTestCase extends ContainerHolder {
    @After
    public void tearDown() throws Exception {
       ContainerLoader.destroyDefaultContainer();
+   }
+
+   public static final class ComponentDefinition<T> {
+      private ComponentDescriptor<T> m_descriptor;
+
+      public ComponentDefinition(ComponentDescriptor<T> descriptor) {
+         m_descriptor = descriptor;
+      }
+
+      public ComponentDefinition<T> is(String instantiationStrategy) {
+         m_descriptor.setInstantiationStrategy(instantiationStrategy);
+         return this;
+      }
+
+      public ComponentDefinition<T> req(Class<?> role) {
+         return req(role, null);
+      }
+
+      public ComponentDefinition<T> req(Class<?> role, String roleHint) {
+         ComponentRequirement requirement = new ComponentRequirement();
+
+         requirement.setRole(role.getName());
+
+         if (roleHint != null) {
+            requirement.setRoleHint(roleHint);
+         } else {
+            requirement.setRoleHint("default");
+         }
+
+         m_descriptor.addRequirement(requirement);
+         return this;
+      }
    }
 }

@@ -1,0 +1,11 @@
+<plexus>
+	<components>
+		<component>
+			<role>org.codehaus.plexus.logging.LoggerManager</role>
+			<implementation>org.unidal.lookup.logger.Log4jLoggerManager</implementation>
+			<configuration>
+				<baseDirRef>CAT_HOME</baseDirRef>
+			</configuration>
+		</component>
+	</components>
+</plexus>
