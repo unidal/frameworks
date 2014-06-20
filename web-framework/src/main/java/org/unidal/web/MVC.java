@@ -25,7 +25,10 @@ public class MVC extends AbstractContainerServlet {
 
    @Override
    protected void initComponents(ServletConfig config) throws Exception {
-      getLogger().info("MVC is starting at " + config.getServletContext().getContextPath());
+      String contextPath = config.getServletContext().getContextPath();
+      String path = contextPath == null || contextPath.length() == 0 ? "/" : contextPath;
+
+      getLogger().info("MVC is starting at " + path);
 
       initializeCat(config);
       initializeModules(config);
@@ -34,7 +37,7 @@ public class MVC extends AbstractContainerServlet {
       m_handler.setServletContext(config.getServletContext());
 
       config.getServletContext().setAttribute(ID, this);
-      getLogger().info("MVC started at " + config.getServletContext().getContextPath());
+      getLogger().info("MVC started at " + path);
    }
 
    private void initializeCat(ServletConfig config) {

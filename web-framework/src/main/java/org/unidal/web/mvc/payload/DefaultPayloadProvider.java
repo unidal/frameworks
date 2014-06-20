@@ -87,28 +87,20 @@ public class DefaultPayloadProvider extends ContainerHolder implements PayloadPr
       return list;
    }
 
-   private Method getSetMethod(Class<?> clazz, String name, Field field) {
-      String[] names = new String[2];
+   private Method getSetMethod(Class<?> clazz, Field field) {
+      String name;
       String fieldName = field.getName();
 
       if (fieldName.startsWith("m_") && fieldName.length() >= 3) {
-         names[0] = "set" + Character.toUpperCase(fieldName.charAt(2)) + fieldName.substring(3);
+         name = "set" + Character.toUpperCase(fieldName.charAt(2)) + fieldName.substring(3);
       } else {
-         names[0] = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+         name = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
       }
 
-      names[1] = "set" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
-
-      for (String methodName : names) {
-         if (methodName == null) {
-            continue;
-         }
-
-         for (Method method : clazz.getMethods()) {
-            if (method.getName().equals(methodName)) {
-               if (!Modifier.isStatic(method.getModifiers()) && method.getParameterTypes().length == 1) {
-                  return method;
-               }
+      for (Method method : clazz.getMethods()) {
+         if (method.getName().equals(name)) {
+            if (!Modifier.isStatic(method.getModifiers()) && method.getParameterTypes().length == 1) {
+               return method;
             }
          }
       }
@@ -380,17 +372,16 @@ public class DefaultPayloadProvider extends ContainerHolder implements PayloadPr
 
    private void registerField(Class<?> payloadClass, PayloadModel payloadModel, Field field, FieldMeta fieldMeta) {
       PayloadFieldModel payloadFieldModel = new PayloadFieldModel();
-      String name = fieldMeta.value();
 
       if (!fieldMeta.defaultValue().equals(FieldMeta.NOT_SPECIFIED)) {
          payloadFieldModel.setDefaultValue(fieldMeta.defaultValue());
       }
 
-      payloadFieldModel.setName(name);
+      payloadFieldModel.setName(fieldMeta.value());
       payloadFieldModel.setFormat(fieldMeta.format().length() == 0 ? null : fieldMeta.format());
       payloadFieldModel.setFile(fieldMeta.file());
       payloadFieldModel.setField(field);
-      payloadFieldModel.setMethod(getSetMethod(payloadClass, name, field));
+      payloadFieldModel.setMethod(getSetMethod(payloadClass, field));
       payloadFieldModel.setMultipleValues(isMultipleValues(field, payloadFieldModel.getMethod()));
 
       if (payloadFieldModel.isFile()) {
@@ -413,22 +404,20 @@ public class DefaultPayloadProvider extends ContainerHolder implements PayloadPr
 
    private void registerObject(Class<?> payloadClass, PayloadModel payloadModel, Field field, ObjectMeta objectMeta) {
       PayloadObjectModel payloadObjectModel = new PayloadObjectModel();
-      String name = objectMeta.value();
 
-      payloadObjectModel.setName(name);
+      payloadObjectModel.setName(objectMeta.value());
       payloadObjectModel.setField(field);
-      payloadObjectModel.setMethod(getSetMethod(payloadClass, name, field));
+      payloadObjectModel.setMethod(getSetMethod(payloadClass, field));
 
       payloadModel.addObject(payloadObjectModel);
    }
 
    private void registerPath(Class<?> payloadClass, PayloadModel payloadModel, Field field, PathMeta pathMeta) {
       PayloadPathModel payloadPathModel = new PayloadPathModel();
-      String name = pathMeta.value();
 
-      payloadPathModel.setName(name);
+      payloadPathModel.setName(pathMeta.value());
       payloadPathModel.setField(field);
-      payloadPathModel.setMethod(getSetMethod(payloadClass, name, field));
+      payloadPathModel.setMethod(getSetMethod(payloadClass, field));
 
       payloadModel.addPath(payloadPathModel);
    }

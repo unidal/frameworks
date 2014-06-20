@@ -77,7 +77,7 @@ public class DefaultTokenParser implements TokenParser {
                      tokens.add(new EndTagToken(sb.toString()));
                   } else if (hasEndSlash) {
                      tokens.add(new SimpleTagToken(sb.toString(), attributes));
-                  } else if (Character.isLetter(sb.charAt(0))){
+                  } else if (Character.isLetter(sb.charAt(0))) {
                      tokens.add(new StartTagToken(sb.toString(), attributes));
                   } else {
                      sb.append(ch);
@@ -89,8 +89,7 @@ public class DefaultTokenParser implements TokenParser {
                   hasStartSlash = false;
                   hasEndSlash = false;
                } else {
-                  throw new DalRuntimeException("Illegal TAG usage, parsed tokens: " + tokens + ". Statement: "
-                        + pattern);
+                  throw new DalRuntimeException("Illegal TAG usage, parsed tokens: " + tokens + ". Statement: " + pattern);
                }
             } else {
                sb.append(ch);
@@ -151,14 +150,15 @@ public class DefaultTokenParser implements TokenParser {
             hasWhiteSpace = false;
             break;
          case '\'':
+         case '"':
             if (inAttrValue) {
                while (i + 1 < len) {
-                  ch = pattern.charAt(++i);
+                  char ch2 = pattern.charAt(++i);
 
-                  if (ch == '\'') {
+                  if (ch2 == ch) {
                      break;
                   } else {
-                     attrValue.append(ch);
+                     attrValue.append(ch2);
                   }
                }
 
@@ -171,16 +171,17 @@ public class DefaultTokenParser implements TokenParser {
                sb.append(ch);
 
                while (i + 1 < len) {
-                  ch = pattern.charAt(++i);
-                  sb.append(ch);
+                  char ch2 = pattern.charAt(++i);
 
-                  if (ch == '\'') {
+                  sb.append(ch2);
+
+                  if (ch2 == ch) {
                      break;
                   }
                }
 
-               if (ch != '\'') {
-                  throw new DalRuntimeException("single quote is expected. Statement: " + pattern);
+               if (i + 1 >= len) {
+                  throw new DalRuntimeException("Quote(" + ch + ") is not paired. Statement: " + pattern);
                }
             }
 

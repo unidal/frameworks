@@ -164,6 +164,18 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
       stopProcess();
    }
 
+   public void sendJson(Object... pairs) throws IOException {
+      if (pairs.length % 2 != 0) {
+         throw new IllegalArgumentException("Arguments must be paired!");
+      }
+
+      String json = toJson(pairs);
+
+      m_httpServletResponse.setContentType("application/json; charset=utf-8");
+      m_httpServletResponse.getWriter().write(json);
+      m_processStopped = true;
+   }
+
    public void sendJsonResponse(String status, Object data, Object message) throws IOException {
       StringBuilder sb = new StringBuilder(2048);
 
@@ -254,6 +266,30 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
 
    public void stopProcess() {
       m_processStopped = true;
+   }
+
+   String toJson(Object... pairs) {
+      StringBuilder sb = new StringBuilder(2048);
+
+      sb.append('{');
+
+      for (int i = 0; i < pairs.length; i += 2) {
+         Object key = pairs[i];
+         Object value = pairs[i + 1];
+
+         sb.append('"').append(key).append("\": ");
+         sb.append(Objects.forJson().from(value));
+         sb.append(", ");
+      }
+
+      int length = sb.length();
+
+      if (length >= 2 && sb.charAt(length - 2) == ',' && sb.charAt(length - 1) == ' ') {
+         sb.setLength(length - 2); // remove trail comma
+      }
+
+      sb.append('}');
+      return sb.toString();
    }
 
    public void write(String data) throws IOException {

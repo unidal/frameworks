@@ -8,56 +8,124 @@ import junit.framework.Assert;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
+import org.jboss.netty.channel.Channel;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.unidal.net.Sockets.SocketClient;
-import org.unidal.net.Sockets.SocketServer;
+import org.unidal.lookup.ComponentTestCase;
+import org.unidal.net.Sockets.Client;
+import org.unidal.net.Sockets.Server;
+import org.unidal.tuple.Pair;
 
-public class SocketsTest {
-   @Test
-   public void testApi() throws InterruptedException {
-      MockMessageDelegate delegate = new MockMessageDelegate();
-      SocketServer server = Sockets.forServer().listenOn(1234).threads("TestServer", 3).start(delegate);
-      SocketClient client = Sockets.forClient().connectTo(1234, "localhost").threads("TestClient", 2).start(delegate);
-      int count = 100;
-
-      for (int i = 0; i < count; i++) {
-         delegate.enqueue("Mocked");
-      }
-
-      TimeUnit.MILLISECONDS.sleep(100);
-
-      client.shutdown();
-      server.shutdown();
-
-      Assert.assertEquals("Not all messages are sent or received.", count, delegate.getReceived());
+public class SocketsTest extends ComponentTestCase {
+   @BeforeClass
+   public static void beforeClass() {
+      System.setProperty("devMode", "true");
    }
 
-   public class MockMessageDelegate implements MessageDelegate {
-      private BlockingQueue<ChannelBuffer> m_queue = new LinkedBlockingQueue<ChannelBuffer>(100);
+   @Test
+   public void test() throws Exception {
+      MockHandler ch = new MockHandler();
+      MockHandler sh = new MockHandler();
+      Server s1 = Sockets.asServer().threads("Server", 0).listenOn(5444).start(sh);
+      Server s2 = Sockets.asServer().threads("Server", 0).listenOn(5445).start(sh);
+      Client c = Sockets.asClient().threads("Client", 0).checkInterval(10) //
+            .connectTo("localhost", 5444) //
+            .connectTo("localhost", 5445) //
+            .start(ch);
 
-      private int m_received;
+      ch.send("Hello server!");
+      sh.check("Hello server!");
 
-      public boolean enqueue(String message) {
-         ChannelBuffer buffer = ChannelBuffers.dynamicBuffer();
-         byte[] bytes = message.getBytes();
+      sh.send("Hello client!");
+      ch.check("Hello client!");
 
-         buffer.writeInt(bytes.length);
-         buffer.writeBytes(bytes);
-         return m_queue.offer(buffer);
-      }
+      s1.shutdown();
+      Thread.sleep(20);
 
-      public int getReceived() {
-         return m_received;
+      ch.send("Hello server!");
+      sh.check("Hello server!");
+
+      sh.send("Hello client!");
+      ch.check("Hello client!");
+
+      s2.shutdown();
+      Thread.sleep(20);
+
+      ch.send("Hello server!");
+      sh.check("");
+
+      sh.send("Hello client!");
+      ch.check("");
+
+      c.shutdown();
+   }
+
+   public static class MockHandler implements SocketHandler {
+      private StringBuilder m_sb = new StringBuilder(1024);
+
+      private Channel m_channel;
+
+      private BlockingQueue<String> m_queue = new LinkedBlockingQueue<String>();
+
+      @Override
+      public Pair<Channel, ChannelBuffer> getNextMessage() {
+         String message = m_queue.poll();
+
+         if (message != null) {
+            ChannelBuffer buffer = ChannelBuffers.dynamicBuffer();
+            byte[] data = message.getBytes();
+
+            buffer.writeInt(data.length);
+            buffer.writeBytes(data);
+            return new Pair<Channel, ChannelBuffer>(m_channel, buffer);
+         }
+
+         return null;
       }
 
       @Override
-      public ChannelBuffer nextMessage(long timeout, TimeUnit unit) throws InterruptedException {
-         return m_queue.poll(timeout, unit);
+      public void onConnected(Channel channel) throws Exception {
+         m_channel = channel;
       }
 
       @Override
-      public void onMessageReceived(ChannelBuffer buffer) {
-         m_received++;
+      public void onDisconnected(Channel channel) throws Exception {
+      }
+
+      @Override
+      public void onException(Channel channel, Throwable cause) throws Exception {
+         channel.close();
+      }
+
+      @Override
+      public void onMessage(Channel channel, ChannelBuffer buffer) throws Exception {
+         int len = buffer.readInt();
+         byte[] data = new byte[len];
+
+         buffer.readBytes(data);
+
+         m_sb.append(new String(data));
+      }
+
+      public void send(String message) {
+         m_queue.offer(message);
+      }
+
+      public void check(String expected) {
+         long deadline = System.currentTimeMillis() + 100;
+
+         try {
+            while (deadline > System.currentTimeMillis() && m_sb.length() == 0) {
+               TimeUnit.MILLISECONDS.sleep(10);
+            }
+         } catch (InterruptedException e) {
+            // ignore it
+         }
+
+         String actual = m_sb.toString();
+
+         m_sb.setLength(0);
+         Assert.assertEquals(expected, actual);
       }
    }
 }

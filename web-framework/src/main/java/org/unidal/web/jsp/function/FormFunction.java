@@ -6,6 +6,16 @@ import org.unidal.lookup.util.ReflectUtils;
 import org.unidal.web.jsp.annotation.FunctionMeta;
 
 public class FormFunction {
+   private static Object getPropertyValue(Object instance, String property) {
+      if (instance == null) {
+         return null;
+      } else if (property == null || property.length() == 0) {
+         return instance.toString();
+      } else {
+         return ReflectUtils.invokeGetter(instance, property);
+      }
+   }
+
    private static String getSelectedOrChecked(Object selected, Object value, boolean selectedOrChecked) {
       if (value != null && selected != null) {
          if (selected instanceof Object[]) {
@@ -27,12 +37,12 @@ public class FormFunction {
 
       return "";
    }
-   
+
    @FunctionMeta(description = "Show checkbox from an object's properties in a form", example = "${w:showCheckbox('groupBy', groupBy, payload.groupBy, 'name', 'description')}")
    public static String showCheckbox(String inputName, Object item, Object selected, String valueName, String textName) {
       StringBuilder sb = new StringBuilder(256);
-      Object value = ReflectUtils.invokeGetter(item, valueName);
-      Object text = ReflectUtils.invokeGetter(item, textName);
+      Object value = getPropertyValue(item, valueName);
+      Object text = getPropertyValue(item, textName);
       String id = inputName + '-' + value;
 
       sb.append("<input type=\"checkbox\" name=\"").append(inputName).append("\" value=\"").append(value).append("\" id=\"")
@@ -67,8 +77,8 @@ public class FormFunction {
    @FunctionMeta(description = "Show select option from an object's properties in a form", example = "${w:showOption(groupBy, payload.groupBy, 'name', 'description')}")
    public static String showOption(Object item, Object selected, String valueName, String textName) {
       StringBuilder sb = new StringBuilder(256);
-      Object value = ReflectUtils.invokeGetter(item, valueName);
-      Object text = ReflectUtils.invokeGetter(item, textName);
+      Object value = getPropertyValue(item, valueName);
+      Object text = getPropertyValue(item, textName);
 
       sb.append("<option value=\"").append(value).append("\"");
       sb.append(getSelectedOrChecked(selected, value, true));
@@ -101,8 +111,8 @@ public class FormFunction {
    @FunctionMeta(description = "Show radio from an object's properties in a form", example = "${w:showRadio('groupBy', groupBy, payload.groupBy, 'name', 'description')}")
    public static String showRadio(String inputName, Object item, Object selected, String valueName, String textName) {
       StringBuilder sb = new StringBuilder(256);
-      Object value = ReflectUtils.invokeGetter(item, valueName);
-      Object text = ReflectUtils.invokeGetter(item, textName);
+      Object value = getPropertyValue(item, valueName);
+      Object text = getPropertyValue(item, textName);
       String id = inputName + '-' + value;
 
       sb.append("<input type=\"radio\" name=\"").append(inputName).append("\" value=\"").append(value).append("\" id=\"")
@@ -141,20 +151,20 @@ public class FormFunction {
       if (selected != null) {
          if (items instanceof Object[]) {
             for (Object item : (Object[]) items) {
-               Object value = ReflectUtils.invokeGetter(item, valueName);
+               Object value = getPropertyValue(item, valueName);
 
                if (value != null && value.toString().equals(selected.toString())) {
-                  Object text = ReflectUtils.invokeGetter(item, textName);
+                  Object text = getPropertyValue(item, textName);
 
                   return text;
                }
             }
          } else if (items instanceof List) {
             for (Object item : (List<?>) items) {
-               Object value = ReflectUtils.invokeGetter(item, valueName);
+               Object value = getPropertyValue(item, valueName);
 
                if (value != null && value.toString().equals(selected.toString())) {
-                  Object text = ReflectUtils.invokeGetter(item, textName);
+                  Object text = getPropertyValue(item, textName);
 
                   return text;
                }

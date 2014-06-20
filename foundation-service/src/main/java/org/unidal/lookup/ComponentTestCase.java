@@ -23,6 +23,8 @@ import org.unidal.lookup.extension.PostConstructionPhase;
 import com.google.common.collect.Multimap;
 
 public abstract class ComponentTestCase extends ContainerHolder {
+   protected static final String PER_LOOKUP = "per-lookup";
+
    private MutablePlexusContainer m_container;
 
    private Map<Object, Object> m_context;

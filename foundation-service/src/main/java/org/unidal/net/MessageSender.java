@@ -3,8 +3,6 @@ package org.unidal.net;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -26,6 +24,7 @@ import org.unidal.helper.Threads;
 import org.unidal.helper.Threads.Task;
 import org.unidal.lookup.logger.LoggerFactory;
 
+@Deprecated
 class MessageSender implements Task {
    private MessageDelegate m_delegate;
 
@@ -37,15 +36,11 @@ class MessageSender implements Task {
 
    private String m_threadNamePrefix;
 
-   private ChannelManager m_manager;
+   private FailoverChannelManager m_manager;
 
    private Logger m_logger = LoggerFactory.getLogger(MessageReceiver.class);
 
    private boolean m_active;
-
-   private static ConcurrentMap<String, AtomicInteger> m_indexes = new ConcurrentHashMap<String, AtomicInteger>();
-
-   private AtomicInteger m_attempts = new AtomicInteger();
 
    public MessageSender(MessageDelegate delegate, int port, String... servers) {
       m_delegate = delegate;
@@ -53,30 +48,18 @@ class MessageSender implements Task {
       m_servers = servers;
    }
 
-   private boolean checkWritable(ChannelFuture future) {
-      boolean isWriteable = false;
-
-      if (future != null && future.getChannel().isOpen()) {
-         if (future.getChannel().isWritable()) {
-            isWriteable = true;
-         } else {
-            int count = m_attempts.incrementAndGet();
-
-            if (count % 1000 == 0 || count == 1) {
-               m_logger.error("Netty write buffer is full! Attempts: " + count + ".");
-            }
-         }
-      }
-
-      return isWriteable;
+   public void setMaxThreads(int maxThreads) {
+      m_maxThreads = maxThreads;
    }
 
-   @Override
-   public String getName() {
-      return getClass().getSimpleName();
+   public void setThreadNamePrefix(String threadNamePrefix) {
+      m_threadNamePrefix = threadNamePrefix;
    }
 
-   private String getUniquePrefix() {
+   public void startClient() {
+      m_active = true;
+      m_manager = new FailoverChannelManager();
+
       String name;
 
       if (m_threadNamePrefix == null) {
@@ -88,97 +71,33 @@ class MessageSender implements Task {
          name = m_threadNamePrefix;
       }
 
-      m_indexes.putIfAbsent(name, new AtomicInteger(1));
-
-      AtomicInteger index = m_indexes.get(name);
-
-      if (index.getAndIncrement() > 1) {
-         name += index.get();
-      }
-
-      return name;
-   }
-
-   @Override
-   public void run() {
-      m_active = true;
-
-      while (m_active) {
-         ChannelFuture future = m_manager.getChannel();
-
-         if (checkWritable(future)) {
-            try {
-               ChannelBuffer buffer = m_delegate.nextMessage(5, TimeUnit.MILLISECONDS);
-
-               if (buffer != null) {
-                  Channel channel = future.getChannel();
-
-                  channel.write(buffer);
-               }
-            } catch (Throwable t) {
-               m_logger.error("Error when sending message over TCP socket!", t);
-            }
-         } else {
-            try {
-               TimeUnit.MILLISECONDS.sleep(5);
-            } catch (Exception e) {
-               // ignore it
-               m_active = false;
-            }
-         }
-      }
-
-      m_manager.shutdown();
-   }
-
-   public void setMaxThreads(int maxThreads) {
-      m_maxThreads = maxThreads;
-   }
-
-   public void setThreadNamePrefix(String threadNamePrefix) {
-      m_threadNamePrefix = threadNamePrefix;
-   }
-
-   @Override
-   public void shutdown() {
-      m_active = false;
-      m_manager.shutdown();
-   }
-
-   public void startClient() {
-      String name = getUniquePrefix();
-
-      m_active = true;
-      m_manager = new ChannelManager();
-
       Threads.forGroup(name).start(this);
       Threads.forGroup(name).start(m_manager);
    }
 
-   class ChannelManager implements Task {
+   class FailoverChannelManager implements Task {
       private List<InetSocketAddress> m_serverAddresses;
 
       private ClientBootstrap m_bootstrap;
 
       private ChannelFuture m_activeFuture;
 
-      private int m_activeIndex = -1;
+      private int m_activeIndex;
 
       private ChannelFuture m_lastFuture;
 
       private AtomicInteger m_reconnects = new AtomicInteger(999);
 
-      public ChannelManager() {
+      public FailoverChannelManager() {
          NioClientSocketChannelFactory factory;
-         String name = getUniquePrefix();
 
          if (m_maxThreads > 0) {
-            ExecutorService bossExecutor = Threads.forPool().getFixedThreadPool(name + "-Boss", 10);
-            ExecutorService workerExecutor = Threads.forPool().getFixedThreadPool(name + "-Worker", m_maxThreads);
+            ExecutorService bossExecutor = Threads.forPool().getFixedThreadPool(m_threadNamePrefix + "-Boss", 10);
+            ExecutorService workerExecutor = Threads.forPool().getFixedThreadPool(m_threadNamePrefix + "-Worker", 10);
             factory = new NioClientSocketChannelFactory(bossExecutor, workerExecutor);
          } else {
-            ExecutorService bossExecutor = Threads.forPool().getCachedThreadPool(name + "-Boss");
-            ExecutorService workerExecutor = Threads.forPool().getCachedThreadPool(name + "-Worker");
+            ExecutorService bossExecutor = Threads.forPool().getCachedThreadPool(m_threadNamePrefix + "-Boss");
+            ExecutorService workerExecutor = Threads.forPool().getCachedThreadPool(m_threadNamePrefix + "-Worker");
             factory = new NioClientSocketChannelFactory(bossExecutor, workerExecutor);
          }
 
@@ -193,7 +112,6 @@ class MessageSender implements Task {
 
          bootstrap.setOption("tcpNoDelay", true);
          bootstrap.setOption("keepAlive", true);
-         bootstrap.setOption("connectTimeoutMillis", 2000);
 
          m_bootstrap = bootstrap;
          m_serverAddresses = new ArrayList<InetSocketAddress>();
@@ -247,7 +165,7 @@ class MessageSender implements Task {
 
       @Override
       public String getName() {
-         return MessageSender.this.getClass().getSimpleName() + "-" + getClass().getSimpleName();
+         return "MessageSender-ChannelManager";
       }
 
       @Override
@@ -255,7 +173,7 @@ class MessageSender implements Task {
          try {
             while (m_active) {
                try {
-                  if (m_activeIndex == -1 || m_activeFuture != null && !m_activeFuture.getChannel().isOpen()) {
+                  if (m_activeFuture != null && !m_activeFuture.getChannel().isOpen()) {
                      m_activeIndex = m_serverAddresses.size();
                   }
 
@@ -302,12 +220,75 @@ class MessageSender implements Task {
 
       @Override
       public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
-         m_logger.warn("Socket disconnected from " + e.getChannel().getRemoteAddress());
+         m_logger.warn("Channel disconnected by remote address: " + e.getChannel().getRemoteAddress());
       }
 
       @Override
       public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
          e.getChannel().close();
       }
+   }
+
+   private AtomicInteger m_attempts = new AtomicInteger();
+
+   private boolean checkWritable(ChannelFuture future) {
+      boolean isWriteable = false;
+
+      if (future != null && future.getChannel().isOpen()) {
+         if (future.getChannel().isWritable()) {
+            isWriteable = true;
+         } else {
+            int count = m_attempts.incrementAndGet();
+
+            if (count % 1000 == 0 || count == 1) {
+               m_logger.error("Netty write buffer is full! Attempts: " + count + ".");
+            }
+         }
+      }
+
+      return isWriteable;
+   }
+
+   @Override
+   public void run() {
+      m_active = true;
+
+      while (m_active) {
+         ChannelFuture future = m_manager.getChannel();
+
+         if (checkWritable(future)) {
+            try {
+               ChannelBuffer buffer = m_delegate.nextMessage(5, TimeUnit.MILLISECONDS);
+
+               if (buffer != null) {
+                  Channel channel = future.getChannel();
+
+                  channel.write(buffer);
+               }
+            } catch (Throwable t) {
+               m_logger.error("Error when sending message over TCP socket!", t);
+            }
+         } else {
+            try {
+               TimeUnit.MILLISECONDS.sleep(5);
+            } catch (Exception e) {
+               // ignore it
+               m_active = false;
+            }
+         }
+      }
+
+      m_manager.shutdown();
+   }
+
+   @Override
+   public String getName() {
+      return getClass().getSimpleName();
+   }
+
+   @Override
+   public void shutdown() {
+      m_active = false;
+      m_manager.shutdown();
    }
 }

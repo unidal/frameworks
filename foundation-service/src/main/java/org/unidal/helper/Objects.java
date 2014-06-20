@@ -1,5 +1,7 @@
 package org.unidal.helper;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
@@ -47,6 +49,11 @@ public class Objects {
 
       public JsonBuilder key(String key) {
          m_sb.append('"').append(key).append('"');
+         return this;
+      }
+
+      public JsonBuilder raw(char ch) {
+         m_sb.append(ch);
          return this;
       }
 
@@ -124,7 +131,7 @@ public class Objects {
       private void fromArray(Set<Object> done, JsonBuilder sb, Object obj) {
          int len = Array.getLength(obj);
 
-         sb.raw("[");
+         sb.raw('[');
 
          for (int i = 0; i < len; i++) {
             if (i > 0) {
@@ -136,14 +143,14 @@ public class Objects {
             fromObject(done, sb, element);
          }
 
-         sb.raw("]");
+         sb.raw(']');
       }
 
       @SuppressWarnings("unchecked")
       private void fromCollection(Set<Object> done, JsonBuilder sb, Object obj) {
          boolean first = true;
 
-         sb.raw("[");
+         sb.raw('[');
 
          for (Object item : ((Collection<Object>) obj)) {
             if (first) {
@@ -155,14 +162,14 @@ public class Objects {
             fromObject(done, sb, item);
          }
 
-         sb.raw("]");
+         sb.raw(']');
       }
 
       @SuppressWarnings("unchecked")
       private void fromMap(Set<Object> done, JsonBuilder sb, Object obj) {
          boolean first = true;
 
-         sb.raw("{");
+         sb.raw('{');
 
          for (Map.Entry<Object, Object> e : ((Map<Object, Object>) obj).entrySet()) {
             Object key = e.getKey();
@@ -178,7 +185,7 @@ public class Objects {
             fromObject(done, sb, value);
          }
 
-         sb.raw("}");
+         sb.raw('}');
       }
 
       private void fromObject(Set<Object> done, JsonBuilder sb, Object obj) {
@@ -186,6 +193,25 @@ public class Objects {
             sb.raw("null");
          } else if (obj instanceof Formattable) {
             sb.raw(String.format("%#s", obj));
+         } else if (obj instanceof Throwable) {
+            Throwable t = (Throwable) obj;
+            StringWriter writer = new StringWriter(1024);
+
+            sb.raw('{');
+            sb.key("name").colon().value(t.getClass().getName());
+
+            if (t.getMessage() != null) {
+               sb.raw(',');
+               sb.key("message").colon().value(t.getMessage());
+            }
+
+            if (t.getStackTrace() != null) {
+               sb.raw(',');
+               t.printStackTrace(new PrintWriter(writer));
+               sb.key("stackTrace").colon().value(writer.toString());
+            }
+
+            sb.raw('}');
          } else {
             Class<?> type = obj.getClass();
 
