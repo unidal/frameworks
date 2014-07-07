@@ -3,6 +3,8 @@ package org.unidal;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+import org.unidal.helper.BytesTest;
+import org.unidal.helper.CodesTest;
 import org.unidal.helper.DatesTest;
 import org.unidal.helper.FormatsTest;
 import org.unidal.helper.PropertiesTest;
@@ -18,6 +20,10 @@ import org.unidal.tuple.TupleTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
+
+BytesTest.class,
+
+CodesTest.class,
 
 DatesTest.class,
 
