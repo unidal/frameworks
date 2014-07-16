@@ -3,6 +3,10 @@ package org.unidal.dal.jdbc;
 import java.util.List;
 
 public interface QueryEngine {
+   public String HINT_QUERY = "QUERY";
+
+   public String HINT_DATA_OBJECT = "DATA_OBJECT";
+
    public <T extends DataObject> void commitTransaction(QueryDef query, T proto) throws DalException;
 
    public <T extends DataObject> int[] deleteBatch(QueryDef query, T[] protos) throws DalException;

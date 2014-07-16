@@ -175,12 +175,12 @@ public class DefaultTransactionManager implements TransactionManager, LogEnabled
 
    public void startTransaction(QueryContext ctx) {
       TableProvider tableProvider = m_tableProviderManager.getTableProvider(ctx.getEntityInfo().getLogicalName());
-      String dataSourceName = tableProvider.getDataSourceName(ctx.getQueryHints());
       TransactionInfo trxInfo = m_threadLocalData.get();
 
       if (trxInfo.isInTransaction()) {
          throw new DalRuntimeException("Can't start transaction while another transaction has not been committed or rollbacked!");
       } else {
+         String dataSourceName = tableProvider.getDataSourceName(ctx.getQueryHints());
          DataSource dataSource = m_dataSourceManager.getDataSource(dataSourceName);
 
          try {

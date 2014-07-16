@@ -21,140 +21,138 @@ import org.unidal.lookup.annotation.Inject;
 
 public class DefaultQueryEngine extends ContainerHolder implements QueryEngine {
    @Inject
-	private EntityInfoManager m_entityManager;
+   private EntityInfoManager m_entityManager;
 
    @Inject
-	private QueryResolver m_queryResolver;
+   private QueryResolver m_queryResolver;
 
    @Inject
-	private QueryExecutor m_queryExecutor;
+   private QueryExecutor m_queryExecutor;
 
    @Inject
-	private TransactionManager m_transactionManager;
+   private TransactionManager m_transactionManager;
 
-	public static final String HINT_QUERY_TYPE = "QUERY_TYPE";
+   public <T extends DataObject> void commitTransaction(QueryDef query, T proto) throws DalException {
+      QueryContext ctx = createContext(query, proto);
 
-	public <T extends DataObject> void commitTransaction(QueryDef query, T proto) throws DalException {
-		QueryContext ctx = createContext(query, proto);
+      m_transactionManager.commitTransaction(ctx);
+   }
 
-		m_transactionManager.commitTransaction(ctx);
-	}
+   protected <T extends DataObject> QueryContext createContext(QueryDef query, T proto) {
+      QueryContext ctx = new DefaultQueryContext();
+      EntityInfo enityInfo = m_entityManager.getEntityInfo(query.getEntityClass());
+      Map<String, Object> queryHints = getQueryHints(query, proto);
 
-	protected <T extends DataObject> QueryContext createContext(QueryDef query, T proto) {
-		QueryContext ctx = new DefaultQueryContext();
-		EntityInfo enityInfo = m_entityManager.getEntityInfo(query.getEntityClass());
-		Map<String, Object> queryHints = getQueryHints(query, proto);
+      ctx.setQuery(query);
+      ctx.setProto(proto);
+      ctx.setEntityInfo(enityInfo);
+      ctx.setQueryHints(queryHints);
 
-		ctx.setQuery(query);
-		ctx.setProto(proto);
-		ctx.setEntityInfo(enityInfo);
-		ctx.setQueryHints(queryHints);
+      return ctx;
+   }
 
-		return ctx;
-	}
+   public <T extends DataObject> int[] deleteBatch(QueryDef query, T[] protos) throws DalException {
+      if (protos.length == 0) {
+         return new int[0];
+      }
 
-	public <T extends DataObject> int[] deleteBatch(QueryDef query, T[] protos) throws DalException {
-		if (protos.length == 0) {
-			return new int[0];
-		}
+      QueryContext ctx = createContext(query, protos[0]);
 
-		QueryContext ctx = createContext(query, protos[0]);
+      m_queryResolver.resolve(ctx);
+      return m_queryExecutor.executeUpdateBatch(ctx, protos);
+   }
 
-		m_queryResolver.resolve(ctx);
-		return m_queryExecutor.executeUpdateBatch(ctx, protos);
-	}
+   public <T extends DataObject> int deleteSingle(QueryDef query, T proto) throws DalException {
+      QueryContext ctx = createContext(query, proto);
 
-	public <T extends DataObject> int deleteSingle(QueryDef query, T proto) throws DalException {
-		QueryContext ctx = createContext(query, proto);
+      m_queryResolver.resolve(ctx);
+      return m_queryExecutor.executeUpdate(ctx);
+   }
 
-		m_queryResolver.resolve(ctx);
-		return m_queryExecutor.executeUpdate(ctx);
-	}
+   protected Map<String, Object> getQueryHints(QueryDef query, DataObject proto) {
+      Map<String, Object> hints = proto.getQueryHints();
 
-	protected Map<String, Object> getQueryHints(QueryDef query, DataObject proto) {
-		Map<String, Object> hints = proto.getQueryHints();
+      if (hints == null) {
+         hints = new HashMap<String, Object>();
+      }
 
-		if (hints == null) {
-			hints = new HashMap<String, Object>(3);
-		}
+      hints.put(HINT_QUERY, query);
+      hints.put(HINT_DATA_OBJECT, proto);
 
-		hints.put(HINT_QUERY_TYPE, query.getType());
+      return hints;
+   }
 
-		return hints;
-	}
+   public <T extends DataObject> int[] insertBatch(QueryDef query, T[] protos) throws DalException {
+      if (protos.length == 0) {
+         return new int[0];
+      }
 
-	public <T extends DataObject> int[] insertBatch(QueryDef query, T[] protos) throws DalException {
-		if (protos.length == 0) {
-			return new int[0];
-		}
+      QueryContext ctx = createContext(query, protos[0]);
 
-		QueryContext ctx = createContext(query, protos[0]);
+      m_queryResolver.resolve(ctx);
+      return m_queryExecutor.executeUpdateBatch(ctx, protos);
+   }
 
-		m_queryResolver.resolve(ctx);
-		return m_queryExecutor.executeUpdateBatch(ctx, protos);
-	}
+   public <T extends DataObject> int insertSingle(QueryDef query, T proto) throws DalException {
+      QueryContext ctx = createContext(query, proto);
 
-	public <T extends DataObject> int insertSingle(QueryDef query, T proto) throws DalException {
-		QueryContext ctx = createContext(query, proto);
+      m_queryResolver.resolve(ctx);
+      return m_queryExecutor.executeUpdate(ctx);
+   }
 
-		m_queryResolver.resolve(ctx);
-		return m_queryExecutor.executeUpdate(ctx);
-	}
+   public <T extends DataObject> List<T> queryMultiple(QueryDef query, T proto, Readset<?> readset) throws DalException {
+      QueryContext ctx = createContext(query, proto);
 
-	public <T extends DataObject> List<T> queryMultiple(QueryDef query, T proto, Readset<?> readset) throws DalException {
-		QueryContext ctx = createContext(query, proto);
+      ctx.setReadset(readset);
+      m_queryResolver.resolve(ctx);
+      return m_queryExecutor.executeQuery(ctx);
+   }
 
-		ctx.setReadset(readset);
-		m_queryResolver.resolve(ctx);
-		return m_queryExecutor.executeQuery(ctx);
-	}
+   public <T extends DataObject> T querySingle(QueryDef query, T proto, Readset<?> readset) throws DalException {
+      QueryContext ctx = createContext(query, proto);
 
-	public <T extends DataObject> T querySingle(QueryDef query, T proto, Readset<?> readset) throws DalException {
-		QueryContext ctx = createContext(query, proto);
+      ctx.setReadset(readset);
+      ctx.setFetchSize(1);
+      m_queryResolver.resolve(ctx);
 
-		ctx.setReadset(readset);
-		ctx.setFetchSize(1);
-		m_queryResolver.resolve(ctx);
+      List<T> results = m_queryExecutor.executeQuery(ctx);
 
-		List<T> results = m_queryExecutor.executeQuery(ctx);
+      if (results.isEmpty()) {
+         throw new DalNotFoundException("No record has been found for " + proto);
+      } else {
+         return results.get(0);
+      }
+   }
 
-		if (results.isEmpty()) {
-			throw new DalNotFoundException("No record has been found for " + proto);
-		} else {
-			return results.get(0);
-		}
-	}
+   public <T extends DataObject> void rollbackTransaction(QueryDef query, T proto) throws DalException {
+      QueryContext ctx = createContext(query, proto);
 
-	public <T extends DataObject> void rollbackTransaction(QueryDef query, T proto) throws DalException {
-		QueryContext ctx = createContext(query, proto);
+      m_transactionManager.rollbackTransaction(ctx);
+   }
 
-		m_transactionManager.rollbackTransaction(ctx);
-	}
+   public <T extends DataObject> void startTransaction(QueryDef query, T proto) throws DalException {
+      QueryContext ctx = createContext(query, proto);
 
-	public <T extends DataObject> void startTransaction(QueryDef query, T proto) throws DalException {
-		QueryContext ctx = createContext(query, proto);
+      m_transactionManager.startTransaction(ctx);
+   }
 
-		m_transactionManager.startTransaction(ctx);
-	}
+   public <T extends DataObject> int[] updateBatch(QueryDef query, T[] protos, Updateset<?> updateset) throws DalException {
+      if (protos.length == 0) {
+         return new int[0];
+      }
 
-	public <T extends DataObject> int[] updateBatch(QueryDef query, T[] protos, Updateset<?> updateset)
-	      throws DalException {
-		if (protos.length == 0) {
-			return new int[0];
-		}
+      QueryContext ctx = createContext(query, protos[0]);
 
-		QueryContext ctx = createContext(query, protos[0]);
+      ctx.setUpdateset(updateset);
+      m_queryResolver.resolve(ctx);
+      return m_queryExecutor.executeUpdateBatch(ctx, protos);
+   }
 
-		ctx.setUpdateset(updateset);
-		m_queryResolver.resolve(ctx);
-		return m_queryExecutor.executeUpdateBatch(ctx, protos);
-	}
+   public <T extends DataObject> int updateSingle(QueryDef query, T proto, Updateset<?> updateset) throws DalException {
+      QueryContext ctx = createContext(query, proto);
 
-	public <T extends DataObject> int updateSingle(QueryDef query, T proto, Updateset<?> updateset) throws DalException {
-		QueryContext ctx = createContext(query, proto);
-
-		ctx.setUpdateset(updateset);
-		m_queryResolver.resolve(ctx);
-		return m_queryExecutor.executeUpdate(ctx);
-	}
+      ctx.setUpdateset(updateset);
+      m_queryResolver.resolve(ctx);
+      return m_queryExecutor.executeUpdate(ctx);
+   }
 }

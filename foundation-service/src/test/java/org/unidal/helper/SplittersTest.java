@@ -16,4 +16,12 @@ public class SplittersTest {
       Assert.assertEquals("{a=1, b=2, c=3 ,  d=4}", Splitters.by('&', '=').split("a=1&b=2&&c=3 & d=4").toString());
       Assert.assertEquals("{a=1, b=2, c=3, d=4}", Splitters.by(',', ':').trim().split("a:1,b:2,,c:3 , d:4").toString());
    }
+   
+   @Test
+   public void tableSplit() {
+      Assert.assertEquals("[[a, 1], [b, 2], [c, 3 ], [ d, 4]]", Splitters.by2('&', '=').split("a=1&b=2&&c=3 & d=4").toString());
+      Assert.assertEquals("[[a, 1], [b, 2], [c, 3], [d, 4]]", Splitters.by2(',', ':').trim().split("a:1,b:2,,c:3 , d:4").toString());
+
+      Assert.assertEquals("[[a, 1, x], [b, 2, y], [c, 3, z]]", Splitters.by2(',', ':').trim().split("a:1:x,b:2:y,,c:3:z").toString());
+   }
 }

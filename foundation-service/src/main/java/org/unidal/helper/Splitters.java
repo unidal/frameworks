@@ -1,6 +1,7 @@
 package org.unidal.helper;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,10 @@ public class Splitters {
 
    public static StringSplitter by(String delimiter) {
       return new StringSplitter(delimiter);
+   }
+
+   public static TableSplitter by2(char recordSeparator, char columnSeparator) {
+      return new TableSplitter(recordSeparator, columnSeparator);
    }
 
    public static class MapSplitter {
@@ -188,6 +193,91 @@ public class Splitters {
       }
 
       public StringSplitter trim() {
+         m_trim = true;
+         return this;
+      }
+   }
+
+   public static class TableSplitter {
+      private char m_recordSeparator;
+
+      private char m_columnSeparator;
+
+      private boolean m_trim;
+
+      TableSplitter(char recordSeparator, char columnSeparator) {
+         m_recordSeparator = recordSeparator;
+         m_columnSeparator = columnSeparator;
+      }
+
+      protected void doCharSplit(String str, List<List<String>> lines) {
+         int len = str.length();
+         List<String> line = new ArrayList<String>();
+         StringBuilder sb = new StringBuilder(256);
+
+         for (int i = 0; i < len; i++) {
+            char ch = str.charAt(i);
+
+            if (ch == m_recordSeparator) {
+               String item = sb.toString();
+
+               if (m_trim) {
+                  item = item.trim();
+               }
+
+               if (item.length() > 0) {
+                  line.add(item);
+               }
+
+               if (!line.isEmpty()) {
+                  lines.add(line);
+               }
+
+               sb.setLength(0);
+               line = new ArrayList<String>();
+            } else if (ch == m_columnSeparator) {
+               if (m_trim) {
+                  line.add(sb.toString().trim());
+               } else {
+                  line.add(sb.toString());
+               }
+
+               sb.setLength(0);
+            } else {
+               sb.append(ch);
+            }
+         }
+
+         if (sb.length() > 0) {
+            String item = sb.toString();
+
+            if (m_trim) {
+               item = item.trim();
+            }
+
+            if (item.length() > 0) {
+               line.add(item);
+            }
+         }
+
+         if (!line.isEmpty()) {
+            lines.add(line);
+         }
+      }
+
+      public List<List<String>> split(String str) {
+         if (str == null) {
+            return Collections.emptyList();
+         }
+
+         List<List<String>> lines = new ArrayList<List<String>>();
+
+         doCharSplit(str, lines);
+
+         return lines;
+      }
+
+      public TableSplitter trim() {
          m_trim = true;
          return this;
       }
