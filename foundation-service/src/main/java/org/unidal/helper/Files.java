@@ -71,14 +71,16 @@ public class Files {
 
          createDir(to);
 
-         for (String name : names) {
-            File file = new File(from, name);
+         if (names != null) {
+            for (String name : names) {
+               File file = new File(from, name);
 
-            if (policy == null || policy.apply(file.getPath())) {
-               if (file.isDirectory()) {
-                  copyDir(file, new File(to, name));
-               } else {
-                  copyFile(file, new File(to, name));
+               if (policy == null || policy.apply(file.getPath())) {
+                  if (file.isDirectory()) {
+                     copyDir(file, new File(to, name));
+                  } else {
+                     copyFile(file, new File(to, name));
+                  }
                }
             }
          }

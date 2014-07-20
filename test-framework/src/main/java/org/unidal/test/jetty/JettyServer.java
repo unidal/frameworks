@@ -60,7 +60,6 @@ public abstract class JettyServer extends ContainerHolder {
                "</web-app>";
 
          try {
-            webXmlFile.getParentFile().mkdirs();
             Files.forIO().writeTo(webXmlFile, webXml);
          } catch (IOException e) {
             throw new RuntimeException("Unable to create a temporary web.xml.", e);
@@ -90,7 +89,7 @@ public abstract class JettyServer extends ContainerHolder {
       setupContainer();
 
       Server server = new Server(getServerPort());
-      WebAppContext context = new WebAppContext();
+      WebAppContext context = new ResourceFallbackWebAppContext();
 
       configure(context);
       server.addHandler(context);
