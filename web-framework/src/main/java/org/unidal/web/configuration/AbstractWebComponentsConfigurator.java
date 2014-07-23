@@ -10,8 +10,7 @@ import org.unidal.helper.Reflects.IMemberFilter;
 import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.configuration.AbstractResourceConfigurator;
 import org.unidal.lookup.configuration.Component;
-import org.unidal.lookup.configuration.Configuration;
-import org.unidal.web.mvc.AbstractModule;
+import org.unidal.web.mvc.Module;
 import org.unidal.web.mvc.annotation.ModulePagesMeta;
 import org.unidal.web.mvc.model.ModuleRegistry;
 
@@ -60,8 +59,8 @@ public abstract class AbstractWebComponentsConfigurator extends AbstractResource
       }
    }
 
-   protected void defineModule(List<Component> all, Class<?> moduleClass) {
-      Component module = C(moduleClass);
+   protected void defineModule(List<Component> all, Class<? extends Module> moduleClass) {
+      Component module = C(Module.class, moduleClass.getName(), moduleClass);
       List<Class<?>> injectableClasses = new ArrayList<Class<?>>();
       ModulePagesMeta pagesMeta = moduleClass.getAnnotation(ModulePagesMeta.class);
 
@@ -88,21 +87,15 @@ public abstract class AbstractWebComponentsConfigurator extends AbstractResource
       }
    }
 
-   protected void defineModuleRegistry(List<Component> all, Class<? extends AbstractModule> defaultModuleClass,
-         Class<? extends AbstractModule>... moduleClasses) {
-      Configuration modules = E("modules");
-
-      for (Class<?> moduleClass : moduleClasses) {
-         if (moduleClass == defaultModuleClass) {
-            modules.add(E("module", "default", "true").value(moduleClass.getName()));
-         } else {
-            modules.add(E("module").value(moduleClass.getName()));
-         }
+   protected void defineModuleRegistry(List<Component> all, Class<? extends Module> defaultModuleClass,
+         Class<? extends Module>... moduleClasses) {
+      if (defaultModuleClass != null) {
+         all.add(C(ModuleRegistry.class).config(E("defaultModule").value(defaultModuleClass.getName())));
+      } else {
+         all.add(C(ModuleRegistry.class));
       }
 
-      all.add(C(ModuleRegistry.class).config(modules));
-
-      for (Class<?> moduleClass : moduleClasses) {
+      for (Class<? extends Module> moduleClass : moduleClasses) {
          defineModule(all, moduleClass);
       }
    }

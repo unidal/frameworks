@@ -3,7 +3,7 @@ package org.unidal.web.mvc;
 import org.unidal.web.mvc.annotation.ErrorActionMeta;
 import org.unidal.web.mvc.annotation.TransitionMeta;
 
-public abstract class AbstractModule {
+public abstract class AbstractModule implements Module {
 	@TransitionMeta(name = "default")
 	public void handleTransition(ActionContext<?> ctx) {
 		// simple cases, nothing here

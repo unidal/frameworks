@@ -1,39 +1,37 @@
 package org.unidal.web.mvc.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.plexus.configuration.PlexusConfiguration;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
+import org.unidal.lookup.ContainerHolder;
+import org.unidal.web.mvc.Module;
 
-import org.unidal.helper.Reflects;
+public class ModuleRegistry extends ContainerHolder implements Initializable {
+   private String m_defaultModuleName;
 
-public class ModuleRegistry {
-	private List<Class<?>> m_moduleClasses = new ArrayList<Class<?>>();
+   private Module m_defaultModule;
 
-	private Class<?> m_defaultModuleClass;
+   private List<Module> m_modules;
 
-	public Class<?> getDefaultModuleClass() {
-		return m_defaultModuleClass;
-	}
+   public Module getDefaultModule() {
+      return m_defaultModule;
+   }
 
-	public List<Class<?>> getModuleClasses() {
-		return m_moduleClasses;
-	}
+   public List<Module> getModules() {
+      return m_modules;
+   }
 
-	public void setModules(PlexusConfiguration configuration) {
-		for (PlexusConfiguration child : configuration.getChildren()) {
-			String moduleClassName = child.getValue("");
-			Class<?> moduleClass = Reflects.forClass().getClass(moduleClassName);
+   @Override
+   public void initialize() throws InitializationException {
+      if (m_defaultModuleName != null) {
+         m_defaultModule = lookup(Module.class, m_defaultModuleName);
+      }
 
-			if (moduleClass != null) {
-				String value = child.getAttribute("default", null);
+      m_modules = lookupList(Module.class);
+   }
 
-				m_moduleClasses.add(moduleClass);
-
-				if ("true".equals(value)) {
-					m_defaultModuleClass = moduleClass;
-				}
-			}
-		}
-	}
+   public void setDefaultModule(String defaultModuleName) {
+      m_defaultModuleName = defaultModuleName;
+   }
 }

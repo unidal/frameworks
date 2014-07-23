@@ -3,14 +3,10 @@
 		<component>
 			<role>org.unidal.web.mvc.model.ModuleRegistry</role>
 			<implementation>org.unidal.web.mvc.model.ModuleRegistry</implementation>
-			<configuration>
-				<modules>
-					<module>org.unidal.web.test.book.BookModule</module>
-				</modules>
-			</configuration>
 		</component>
 		<component>
-			<role>org.unidal.web.test.book.BookModule</role>
+			<role>org.unidal.web.mvc.Module</role>
+			<role-hint>org.unidal.web.test.book.BookModule</role-hint>
 			<implementation>org.unidal.web.test.book.BookModule</implementation>
 			<requirements>
 				<requirement>

@@ -3,7 +3,9 @@ package org.unidal.web.mvc.model;
 import org.junit.Assert;
 import org.junit.Test;
 import org.unidal.lookup.ComponentTestCase;
+import org.unidal.web.mvc.AbstractModule;
 import org.unidal.web.mvc.ActionContext;
+import org.unidal.web.mvc.Module;
 import org.unidal.web.mvc.annotation.ErrorActionMeta;
 import org.unidal.web.mvc.annotation.InboundActionMeta;
 import org.unidal.web.mvc.annotation.ModuleMeta;
@@ -11,10 +13,10 @@ import org.unidal.web.mvc.annotation.TransitionMeta;
 import org.unidal.web.mvc.model.entity.ModuleModel;
 
 public class ModuleManagerTest extends ComponentTestCase {
-	@Test
+   @Test
    public void testBuild() throws Exception {
       ModelManager manager = lookup(ModelManager.class);
-      ModuleModel module = manager.build(TestModule2.class);
+      ModuleModel module = manager.build(TestModule2.class.newInstance());
 
       Assert.assertEquals("test2", module.getModuleName());
       Assert.assertEquals("action1", module.getDefaultInboundActionName());
@@ -55,11 +57,11 @@ public class ModuleManagerTest extends ComponentTestCase {
    }
 
    @ModuleMeta(name = "test1")
-   public static final class TestModule1 {
+   public static final class TestModule1 extends AbstractModule {
    }
 
    @ModuleMeta(name = "test2", defaultInboundAction = "action1", defaultTransition = "default", defaultErrorAction = "default")
-   public static final class TestModule2 {
+   public static final class TestModule2 extends AbstractModule {
       @TransitionMeta(name = "secondary")
       public void doSecondaryTransition(ActionContext<?> ctx) {
       }
@@ -86,15 +88,15 @@ public class ModuleManagerTest extends ComponentTestCase {
    }
 
    @ModuleMeta(name = "test2")
-   public static final class TestModule2Copy {
+   public static final class TestModule2Copy extends AbstractModule {
    }
 
    @ModuleMeta(name = "test3", defaultTransition = "default", defaultErrorAction = "default")
-   public static final class TestModule3 {
+   public static final class TestModule3 implements Module {
    }
 
    @ModuleMeta(name = "test4")
-   public static final class TestModule4 {
+   public static final class TestModule4 extends AbstractModule {
       @InboundActionMeta(name = "action1")
       public void inboundAction1(ActionContext<?> ctx) {
       }
