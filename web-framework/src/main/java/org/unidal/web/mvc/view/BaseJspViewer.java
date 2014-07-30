@@ -34,7 +34,9 @@ public abstract class BaseJspViewer<P extends Page, A extends Action, S extends 
 
       if (!ctx.isProcessStopped()) {
          try {
-            req.getRequestDispatcher(getJspFilePath(ctx, model)).forward(req, res);
+            String path = getJspFilePath(ctx, model);
+            
+            req.getRequestDispatcher(path).forward(req, res);
          } catch (EOFException e) {
             // Caused by: java.net.SocketException: Broken pipe
             // ignore it

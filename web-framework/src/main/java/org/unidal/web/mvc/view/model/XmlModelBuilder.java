@@ -42,12 +42,11 @@ public class XmlModelBuilder implements ModelBuilder {
             String name = getNormalizedName(attribute.value(), field);
             String str = getString(value, attribute.format());
 
-            sb.append(' ').append(name).append("=\"").append(escape(str)).append("\"");
+            XmlBuilder.ATTRIBUTE.build(sb, name, str);
          }
       }
    }
 
-   @SuppressWarnings("unchecked")
    private void buildElements(StringBuilder sb, ModelDescriptor descriptor, Object model) {
       for (Field field : descriptor.getElementFields()) {
          ElementMeta element = field.getAnnotation(ElementMeta.class);
@@ -57,58 +56,16 @@ public class XmlModelBuilder implements ModelBuilder {
             String name = getNormalizedName(element.value(), field);
 
             if (element.multiple()) {
-               String names = element.names();
-
-               if (names.length() > 0) {
-                  sb.append('<').append(names).append(">\r\n");
-               }
-
-               if (value instanceof Collection) {
-                  for (Object item : (Collection<Object>) value) {
-                     if (item != null) {
-                        String str = getString(item, element.format());
-
-                        sb.append('<').append(name).append('>').append(escape(str)).append("</").append(name).append(">\r\n");
-                     }
-                  }
-               } else if (value.getClass().isArray()) {
-                  int len = Array.getLength(value);
-
-                  for (int i = 0; i < len; i++) {
-                     Object item = Array.get(value, i);
-
-                     if (item != null) {
-                        String str = getString(item, element.format());
-
-                        sb.append('<').append(name).append('>').append(escape(str)).append("</").append(name).append(">\r\n");
-                     }
-                  }
-               } else if (value instanceof Map) {
-                  for (Object item : ((Map<Object, Object>) value).values()) {
-                     if (item != null) {
-                        String str = getString(item, element.format());
-
-                        sb.append('<').append(name).append('>').append(escape(str)).append("</").append(name).append(">\r\n");
-                     }
-                  }
-               } else {
-                  throw new UnsupportedOperationException(String.format("%s(multiple=true) is not support for type(%s)",
-                        ElementMeta.class.getSimpleName(), value.getClass()));
-               }
-
-               if (names.length() > 0) {
-                  sb.append("</").append(names).append(">\r\n");
-               }
+               buildMutlple(sb, element.names(), name, value, element.format(), ElementMeta.class, XmlBuilder.ELEMENT);
             } else {
                String str = getString(value, element.format());
 
-               sb.append('<').append(name).append('>').append(escape(str)).append("</").append(name).append(">\r\n");
+               XmlBuilder.ELEMENT.build(sb, name, str);
             }
          }
       }
    }
 
-   @SuppressWarnings("unchecked")
    private void buildEntities(StringBuilder sb, ModelDescriptor descriptor, Object model) {
       for (Field field : descriptor.getEntityFields()) {
          EntityMeta entity = field.getAnnotation(EntityMeta.class);
@@ -118,109 +75,80 @@ public class XmlModelBuilder implements ModelBuilder {
             String name = getNormalizedName(entity.value(), field);
 
             if (entity.multiple()) {
-               String names = entity.names();
-
-               if (names.length() > 0) {
-                  sb.append('<').append(names).append(">\r\n");
-               }
-
-               if (value instanceof Collection) {
-                  for (Object item : (Collection<Object>) value) {
-                     if (item != null) {
-                        String str = getModel(item, name);
-
-                        sb.append(str).append("\r\n");
-                     }
-                  }
-               } else if (value.getClass().isArray()) {
-                  int len = Array.getLength(value);
-
-                  for (int i = 0; i < len; i++) {
-                     Object item = Array.get(value, i);
-
-                     if (item != null) {
-                        String str = getModel(item, name);
-
-                        sb.append(str).append("\r\n");
-                     }
-                  }
-               } else if (value instanceof Map) {
-                  for (Object item : ((Map<Object, Object>) value).values()) {
-                     if (item != null) {
-                        String str = getModel(item, name);
-
-                        sb.append(str).append("\r\n");
-                     }
-                  }
-               } else {
-                  throw new UnsupportedOperationException(String.format("%s(multiple=true) is not support for type(%s)",
-                        EntityMeta.class.getSimpleName(), value.getClass()));
-               }
-
-               if (names.length() > 0) {
-                  sb.append("</").append(names).append(">\r\n");
-               }
+               buildMutlple(sb, entity.names(), name, value, null, EntityMeta.class, XmlBuilder.ENTITY);
             } else {
-               String str = getModel(value, name);
-
-               sb.append(str).append("\r\n");
+               XmlBuilder.ENTITY.build(sb, name, value);
             }
          }
+      }
+   }
+
+   @SuppressWarnings("unchecked")
+   private void buildMutlple(StringBuilder sb, String names, String name, Object value, String format, Class<?> metaClass,
+         XmlBuilder builder) {
+      if (names.length() > 0) {
+         sb.append('<').append(names).append(">\r\n");
+      }
+
+      if (value instanceof Collection) {
+         for (Object item : (Collection<Object>) value) {
+            if (item != null) {
+               if (format != null) {
+                  item = getString(item, format);
+               }
+
+               builder.build(sb, name, item);
+            }
+         }
+      } else if (value.getClass().isArray()) {
+         int len = Array.getLength(value);
+
+         for (int i = 0; i < len; i++) {
+            Object item = Array.get(value, i);
+
+            if (item != null) {
+               if (format != null) {
+                  item = getString(item, format);
+               }
+
+               builder.build(sb, name, item);
+            }
+         }
+      } else if (value instanceof Map) {
+         for (Object item : ((Map<Object, Object>) value).values()) {
+            if (item != null) {
+               if (format != null) {
+                  item = getString(item, format);
+               }
+
+               builder.build(sb, name, item);
+            }
+         }
+      } else {
+         throw new UnsupportedOperationException(String.format("%s(multiple=true) is not support for type(%s) on %s!",
+               metaClass.getSimpleName(), value.getClass(), name));
+      }
+
+      if (names.length() > 0) {
+         sb.append("</").append(names).append(">\r\n");
       }
    }
 
    private void buildPojos(StringBuilder sb, ModelDescriptor descriptor, Object model) {
       for (Field field : descriptor.getPojoFields()) {
-         PojoMeta entity = field.getAnnotation(PojoMeta.class);
+         PojoMeta pojo = field.getAnnotation(PojoMeta.class);
          Object value = getFieldValue(field, model);
 
          if (value != null) {
-            String name = getNormalizedName(entity.value(), field);
-            String str = Objects.forXml().build(name, value);
+            String name = getNormalizedName(pojo.value(), field);
 
-            sb.append(str).append("\r\n");
-         }
-      }
-   }
-
-   private String escape(Object value) {
-      return escape(value, false);
-   }
-
-   private String escape(Object value, boolean text) {
-      if (value == null) {
-         return null;
-      }
-
-      String str = value.toString();
-      int len = str.length();
-      StringBuilder sb = new StringBuilder(len + 16);
-
-      for (int i = 0; i < len; i++) {
-         final char ch = str.charAt(i);
-
-         switch (ch) {
-         case '<':
-            sb.append("&lt;");
-            break;
-         case '>':
-            sb.append("&gt;");
-            break;
-         case '&':
-            sb.append("&amp;");
-            break;
-         case '"':
-            if (!text) {
-               sb.append("&quot;");
-               break;
+            if (pojo.multiple()) {
+               buildMutlple(sb, pojo.names(), name, value, null, PojoMeta.class, XmlBuilder.POJO);
+            } else {
+               XmlBuilder.POJO.build(sb, name, value);
             }
-         default:
-            sb.append(ch);
-            break;
          }
       }
-
-      return sb.toString();
    }
 
    private Object getFieldValue(Field field, Object instance) {
@@ -233,32 +161,6 @@ public class XmlModelBuilder implements ModelBuilder {
       } catch (Exception e) {
          throw new RuntimeException(String.format("Error when getting value of field(%s) of %s", field.getName(),
                instance.getClass()));
-      }
-   }
-
-   private String getModel(Object value, String name) {
-      String model = value.toString();
-      String prefix = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n";
-
-      if (model.startsWith(prefix)) {
-         model = model.substring(prefix.length());
-      }
-
-      int pos1 = model.indexOf('>');
-      int pos2 = model.indexOf(' ');
-      int pos3 = model.lastIndexOf('/');
-      int off;
-
-      if (pos2 > 0 && pos2 < pos1) {
-         off = pos2;
-      } else {
-         off = pos1;
-      }
-
-      if (off >= 0) {
-         return "<" + name + model.substring(off, pos3 + 1) + name + ">";
-      } else {
-         return "<" + name + ">" + model + "</" + name + ">";
       }
    }
 
@@ -292,5 +194,95 @@ public class XmlModelBuilder implements ModelBuilder {
       }
 
       return str;
+   }
+
+   static enum XmlBuilder {
+      ENTITY {
+         @Override
+         public void build(StringBuilder sb, String tag, Object value) {
+            String model = value.toString();
+            String prefix = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n";
+
+            if (model.startsWith(prefix)) {
+               model = model.substring(prefix.length());
+            }
+
+            int pos1 = model.indexOf('>');
+            int pos2 = model.indexOf(' ');
+            int pos3 = model.lastIndexOf('/');
+            int off;
+
+            if (pos2 > 0 && pos2 < pos1) {
+               off = pos2;
+            } else {
+               off = pos1;
+            }
+
+            if (off >= 0) {
+               sb.append("<").append(tag).append(model.substring(off, pos3 + 1)).append(tag).append(">\r\n");
+            } else {
+               sb.append("<").append(tag).append(">").append(model).append("</").append(tag).append(">\r\n");
+            }
+         }
+      },
+
+      POJO {
+         @Override
+         public void build(StringBuilder sb, String tag, Object value) {
+            sb.append(Objects.forXml().from(tag, value));
+         }
+      },
+
+      ATTRIBUTE {
+         @Override
+         public void build(StringBuilder sb, String tag, Object value) {
+            sb.append(' ').append(tag).append("=\"").append(escape((String) value, false)).append("\"");
+         }
+      },
+
+      ELEMENT {
+         @Override
+         public void build(StringBuilder sb, String tag, Object value) {
+            sb.append('<').append(tag).append('>').append(escape((String) value, true)).append("</").append(tag).append(">\r\n");
+         }
+      };
+
+      private static String escape(Object value, boolean text) {
+         if (value == null) {
+            return null;
+         }
+
+         String str = value.toString();
+         int len = str.length();
+         StringBuilder sb = new StringBuilder(len + 16);
+
+         for (int i = 0; i < len; i++) {
+            final char ch = str.charAt(i);
+
+            switch (ch) {
+            case '<':
+               sb.append("&lt;");
+               break;
+            case '>':
+               sb.append("&gt;");
+               break;
+            case '&':
+               sb.append("&amp;");
+               break;
+            case '"':
+               if (!text) {
+                  sb.append("&quot;");
+                  break;
+               }
+            default:
+               sb.append(ch);
+               break;
+            }
+         }
+
+         return sb.toString();
+      }
+
+      public abstract void build(StringBuilder sb, String tag, Object value);
    }
 }

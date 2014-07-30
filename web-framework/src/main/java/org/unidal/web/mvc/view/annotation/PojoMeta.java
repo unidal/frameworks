@@ -10,4 +10,8 @@ import java.lang.annotation.Target;
 @Target(FIELD)
 public @interface PojoMeta {
    String value() default ""; // auto detect
+
+   boolean multiple() default false;
+
+   String names() default "";
 }

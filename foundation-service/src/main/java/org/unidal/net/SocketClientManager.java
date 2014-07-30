@@ -201,9 +201,9 @@ class SocketClientManager {
             long lastTime = m_lastTime.get();
             long now = System.currentTimeMillis();
 
-            if (attempts == 1 || attempts % 10 == 0 || lastTime < now - 9 * 1000L) {
+            if (attempts == 1 || attempts % 100 == 0 || lastTime < now - 60 * 1000L) {
                m_lastTime.set(now);
-               m_logger.error("Error when connecting to " + address + ", " + future.getCause() + ", attempts: " + attempts);
+               m_logger.warn("Error when connecting to " + address + ", " + future.getCause() + ", attempts: " + attempts);
             }
 
             return null;
