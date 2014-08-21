@@ -9,7 +9,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.unidal.initialization.DefaultModuleContext;
 import org.unidal.initialization.ModuleContext;
 import org.unidal.initialization.ModuleInitializer;
 import org.unidal.web.lifecycle.RequestLifecycle;
@@ -61,7 +60,7 @@ public class MVC extends AbstractContainerServlet {
 
       if (!"false".equals(initModules)) {
          try {
-            ModuleContext ctx = new DefaultModuleContext(getContainer());
+            ModuleContext ctx = getContainer().lookup(ModuleContext.class);
             ModuleInitializer initializer = ctx.lookup(ModuleInitializer.class);
             Enumeration<String> names = config.getInitParameterNames();
 

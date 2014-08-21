@@ -88,6 +88,8 @@ public class JdbcDataSource implements DataSource, Disposable, LogEnabled {
          m_cpds.getConnection().close();
          m_logger.info(String.format("Connected to JDBC data source(%s).", id));
       } catch (Throwable e) {
+         cpds.close();
+         
          throw new DataSourceException(String.format(
                "Error when connecting to JDBC data source(%s) with properties (driver=%s, url=%s, user=%s). Error message=%s", id,
                driver, url, user, e), e);

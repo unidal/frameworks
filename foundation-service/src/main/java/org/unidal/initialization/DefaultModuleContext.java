@@ -6,28 +6,33 @@ import java.util.Map;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.LoggerManager;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
-public class DefaultModuleContext implements ModuleContext {
+public class DefaultModuleContext implements ModuleContext, Contextualizable {
    private PlexusContainer m_container;
 
-   private Map<String, Object> m_attributes;
+   private Map<String, Object> m_attributes = new HashMap<String, Object>();
 
    private Logger m_logger;
 
+   public DefaultModuleContext() {
+   }
+
    public DefaultModuleContext(PlexusContainer container) {
       m_container = container;
-      m_attributes = new HashMap<String, Object>();
 
-      try {
-         LoggerManager loggerManager = container.lookup(LoggerManager.class);
+      setup();
+   }
 
-         m_logger = loggerManager.getLoggerForComponent(PlexusContainer.class.getName());
-      } catch (Exception e) {
-         throw new RuntimeException("Unable to get instance of Logger, " + "please make sure the environment was setup correctly!",
-               e);
-      }
+   @Override
+   public void contextualize(Context context) throws ContextException {
+      m_container = (PlexusContainer) context.get("plexus");
+
+      setup();
    }
 
    @Override
@@ -104,6 +109,17 @@ public class DefaultModuleContext implements ModuleContext {
    @Override
    public void setAttribute(String name, Object value) {
       m_attributes.put(name, value);
+   }
+
+   private void setup() {
+      try {
+         LoggerManager loggerManager = m_container.lookup(LoggerManager.class);
+
+         m_logger = loggerManager.getLoggerForComponent(PlexusContainer.class.getName());
+      } catch (Exception e) {
+         throw new RuntimeException("Unable to get instance of Logger, " + "please make sure the environment was setup correctly!",
+               e);
+      }
    }
 
    @Override

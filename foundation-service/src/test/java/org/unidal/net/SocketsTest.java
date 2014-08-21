@@ -26,11 +26,11 @@ public class SocketsTest extends ComponentTestCase {
    public void test() throws Exception {
       MockHandler ch = new MockHandler();
       MockHandler sh = new MockHandler();
-      Server s1 = Sockets.asServer().threads("Server", 0).listenOn(5444).start(sh);
-      Server s2 = Sockets.asServer().threads("Server", 0).listenOn(5445).start(sh);
+      Server s1 = Sockets.asServer().threads("Server", 0).listenOn(9444).start(sh);
+      Server s2 = Sockets.asServer().threads("Server", 0).listenOn(9445).start(sh);
       Client c = Sockets.asClient().threads("Client", 0).checkInterval(10) //
-            .connectTo("localhost", 5444) //
-            .connectTo("localhost", 5445) //
+            .connectTo("localhost", 9444) //
+            .connectTo("localhost", 9445) //
             .start(ch);
 
       ch.send("Hello server!");

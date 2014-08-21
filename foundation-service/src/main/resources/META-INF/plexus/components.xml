@@ -14,6 +14,10 @@
 			</requirements>
 		</component>
 		<component>
+			<role>org.unidal.initialization.ModuleContext</role>
+			<implementation>org.unidal.initialization.DefaultModuleContext</implementation>
+		</component>
+		<component>
 			<role>org.unidal.formatter.Formatter</role>
 			<role-hint>java.util.Date</role-hint>
 			<implementation>org.unidal.formatter.DateFormatter</implementation>
