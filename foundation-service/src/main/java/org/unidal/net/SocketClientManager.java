@@ -50,6 +50,8 @@ class SocketClientManager {
 
    private int m_checkInterval;
 
+   private String m_group;
+
    public SocketClientManager(SocketHandler handler, List<Integer> ports, List<String> servers) {
       m_handler = handler;
 
@@ -109,16 +111,13 @@ class SocketClientManager {
    }
 
    public void start() {
-      String group = getUniquePrefix();
-
+      m_group = getUniquePrefix();
       m_active = true;
-
       m_manager = new FailoverChannelManager();
-      Threads.forGroup(group).start(m_manager);
-
       m_sender = new MessageSender();
-
-      Thread thread = Threads.forGroup(group).start(m_sender);
+      
+      Threads.forGroup(m_group).start(m_manager);
+      Thread thread = Threads.forGroup(m_group).start(m_sender);
 
       try {
          while (!thread.isAlive()) {
@@ -171,9 +170,7 @@ class SocketClientManager {
       private AtomicLong m_lastTime = new AtomicLong();
 
       public FailoverChannelManager() {
-         String group = getUniquePrefix();
-
-         m_bootstrap = setup(group);
+         m_bootstrap = setup(m_group);
 
          int len = m_serverAddresses.size();
 

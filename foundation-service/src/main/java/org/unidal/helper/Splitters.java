@@ -67,7 +67,7 @@ public class Splitters {
             }
          }
 
-         if (!inKey && key.length() > 0) {
+         if (key.length() > 0) {
             if (m_trim) {
                map.put(key.toString().trim(), value.toString().trim());
             } else {
