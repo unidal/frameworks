@@ -218,7 +218,9 @@ public class XmlModelBuilder implements ModelBuilder {
                off = pos1;
             }
 
-            if (off >= 0) {
+            if (model.trim().endsWith("/>")) {
+               sb.append("<").append(tag).append(model.substring(off, pos3 + 1)).append(">\r\n");
+            } else if (off >= 0) {
                sb.append("<").append(tag).append(model.substring(off, pos3 + 1)).append(tag).append(">\r\n");
             } else {
                sb.append("<").append(tag).append(">").append(model).append("</").append(tag).append(">\r\n");

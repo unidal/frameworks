@@ -9,6 +9,17 @@ import org.junit.Test;
 public class DatesTest {
    private int m_firstDayOfWeek = Calendar.SUNDAY;
 
+   private void checkBeginOf(String expected, char field, String source) {
+      String format = "yyyy-MM-dd HH:mm:ss";
+
+      Assert.assertEquals(expected, Dates.from(source, format).firstDayOfWeek(m_firstDayOfWeek).beginOf(field).asString(format));
+   }
+
+   private void checkEndOf(String expected, char field, String source) {
+      String format = "yyyy-MM-dd HH:mm:ss";
+
+      Assert.assertEquals(expected, Dates.from(source, format).firstDayOfWeek(m_firstDayOfWeek).endOf(field).asString(format));
+   }
    @Test
    public void test() {
       long now = System.currentTimeMillis();
@@ -47,6 +58,17 @@ public class DatesTest {
    }
 
    @Test
+   public void testBugfixs() {
+      checkBeginOf("2013-05-25 00:00:00", 'd', "2013-05-25 15:48:05");
+      checkEndOf("2013-05-25 23:59:59", 'd', "2013-05-25 15:48:05");
+      
+      m_firstDayOfWeek = Calendar.MONDAY;
+
+      checkBeginOf("2013-05-20 00:00:00", 'w', "2013-05-25 15:48:05");
+      checkEndOf("2013-05-26 23:59:59", 'w', "2013-05-25 15:48:05");
+   }
+
+   @Test
    public void testEndOf() {
       checkEndOf("2013-05-25 11:48:05", 's', "2013-05-25 11:48:05");
       checkEndOf("2013-05-25 11:48:59", 'm', "2013-05-25 11:48:05");
@@ -69,17 +91,5 @@ public class DatesTest {
       checkEndOf("2013-05-24 23:59:59", 'w', "2013-05-19 11:48:05");
       checkEndOf("2013-05-31 23:59:59", 'w', "2013-05-25 11:48:05");
       checkEndOf("2013-05-31 23:59:59", 'w', "2013-05-26 11:48:05");
-   }
-
-   private void checkBeginOf(String expected, char field, String source) {
-      String format = "yyyy-MM-dd HH:mm:ss";
-
-      Assert.assertEquals(expected, Dates.from(source, format).firstDayOfWeek(m_firstDayOfWeek).beginOf(field).asString(format));
-   }
-
-   private void checkEndOf(String expected, char field, String source) {
-      String format = "yyyy-MM-dd HH:mm:ss";
-
-      Assert.assertEquals(expected, Dates.from(source, format).firstDayOfWeek(m_firstDayOfWeek).endOf(field).asString(format));
    }
 }

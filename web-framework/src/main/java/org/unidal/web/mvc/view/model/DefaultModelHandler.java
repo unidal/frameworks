@@ -1,7 +1,6 @@
 package org.unidal.web.mvc.view.model;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,16 +32,38 @@ public class DefaultModelHandler implements ModelHandler {
    @Override
    public void handle(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
       String forceDownload = req.getParameter("forceDownload");
+      ViewModel<?, ?, ?> model = (ViewModel<?, ?, ?>) req.getAttribute("model");
+      ActionContext<?> ctx = (ActionContext<?>) req.getAttribute("ctx");
 
       if ("xml".equals(forceDownload)) {
-         handleXmlDownload(req, res);
+         handleXmlDownload(res, model, ctx);
       } else if ("json".equals(forceDownload)) {
-         handleJsonDownload(req, res);
+         handleJsonDownload(res, model, ctx);
       }
    }
 
-   private void handleXmlDownload(HttpServletRequest req, HttpServletResponse res) throws UnsupportedEncodingException, IOException {
-      ViewModel<?, ?, ?> model = (ViewModel<?, ?, ?>) req.getAttribute("model");
+   protected void handleJsonDownload(HttpServletResponse res, ViewModel<?, ?, ?> model, ActionContext<?> ctx) throws IOException {
+      Class<?> clazz = model.getClass();
+      ModelDescriptor descriptor = m_map.get(clazz);
+
+      if (descriptor == null) {
+         descriptor = new AnnotationModelDescriptor(clazz);
+         m_map.put(clazz, descriptor);
+      }
+
+      if (descriptor.getModelName() != null) {
+         String json = m_jsonBuilder.build(descriptor, model);
+         byte[] data = json.getBytes("utf-8");
+
+         res.setContentType("application/json; charset=utf-8");
+         res.setContentLength(data.length);
+         res.getOutputStream().write(data);
+
+         ctx.stopProcess();
+      }
+   }
+
+   protected void handleXmlDownload(HttpServletResponse res, ViewModel<?, ?, ?> model, ActionContext<?> ctx) throws IOException {
       Class<?> clazz = model.getClass();
       ModelDescriptor descriptor = m_map.get(clazz);
 
@@ -59,36 +80,11 @@ public class DefaultModelHandler implements ModelHandler {
          res.setContentLength(data.length);
          res.getOutputStream().write(data);
 
-         ActionContext<?> ctx = (ActionContext<?>) req.getAttribute("ctx");
-
-         ctx.stopProcess();
-      }
-   }
-   private void handleJsonDownload(HttpServletRequest req, HttpServletResponse res) throws UnsupportedEncodingException, IOException {
-      ViewModel<?, ?, ?> model = (ViewModel<?, ?, ?>) req.getAttribute("model");
-      Class<?> clazz = model.getClass();
-      ModelDescriptor descriptor = m_map.get(clazz);
-      
-      if (descriptor == null) {
-         descriptor = new AnnotationModelDescriptor(clazz);
-         m_map.put(clazz, descriptor);
-      }
-      
-      if (descriptor.getModelName() != null) {
-         String json = m_jsonBuilder.build(descriptor, model);
-         byte[] data = json.getBytes("utf-8");
-         
-         res.setContentType("application/json; charset=utf-8");
-         res.setContentLength(data.length);
-         res.getOutputStream().write(data);
-         
-         ActionContext<?> ctx = (ActionContext<?>) req.getAttribute("ctx");
-         
          ctx.stopProcess();
       }
    }
 
-   static class AnnotationModelDescriptor implements ModelDescriptor {
+   protected static class AnnotationModelDescriptor implements ModelDescriptor {
       private Class<?> m_clazz;
 
       private String m_modelName;
@@ -122,13 +118,13 @@ public class DefaultModelHandler implements ModelHandler {
       }
 
       @Override
-      public List<Field> getPojoFields() {
-         return m_pojoFields;
+      public String getModelName() {
+         return m_modelName;
       }
 
       @Override
-      public String getModelName() {
-         return m_modelName;
+      public List<Field> getPojoFields() {
+         return m_pojoFields;
       }
 
       private void initialize() {

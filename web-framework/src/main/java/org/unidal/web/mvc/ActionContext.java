@@ -50,6 +50,13 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
       m_errors.add(error);
    }
 
+   public ErrorObject addError(String id) {
+      ErrorObject error = new ErrorObject(id);
+
+      m_errors.add(error);
+      return error;
+   }
+
    public ErrorObject addError(String id, Exception e) {
       ErrorObject error = new ErrorObject(id, e);
 

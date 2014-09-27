@@ -71,7 +71,7 @@ public class Dates {
          case 'M':
             m_cal.set(Calendar.DATE, 1);
          case 'd':
-            m_cal.set(Calendar.HOUR, 0);
+            m_cal.set(Calendar.HOUR_OF_DAY, 0);
          case 'h':
          case 'H':
             m_cal.set(Calendar.MINUTE, 0);
@@ -90,7 +90,7 @@ public class Dates {
                m_cal.add(Calendar.DATE, firstDayOfWeek - day - 7);
             }
 
-            m_cal.set(Calendar.HOUR, 0);
+            m_cal.set(Calendar.HOUR_OF_DAY, 0);
             m_cal.set(Calendar.MINUTE, 0);
             m_cal.set(Calendar.SECOND, 0);
             m_cal.set(Calendar.MILLISECOND, 0);
@@ -129,7 +129,7 @@ public class Dates {
          case 'M':
             m_cal.set(Calendar.DATE, m_cal.getActualMaximum(Calendar.DAY_OF_MONTH));
          case 'd':
-            m_cal.set(Calendar.HOUR, 23);
+            m_cal.set(Calendar.HOUR_OF_DAY, 23);
          case 'h':
          case 'H':
             m_cal.set(Calendar.MINUTE, 59);
@@ -148,7 +148,7 @@ public class Dates {
                m_cal.add(Calendar.DATE, firstDayOfWeek - day - 1);
             }
 
-            m_cal.set(Calendar.HOUR, 23);
+            m_cal.set(Calendar.HOUR_OF_DAY, 23);
             m_cal.set(Calendar.MINUTE, 59);
             m_cal.set(Calendar.SECOND, 59);
             m_cal.set(Calendar.MILLISECOND, 999);
