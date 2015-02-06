@@ -40,7 +40,7 @@ class ComponentsConfigurator extends AbstractResourceConfigurator {
       List<Component> all = new ArrayList<Component>();
 
       all.add(C(AnnotationMatrix.class).is(PER_LOOKUP));
-      all.add(C(ModelManager.class).req(ModuleRegistry.class, AnnotationMatrix.class));
+      all.add(C(ModelManager.class).req(ModuleRegistry.class));
       all.add(C(ActionResolver.class, DefaultActionResolver.class));
       all.add(C(InboundActionHandler.class, DefaultInboundActionHandler.class).is(PER_LOOKUP) //
             .req(MessageProducer.class));

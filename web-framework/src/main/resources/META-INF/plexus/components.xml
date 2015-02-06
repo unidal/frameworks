@@ -12,9 +12,6 @@
 				<requirement>
 					<role>org.unidal.web.mvc.model.ModuleRegistry</role>
 				</requirement>
-				<requirement>
-					<role>org.unidal.web.mvc.model.AnnotationMatrix</role>
-				</requirement>
 			</requirements>
 		</component>
 		<component>

@@ -91,8 +91,8 @@ public class ModuleManagerTest extends ComponentTestCase {
    public static final class TestModule2Copy extends AbstractModule {
    }
 
-   @ModuleMeta(name = "test3", defaultTransition = "default", defaultErrorAction = "default")
-   public static final class TestModule3 implements Module {
+   @ModuleMeta(name = "test3", defaultTransition = "missing", defaultErrorAction = "missing")
+   public static final class TestModule3 extends AbstractModule implements Module {
    }
 
    @ModuleMeta(name = "test4")
