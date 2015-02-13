@@ -5,6 +5,7 @@ import static org.unidal.lookup.util.StringUtils.isNotEmpty;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,9 @@ public class ModelManager extends ContainerHolder implements Initializable {
 	@Inject
 	private ModuleRegistry m_registry;
 
-	private Map<String, ModuleModel> m_modules = new HashMap<String, ModuleModel>();
+	private Map<String, List<ModuleModel>> m_modules = new HashMap<String, List<ModuleModel>>();
+
+	private ModuleModel m_defaultModule;
 
 	private void assertErrorExists(ModuleModel module, String errorActionName) {
 		if (!module.getErrors().containsKey(errorActionName)) {
@@ -240,12 +243,51 @@ public class ModelManager extends ContainerHolder implements Initializable {
 		return transition;
 	}
 
-	public ModuleModel getModule(String name) {
-		return m_modules.get(name);
+	public ActionResolver getActionResolver(String moduleName) {
+		ModuleModel module = getFirstModule(moduleName);
+
+		if (module == null) {
+			return null;
+		} else {
+			return (ActionResolver) module.getActionResolverInstance();
+		}
 	}
 
-	public boolean hasModule(String name) {
-		return m_modules.containsKey(name);
+	ModuleModel getFirstModule(String moduleName) {
+		List<ModuleModel> list = m_modules.get(moduleName);
+
+		if (list == null || list.isEmpty()) {
+			return m_defaultModule;
+		} else {
+			return list.get(0);
+		}
+	}
+
+	public InboundActionModel getInboundAction(String moduleName, String action) {
+		ModuleModel module = getFirstModule(moduleName);
+		Map<String, InboundActionModel> inbounds = module.getInbounds();
+		InboundActionModel inboundAction = inbounds.get(action);
+
+		// try to get the action with default action name
+		if (inboundAction == null && module.getDefaultInboundActionName() != null) {
+			inboundAction = inbounds.get(module.getDefaultInboundActionName());
+		}
+
+		return inboundAction;
+	}
+
+	public ModuleModel getModule(String moduleName, String action) {
+		List<ModuleModel> list = m_modules.get(moduleName);
+
+		if (list != null) {
+			for (ModuleModel module : list) {
+				if (module.findInbound(action) != null) {
+					return module;
+				}
+			}
+		}
+
+		return m_defaultModule;
 	}
 
 	public void initialize() throws InitializationException {
@@ -270,17 +312,24 @@ public class ModelManager extends ContainerHolder implements Initializable {
 	}
 
 	void register(Module module, boolean defaultModule) {
-		Class<? extends Module> moduleClass = module.getClass();
 		ModuleModel model = build(module);
-		ModuleModel oldModel = m_modules.put(model.getModuleName(), model);
+		String name = model.getModuleName();
+		List<ModuleModel> list = m_modules.get(name);
 
-		if (oldModel != null && oldModel.getModuleClass() != moduleClass) {
-			throw new RuntimeException("Two modules(" + oldModel.getModuleClass() + " and " + moduleClass
-			      + ") can't have same module name(" + model.getModuleName() + ").");
+		if (list == null) {
+			list = new ArrayList<ModuleModel>();
+			m_modules.put(name, list);
 		}
 
+		list.add(model);
+
 		if (defaultModule) {
-			m_modules.put(null, model);
+			if (m_defaultModule == null) {
+				m_defaultModule = model;
+			} else {
+				throw new RuntimeException(String.format("Only one default module supported, but found (%s) and (%s)!",
+				      m_defaultModule.getModuleClass(), module.getClass()));
+			}
 		}
 	}
 
@@ -295,10 +344,29 @@ public class ModelManager extends ContainerHolder implements Initializable {
 
 		for (InboundActionModel inbound : module.getInbounds().values()) {
 			if (isEmpty(inbound.getTransitionName())) {
-				throw new IllegalArgumentException("Please specify transition() of @"
-				      + InboundActionMeta.class.getSimpleName() + " of " + inbound.getActionMethod());
+				TransitionModel transition = module.findTransition("default");
+
+				if (transition != null) {
+					inbound.setTransitionName("default");
+				} else {
+					throw new IllegalArgumentException("Please specify transition() of @"
+					      + InboundActionMeta.class.getSimpleName() + " of " + inbound.getActionMethod());
+				}
 			} else {
 				assertTransitionExists(module, inbound.getTransitionName());
+			}
+
+			if (isEmpty(inbound.getErrorActionName())) {
+				ErrorModel error = module.findError("default");
+
+				if (error != null) {
+					inbound.setErrorActionName("default");
+				} else {
+					throw new IllegalArgumentException("Please specify error() of @"
+					      + InboundActionMeta.class.getSimpleName() + " of " + inbound.getActionMethod());
+				}
+			} else {
+				assertErrorExists(module, inbound.getErrorActionName());
 			}
 
 			// error action is optional
@@ -307,19 +375,4 @@ public class ModelManager extends ContainerHolder implements Initializable {
 			}
 		}
 	}
-
-	public ActionResolver getActionResolver(String moduleName) {
-		ModuleModel module = m_modules.get(moduleName);
-
-		if (module == null) {
-			module = m_modules.get(null);
-		}
-
-		if (module == null) {
-			return null;
-		} else {
-			return (ActionResolver) module.getActionResolverInstance();
-		}
-	}
-
 }

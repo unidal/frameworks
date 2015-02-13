@@ -1,7 +1,5 @@
 package org.unidal.web.mvc.lifecycle;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.unidal.lookup.ContainerHolder;
@@ -19,35 +17,24 @@ public class DefaultRequestContextBuilder extends ContainerHolder implements Req
 
 	@Override
 	public RequestContext build(HttpServletRequest request) {
-		ParameterProvider provider = getParameterProvider(request);
-		String moduleName = provider.getModuleName();
-		ActionResolver actionResolver = (ActionResolver) m_modelManager.getActionResolver(moduleName);
+		ParameterProvider provider = buildParameterProvider(request);
+		String requestModuleName = provider.getModuleName();
+		ActionResolver actionResolver = (ActionResolver) m_modelManager.getActionResolver(requestModuleName);
 
 		if (actionResolver == null) {
 			return null;
 		}
 
 		UrlMapping urlMapping = actionResolver.parseUrl(provider);
-		ModuleModel module;
-
-		if (m_modelManager.hasModule(moduleName)) {
-			module = m_modelManager.getModule(moduleName);
-		} else {
-			// try default module
-			module = m_modelManager.getModule(null);
-		}
-
-		if (module == null) {
-			return null;
-		}
-
-		InboundActionModel inboundAction = getInboundAction(module, urlMapping.getAction());
+		String action = urlMapping.getAction();
+		InboundActionModel inboundAction = m_modelManager.getInboundAction(requestModuleName, action);
 
 		if (inboundAction == null) {
 			return null;
 		}
 
 		RequestContext context = new RequestContext();
+		ModuleModel module = m_modelManager.getModule(requestModuleName, action);
 
 		urlMapping.setModule(module.getModuleName());
 		context.setActionResolver(actionResolver);
@@ -55,25 +42,20 @@ public class DefaultRequestContextBuilder extends ContainerHolder implements Req
 		context.setUrlMapping(urlMapping);
 		context.setModule(module);
 		context.setInboundAction(inboundAction);
-		context.setTransition(module.getTransitions().get(inboundAction.getTransitionName()));
-		context.setError(module.getErrors().get(inboundAction.getErrorActionName()));
+		context.setTransition(module.findTransition(inboundAction.getTransitionName()));
+		context.setError(module.findError(inboundAction.getErrorActionName()));
 
 		return context;
 	}
 
-	/**
-	 * get in-bound action from current module or default module
-	 */
-	private InboundActionModel getInboundAction(ModuleModel module, String actionName) {
-		Map<String, InboundActionModel> inbounds = module.getInbounds();
-		InboundActionModel inboundAction = inbounds.get(actionName);
+	private ParameterProvider buildParameterProvider(final HttpServletRequest request) {
+		String contentType = request.getContentType();
+		String mimeType = getMimeType(contentType);
+		ParameterProvider provider = lookup(ParameterProvider.class, mimeType);
 
-		// try to get the action with default action name
-		if (inboundAction == null && module.getDefaultInboundActionName() != null) {
-			inboundAction = inbounds.get(module.getDefaultInboundActionName());
-		}
+		provider.setRequest(request);
 
-		return inboundAction;
+		return provider;
 	}
 
 	private String getMimeType(String contentType) {
@@ -88,16 +70,6 @@ public class DefaultRequestContextBuilder extends ContainerHolder implements Req
 		}
 
 		return "application/x-www-form-urlencoded";
-	}
-
-	private ParameterProvider getParameterProvider(final HttpServletRequest request) {
-		String contentType = request.getContentType();
-		String mimeType = getMimeType(contentType);
-		ParameterProvider provider = lookup(ParameterProvider.class, mimeType);
-
-		provider.setRequest(request);
-
-		return provider;
 	}
 
 	@Override
