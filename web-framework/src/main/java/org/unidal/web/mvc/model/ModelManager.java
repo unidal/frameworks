@@ -14,6 +14,7 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationExce
 import org.unidal.lookup.ContainerHolder;
 import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.util.ReflectUtils;
+import org.unidal.web.lifecycle.ActionResolver;
 import org.unidal.web.mvc.ActionContext;
 import org.unidal.web.mvc.Module;
 import org.unidal.web.mvc.PageHandler;
@@ -243,6 +244,10 @@ public class ModelManager extends ContainerHolder implements Initializable {
 		return m_modules.get(name);
 	}
 
+	public boolean hasModule(String name) {
+		return m_modules.containsKey(name);
+	}
+
 	public void initialize() throws InitializationException {
 		Module defaultModule = m_registry.getDefaultModule();
 		List<Module> modules = m_registry.getModules();
@@ -300,6 +305,20 @@ public class ModelManager extends ContainerHolder implements Initializable {
 			if (!isEmpty(inbound.getErrorActionName())) {
 				assertErrorExists(module, inbound.getErrorActionName());
 			}
+		}
+	}
+
+	public ActionResolver getActionResolver(String moduleName) {
+		ModuleModel module = m_modules.get(moduleName);
+
+		if (module == null) {
+			module = m_modules.get(null);
+		}
+
+		if (module == null) {
+			return null;
+		} else {
+			return (ActionResolver) module.getActionResolverInstance();
 		}
 	}
 
