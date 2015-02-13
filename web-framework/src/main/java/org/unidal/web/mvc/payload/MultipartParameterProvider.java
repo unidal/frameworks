@@ -26,193 +26,218 @@ import org.unidal.helper.Joiners;
 import org.unidal.lookup.annotation.Inject;
 
 public class MultipartParameterProvider implements ParameterProvider, LogEnabled {
-   @Inject
-   private int m_sizeThreshold = 100 * 1024; // 100K
+	@Inject
+	private int m_sizeThreshold = 100 * 1024; // 100K
 
-   @Inject
-   private int m_maxUploadFileSize = 5 * 1024 * 1024; // 5M
+	@Inject
+	private int m_maxUploadFileSize = 5 * 1024 * 1024; // 5M
 
-   private Map<String, List<String>> m_parameters = new HashMap<String, List<String>>();
+	private Map<String, List<String>> m_parameters = new HashMap<String, List<String>>();
 
-   private Map<String, DiskFileItem> m_files = new HashMap<String, DiskFileItem>();
+	private Map<String, DiskFileItem> m_files = new HashMap<String, DiskFileItem>();
 
-   private Logger m_logger;
+	private Logger m_logger;
 
-   private HttpServletRequest m_request;
+	private HttpServletRequest m_request;
 
-   public void enableLogging(Logger logger) {
-      m_logger = logger;
-   }
+	@Override
+	public void enableLogging(Logger logger) {
+		m_logger = logger;
+	}
 
-   public InputStream getFile(String name) throws IOException {
-      DiskFileItem file = m_files.get(name);
+	@Override
+	public InputStream getFile(String name) throws IOException {
+		DiskFileItem file = m_files.get(name);
 
-      if (file == null) {
-         return null;
-      } else {
-         return new ItemStream(file);
-      }
-   }
+		if (file == null) {
+			return null;
+		} else {
+			return new ItemStream(file);
+		}
+	}
 
-   public String getParameter(String name) {
-      List<String> values = m_parameters.get(name);
+	@Override
+	public String getModuleName() {
+		final String path = m_request.getServletPath();
 
-      if (values == null) {
-         return null;
-      } else {
-         return Joiners.by(',').join(values);
-      }
-   }
+		if (path != null && path.length() > 0) {
+			int index = path.indexOf('/', 1);
 
-   public String[] getParameterNames() {
-      int size = m_parameters.size();
-      String[] names = new String[size];
-      int index = 0;
+			if (index > 0) {
+				return path.substring(1, index);
+			} else {
+				return path.substring(1);
+			}
+		}
 
-      for (String name : m_parameters.keySet()) {
-         names[index++] = name;
-      }
+		return "default";
+	}
 
-      return names;
-   }
+	@Override
+	public String getParameter(String name) {
+		List<String> values = m_parameters.get(name);
 
-   public String[] getParameterValues(String name) {
-      List<String> values = m_parameters.get(name);
+		if (values == null) {
+			return null;
+		} else {
+			return Joiners.by(',').join(values);
+		}
+	}
 
-      if (values == null) {
-         return null;
-      } else {
-         return values.toArray(new String[0]);
-      }
-   }
+	@Override
+	public String[] getParameterNames() {
+		int size = m_parameters.size();
+		String[] names = new String[size];
+		int index = 0;
 
-   public HttpServletRequest getRequest() {
-      return m_request;
-   }
+		for (String name : m_parameters.keySet()) {
+			names[index++] = name;
+		}
 
-   @SuppressWarnings("unchecked")
-   private void initialize(HttpServletRequest request) {
-      DiskFileItemFactory factory = new DiskFileItemFactory();
-      ServletFileUpload upload = new ServletFileUpload(factory);
-      File tmpDir = new File(System.getProperty("java.io.tmpdir"));
-      File repository = new File(tmpDir, "upload");
+		return names;
+	}
 
-      repository.mkdirs();
-      factory.setRepository(repository);
-      factory.setSizeThreshold(m_sizeThreshold);
-      upload.setSizeMax(m_maxUploadFileSize);
+	@Override
+	public String[] getParameterValues(String name) {
+		List<String> values = m_parameters.get(name);
 
-      try {
-         List<DiskFileItem> items = upload.parseRequest(request);
+		if (values == null) {
+			return null;
+		} else {
+			return values.toArray(new String[0]);
+		}
+	}
 
-         for (DiskFileItem item : items) {
-            String name = item.getFieldName();
+	@Override
+	public HttpServletRequest getRequest() {
+		return m_request;
+	}
 
-            if (item.isFormField()) {
-               List<String> values = m_parameters.get(name);
-               String value = item.getString();
+	@SuppressWarnings("unchecked")
+	private void initialize(HttpServletRequest request) {
+		DiskFileItemFactory factory = new DiskFileItemFactory();
+		ServletFileUpload upload = new ServletFileUpload(factory);
+		File tmpDir = new File(System.getProperty("java.io.tmpdir"));
+		File repository = new File(tmpDir, "upload");
 
-               if (values == null) {
-                  values = new ArrayList<String>(3);
-                  m_parameters.put(name, values);
-               }
+		repository.mkdirs();
+		factory.setRepository(repository);
+		factory.setSizeThreshold(m_sizeThreshold);
+		upload.setSizeMax(m_maxUploadFileSize);
 
-               values.add(value);
-            } else {
-               m_files.put(name, item);
-            }
-         }
-      } catch (SizeLimitExceededException e) {
-         m_logger.warn("Uplaod file size exceeds the limit: " + m_maxUploadFileSize + " byte.", e);
-      } catch (FileUploadException e) {
-         m_logger.error("Error when uploading file.", e);
-      }
+		try {
+			List<DiskFileItem> items = upload.parseRequest(request);
 
-      processQueryString();
-   }
+			for (DiskFileItem item : items) {
+				String name = item.getFieldName();
 
-   @SuppressWarnings("deprecation")
-   private void processQueryString() {
-      String qs = m_request.getQueryString();
+				if (item.isFormField()) {
+					List<String> values = m_parameters.get(name);
+					String value = item.getString();
 
-      if (qs != null) {
-         String[] pairs = qs.split(Pattern.quote("&"));
-         Set<String> added = new HashSet<String>();
+					if (values == null) {
+						values = new ArrayList<String>(3);
+						m_parameters.put(name, values);
+					}
 
-         for (String pair : pairs) {
-            int pos = pair.indexOf('=');
+					values.add(value);
+				} else {
+					m_files.put(name, item);
+				}
+			}
+		} catch (SizeLimitExceededException e) {
+			m_logger.warn("Uplaod file size exceeds the limit: " + m_maxUploadFileSize + " byte.", e);
+		} catch (FileUploadException e) {
+			m_logger.error("Error when uploading file.", e);
+		}
 
-            if (pos > 0) {
-               String name = pair.substring(0, pos);
-               String value = pair.substring(pos + 1);
+		processQueryString();
+	}
 
-               if (!m_parameters.containsKey(name) || added.contains(name)) {
-                  List<String> values = m_parameters.get(name);
+	@SuppressWarnings("deprecation")
+	private void processQueryString() {
+		String qs = m_request.getQueryString();
 
-                  if (values == null) {
-                     values = new ArrayList<String>(3);
-                     m_parameters.put(name, values);
-                  }
+		if (qs != null) {
+			String[] pairs = qs.split(Pattern.quote("&"));
+			Set<String> added = new HashSet<String>();
 
-                  try {
-                     values.add(URLDecoder.decode(value, "utf-8"));
-                  } catch (UnsupportedEncodingException e) {
-                     values.add(URLDecoder.decode(value));
-                  }
+			for (String pair : pairs) {
+				int pos = pair.indexOf('=');
 
-                  added.add(name);
-               }
-            }
-         }
-      }
-   }
+				if (pos > 0) {
+					String name = pair.substring(0, pos);
+					String value = pair.substring(pos + 1);
 
-   public void setMaxUploadFileSize(int maxUploadFileSize) {
-      m_maxUploadFileSize = maxUploadFileSize;
-   }
+					if (!m_parameters.containsKey(name) || added.contains(name)) {
+						List<String> values = m_parameters.get(name);
 
-   public void setRequest(HttpServletRequest request) {
-      m_request = request;
+						if (values == null) {
+							values = new ArrayList<String>(3);
+							m_parameters.put(name, values);
+						}
 
-      initialize(request);
-   }
+						try {
+							values.add(URLDecoder.decode(value, "utf-8"));
+						} catch (UnsupportedEncodingException e) {
+							values.add(URLDecoder.decode(value));
+						}
 
-   public void setSizeThreshold(int sizeThreshold) {
-      m_sizeThreshold = sizeThreshold;
-   }
+						added.add(name);
+					}
+				}
+			}
+		}
+	}
 
-   public static final class ItemStream extends InputStream {
-      private DiskFileItem m_file;
+	public void setMaxUploadFileSize(int maxUploadFileSize) {
+		m_maxUploadFileSize = maxUploadFileSize;
+	}
 
-      private InputStream m_stream;
+	@Override
+	public MultipartParameterProvider setRequest(HttpServletRequest request) {
+		m_request = request;
 
-      public ItemStream(DiskFileItem file) throws IOException {
-         m_file = file;
-         m_stream = file.getInputStream();
-      }
+		initialize(request);
+		return this;
+	}
 
-      @Override
-      public void close() throws IOException {
-         m_stream.close();
-      }
+	public void setSizeThreshold(int sizeThreshold) {
+		m_sizeThreshold = sizeThreshold;
+	}
 
-      @Override
-      public int read() throws IOException {
-         return m_stream.read();
-      }
+	public static final class ItemStream extends InputStream {
+		private DiskFileItem m_file;
 
-      @Override
-      public int read(byte[] b) throws IOException {
-         return m_stream.read(b);
-      }
+		private InputStream m_stream;
 
-      @Override
-      public int read(byte[] b, int off, int len) throws IOException {
-         return m_stream.read(b, off, len);
-      }
+		public ItemStream(DiskFileItem file) throws IOException {
+			m_file = file;
+			m_stream = file.getInputStream();
+		}
 
-      public void write(File file) throws Exception {
-         m_file.write(file);
-      }
-   }
+		@Override
+		public void close() throws IOException {
+			m_stream.close();
+		}
+
+		@Override
+		public int read() throws IOException {
+			return m_stream.read();
+		}
+
+		@Override
+		public int read(byte[] b) throws IOException {
+			return m_stream.read(b);
+		}
+
+		@Override
+		public int read(byte[] b, int off, int len) throws IOException {
+			return m_stream.read(b, off, len);
+		}
+
+		public void write(File file) throws Exception {
+			m_file.write(file);
+		}
+	}
 }

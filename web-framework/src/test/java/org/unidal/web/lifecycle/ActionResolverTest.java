@@ -40,8 +40,8 @@ public class ActionResolverTest extends ComponentTestCase {
 			}
 		};
 
-		UrlMapping mapping = resolver.parseUrl(new UrlEncodedParameterProvider(request));
-		String actualUri = resolver.buildUrl(new UrlEncodedParameterProvider(request), mapping);
+		UrlMapping mapping = resolver.parseUrl(new UrlEncodedParameterProvider().setRequest(request));
+		String actualUri = resolver.buildUrl(new UrlEncodedParameterProvider().setRequest(request), mapping);
 		String expectedUri = (contextPath == null ? "" : contextPath) + uri;
 
 		Assert.assertEquals(expectedUri, actualUri);

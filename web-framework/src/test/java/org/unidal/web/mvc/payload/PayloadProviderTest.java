@@ -62,7 +62,8 @@ public class PayloadProviderTest extends ComponentTestCase {
 		sections[4] = pathInfo;
 
 		DefaultUrlMapping mapping = new DefaultUrlMapping(sections);
-		List<ErrorObject> errors = provider.process(mapping, new UrlEncodedParameterProvider(request), payload);
+		List<ErrorObject> errors = provider.process(mapping, new UrlEncodedParameterProvider().setRequest(request),
+		      payload);
 
 		release(DefaultPayloadProvider.class);
 		Assert.assertEquals("Errors occured.", "[]", errors.toString());
@@ -76,7 +77,8 @@ public class PayloadProviderTest extends ComponentTestCase {
 
 		provider.register(payload.getClass());
 
-		List<ErrorObject> errors = provider.process(mapping, new UrlEncodedParameterProvider(request), payload);
+		List<ErrorObject> errors = provider.process(mapping, new UrlEncodedParameterProvider().setRequest(request),
+		      payload);
 
 		release(DefaultPayloadProvider.class);
 		Assert.assertEquals("Errors occured.", "[]", errors.toString());

@@ -7,46 +7,63 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 public class UrlEncodedParameterProvider implements ParameterProvider {
-   private HttpServletRequest m_request;
+	private HttpServletRequest m_request;
 
-   public UrlEncodedParameterProvider() {
-   }
+	@Override
+	public InputStream getFile(String name) throws IOException {
+		throw new UnsupportedOperationException("File upload is only support in multipart/form-data encoding type.");
+	}
 
-   public UrlEncodedParameterProvider(HttpServletRequest request) {
-      m_request = request;
-   }
+	@Override
+	public String getModuleName() {
+		final String path = m_request.getServletPath();
 
-   public InputStream getFile(String name) throws IOException {
-      throw new UnsupportedOperationException("File upload is only support in multipart/form-data encoding type.");
-   }
+		if (path != null && path.length() > 0) {
+			int index = path.indexOf('/', 1);
 
-   public String getParameter(String name) {
-      return m_request.getParameter(name);
-   }
+			if (index > 0) {
+				return path.substring(1, index);
+			} else {
+				return path.substring(1);
+			}
+		}
 
-   @SuppressWarnings("unchecked")
-   public String[] getParameterNames() {
-      Map<String, String[]> map = m_request.getParameterMap();
-      int size = map.size();
-      String[] names = new String[size];
-      int index = 0;
+		return "default";
+	}
 
-      for (String name : map.keySet()) {
-         names[index++] = name;
-      }
+	@Override
+	public String getParameter(String name) {
+		return m_request.getParameter(name);
+	}
 
-      return names;
-   }
+	@Override
+	@SuppressWarnings("unchecked")
+	public String[] getParameterNames() {
+		Map<String, String[]> map = m_request.getParameterMap();
+		int size = map.size();
+		String[] names = new String[size];
+		int index = 0;
 
-   public String[] getParameterValues(String name) {
-      return m_request.getParameterValues(name);
-   }
+		for (String name : map.keySet()) {
+			names[index++] = name;
+		}
 
-   public HttpServletRequest getRequest() {
-      return m_request;
-   }
+		return names;
+	}
 
-   public void setRequest(HttpServletRequest request) {
-      m_request = request;
-   }
+	@Override
+	public String[] getParameterValues(String name) {
+		return m_request.getParameterValues(name);
+	}
+
+	@Override
+	public HttpServletRequest getRequest() {
+		return m_request;
+	}
+
+	@Override
+	public UrlEncodedParameterProvider setRequest(HttpServletRequest request) {
+		m_request = request;
+		return this;
+	}
 }
