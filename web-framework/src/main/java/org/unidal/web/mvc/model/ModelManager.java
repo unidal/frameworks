@@ -264,7 +264,7 @@ public class ModelManager extends ContainerHolder implements Initializable {
 	}
 
 	public InboundActionModel getInboundAction(String moduleName, String action) {
-		ModuleModel module = getFirstModule(moduleName);
+		ModuleModel module = getModule(moduleName, action);
 		Map<String, InboundActionModel> inbounds = module.getInbounds();
 		InboundActionModel inboundAction = inbounds.get(action);
 
