@@ -38,7 +38,7 @@ public class TableProviderTest extends ComponentTestCase {
 
       dao.findByPK(123, UserEntity.READSET_FULL);
 
-      Assert.assertEquals("SELECT u.user_id,u.full_name,u.creation_date,u.last_modified_date FROM user_3 u WHERE u.user_id = ?",
+      Assert.assertEquals("SELECT u.user_id,u.full_name,u.creation_date,u.last_modified_date FROM `user_3` u WHERE u.user_id = ?",
             executor.getSql());
    }
 

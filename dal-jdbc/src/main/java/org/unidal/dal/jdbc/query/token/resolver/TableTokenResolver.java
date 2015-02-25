@@ -24,18 +24,19 @@ public class TableTokenResolver implements TokenResolver {
       String[] logicalNameAndAlias = ctx.getEntityInfo().getLogicalNameAndAlias(tableName);
       TableProvider tableProvider = m_manager.getTableProvider(logicalNameAndAlias[0]);
       String physicalTableName = tableProvider.getPhysicalTableName(ctx.getQueryHints());
+      String quotedTableName = "`" + physicalTableName + "`";
 
       switch (ctx.getQuery().getType()) {
       case SELECT:
          String alias = table.getAttribute("alias", logicalNameAndAlias[1]);
 
-         return physicalTableName + " " + alias;
+         return quotedTableName + " " + alias;
       case INSERT:
-         return physicalTableName;
+         return quotedTableName;
       case UPDATE:
-         return physicalTableName;
+         return quotedTableName;
       case DELETE:
-         return physicalTableName;
+         return quotedTableName;
       default:
          throw new DalRuntimeException("TABLE token does not support query type: " + ctx.getQuery().getType());
       }

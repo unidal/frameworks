@@ -5,7 +5,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
@@ -42,6 +44,8 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
 
    private int m_htmlId;
 
+   private Map<String, Object> m_attributes;
+
    public void addCookie(Cookie cookie) {
       m_httpServletResponse.addCookie(cookie);
    }
@@ -62,6 +66,15 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
 
       m_errors.add(error);
       return error;
+   }
+
+   @SuppressWarnings("unchecked")
+   public <S> S getAttribute(String name) {
+      if (m_attributes == null) {
+         return null;
+      } else {
+         return (S) m_attributes.get(name);
+      }
    }
 
    public Cookie getCookie(String name) {
@@ -124,6 +137,10 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
 
    public ServletContext getServletContext() {
       return m_servletContext;
+   }
+
+   public boolean hasAttribute(String name) {
+      return m_attributes != null && m_attributes.containsKey(name);
    }
 
    public boolean hasErrors() {
@@ -237,6 +254,14 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
       m_httpServletResponse.setContentType("application/json; charset=utf-8");
       m_httpServletResponse.getWriter().write(sb.toString());
       m_processStopped = true;
+   }
+
+   public void setAttribute(String name, Object value) {
+      if (m_attributes == null) {
+         m_attributes = new HashMap<String, Object>();
+      }
+
+      m_attributes.put(name, value);
    }
 
    public void setException(Throwable exception) {
