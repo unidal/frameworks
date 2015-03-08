@@ -104,13 +104,10 @@ org.eclipse.jdt.core.compiler.compliance=1.6
    <repositories>
       <repository>
            <id>central</id>
-           <name>Maven2 Central Repository</name>
-           <layout>default</layout>
            <url>http://repo1.maven.org/maven2</url>
       </repository>
       <repository>
          <id>frameworks</id>
-         <name>Unidal Frameworks Repository</name>
          <url>https://raw.githubusercontent.com/unidal/frameworks/mvn-repo</url>
          <releases>
             <checksumPolicy>ignore</checksumPolicy>
@@ -124,7 +121,6 @@ org.eclipse.jdt.core.compiler.compliance=1.6
       </pluginRepository>
       <pluginRepository>
          <id>maven-plugins</id>
-         <name>Unidal Maven Plugins Repository</name>
          <url>https://raw.githubusercontent.com/unidal/maven-plugins/mvn-repo</url>
          <releases>
             <checksumPolicy>ignore</checksumPolicy>
