@@ -15,7 +15,6 @@
       <module>dal-jdbc</module>
       <module>test-framework</module>
       <module>web-framework</module>
-      <module>spring-support</module>
    </modules>
    <build>
       <pluginManagement>
