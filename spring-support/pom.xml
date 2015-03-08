@@ -22,17 +22,19 @@
          <groupId>com.dianping.cat</groupId>
          <artifactId>cat-client</artifactId>
          <version>1.1.5</version>
+         <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.springframework</groupId>
          <artifactId>spring-beans</artifactId>
          <version>3.2.2.RELEASE</version>
+         <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.springframework</groupId>
          <artifactId>spring-context</artifactId>
          <version>3.2.2.RELEASE</version>
-         <scope>test</scope>
+         <scope>provided</scope>
       </dependency>
    </dependencies>
 </project>
