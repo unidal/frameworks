@@ -3,6 +3,7 @@ package org.unidal.web.mvc.view.model;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import junit.framework.Assert;
 
@@ -28,7 +29,10 @@ public class ModelHandlerTest extends ComponentTestCase {
 
    @Test
    public void testXmlBuilder() throws Exception {
+      TimeZone.setDefault(TimeZone.getTimeZone("GMT+08"));
+
       AnnotationModelDescriptor descriptor = new AnnotationModelDescriptor(MockModel0.class);
+
       Assert.assertEquals(null, descriptor.getModelName());
 
       checkModel(new MockModel1());
