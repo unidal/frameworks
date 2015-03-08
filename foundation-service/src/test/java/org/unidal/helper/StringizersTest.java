@@ -5,151 +5,154 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
 
 public class StringizersTest {
-	private void check(Object obj, String expected) {
-		String actual = Stringizers.forJson().compact().from(obj);
+   private void check(Object obj, String expected) {
+      String actual = Stringizers.forJson().compact().from(obj);
 
-		Assert.assertEquals(expected, actual);
-	}
+      Assert.assertEquals(expected, actual);
+   }
 
-	private void checkLimit(Object obj, String expected) {
-		String actual = Stringizers.forJson().compact().from(obj, 60, 5);
+   private void checkLimit(Object obj, String expected) {
+      String actual = Stringizers.forJson().compact().from(obj, 60, 5);
 
-		Assert.assertEquals(expected, actual);
-	}
+      Assert.assertEquals(expected, actual);
+   }
 
-	private Map<String, Object> map(Object forth) {
-		Map<String, Object> map = new HashMap<String, Object>();
+   private Map<String, Object> map(Object forth) {
+      Map<String, Object> map = new HashMap<String, Object>();
 
-		map.put("first", new Pojo(1, "x"));
-		map.put("second", new Pojo(2, "y"));
-		map.put("third", new Pojo(3, "z"));
-		map.put("forth", forth);
+      map.put("first", new Pojo(1, "x"));
+      map.put("second", new Pojo(2, "y"));
+      map.put("third", new Pojo(3, "z"));
+      map.put("forth", forth);
 
-		return map;
-	}
+      return map;
+   }
 
-	@Test
-	public void testBreakLoop() {
-		check(new Loop1("x0").addChild(new Loop1("x10").addChild(new Loop1("x210")).addChild(new Loop1("x310")))
-		      .addChild(new Loop1("x11")),
-		      "{\"children\":[{\"children\":[{\"children\":[],\"data\":\"x210\",\"parent\":{}},{\"children\":{},\"data\":\"x310\",\"parent\":{}}],\"data\":\"x10\",\"parent\":{}},{\"children\":{},\"data\":\"x11\",\"parent\":{}}],\"data\":\"x0\"}");
-	}
+   @Test
+   public void testBreakLoop() {
+      check(new Loop1("x0").addChild(new Loop1("x10").addChild(new Loop1("x210")).addChild(new Loop1("x310")))
+            .addChild(new Loop1("x11")),
+            "{\"children\":[{\"children\":[{\"children\":[],\"data\":\"x210\",\"parent\":{}},{\"children\":{},\"data\":\"x310\",\"parent\":{}}],\"data\":\"x10\",\"parent\":{}},{\"children\":{},\"data\":\"x11\",\"parent\":{}}],\"data\":\"x0\"}");
+   }
 
-	@Test
-	public void testLengthLimiter() {
-		checkLimit("xyz", "\"xyz\"");
-		checkLimit("xyzabc", "\"x...c\"");
-		checkLimit("123456789", "\"1...9\"");
-		checkLimit(map("hello, world"), "{\"forth\":\"h...d\",\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"...");
-		checkLimit(map(map(map("hello, world"))), //
-		      "{\"forth\":{\"forth\":{\"forth\":\"h...d\",\"second\":{\"x\":2,\"y\":\"y\"},\"...");
-	}
+   @Test
+   public void testLengthLimiter() {
+      checkLimit("xyz", "\"xyz\"");
+      checkLimit("xyzabc", "\"x...c\"");
+      checkLimit("123456789", "\"1...9\"");
+      checkLimit(map("hello, world"), "{\"forth\":\"h...d\",\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"...");
+      checkLimit(map(map(map("hello, world"))), //
+            "{\"forth\":{\"forth\":{\"forth\":\"h...d\",\"second\":{\"x\":2,\"y\":\"y\"},\"...");
+   }
 
-	@Test
-	public void testNotSame() {
-		check(new Date(1330079278861L), "\"2012-02-24 18:27:58\"");
-		check(Date.class, "\"class java.util.Date\"");
-		check(new Object[] { "x", "y", new Object[] { 1, 2.3, true, map(null) } }, //
-		      "[\"x\",\"y\",[1,2.3,true,{\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"y\":\"z\"},\"first\":{\"x\":1,\"y\":\"x\"}}]]");
-	}
+   @Test
+   public void testNotSame() {
+      TimeZone.setDefault(TimeZone.getTimeZone("GMT+08"));
 
-	@Test
-	public void testObjectWithToString() {
-		check(new PojoWithToString(2, "second"), "\"Pojo[2,second]\"");
-	}
+      check(new Date(1330079278861L), "\"2012-02-24 18:27:58\"");
+      check(Date.class, "\"class java.util.Date\"");
+      check(new Object[] { "x", "y", new Object[] { 1, 2.3, true, map(null) } }, //
+            "[\"x\",\"y\",[1,2.3,true,{\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"y\":\"z\"},\"first\":{\"x\":1,\"y\":\"x\"}}]]");
+   }
 
-	@Test
-	public void testSame() {
-		check(null, "");
-		check(1, "1");
-		check(1.2, "1.2");
-		check(true, "true");
-		check("xyz", "\"xyz\"");
-		check(new String[] { "x", "y" }, "[\"x\",\"y\"]");
-		check(new Pojo(3, null), "{\"x\":3}");
-		check(new Pojo(3, "a"), "{\"x\":3,\"y\":\"a\"}");
-		check(map(null),
-		      "{\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"y\":\"z\"},\"first\":{\"x\":1,\"y\":\"x\"}}");
-		check(map(map(map(null))), //
-		      "{\"forth\":{\"forth\":{\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"y\":\"z\"},\"first\":{\"x\":1,\"y\":\"x\"}},\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"y\":\"z\"},\"first\":{\"x\":1,\"y\":\"x\"}},\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"y\":\"z\"},\"first\":{\"x\":1,\"y\":\"x\"}}");
-	}
+   @Test
+   public void testObjectWithToString() {
+      check(new PojoWithToString(2, "second"), "\"Pojo[2,second]\"");
+   }
 
-	public static class Loop1 {
-		private Loop1 m_parent;
+   @Test
+   public void testSame() {
+      check(null, "");
+      check(1, "1");
+      check(1.2, "1.2");
+      check(true, "true");
+      check("xyz", "\"xyz\"");
+      check(new String[] { "x", "y" }, "[\"x\",\"y\"]");
+      check(new Pojo(3, null), "{\"x\":3}");
+      check(new Pojo(3, "a"), "{\"x\":3,\"y\":\"a\"}");
+      check(map(null),
+            "{\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"y\":\"z\"},\"first\":{\"x\":1,\"y\":\"x\"}}");
+      check(map(map(map(null))), //
+            "{\"forth\":{\"forth\":{\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"y\":\"z\"},\"first\":{\"x\":1,\"y\":\"x\"}},\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"y\":\"z\"},\"first\":{\"x\":1,\"y\":\"x\"}},\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"y\":\"z\"},\"first\":{\"x\":1,\"y\":\"x\"}}");
+   }
 
-		private Object m_data;
+   public static class Loop1 {
+      private Loop1 m_parent;
 
-		private List<Loop1> m_children = new ArrayList<Loop1>();
+      private Object m_data;
 
-		public Loop1(Object data) {
-			m_data = data;
-		}
+      private List<Loop1> m_children = new ArrayList<Loop1>();
 
-		public Loop1 addChild(Loop1 loop) {
-			loop.m_parent = this;
-			m_children.add(loop);
-			return this;
-		}
+      public Loop1(Object data) {
+         m_data = data;
+      }
 
-		public List<Loop1> getChildren() {
-			return m_children;
-		}
+      public Loop1 addChild(Loop1 loop) {
+         loop.m_parent = this;
+         m_children.add(loop);
+         return this;
+      }
 
-		public Object getData() {
-			return m_data;
-		}
+      public List<Loop1> getChildren() {
+         return m_children;
+      }
 
-		public Loop1 getParent() {
-			return m_parent;
-		}
-	}
+      public Object getData() {
+         return m_data;
+      }
 
-	public static class Pojo {
-		private int x;
+      public Loop1 getParent() {
+         return m_parent;
+      }
+   }
 
-		private String y;
+   public static class Pojo {
+      private int x;
 
-		public Pojo(int x, String y) {
-			this.x = x;
-			this.y = y;
-		}
+      private String y;
 
-		public int getX() {
-			return x;
-		}
+      public Pojo(int x, String y) {
+         this.x = x;
+         this.y = y;
+      }
 
-		public String getY() {
-			return y;
-		}
-	}
+      public int getX() {
+         return x;
+      }
 
-	public static class PojoWithToString {
-		private int x;
+      public String getY() {
+         return y;
+      }
+   }
 
-		private String y;
+   public static class PojoWithToString {
+      private int x;
 
-		public PojoWithToString(int x, String y) {
-			this.x = x;
-			this.y = y;
-		}
+      private String y;
 
-		public int getX() {
-			return x;
-		}
+      public PojoWithToString(int x, String y) {
+         this.x = x;
+         this.y = y;
+      }
 
-		public String getY() {
-			return y;
-		}
+      public int getX() {
+         return x;
+      }
 
-		@Override
-		public String toString() {
-			return "Pojo[" + x + "," + y + "]";
-		}
-	}
+      public String getY() {
+         return y;
+      }
+
+      @Override
+      public String toString() {
+         return "Pojo[" + x + "," + y + "]";
+      }
+   }
 }
