@@ -1,4 +1,5 @@
 /ws/*
+/*/bin/*
 /target/*
 /*/target/*
 /*/.*
