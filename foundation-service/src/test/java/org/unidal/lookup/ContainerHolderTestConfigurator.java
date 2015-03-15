@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.unidal.lookup.ContainerHolderTest.BadCollectionHolder;
 import org.unidal.lookup.ContainerHolderTest.BadObject;
 import org.unidal.lookup.ContainerHolderTest.BadObjectHolder;
 import org.unidal.lookup.ContainerHolderTest.MockContainer;
@@ -55,8 +54,6 @@ public class ContainerHolderTestConfigurator extends AbstractResourceConfigurato
       all.add(C(Queue.class, "blocking", LinkedBlockingQueue.class));
       all.add(C(List.class, "array", ArrayList.class));
       all.add(C(Map.class, "hash", HashMap.class));
-
-      all.addAll(defineComponent(BadCollectionHolder.class));
 
       return all;
    }

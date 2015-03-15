@@ -8,14 +8,8 @@ import java.lang.annotation.Target;
 
 @Retention(RUNTIME)
 @Target({ FIELD })
-public @interface Inject {
-   Class<?> type() default Default.class;
+public @interface InjectAttribute {
+   public String DEFAULT = "";
 
-   String[] value() default {};
-
-   @Deprecated
-   String instantiationStrategy() default "";
-
-   public static final class Default {
-   }
+   String value() default DEFAULT;
 }

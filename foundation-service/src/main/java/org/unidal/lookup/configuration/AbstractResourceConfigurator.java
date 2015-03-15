@@ -3,7 +3,8 @@ package org.unidal.lookup.configuration;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -11,155 +12,260 @@ import java.util.Map;
 
 import org.unidal.helper.Files;
 import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.InjectAttribute;
+import org.unidal.lookup.annotation.Named;
+import org.unidal.tuple.Pair;
 
 public abstract class AbstractResourceConfigurator {
-	protected static final String PER_LOOKUP = "per-lookup";
-	
-	protected static final String ENUM = "enum";
+   protected static final String PER_LOOKUP = "per-lookup";
 
-	protected static <T> Component C(Class<T> role) {
-		return new Component(role);
-	}
+   protected static final String ENUM = "enum";
 
-	protected static <T> Component C(Class<T> role, Class<? extends T> implementationClass) {
-		return new Component(role, implementationClass);
-	}
+   protected static <T> Component A(Class<T> clazz) {
+      return A(clazz, null);
+   }
 
-	protected static <T> Component C(Class<T> role, Object roleHint, Class<? extends T> implementationClass) {
-		return new Component(role, roleHint, implementationClass);
-	}
+   @SuppressWarnings("unchecked")
+   protected static <T> Component A(Class<T> clazz, String enumField) {
+      Named named = clazz.getAnnotation(Named.class);
 
-	protected static Configuration E(String name, String... attributePairs) {
-		return new Configuration(name, attributePairs);
-	}
+      if (named == null) {
+         throw new IllegalStateException(String.format("Class(%s) is not annotated by %s.", clazz.getName(),
+               Named.class.getName()));
+      }
 
-	protected static void generatePlexusComponentsXmlFile(AbstractResourceConfigurator rc) {
-		File file = rc.getConfigurationFile();
+      Class<?> role = named.type();
+      String roleHint = named.value();
 
-		try {
-			rc.saveToFile();
+      if (role == Named.Default.class) {
+         role = clazz;
+      } else {
+         if (!role.isAssignableFrom(clazz)) {
+            throw new IllegalStateException(String.format("Class(%s) is not assignable from class(%s).",
+                  role.getName(), clazz, clazz.getName(), role.getName()));
+         }
+      }
 
-			System.out.println(String.format("File %s generated. File length is %s.", file.getCanonicalPath(),
-			      file.length()));
-		} catch (IOException e) {
-			System.err.println(String.format("Error when generating %s file.", file));
-			e.printStackTrace();
-		}
-	}
+      if (enumField != null) {
+         roleHint = enumField;
+      } else if (roleHint.length() == 0) {
+         roleHint = null;
+      }
 
-	protected List<Component> defineComponent(Class<?> role) {
-		return defineComponent(role, C(role));
-	}
+      Component component = new Component((Class<Object>) role, roleHint, clazz);
 
-	private List<Component> defineComponent(Class<?> role, Component component) {
-		List<Component> all = new ArrayList<Component>();
-		Map<Class<?>, Component> map = new LinkedHashMap<Class<?>, Component>();
+      if (enumField != null) {
+         component.is(ENUM);
+      } else if (named.instantiationStrategy().length() > 0) {
+         component.is(named.instantiationStrategy());
+      }
 
-		map.put(role, component);
-		processInjectFields(map, role, component);
+      Map<Class<?>, List<Pair<Object, String>>> requires = new LinkedHashMap<Class<?>, List<Pair<Object, String>>>();
+      Map<String, String> attributes = new LinkedHashMap<String, String>();
 
-		all.addAll(map.values());
-		return all;
-	}
+      collectFields(clazz, requires, attributes);
 
-	protected <T> List<Component> defineComponent(Class<T> role, Class<? extends T> implementationClass) {
-		return defineComponent(role, C(role, implementationClass));
-	}
+      for (Map.Entry<Class<?>, List<Pair<Object, String>>> e : requires.entrySet()) {
+         List<Pair<Object, String>> list = e.getValue();
 
-	protected <T> List<Component> defineComponent(Class<T> role, Object roleHint, Class<? extends T> implementationClass) {
-		return defineComponent(role, C(role, roleHint, implementationClass));
-	}
+         for (Pair<Object, String> item : list) {
+            Object key = item.getKey();
 
-	private void defineComponentRequirements(Map<Class<?>, Component> map, Class<?> clazz) {
-		if (!map.containsKey(clazz)) {
-			Component component = C(clazz);
+            if (key instanceof String[]) {
+               String[] roleHints = (String[]) key;
 
-			map.put(clazz, component);
-			processInjectFields(map, clazz, component);
-		}
-	}
+               if (roleHints.length == 1) {
+                  if (list.size() == 1) {
+                     component.req(e.getKey(), roleHints[0]);
+                  } else {
+                     component.req(e.getKey(), roleHints[0], item.getValue());
+                  }
+               } else {
+                  component.req(e.getKey(), roleHints, item.getValue());
+               }
+            } else {
+               if (list.size() == 1) {
+                  component.req(e.getKey(), (String) key);
+               } else {
+                  component.req(e.getKey(), (String) key, item.getValue());
+               }
+            }
+         }
+      }
 
-	public abstract List<Component> defineComponents();
+      for (Map.Entry<String, String> attribute : attributes.entrySet()) {
+         component.config(new Configuration(attribute.getKey()).value(attribute.getValue()));
+      }
 
-	protected File getConfigurationFile() {
-		Class<?> testClass = getTestClass();
+      return component;
+   }
 
-		if (testClass != null) {
-			return new File(String.format("src/test/resources/%s.xml", testClass.getName().replace('.', '/')));
-		} else {
-			return new File("src/main/resources/META-INF/plexus/components.xml");
-		}
-	}
+   protected static <T> Component C(Class<T> role) {
+      return new Component(role);
+   }
 
-	/**
-	 * @return null means not a test class
-	 */
-	protected Class<?> getTestClass() {
-		return null;
-	}
+   protected static <T> Component C(Class<T> role, Class<? extends T> implementationClass) {
+      return new Component(role, implementationClass);
+   }
 
-	protected boolean isEnv(String name) {
-		String env = System.getProperty("env");
+   protected static <T> Component C(Class<T> role, Object roleHint, Class<? extends T> implementationClass) {
+      return new Component(role, roleHint, implementationClass);
+   }
 
-		if (env != null && env.equals(name)) {
-			return false;
-		} else {
-			return false;
-		}
-	}
+   private static void collectField(Class<?> clazz, Field field, Map<Class<?>, List<Pair<Object, String>>> requires,
+         Map<String, String> attributes) {
+      Inject inject = field.getAnnotation(Inject.class);
+      InjectAttribute injectAttribute = field.getAnnotation(InjectAttribute.class);
 
-	private void processInjectFields(Map<Class<?>, Component> map, Class<?> clazz, Component component) {
-		Field[] fields = clazz.getDeclaredFields();
+      if (inject != null && injectAttribute != null) {
+         throw new IllegalStateException(String.format("Field(%s) can't be annotated by both %s and %s.",
+               field.getName(), Inject.class.getName(), InjectAttribute.class.getName()));
+      }
 
-		for (Field field : fields) {
-			Inject inject = field.getAnnotation(Inject.class);
+      if (inject != null) {
+         Class<?> role = inject.type();
+         String[] roleHints = inject.value();
+         Class<?> type = field.getType();
 
-			if (inject != null) {
-				Class<?> role = inject.type();
-				String alias = inject.value();
-				Class<?> type = field.getType();
+         if (role != Inject.Default.class) {
+            if (!type.isAssignableFrom(role)) {
+               throw new IllegalStateException(String.format("Field(%s) of %s can only be injected " + //
+                     "by subclass of %s instead of %s.", field.getName(), clazz, type.getName(), role.getName()));
+            }
+         } else {
+            if (roleHints.length <= 1) {
+               role = field.getType();
+            } else {
+               role = getElementType(field.getGenericType(), field);
+            }
+         }
 
-				if (role != Inject.Default.class) {
-					if (!type.isAssignableFrom(role)) {
-						throw new RuntimeException(String.format("Field %s of %s can only be injected " + //
-						      "by subclass of %s instead of %s.", field.getName(), clazz, type.getName(), role.getName()));
-					}
-				}
+         if (roleHints.length <= 1) {
+            List<Pair<Object, String>> require = requires.get(role);
 
-				if (alias.length() == 0) {
-					component.req(type);
+            if (require == null) {
+               require = new ArrayList<Pair<Object, String>>(3);
+               requires.put(role, require);
+            }
 
-					if (!type.isInterface() && !Modifier.isAbstract(type.getModifiers())) {
-						defineComponentRequirements(map, type);
-					}
-				} else {
-					component.req(type, alias);
-				}
-			}
-		}
+            if (roleHints.length == 0) {
+               require.add(new Pair<Object, String>("default", field.getName()));
+            } else if (roleHints.length == 1) {
+               require.add(new Pair<Object, String>(roleHints[0], field.getName()));
+            }
+         } else {
+            List<Pair<Object, String>> require = requires.get(role);
 
-		Class<?> superClass = clazz.getSuperclass();
+            if (require == null) {
+               require = new ArrayList<Pair<Object, String>>(3);
+               requires.put(role, require);
+            }
 
-		if (superClass != null) {
-			processInjectFields(map, superClass, component);
-		}
-	}
+            require.add(new Pair<Object, String>(roleHints, field.getName()));
+         }
+      }
 
-	protected String property(String name, String defaultValue) {
-		return System.getProperty(name, defaultValue);
-	}
+      if (injectAttribute != null) {
+         String value = injectAttribute.value();
 
-	protected void saveToFile() throws IOException {
-		File file = getConfigurationFile();
+         if (value != InjectAttribute.DEFAULT) {
+            String name = field.getName();
 
-		// create parent directory if not there
-		if (!file.getParentFile().exists()) {
-			file.getParentFile().mkdirs();
-		}
+            if (name.startsWith("m_")) {
+               name = name.substring(2);
+            }
 
-		String content = Configurators.forPlexus().generateXmlConfiguration(defineComponents());
+            attributes.put(name, value);
+         }
+      }
+   }
 
-		Files.forIO().writeTo(file, content);
-	}
+   private static Class<?> getElementType(Type type, Field field) {
+      if (type instanceof ParameterizedType) {
+         return (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[0];
+      }
+
+      throw new IllegalStateException(String.format("Unsupported type(%s) of field(%s) of %s, use List instead!", type,
+            field.getName(), field.getDeclaringClass()));
+   }
+
+   private static void collectFields(Class<?> clazz, Map<Class<?>, List<Pair<Object, String>>> requires,
+         Map<String, String> attributes) {
+      Field[] fields = clazz.getDeclaredFields();
+
+      for (Field field : fields) {
+         collectField(clazz, field, requires, attributes);
+      }
+
+      Class<?> superClass = clazz.getSuperclass();
+
+      if (superClass != null) {
+         collectFields(superClass, requires, attributes);
+      }
+   }
+
+   protected static Configuration E(String name, String... attributePairs) {
+      return new Configuration(name, attributePairs);
+   }
+
+   protected static void generatePlexusComponentsXmlFile(AbstractResourceConfigurator rc) {
+      File file = rc.getConfigurationFile();
+
+      try {
+         rc.saveToFile();
+
+         System.out.println(String.format("File %s generated. File length is %s.", file.getCanonicalPath(),
+               file.length()));
+      } catch (IOException e) {
+         System.err.println(String.format("Error when generating %s file.", file));
+         e.printStackTrace();
+      }
+   }
+
+   public abstract List<Component> defineComponents();
+
+   protected File getConfigurationFile() {
+      Class<?> testClass = getTestClass();
+
+      if (testClass != null) {
+         return new File(String.format("src/test/resources/%s.xml", testClass.getName().replace('.', '/')));
+      } else {
+         return new File("src/main/resources/META-INF/plexus/components.xml");
+      }
+   }
+
+   /**
+    * @return null means not a test class
+    */
+   protected Class<?> getTestClass() {
+      return null;
+   }
+
+   protected boolean isEnv(String name) {
+      String env = System.getProperty("env");
+
+      if (env != null && env.equals(name)) {
+         return false;
+      } else {
+         return false;
+      }
+   }
+
+   protected String property(String name, String defaultValue) {
+      return System.getProperty(name, defaultValue);
+   }
+
+   protected void saveToFile() throws IOException {
+      File file = getConfigurationFile();
+
+      // create parent directory if not there
+      if (!file.getParentFile().exists()) {
+         file.getParentFile().mkdirs();
+      }
+
+      String content = Configurators.forPlexus().generateXmlConfiguration(defineComponents());
+
+      Files.forIO().writeTo(file, content);
+   }
 
 }

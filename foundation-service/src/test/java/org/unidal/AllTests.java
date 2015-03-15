@@ -14,6 +14,7 @@ import org.unidal.helper.ThreadsTest;
 import org.unidal.lookup.ComponentTestCaseTest;
 import org.unidal.lookup.ContainerHolderTest;
 import org.unidal.lookup.ContainerLoaderTest;
+import org.unidal.lookup.configuration.ConfiguratorTest;
 import org.unidal.lookup.logger.TimedConsoleLoggerTest;
 import org.unidal.net.SocketsTest;
 import org.unidal.tuple.TupleTest;
@@ -36,6 +37,8 @@ SplittersTest.class,
 ThreadsTest.class,
 
 PropertiesTest.class,
+
+ConfiguratorTest.class,
 
 ComponentTestCaseTest.class,
 

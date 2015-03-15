@@ -30,8 +30,7 @@ public abstract class AbstractWebComponentsConfigurator extends AbstractResource
 
          if (inject != null) {
             Class<?> role = inject.type();
-            String roleHint = inject.value();
-            String is = inject.instantiationStrategy();
+            String[] roleHints = inject.value();
             String fieldName = null;
 
             if (role == Inject.Default.class) {
@@ -40,16 +39,16 @@ public abstract class AbstractWebComponentsConfigurator extends AbstractResource
                fieldName = field.getName();
             }
 
-            if (is.length() > 0) {
-               component.is(is);
-            }
-
-            if (roleHint.length() == 0) {
+            if (roleHints.length == 0) {
                component.req(role);
-            } else if (fieldName == null) {
-               component.req(role, roleHint);
+            } else if (roleHints.length == 1) {
+               if (fieldName == null) {
+                  component.req(role, roleHints[0]);
+               } else {
+                  component.req(role, roleHints[0], fieldName);
+               }
             } else {
-               component.req(role, roleHint, fieldName);
+               component.req(role, roleHints, fieldName);
             }
          }
 

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,14 +17,13 @@ import org.codehaus.plexus.lifecycle.LifecycleHandler;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.junit.Test;
-import org.unidal.formatter.DateFormatter;
-import org.unidal.formatter.Formatter;
 import org.unidal.helper.Files;
-import org.unidal.helper.Threads.LoggerThreadListener;
-import org.unidal.helper.Threads.ThreadListener;
 import org.unidal.lookup.ContainerLoader;
-import org.unidal.lookup.configuration.ConfiguratorTest.LegacyCases.Legacy1;
-import org.unidal.lookup.configuration.ConfiguratorTest.ModernCases.Simple1;
+import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.InjectAttribute;
+import org.unidal.lookup.annotation.Named;
+import org.unidal.lookup.configuration.ConfiguratorTest.AnnotatedCases.Annotated;
+import org.unidal.lookup.configuration.ConfiguratorTest.LegacyCases.Legacy;
 import org.unidal.lookup.extension.PostConstructionPhase;
 import org.unidal.lookup.extension.RoleHintEnabled;
 
@@ -60,6 +58,8 @@ public class ConfiguratorTest {
          // try lookup all components
          container.lookup(role, roleHint);
       }
+
+      ContainerLoader.destroyDefaultContainer();
    }
 
    private DefaultContainerConfiguration getConfiguration(String path) throws Exception {
@@ -80,17 +80,172 @@ public class ConfiguratorTest {
    }
 
    @Test
-   public void testLegacyCases() throws Exception {
-      checkCodegen(new Legacy1());
-      checkLookup(new Legacy1());
+   public void testAnnotatedCases() throws Exception {
+      checkCodegen(new Annotated());
+      checkLookup(new Annotated());
    }
 
    @Test
-   public void testModernCases() throws IOException {
-      checkCodegen(new Simple1());
+   public void testLegacyCases() throws Exception {
+      checkCodegen(new Legacy());
+      checkLookup(new Legacy());
    }
 
-   public interface LegacyCases {
+   interface AnnotatedCases {
+      @Named(type = AT1.class)
+      public static class AC11 implements AT1 {
+      }
+
+      @Named(type = AT1.class, value = "secondary")
+      public static class AC12 implements AT1 {
+      }
+
+      @Named(type = AT3.class)
+      public static class AC31 implements AT3, Initializable {
+         @Inject
+         private AT1 m_lt1;
+
+         @Inject
+         private AT2 m_lt2;
+
+         public AT1 getLt1() {
+            return m_lt1;
+         }
+
+         public AT2 getLt2() {
+            return m_lt2;
+         }
+
+         @Override
+         public void initialize() throws InitializationException {
+            Assert.assertNotNull(m_lt1);
+            Assert.assertNotNull(m_lt2);
+         }
+      }
+
+      @Named(type = AT3.class, value = "secondary")
+      public static class AC32 implements AT3, RoleHintEnabled, Initializable {
+         @Inject
+         private AT1 m_first;
+
+         @Inject("secondary")
+         private AT1 m_second;
+
+         @InjectAttribute("test")
+         private String m_type;
+
+         @InjectAttribute("true")
+         private boolean m_verbose;
+
+         private String m_roleHint;
+
+         @Override
+         public void enableRoleHint(String roleHint) {
+            m_roleHint = roleHint;
+         }
+
+         public AT1 getFirst() {
+            return m_first;
+         }
+
+         public AT1 getSecond() {
+            return m_second;
+         }
+
+         public String getType() {
+            return m_type;
+         }
+
+         @Override
+         public void initialize() throws InitializationException {
+            Assert.assertNotNull(m_first);
+            Assert.assertNotNull(m_second);
+            Assert.assertEquals("test", m_type);
+            Assert.assertEquals(true, m_verbose);
+            Assert.assertEquals("secondary", m_roleHint);
+         }
+
+         public boolean isVerbose() {
+            return m_verbose;
+         }
+
+         public void setFirst(AT1 first) {
+            m_first = first;
+         }
+
+         public void setSecond(AT1 second) {
+            m_second = second;
+         }
+
+         public void setType(String type) {
+            m_type = type;
+         }
+
+         public void setVerbose(boolean verbose) {
+            m_verbose = verbose;
+         }
+      }
+
+      @Named(type = AT3.class, value = "third")
+      public static class AC33 implements AT3, Initializable {
+         @Inject({ "default", "secondary" })
+         private List<AT1> m_list;
+
+         public List<AT1> getList() {
+            return m_list;
+         }
+
+         @Override
+         public void initialize() throws InitializationException {
+            Assert.assertEquals(2, m_list.size());
+         }
+      }
+
+      @Named(type = AT4.class, value = Named.PER_LOOKUP, instantiationStrategy = Named.PER_LOOKUP)
+      public static class AC41 implements AT4 {
+      }
+
+      @Named(type = AT4.class)
+      public static enum AC42 implements AT4 {
+         E1, E2;
+      }
+
+      public static class Annotated extends AbstractResourceConfigurator {
+         @Override
+         public List<Component> defineComponents() {
+            List<Component> all = new ArrayList<Component>();
+
+            all.add(A(AC11.class));
+            all.add(A(AC12.class));
+            all.add(A(AT2.class));
+            all.add(A(AC31.class));
+            all.add(A(AC32.class));
+            all.add(A(AC33.class));
+            all.add(A(AC41.class));
+
+            for (AC42 value : AC42.values()) {
+               all.add(A(AC42.class, value.name()));
+            }
+
+            return all;
+         }
+      }
+
+      public interface AT1 {
+      }
+
+      @Named
+      public static class AT2 {
+      }
+
+      public interface AT3 {
+      }
+
+      public interface AT4 {
+      }
+   }
+
+   interface LegacyCases {
       public static class LC11 implements LT1 {
       }
 
@@ -195,7 +350,7 @@ public class ConfiguratorTest {
          E1, E2;
       }
 
-      public static class Legacy1 extends AbstractResourceConfigurator {
+      public static class Legacy extends AbstractResourceConfigurator {
          @Override
          public List<Component> defineComponents() {
             List<Component> all = new ArrayList<Component>();
@@ -231,27 +386,6 @@ public class ConfiguratorTest {
       }
 
       public interface LT4 {
-      }
-   }
-
-   interface ModernCases {
-      public static class C1 implements I1 {
-      }
-
-      public interface I1 {
-      }
-
-      public static class Simple1 extends AbstractResourceConfigurator {
-         @Override
-         public List<Component> defineComponents() {
-            List<Component> all = new ArrayList<Component>();
-
-            all.add(C(I1.class, C1.class));
-            all.add(C(Formatter.class, Date.class.getName(), DateFormatter.class));
-            all.add(C(ThreadListener.class, "logger", LoggerThreadListener.class));
-
-            return all;
-         }
       }
    }
 }
