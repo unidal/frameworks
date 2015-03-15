@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.unidal.lookup.annotation.Named;
+
+@Named(type = Formatter.class, value = "java.util.Date")
 public class DateFormatter implements Formatter<Date> {
    private static final InheritableThreadLocal<Manager> MANAGER = new InheritableThreadLocal<Manager>() {
       @Override

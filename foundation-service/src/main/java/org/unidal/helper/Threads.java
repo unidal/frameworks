@@ -14,6 +14,7 @@ import java.util.concurrent.locks.LockSupport;
 
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
+import org.unidal.lookup.annotation.Named;
 
 public class Threads {
    private static volatile Manager s_manager = new Manager();
@@ -108,6 +109,7 @@ public class Threads {
       }
    }
 
+   @Named(type = ThreadListener.class, value = "logger")
    public static class LoggerThreadListener implements ThreadListener, LogEnabled {
       private Logger m_logger;
 

@@ -4,12 +4,15 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.InjectAttribute;
+import org.unidal.lookup.annotation.Named;
 
+@Named(type = ModuleInitializer.class)
 public class DefaultModuleInitializer implements ModuleInitializer {
    @Inject
    private ModuleManager m_manager;
 
-   @Inject
+   @InjectAttribute
    private boolean m_verbose;
 
    private int m_index = 1;

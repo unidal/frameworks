@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Target({ FIELD })
 public @interface InjectAttribute {
-   public String DEFAULT = "";
+   public String DEFAULT = "<DEFAULT>";
 
    String value() default DEFAULT;
 }

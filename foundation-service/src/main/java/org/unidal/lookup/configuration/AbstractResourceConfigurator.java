@@ -168,7 +168,7 @@ public abstract class AbstractResourceConfigurator {
       if (injectAttribute != null) {
          String value = injectAttribute.value();
 
-         if (value != InjectAttribute.DEFAULT) {
+         if (!value.equals(InjectAttribute.DEFAULT)) {
             String name = field.getName();
 
             if (name.startsWith("m_")) {

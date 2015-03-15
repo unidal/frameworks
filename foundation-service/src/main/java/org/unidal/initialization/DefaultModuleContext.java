@@ -11,7 +11,9 @@ import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.LoggerManager;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
+import org.unidal.lookup.annotation.Named;
 
+@Named(type = ModuleContext.class)
 public class DefaultModuleContext implements ModuleContext, Contextualizable {
    private PlexusContainer m_container;
 
@@ -117,8 +119,8 @@ public class DefaultModuleContext implements ModuleContext, Contextualizable {
 
          m_logger = loggerManager.getLoggerForComponent(PlexusContainer.class.getName());
       } catch (Exception e) {
-         throw new RuntimeException("Unable to get instance of Logger, " + "please make sure the environment was setup correctly!",
-               e);
+         throw new RuntimeException("Unable to get instance of Logger, "
+               + "please make sure the environment was setup correctly!", e);
       }
    }
 
