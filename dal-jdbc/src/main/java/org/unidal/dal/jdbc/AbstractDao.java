@@ -2,7 +2,6 @@ package org.unidal.dal.jdbc;
 
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
-
 import org.unidal.dal.jdbc.entity.EntityInfoManager;
 import org.unidal.dal.jdbc.raw.RawEntity;
 import org.unidal.lookup.ContainerHolder;

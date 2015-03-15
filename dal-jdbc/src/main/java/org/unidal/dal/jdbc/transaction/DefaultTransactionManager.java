@@ -13,6 +13,8 @@ import org.unidal.dal.jdbc.mapping.TableProvider;
 import org.unidal.dal.jdbc.mapping.TableProviderManager;
 import org.unidal.lookup.annotation.Inject;
 
+import com.dianping.cat.Cat;
+
 public class DefaultTransactionManager implements TransactionManager, LogEnabled {
    private static ThreadLocalTransactionInfo m_threadLocalData = new ThreadLocalTransactionInfo();
 
@@ -38,7 +40,7 @@ public class DefaultTransactionManager implements TransactionManager, LogEnabled
       }
    }
 
-   public void commitTransaction(QueryContext ctx) {
+   public void commitTransaction() {
       TransactionInfo trxInfo = m_threadLocalData.get();
 
       if (!trxInfo.isInTransaction()) {
@@ -105,7 +107,8 @@ public class DefaultTransactionManager implements TransactionManager, LogEnabled
                }
             }
 
-            m_logger.warn(String.format("Iffy database(%s) connection closed, try to reconnect.", dataSourceName), exception);
+            m_logger.warn(String.format("Iffy database(%s) connection closed, try to reconnect.", dataSourceName),
+                  exception);
 
             try {
                connection = dataSource.getConnection();
@@ -116,8 +119,8 @@ public class DefaultTransactionManager implements TransactionManager, LogEnabled
          }
 
          if (exception != null) {
-            throw new DalRuntimeException("Error when getting connection from DataSource(" + dataSourceName + "), message: "
-                  + exception, exception);
+            throw new DalRuntimeException("Error when getting connection from DataSource(" + dataSourceName
+                  + "), message: " + exception, exception);
          } else {
             trxInfo.setConnection(connection);
             trxInfo.setDataSourceName(dataSourceName);
@@ -151,7 +154,7 @@ public class DefaultTransactionManager implements TransactionManager, LogEnabled
       m_threadLocalData.remove();
    }
 
-   public void rollbackTransaction(QueryContext ctx) {
+   public void rollbackTransaction() {
       TransactionInfo trxInfo = m_threadLocalData.get();
 
       if (!trxInfo.isInTransaction()) {
@@ -168,30 +171,30 @@ public class DefaultTransactionManager implements TransactionManager, LogEnabled
          try {
             trxInfo.reset();
          } catch (SQLException e) {
-            e.printStackTrace();
+            Cat.logError(e);
          }
       }
    }
 
-   public void startTransaction(QueryContext ctx) {
-      TableProvider tableProvider = m_tableProviderManager.getTableProvider(ctx.getEntityInfo().getLogicalName());
+   public void startTransaction(String datasource) {
       TransactionInfo trxInfo = m_threadLocalData.get();
 
       if (trxInfo.isInTransaction()) {
-         throw new DalRuntimeException("Can't start transaction while another transaction has not been committed or rollbacked!");
+         throw new DalRuntimeException(
+               "Can't start transaction while another transaction has not been committed or rollbacked!");
       } else {
-         String dataSourceName = tableProvider.getDataSourceName(ctx.getQueryHints());
-         DataSource dataSource = m_dataSourceManager.getDataSource(dataSourceName);
+         DataSource ds = m_dataSourceManager.getDataSource(datasource);
 
          try {
-            Connection connection = dataSource.getConnection();
+            Connection connection = ds.getConnection();
 
             connection.setAutoCommit(false);
             trxInfo.setConnection(connection);
-            trxInfo.setDataSourceName(dataSourceName);
+            trxInfo.setDataSourceName(datasource);
             trxInfo.setInTransaction(true);
          } catch (SQLException e) {
-            throw new DalRuntimeException("Error when getting connection from DataSource(" + dataSourceName + "), message: " + e, e);
+            throw new DalRuntimeException("Error when getting connection from DataSource(" + datasource
+                  + "), message: " + e, e);
          }
       }
    }
@@ -224,7 +227,7 @@ public class DefaultTransactionManager implements TransactionManager, LogEnabled
                return false;
             }
          } catch (SQLException e) {
-            e.printStackTrace();
+            Cat.logError(e);
          }
 
          return m_inTransaction;

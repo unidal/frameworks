@@ -32,12 +32,6 @@ public class DefaultQueryEngine extends ContainerHolder implements QueryEngine {
    @Inject
    private TransactionManager m_transactionManager;
 
-   public <T extends DataObject> void commitTransaction(QueryDef query, T proto) throws DalException {
-      QueryContext ctx = createContext(query, proto);
-
-      m_transactionManager.commitTransaction(ctx);
-   }
-
    protected <T extends DataObject> QueryContext createContext(QueryDef query, T proto) {
       QueryContext ctx = new DefaultQueryContext();
       EntityInfo enityInfo = m_entityManager.getEntityInfo(query.getEntityClass());
@@ -124,19 +118,8 @@ public class DefaultQueryEngine extends ContainerHolder implements QueryEngine {
       }
    }
 
-   public <T extends DataObject> void rollbackTransaction(QueryDef query, T proto) throws DalException {
-      QueryContext ctx = createContext(query, proto);
-
-      m_transactionManager.rollbackTransaction(ctx);
-   }
-
-   public <T extends DataObject> void startTransaction(QueryDef query, T proto) throws DalException {
-      QueryContext ctx = createContext(query, proto);
-
-      m_transactionManager.startTransaction(ctx);
-   }
-
-   public <T extends DataObject> int[] updateBatch(QueryDef query, T[] protos, Updateset<?> updateset) throws DalException {
+   public <T extends DataObject> int[] updateBatch(QueryDef query, T[] protos, Updateset<?> updateset)
+         throws DalException {
       if (protos.length == 0) {
          return new int[0];
       }

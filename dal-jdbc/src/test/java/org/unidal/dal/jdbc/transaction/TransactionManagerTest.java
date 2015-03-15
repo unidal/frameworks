@@ -10,148 +10,139 @@ import org.unidal.test.user.dal.User;
 import org.unidal.test.user.dal.UserEntity;
 
 public class TransactionManagerTest extends ComponentTestCase {
-	protected void delete(int id) throws Exception {
-		QueryEngine queryEngine = lookup(QueryEngine.class);
-		User proto = new User();
+   private void commitTransaction() throws Exception {
+      TransactionManager tm = lookup(TransactionManager.class);
 
-		proto.setKeyUserId(id);
+      tm.commitTransaction();
+   }
 
-		queryEngine.deleteSingle(UserEntity.DELETE_BY_PK, proto);
-	}
+   protected void delete(int id) throws Exception {
+      QueryEngine queryEngine = lookup(QueryEngine.class);
+      User proto = new User();
 
-	protected void insert(int id, String userName) throws Exception {
-		QueryEngine queryEngine = lookup(QueryEngine.class);
-		User proto = new User();
+      proto.setKeyUserId(id);
 
-		proto.setUserId(id);
-		proto.setUserName(userName);
-		proto.setPassword("");
+      queryEngine.deleteSingle(UserEntity.DELETE_BY_PK, proto);
+   }
 
-		queryEngine.insertSingle(UserEntity.INSERT, proto);
-	}
+   protected void insert(int id, String userName) throws Exception {
+      QueryEngine queryEngine = lookup(QueryEngine.class);
+      User proto = new User();
 
-	protected void select(int id, String userName) throws Exception {
-		QueryEngine queryEngine = lookup(QueryEngine.class);
-		User proto = new User();
+      proto.setUserId(id);
+      proto.setUserName(userName);
+      proto.setPassword("");
 
-		proto.setKeyUserId(id);
+      queryEngine.insertSingle(UserEntity.INSERT, proto);
+   }
 
-		User user = queryEngine.querySingle(UserEntity.FIND_BY_PK, proto, UserEntity.READSET_FULL);
+   private void rollbackTransaction() throws Exception {
+      TransactionManager tm = lookup(TransactionManager.class);
 
-		Assert.assertNotNull(user);
-		Assert.assertEquals(proto.getKeyUserId(), user.getUserId());
-		Assert.assertEquals(userName, user.getUserName());
-		Assert.assertNotNull(user.getCreationDate());
-		Assert.assertNotNull(user.getLastModifiedDate());
-	}
+      tm.rollbackTransaction();
+   }
 
-	@Test
-	public void testNoTransaction() throws Exception {
-		try {
-			delete(1);
-			insert(1, "user 1");
-			select(1, "user 1");
-			update(1, "user 11");
-			select(1, "user 11");
-			delete(1);
-		} catch (DataSourceException e) {
-			if (e.isDataSourceDown()) {
-				System.out.println("Can't connect to database, gave up");
-			} else {
-				throw e;
-			}
-		}
-	}
+   protected void select(int id, String userName) throws Exception {
+      QueryEngine queryEngine = lookup(QueryEngine.class);
+      User proto = new User();
 
-	@Test
-	public void testTransactionCommit() throws Exception {
-		try {
-			delete(1);
-			startTransaction(1);
-			insert(1, "user 1");
-			select(1, "user 1");
-			update(1, "user 11");
-			commitTransaction(1);
-			select(1, "user 11");
-			delete(1);
-		} catch (DataSourceException e) {
-			if (e.isDataSourceDown()) {
-				System.out.println("Can't connect to database, gave up");
-			} else {
-				throw e;
-			}
-		}
-	}
+      proto.setKeyUserId(id);
 
-	@Test
-	public void testTransactionRollback() throws Exception {
-		try {
-			delete(1);
-			insert(1, "user 1");
-			startTransaction(1);
-			select(1, "user 1");
-			update(1, "user 11");
-			rollbackTransaction(1);
-			select(1, "user 1");
-			delete(1);
-		} catch (DataSourceException e) {
-			if (e.isDataSourceDown()) {
-				System.out.println("Can't connect to database, gave up");
-			} else {
-				throw e;
-			}
-		}
-	}
+      User user = queryEngine.querySingle(UserEntity.FIND_BY_PK, proto, UserEntity.READSET_FULL);
 
-	private void startTransaction(int id) throws Exception {
-		QueryEngine queryEngine = lookup(QueryEngine.class);
-		User proto = new User();
+      Assert.assertNotNull(user);
+      Assert.assertEquals(proto.getKeyUserId(), user.getUserId());
+      Assert.assertEquals(userName, user.getUserName());
+      Assert.assertNotNull(user.getCreationDate());
+      Assert.assertNotNull(user.getLastModifiedDate());
+   }
 
-		proto.setKeyUserId(id);
+   @Override
+   public void setUp() throws Exception {
+      super.setUp();
 
-		queryEngine.startTransaction(UserEntity.UPDATE_BY_PK, proto);
-	}
+      EntityInfoManager entityManager = lookup(EntityInfoManager.class);
 
-	private void commitTransaction(int id) throws Exception {
-		QueryEngine queryEngine = lookup(QueryEngine.class);
-		User proto = new User();
+      entityManager.register(UserEntity.class);
+   }
 
-		proto.setKeyUserId(id);
+   private void startTransaction() throws Exception {
+      TransactionManager tm = lookup(TransactionManager.class);
 
-		queryEngine.commitTransaction(UserEntity.UPDATE_BY_PK, proto);
-	}
+      tm.startTransaction("jdbc-dal");
+   }
 
-	private void rollbackTransaction(int id) throws Exception {
-		QueryEngine queryEngine = lookup(QueryEngine.class);
-		User proto = new User();
+   @Override
+   public void tearDown() throws Exception {
 
-		proto.setKeyUserId(id);
+      super.tearDown();
+   }
 
-		queryEngine.rollbackTransaction(UserEntity.UPDATE_BY_PK, proto);
-	}
+   @Test
+   public void testNoTransaction() throws Exception {
+      try {
+         delete(1);
+         insert(1, "user 1");
+         select(1, "user 1");
+         update(1, "user 11");
+         select(1, "user 11");
+         delete(1);
+      } catch (DataSourceException e) {
+         if (e.isDataSourceDown()) {
+            System.out.println("Can't connect to database, gave up");
+         } else {
+            throw e;
+         }
+      }
+   }
 
-	protected void update(int id, String userName) throws Exception {
-		QueryEngine queryEngine = lookup(QueryEngine.class);
-		User proto = new User();
+   @Test
+   public void testTransactionCommit() throws Exception {
+      try {
+         delete(1);
+         startTransaction();
+         insert(1, "user 1");
+         select(1, "user 1");
+         update(1, "user 11");
+         commitTransaction();
+         select(1, "user 11");
+         delete(1);
+      } catch (DataSourceException e) {
+         if (e.isDataSourceDown()) {
+            System.out.println("Can't connect to database, gave up");
+         } else {
+            throw e;
+         }
+      }
+   }
 
-		proto.setKeyUserId(id);
-		proto.setUserName(userName);
+   @Test
+   public void testTransactionRollback() throws Exception {
+      try {
+         delete(1);
+         insert(1, "user 1");
+         startTransaction();
+         select(1, "user 1");
+         update(1, "user 11");
+         rollbackTransaction();
+         select(1, "user 1");
+         delete(1);
+      } catch (DataSourceException e) {
+         if (e.isDataSourceDown()) {
+            System.out.println("Can't connect to database, gave up");
+         } else {
+            throw e;
+         }
+      }
+   }
 
-		queryEngine.updateSingle(UserEntity.UPDATE_BY_PK, proto, UserEntity.UPDATESET_FULL);
-	}
+   protected void update(int id, String userName) throws Exception {
+      QueryEngine queryEngine = lookup(QueryEngine.class);
+      User proto = new User();
 
-	@Override
-	public void setUp() throws Exception {
-		super.setUp();
+      proto.setKeyUserId(id);
+      proto.setUserName(userName);
 
-		EntityInfoManager entityManager = lookup(EntityInfoManager.class);
-
-		entityManager.register(UserEntity.class);
-	}
-
-	@Override
-	public void tearDown() throws Exception {
-
-		super.tearDown();
-	}
+      queryEngine.updateSingle(UserEntity.UPDATE_BY_PK, proto, UserEntity.UPDATESET_FULL);
+   }
 }
