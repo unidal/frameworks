@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -24,8 +25,10 @@ import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.lifecycle.AbstractLifecycleHandler;
 import org.codehaus.plexus.lifecycle.LifecycleHandler;
-import org.codehaus.plexus.lifecycle.UndefinedLifecycleHandlerException;
+import org.codehaus.plexus.lifecycle.phase.Phase;
+import org.unidal.helper.Reflects;
 import org.unidal.lookup.extension.EnumComponentManagerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -36,22 +39,6 @@ public class ContainerLoader {
    private static volatile DefaultPlexusContainer s_container;
 
    private static ConcurrentMap<Key, Object> m_components = new ConcurrentHashMap<Key, Object>();
-
-   @SuppressWarnings("unchecked")
-   static <T> T lookupById(Class<T> role, String roleHint, String id) throws ComponentLookupException {
-      Key key = new Key(role, roleHint, id);
-      Object component = m_components.get(key);
-
-      if (component == null) {
-         component = s_container.lookup(role, roleHint);
-
-         if (m_components.putIfAbsent(key, component) != null) {
-            component = m_components.get(key);
-         }
-      }
-
-      return (T) component;
-   }
 
    public static void destroyDefaultContainer() {
       if (s_container != null) {
@@ -133,20 +120,42 @@ public class ContainerLoader {
       return s_container;
    }
 
+   @SuppressWarnings("unchecked")
+   static <T> T lookupById(Class<T> role, String roleHint, String id) throws ComponentLookupException {
+      Key key = new Key(role, roleHint, id);
+      Object component = m_components.get(key);
+
+      if (component == null) {
+         component = s_container.lookup(role, roleHint);
+
+         if (m_components.putIfAbsent(key, component) != null) {
+            component = m_components.get(key);
+         }
+      }
+
+      return (T) component;
+   }
+
    private static void postConstruction(DefaultPlexusContainer container) {
       container.getComponentRegistry().registerComponentManagerFactory(new EnumComponentManagerFactory());
    }
 
-   private static void preConstruction(ContainerConfiguration configuration) throws UndefinedLifecycleHandlerException {
+   @SuppressWarnings("unchecked")
+   private static void preConstruction(ContainerConfiguration configuration) throws Exception {
       LifecycleHandler plexus = configuration.getLifecycleHandlerManager().getLifecycleHandler("plexus");
+      Field field = Reflects.forField().getDeclaredField(AbstractLifecycleHandler.class, "beginSegment");
+
+      field.setAccessible(true);
+
+      List<Phase> segment = (List<Phase>) field.get(plexus);
+
+      segment.add(0, new org.unidal.lookup.extension.PostConstructionPhase());
 
       try {
          new ContainerConfigurationDecorator().process(configuration);
       } catch (Exception e) {
          e.printStackTrace();
       }
-
-      plexus.addBeginSegment(new org.unidal.lookup.extension.PostConstructionPhase());
    }
 
    private static void setContainerToLookupLibrary(Class<?> loaderClass, PlexusContainer container) {
@@ -164,12 +173,29 @@ public class ContainerLoader {
    static class ContainerConfigurationDecorator {
       private String m_defaultPath = "META-INF/plexus/plexus.xml";
 
+      private void fillFrom(Document to, DocumentBuilder builder, URL url) throws Exception {
+         InputStream in = url.openStream();
+         Document from = builder.parse(in);
+
+         in.close();
+
+         Node source = from.getDocumentElement().getElementsByTagName("components").item(0);
+         Node target = to.getDocumentElement().getFirstChild();
+         NodeList list = source.getChildNodes();
+         int len = list.getLength();
+
+         for (int i = 0; i < len; i++) {
+            target.appendChild(to.importNode(list.item(i), true));
+         }
+      }
+
       public void process(ContainerConfiguration configuration) throws Exception {
          DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
          DocumentBuilder builder = builderFactory.newDocumentBuilder();
          Document doc = builder.newDocument();
          String path = configuration.getContainerConfiguration();
-         ClassRealm realm = new ClassWorld("plexus.core", Thread.currentThread().getContextClassLoader()).getRealm("plexus.core");
+         ClassRealm realm = new ClassWorld("plexus.core", Thread.currentThread().getContextClassLoader())
+               .getRealm("plexus.core");
          Enumeration<URL> resources = realm.getResources(m_defaultPath);
          Element root = doc.createElement("plexus");
 
@@ -200,22 +226,6 @@ public class ContainerLoader {
             transformer.transform(new DOMSource(doc), result);
 
             configuration.setContainerConfigurationURL(tmp.toURI().toURL());
-         }
-      }
-
-      private void fillFrom(Document to, DocumentBuilder builder, URL url) throws Exception {
-         InputStream in = url.openStream();
-         Document from = builder.parse(in);
-
-         in.close();
-
-         Node source = from.getDocumentElement().getElementsByTagName("components").item(0);
-         Node target = to.getDocumentElement().getFirstChild();
-         NodeList list = source.getChildNodes();
-         int len = list.getLength();
-
-         for (int i = 0; i < len; i++) {
-            target.appendChild(to.importNode(list.item(i), true));
          }
       }
    }

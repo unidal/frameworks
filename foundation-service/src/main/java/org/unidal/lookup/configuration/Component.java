@@ -120,6 +120,17 @@ public class Component {
       return this;
    }
 
+   /**
+    * NOTES: non-exist required components identified by role hints will be ignored silently.
+    * 
+    * @param roleClass
+    *           role class
+    * @param roleHints
+    *           role hints.
+    * @param fieldName
+    *           field name to inject
+    * @return component definition
+    */
    public Component req(Class<?> roleClass, String[] roleHints, String fieldName) {
       ComponentRequirementList requirement = new ComponentRequirementList();
       List<String> hints = new ArrayList<String>();
