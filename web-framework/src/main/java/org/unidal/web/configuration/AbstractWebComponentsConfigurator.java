@@ -8,6 +8,7 @@ import java.util.List;
 import org.unidal.helper.Reflects;
 import org.unidal.helper.Reflects.IMemberFilter;
 import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
 import org.unidal.lookup.configuration.AbstractResourceConfigurator;
 import org.unidal.lookup.configuration.Component;
 import org.unidal.web.mvc.Module;
@@ -117,6 +118,8 @@ public abstract class AbstractWebComponentsConfigurator extends AbstractResource
          int modifiers = clazz.getModifiers();
 
          if (!Modifier.isPublic(modifiers) || Modifier.isAbstract(modifiers)) {
+            return false;
+         } else if (clazz.isAnnotationPresent(Named.class)) {
             return false;
          }
       }

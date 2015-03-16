@@ -103,6 +103,8 @@ public enum EunitEventListener implements IEventListener {
 
          ctx.pop();
          break;
+      default:
+         break;
       }
    }
 
@@ -122,6 +124,9 @@ public enum EunitEventListener implements IEventListener {
                   } else if (option == RunOption.IGNORED_CASES_ONLY) {
                      eunitMethod.setIgnored(true);
                   }
+                  break;
+               default:
+                  break;
                }
             } else {
                eunitMethod.setIgnored(true);

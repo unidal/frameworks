@@ -45,7 +45,8 @@ public class MethodInvokerTest {
       m_ctx = ctx;
    }
 
-   public String m1(String first, Boolean third, Integer second, Double forth, @MockId("i5") Object fifth, @Id("i6") Object sixth) {
+   public String m1(String first, Boolean third, Integer second, Double forth, @MockId("i5") Object fifth,
+         @Id("i6") Object sixth) {
       String result = first + ":" + second + ":" + third + ":" + forth + ":" + fifth + ":" + sixth;
 
       return result;
@@ -83,6 +84,8 @@ public class MethodInvokerTest {
                eunitParameter.setId(mockId.value());
             }
 
+            break;
+         default:
             break;
          }
       }

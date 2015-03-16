@@ -38,6 +38,8 @@ public enum RunIgnoreHandler implements IAnnotationHandler<RunIgnore, Class<?>> 
          }
 
          break;
+      default:
+         break;
       }
    }
 

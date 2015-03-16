@@ -81,6 +81,8 @@ public enum BenchmarkEventListener implements IEventListener {
       case AFTER_CLASS:
          ctx.pop();
          break;
+      default:
+         break;
       }
    }
 

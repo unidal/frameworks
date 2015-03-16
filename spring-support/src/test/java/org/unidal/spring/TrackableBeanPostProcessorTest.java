@@ -9,6 +9,7 @@ import org.unidal.spring.beans.IFirstService;
 
 public class TrackableBeanPostProcessorTest {
    @Test
+   @SuppressWarnings("resource")
    public void test() throws InterruptedException {
       ApplicationContext context = new ClassPathXmlApplicationContext("context.xml", getClass());
       IFirstService firstService = context.getBean("FirstService", IFirstService.class);

@@ -120,8 +120,8 @@ public class EunitTestNGRunner extends BaseJUnit4Runner {
          }
 
          if (in != null) {
-//            throw new RuntimeException(String.format("XML configuration file(%s) not found!", xmlFile));
-//         } else {
+            // throw new RuntimeException(String.format("XML configuration file(%s) not found!", xmlFile));
+            // } else {
             try {
                List<XmlSuite> suites = new Parser(in).parseToList();
 
@@ -165,7 +165,8 @@ public class EunitTestNGRunner extends BaseJUnit4Runner {
       }
 
       @Override
-      public void transform(ITestAnnotation annotation, @SuppressWarnings("rawtypes") Class testClass, @SuppressWarnings("rawtypes") Constructor testConstructor, Method testMethod) {
+      public void transform(ITestAnnotation annotation, @SuppressWarnings("rawtypes") Class testClass,
+            @SuppressWarnings("rawtypes") Constructor testConstructor, Method testMethod) {
          if (testMethod != null) {
             EunitMethod eunitMethod = m_filter == null ? null : buildEunitMethod(testMethod);
 
@@ -176,6 +177,8 @@ public class EunitTestNGRunner extends BaseJUnit4Runner {
                   break;
                case ALL_CASES:
                   annotation.setEnabled(true);
+                  break;
+               default:
                   break;
                }
             } else {

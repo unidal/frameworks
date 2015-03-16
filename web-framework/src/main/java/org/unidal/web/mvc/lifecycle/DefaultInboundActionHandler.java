@@ -70,7 +70,7 @@ public class DefaultInboundActionHandler extends ContainerHolder implements Inbo
       }
    }
 
-   private PayloadProvider createPayloadProviderInstance(Class<PayloadProvider> clazz) {
+   private PayloadProvider createPayloadProviderInstance(Class<? extends PayloadProvider> clazz) {
       if (hasComponent(clazz)) {
          return lookup(clazz);
       } else {
@@ -89,7 +89,7 @@ public class DefaultInboundActionHandler extends ContainerHolder implements Inbo
          if (providerMeta == null) {
             m_payloadProvider = createPayloadProviderInstance(PayloadProvider.class);
          } else {
-            m_payloadProvider = createPayloadProviderInstance((Class<PayloadProvider>) providerMeta.value());
+            m_payloadProvider = createPayloadProviderInstance((Class<? extends PayloadProvider>) providerMeta.value());
          }
 
          m_payloadProvider.register(m_payloadClass);
