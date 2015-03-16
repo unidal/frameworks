@@ -3,14 +3,15 @@ package org.unidal.web.mvc.lifecycle;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.unidal.lookup.ContainerHolder;
+import org.unidal.lookup.annotation.Named;
 import org.unidal.web.mvc.model.entity.ErrorModel;
 import org.unidal.web.mvc.model.entity.InboundActionModel;
 import org.unidal.web.mvc.model.entity.ModuleModel;
 import org.unidal.web.mvc.model.entity.OutboundActionModel;
 import org.unidal.web.mvc.model.entity.TransitionModel;
 
-import org.unidal.lookup.ContainerHolder;
-
+@Named(type = ActionHandlerManager.class)
 public class DefaultActionHandlerManager extends ContainerHolder implements ActionHandlerManager {
    private volatile Map<String, InboundActionHandler> m_inboundActionHandlers = new HashMap<String, InboundActionHandler>();
 

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
 import org.unidal.web.mvc.ActionContext;
 import org.unidal.web.mvc.ViewModel;
 import org.unidal.web.mvc.view.annotation.AttributeMeta;
@@ -20,6 +21,7 @@ import org.unidal.web.mvc.view.annotation.EntityMeta;
 import org.unidal.web.mvc.view.annotation.ModelMeta;
 import org.unidal.web.mvc.view.annotation.PojoMeta;
 
+@Named(type = ModelHandler.class)
 public class DefaultModelHandler implements ModelHandler {
    @Inject("xml")
    private ModelBuilder m_xmlBuilder;
@@ -42,7 +44,8 @@ public class DefaultModelHandler implements ModelHandler {
       }
    }
 
-   protected void handleJsonDownload(HttpServletResponse res, ViewModel<?, ?, ?> model, ActionContext<?> ctx) throws IOException {
+   protected void handleJsonDownload(HttpServletResponse res, ViewModel<?, ?, ?> model, ActionContext<?> ctx)
+         throws IOException {
       Class<?> clazz = model.getClass();
       ModelDescriptor descriptor = m_map.get(clazz);
 
@@ -63,7 +66,8 @@ public class DefaultModelHandler implements ModelHandler {
       }
    }
 
-   protected void handleXmlDownload(HttpServletResponse res, ViewModel<?, ?, ?> model, ActionContext<?> ctx) throws IOException {
+   protected void handleXmlDownload(HttpServletResponse res, ViewModel<?, ?, ?> model, ActionContext<?> ctx)
+         throws IOException {
       Class<?> clazz = model.getClass();
       ModelDescriptor descriptor = m_map.get(clazz);
 
@@ -145,7 +149,8 @@ public class DefaultModelHandler implements ModelHandler {
                         + (pojo == null ? 0 : 1);
 
                   if (count > 1) {
-                     throw new RuntimeException(String.format("Only one of %s, %s, %s or %s could be annotated to a model field!",
+                     throw new RuntimeException(String.format(
+                           "Only one of %s, %s, %s or %s could be annotated to a model field!",
                            AttributeMeta.class.getSimpleName(), ElementMeta.class.getSimpleName(),
                            EntityMeta.class.getSimpleName(), PojoMeta.class.getSimpleName()));
                   }

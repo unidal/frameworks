@@ -5,10 +5,7 @@ import java.util.List;
 
 import org.unidal.lookup.configuration.AbstractResourceConfigurator;
 import org.unidal.lookup.configuration.Component;
-import org.unidal.web.lifecycle.ActionResolver;
 import org.unidal.web.lifecycle.DefaultActionResolver;
-import org.unidal.web.lifecycle.RequestLifecycle;
-import org.unidal.web.mvc.lifecycle.ActionHandlerManager;
 import org.unidal.web.mvc.lifecycle.DefaultActionHandlerManager;
 import org.unidal.web.mvc.lifecycle.DefaultErrorHandler;
 import org.unidal.web.mvc.lifecycle.DefaultInboundActionHandler;
@@ -16,63 +13,41 @@ import org.unidal.web.mvc.lifecycle.DefaultOutboundActionHandler;
 import org.unidal.web.mvc.lifecycle.DefaultRequestContextBuilder;
 import org.unidal.web.mvc.lifecycle.DefaultRequestLifecycle;
 import org.unidal.web.mvc.lifecycle.DefaultTransitionHandler;
-import org.unidal.web.mvc.lifecycle.ErrorHandler;
-import org.unidal.web.mvc.lifecycle.InboundActionHandler;
-import org.unidal.web.mvc.lifecycle.OutboundActionHandler;
-import org.unidal.web.mvc.lifecycle.RequestContextBuilder;
-import org.unidal.web.mvc.lifecycle.TransitionHandler;
 import org.unidal.web.mvc.model.AnnotationMatrix;
 import org.unidal.web.mvc.model.ModelManager;
-import org.unidal.web.mvc.model.ModuleRegistry;
 import org.unidal.web.mvc.payload.DefaultPayloadProvider;
 import org.unidal.web.mvc.payload.MultipartParameterProvider;
-import org.unidal.web.mvc.payload.ParameterProvider;
 import org.unidal.web.mvc.payload.UrlEncodedParameterProvider;
 import org.unidal.web.mvc.view.model.DefaultModelHandler;
 import org.unidal.web.mvc.view.model.JsonModelBuilder;
-import org.unidal.web.mvc.view.model.ModelBuilder;
-import org.unidal.web.mvc.view.model.ModelHandler;
 import org.unidal.web.mvc.view.model.XmlModelBuilder;
 
-import com.dianping.cat.message.MessageProducer;
-
 class ComponentsConfigurator extends AbstractResourceConfigurator {
-	@Override
-	public List<Component> defineComponents() {
-		List<Component> all = new ArrayList<Component>();
+   @Override
+   public List<Component> defineComponents() {
+      List<Component> all = new ArrayList<Component>();
 
-		all.add(C(AnnotationMatrix.class).is(PER_LOOKUP));
-		all.add(C(ModelManager.class).req(ModuleRegistry.class));
-		all.add(C(ActionResolver.class, DefaultActionResolver.class));
-		all.add(C(InboundActionHandler.class, DefaultInboundActionHandler.class).is(PER_LOOKUP) //
-		      .req(MessageProducer.class));
-		all.add(C(OutboundActionHandler.class, DefaultOutboundActionHandler.class).is(PER_LOOKUP) //
-		      .req(MessageProducer.class));
-		all.add(C(TransitionHandler.class, DefaultTransitionHandler.class).is(PER_LOOKUP) //
-		      .req(MessageProducer.class));
-		all.add(C(ErrorHandler.class, DefaultErrorHandler.class));
-		all.add(C(DefaultPayloadProvider.class));
-		all.add(C(ActionHandlerManager.class, DefaultActionHandlerManager.class));
-		all.add(C(RequestLifecycle.class, "mvc", DefaultRequestLifecycle.class) //
-		      .req(RequestContextBuilder.class, ActionHandlerManager.class));
-		all.add(C(RequestContextBuilder.class, DefaultRequestContextBuilder.class) //
-		      .req(ModelManager.class));
+      all.add(A(AnnotationMatrix.class));
+      all.add(A(ModelManager.class));
+      all.add(A(DefaultActionResolver.class));
+      all.add(A(DefaultInboundActionHandler.class));
+      all.add(A(DefaultOutboundActionHandler.class));
+      all.add(A(DefaultTransitionHandler.class));
+      all.add(A(DefaultErrorHandler.class));
+      all.add(A(DefaultPayloadProvider.class));
+      all.add(A(DefaultActionHandlerManager.class));
+      all.add(A(DefaultRequestLifecycle.class));
+      all.add(A(DefaultRequestContextBuilder.class));
+      all.add(A(UrlEncodedParameterProvider.class));
+      all.add(A(MultipartParameterProvider.class));
+      all.add(A(DefaultModelHandler.class));
+      all.add(A(XmlModelBuilder.class));
+      all.add(A(JsonModelBuilder.class));
 
-		all.add(C(ParameterProvider.class, "application/x-www-form-urlencoded", UrlEncodedParameterProvider.class) //
-		      .is(PER_LOOKUP));
-		all.add(C(ParameterProvider.class, "multipart/form-data", MultipartParameterProvider.class) //
-		      .is(PER_LOOKUP));
+      return all;
+   }
 
-		all.add(C(ModelHandler.class, DefaultModelHandler.class) //
-		      .req(ModelBuilder.class, "xml", "m_xmlBuilder") //
-		      .req(ModelBuilder.class, "json", "m_jsonBuilder"));
-		all.add(C(ModelBuilder.class, "xml", XmlModelBuilder.class));
-		all.add(C(ModelBuilder.class, "json", JsonModelBuilder.class));
-
-		return all;
-	}
-
-	public static void main(String[] args) {
-		generatePlexusComponentsXmlFile(new ComponentsConfigurator());
-	}
+   public static void main(String[] args) {
+      generatePlexusComponentsXmlFile(new ComponentsConfigurator());
+   }
 }

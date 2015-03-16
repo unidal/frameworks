@@ -2,9 +2,11 @@ package org.unidal.web.mvc.lifecycle;
 
 import static org.unidal.lookup.util.ReflectUtils.invokeMethod;
 
+import org.unidal.lookup.annotation.Named;
 import org.unidal.web.mvc.ActionContext;
 import org.unidal.web.mvc.model.entity.ErrorModel;
 
+@Named(type = ErrorHandler.class)
 public class DefaultErrorHandler implements ErrorHandler {
    private ErrorModel m_error;
 

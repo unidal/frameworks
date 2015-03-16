@@ -10,11 +10,13 @@ import java.util.Map;
 
 import org.unidal.helper.Objects;
 import org.unidal.helper.Objects.JsonBuilder;
+import org.unidal.lookup.annotation.Named;
 import org.unidal.web.mvc.view.annotation.AttributeMeta;
 import org.unidal.web.mvc.view.annotation.ElementMeta;
 import org.unidal.web.mvc.view.annotation.EntityMeta;
 import org.unidal.web.mvc.view.annotation.PojoMeta;
 
+@Named(type = ModelBuilder.class, value = "json")
 public class JsonModelBuilder implements ModelBuilder {
    @Override
    public String build(ModelDescriptor descriptor, Object model) {
@@ -89,8 +91,9 @@ public class JsonModelBuilder implements ModelBuilder {
                      }
                   }
                } else {
-                  throw new UnsupportedOperationException(String.format("%s(multiple=true) is not support for type(%s)",
-                        ElementMeta.class.getSimpleName(), value.getClass()));
+                  throw new UnsupportedOperationException(String.format(
+                        "%s(multiple=true) is not support for type(%s)", ElementMeta.class.getSimpleName(),
+                        value.getClass()));
                }
 
                sb.trimComma();
@@ -141,8 +144,9 @@ public class JsonModelBuilder implements ModelBuilder {
                      }
                   }
                } else {
-                  throw new UnsupportedOperationException(String.format("%s(multiple=true) is not support for type(%s)",
-                        EntityMeta.class.getSimpleName(), value.getClass()));
+                  throw new UnsupportedOperationException(String.format(
+                        "%s(multiple=true) is not support for type(%s)", EntityMeta.class.getSimpleName(),
+                        value.getClass()));
                }
 
                sb.trimComma();

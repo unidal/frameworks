@@ -9,11 +9,13 @@ import java.util.Date;
 import java.util.Map;
 
 import org.unidal.helper.Objects;
+import org.unidal.lookup.annotation.Named;
 import org.unidal.web.mvc.view.annotation.AttributeMeta;
 import org.unidal.web.mvc.view.annotation.ElementMeta;
 import org.unidal.web.mvc.view.annotation.EntityMeta;
 import org.unidal.web.mvc.view.annotation.PojoMeta;
 
+@Named(type = ModelBuilder.class, value = "xml")
 public class XmlModelBuilder implements ModelBuilder {
    @Override
    public String build(ModelDescriptor descriptor, Object model) {
@@ -84,8 +86,8 @@ public class XmlModelBuilder implements ModelBuilder {
    }
 
    @SuppressWarnings("unchecked")
-   private void buildMutlple(StringBuilder sb, String names, String name, Object value, String format, Class<?> metaClass,
-         XmlBuilder builder) {
+   private void buildMutlple(StringBuilder sb, String names, String name, Object value, String format,
+         Class<?> metaClass, XmlBuilder builder) {
       if (names.length() > 0) {
          sb.append('<').append(names).append(">\r\n");
       }
@@ -245,7 +247,8 @@ public class XmlModelBuilder implements ModelBuilder {
       ELEMENT {
          @Override
          public void build(StringBuilder sb, String tag, Object value) {
-            sb.append('<').append(tag).append('>').append(escape((String) value, true)).append("</").append(tag).append(">\r\n");
+            sb.append('<').append(tag).append('>').append(escape((String) value, true)).append("</").append(tag)
+                  .append(">\r\n");
          }
       };
 

@@ -53,7 +53,7 @@
 			<implementation>org.unidal.web.mvc.lifecycle.DefaultErrorHandler</implementation>
 		</component>
 		<component>
-			<role>org.unidal.web.mvc.payload.DefaultPayloadProvider</role>
+			<role>org.unidal.web.mvc.PayloadProvider</role>
 			<implementation>org.unidal.web.mvc.payload.DefaultPayloadProvider</implementation>
 		</component>
 		<component>

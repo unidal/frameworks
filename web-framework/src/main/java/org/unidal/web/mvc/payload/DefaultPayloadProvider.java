@@ -20,6 +20,7 @@ import org.unidal.converter.ConverterManager;
 import org.unidal.converter.TypeUtil;
 import org.unidal.formatter.Formatter;
 import org.unidal.lookup.ContainerHolder;
+import org.unidal.lookup.annotation.Named;
 import org.unidal.lookup.util.ReflectUtils;
 import org.unidal.web.lifecycle.UrlMapping;
 import org.unidal.web.mvc.Action;
@@ -35,6 +36,7 @@ import org.unidal.web.mvc.payload.annotation.FieldMeta;
 import org.unidal.web.mvc.payload.annotation.ObjectMeta;
 import org.unidal.web.mvc.payload.annotation.PathMeta;
 
+@Named(type = PayloadProvider.class)
 public class DefaultPayloadProvider extends ContainerHolder implements PayloadProvider<Page, Action>, LogEnabled {
    private Map<Class<?>, PayloadModel> m_payloadModels = new HashMap<Class<?>, PayloadModel>();
 
@@ -329,7 +331,8 @@ public class DefaultPayloadProvider extends ContainerHolder implements PayloadPr
       }
    }
 
-   private void processPath(UrlMapping mapping, ActionPayload<?, ?> payload, PayloadPathModel pathModel) throws IOException {
+   private void processPath(UrlMapping mapping, ActionPayload<?, ?> payload, PayloadPathModel pathModel)
+         throws IOException {
       String pathInfo = mapping.getPathInfo(); // not starting with "/"
       String[] parts;
 

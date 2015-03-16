@@ -2,14 +2,16 @@ package org.unidal.web.mvc.lifecycle;
 
 import static org.unidal.lookup.util.ReflectUtils.invokeMethod;
 
+import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
 import org.unidal.web.mvc.ActionContext;
 import org.unidal.web.mvc.ActionException;
 import org.unidal.web.mvc.model.entity.TransitionModel;
 
 import com.dianping.cat.message.MessageProducer;
 import com.dianping.cat.message.Transaction;
-import org.unidal.lookup.annotation.Inject;
 
+@Named(type = TransitionHandler.class, instantiationStrategy = Named.PER_LOOKUP)
 public class DefaultTransitionHandler implements TransitionHandler {
    @Inject
    private MessageProducer m_cat;

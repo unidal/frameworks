@@ -16,6 +16,7 @@ import org.unidal.web.mvc.ActionPayload;
 import org.unidal.web.mvc.ErrorObject;
 import org.unidal.web.mvc.NormalAction;
 import org.unidal.web.mvc.Page;
+import org.unidal.web.mvc.PayloadProvider;
 import org.unidal.web.mvc.payload.annotation.FieldMeta;
 import org.unidal.web.mvc.payload.annotation.ObjectMeta;
 import org.unidal.web.mvc.payload.annotation.PathMeta;
@@ -54,7 +55,7 @@ public class PayloadProviderTest extends ComponentTestCase {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void checkPathInfo(ActionPayload payload, String name, String pathInfo) throws Exception {
-		DefaultPayloadProvider provider = lookup(DefaultPayloadProvider.class);
+		PayloadProvider provider = lookup(PayloadProvider.class);
 		String[] sections = new String[6];
 		QueryStringMock request = new QueryStringMock(new String[0]);
 
@@ -65,13 +66,13 @@ public class PayloadProviderTest extends ComponentTestCase {
 		List<ErrorObject> errors = provider.process(mapping, new UrlEncodedParameterProvider().setRequest(request),
 		      payload);
 
-		release(DefaultPayloadProvider.class);
+		release(PayloadProvider.class);
 		Assert.assertEquals("Errors occured.", "[]", errors.toString());
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void checkQueryString(ActionPayload payload, String... nameValuePairs) throws Exception {
-		DefaultPayloadProvider provider = lookup(DefaultPayloadProvider.class);
+		PayloadProvider provider = lookup(PayloadProvider.class);
 		QueryStringMock request = new QueryStringMock(nameValuePairs);
 		DefaultUrlMapping mapping = new DefaultUrlMapping(new String[6]);
 
@@ -80,7 +81,7 @@ public class PayloadProviderTest extends ComponentTestCase {
 		List<ErrorObject> errors = provider.process(mapping, new UrlEncodedParameterProvider().setRequest(request),
 		      payload);
 
-		release(DefaultPayloadProvider.class);
+		release(PayloadProvider.class);
 		Assert.assertEquals("Errors occured.", "[]", errors.toString());
 	}
 

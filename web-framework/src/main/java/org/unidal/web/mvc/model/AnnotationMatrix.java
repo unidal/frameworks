@@ -5,6 +5,9 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.unidal.lookup.annotation.Named;
+
+@Named(instantiationStrategy = Named.PER_LOOKUP)
 public class AnnotationMatrix {
    private Map<Class<? extends Annotation>, Map<Class<? extends Annotation>, Integer>> m_map = new HashMap<Class<? extends Annotation>, Map<Class<? extends Annotation>, Integer>>();
 

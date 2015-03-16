@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
 import org.unidal.web.lifecycle.RequestLifecycle;
 import org.unidal.web.mvc.ActionContext;
 import org.unidal.web.mvc.ActionException;
@@ -26,181 +27,182 @@ import com.dianping.cat.CatConstants;
 import com.dianping.cat.message.Transaction;
 import com.dianping.cat.message.internal.NullMessage;
 
+@Named(type = RequestLifecycle.class, value = "mvc")
 public class DefaultRequestLifecycle implements RequestLifecycle, LogEnabled {
-	@Inject
-	private RequestContextBuilder m_builder;
+   @Inject
+   private RequestContextBuilder m_builder;
 
-	@Inject
-	private ActionHandlerManager m_actionHandlerManager;
+   @Inject
+   private ActionHandlerManager m_actionHandlerManager;
 
-	private Logger m_logger;
+   private Logger m_logger;
 
-	private ServletContext m_servletContext;
+   private ServletContext m_servletContext;
 
-	private ActionContext<?> createActionContext(final HttpServletRequest request, final HttpServletResponse response,
-	      RequestContext requestContext, InboundActionModel inboundAction) {
-		ActionContext<?> context = createInstance(inboundAction.getContextClass());
+   private ActionContext<?> createActionContext(final HttpServletRequest request, final HttpServletResponse response,
+         RequestContext requestContext, InboundActionModel inboundAction) {
+      ActionContext<?> context = createInstance(inboundAction.getContextClass());
 
-		context.initialize(request, response);
-		context.setRequestContext(requestContext);
-		context.setInboundPage(inboundAction.getActionName());
-		context.setOutboundPage(inboundAction.getActionName());
-		context.setServletContext(m_servletContext);
+      context.initialize(request, response);
+      context.setRequestContext(requestContext);
+      context.setInboundPage(inboundAction.getActionName());
+      context.setOutboundPage(inboundAction.getActionName());
+      context.setServletContext(m_servletContext);
 
-		return context;
-	}
+      return context;
+   }
 
-	public void enableLogging(Logger logger) {
-		m_logger = logger;
-	}
+   public void enableLogging(Logger logger) {
+      m_logger = logger;
+   }
 
-	public void handle(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
-		RequestContext context = m_builder.build(request);
+   public void handle(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+      RequestContext context = m_builder.build(request);
 
-		handleRequest(request, response, context);
-		m_builder.reset(context);
-	}
+      handleRequest(request, response, context);
+      m_builder.reset(context);
+   }
 
-	private void handleException(HttpServletRequest request, Throwable e, ActionContext<?> actionContext) {
-		RequestContext requestContext = actionContext.getRequestContext();
-		ErrorModel error = requestContext.getError();
+   private void handleException(HttpServletRequest request, Throwable e, ActionContext<?> actionContext) {
+      RequestContext requestContext = actionContext.getRequestContext();
+      ErrorModel error = requestContext.getError();
 
-		if (error != null) {
-			ErrorHandler errorHandler = m_actionHandlerManager.getErrorHandler(requestContext.getModule(), error);
+      if (error != null) {
+         ErrorHandler errorHandler = m_actionHandlerManager.getErrorHandler(requestContext.getModule(), error);
 
-			try {
-				errorHandler.handle(actionContext, e);
-			} catch (RuntimeException re) {
-				Cat.logError(re);
-				throw re;
-			}
-		} else {
-			m_logger.error(e.getMessage(), e);
-		}
+         try {
+            errorHandler.handle(actionContext, e);
+         } catch (RuntimeException re) {
+            Cat.logError(re);
+            throw re;
+         }
+      } else {
+         m_logger.error(e.getMessage(), e);
+      }
 
-		if (!actionContext.isProcessStopped()) {
-			request.setAttribute(CatConstants.CAT_STATE, e.getClass().getSimpleName());
-			Cat.logError(e);
-			throw new RuntimeException(e.getMessage(), e);
-		}
-	}
+      if (!actionContext.isProcessStopped()) {
+         request.setAttribute(CatConstants.CAT_STATE, e.getClass().getSimpleName());
+         Cat.logError(e);
+         throw new RuntimeException(e.getMessage(), e);
+      }
+   }
 
-	private void handleInboundAction(ModuleModel module, ActionContext<?> actionContext) throws ActionException {
-		InboundActionModel inboundAction = actionContext.getRequestContext().getInboundAction();
-		InboundActionHandler inboundActionHandler = m_actionHandlerManager.getInboundActionHandler(module, inboundAction);
+   private void handleInboundAction(ModuleModel module, ActionContext<?> actionContext) throws ActionException {
+      InboundActionModel inboundAction = actionContext.getRequestContext().getInboundAction();
+      InboundActionHandler inboundActionHandler = m_actionHandlerManager.getInboundActionHandler(module, inboundAction);
 
-		inboundActionHandler.handle(actionContext);
-	}
+      inboundActionHandler.handle(actionContext);
+   }
 
-	private void handleOutboundAction(ModuleModel module, ActionContext<?> actionContext) throws ActionException {
-		String outboundActionName = actionContext.getOutboundAction();
-		OutboundActionModel outboundAction = module.getOutbounds().get(outboundActionName);
+   private void handleOutboundAction(ModuleModel module, ActionContext<?> actionContext) throws ActionException {
+      String outboundActionName = actionContext.getOutboundAction();
+      OutboundActionModel outboundAction = module.getOutbounds().get(outboundActionName);
 
-		if (outboundAction == null) {
-			throw new ActionException("No method annotated by @" + OutboundActionMeta.class.getSimpleName() + "("
-			      + outboundActionName + ") found in " + module.getModuleClass());
-		} else {
-			OutboundActionHandler outboundActionHandler = m_actionHandlerManager.getOutboundActionHandler(module,
-			      outboundAction);
+      if (outboundAction == null) {
+         throw new ActionException("No method annotated by @" + OutboundActionMeta.class.getSimpleName() + "("
+               + outboundActionName + ") found in " + module.getModuleClass());
+      } else {
+         OutboundActionHandler outboundActionHandler = m_actionHandlerManager.getOutboundActionHandler(module,
+               outboundAction);
 
-			outboundActionHandler.handle(actionContext);
-		}
-	}
+         outboundActionHandler.handle(actionContext);
+      }
+   }
 
-	private boolean handlePreActions(final HttpServletRequest request, final HttpServletResponse response,
-	      ModuleModel module, RequestContext requestContext, InboundActionModel inboundAction,
-	      ActionContext<?> actionContext) {
-		if (inboundAction.getPreActionNames() != null) {
-			for (String actionName : inboundAction.getPreActionNames()) {
-				InboundActionModel action = module.getInbounds().get(actionName);
-				ActionContext<?> ctx = createActionContext(request, response, requestContext, action);
+   private boolean handlePreActions(final HttpServletRequest request, final HttpServletResponse response,
+         ModuleModel module, RequestContext requestContext, InboundActionModel inboundAction,
+         ActionContext<?> actionContext) {
+      if (inboundAction.getPreActionNames() != null) {
+         for (String actionName : inboundAction.getPreActionNames()) {
+            InboundActionModel action = module.getInbounds().get(actionName);
+            ActionContext<?> ctx = createActionContext(request, response, requestContext, action);
 
-				ctx.setParent(actionContext);
-				requestContext.setInboundAction(action);
+            ctx.setParent(actionContext);
+            requestContext.setInboundAction(action);
 
-				try {
-					handleInboundAction(module, ctx);
+            try {
+               handleInboundAction(module, ctx);
 
-					if (!ctx.isProcessStopped() && !ctx.isSkipAction()) {
-						continue;
-					}
+               if (!ctx.isProcessStopped() && !ctx.isSkipAction()) {
+                  continue;
+               }
 
-					if (ctx.isSkipAction()) {
-						handleOutboundAction(module, ctx);
-					}
-				} catch (ActionException e) {
-					handleException(request, e, ctx);
-				}
+               if (ctx.isSkipAction()) {
+                  handleOutboundAction(module, ctx);
+               }
+            } catch (ActionException e) {
+               handleException(request, e, ctx);
+            }
 
-				return false;
-			}
+            return false;
+         }
 
-			requestContext.setInboundAction(inboundAction);
-		}
+         requestContext.setInboundAction(inboundAction);
+      }
 
-		return true;
-	}
+      return true;
+   }
 
-	private void handleRequest(final HttpServletRequest request, final HttpServletResponse response,
-	      RequestContext requestContext) throws IOException {
-		if (requestContext == null) {
-			showPageNotFound(request, response);
-			return;
-		}
+   private void handleRequest(final HttpServletRequest request, final HttpServletResponse response,
+         RequestContext requestContext) throws IOException {
+      if (requestContext == null) {
+         showPageNotFound(request, response);
+         return;
+      }
 
-		ModuleModel module = requestContext.getModule();
-		InboundActionModel inboundAction = requestContext.getInboundAction();
-		ActionContext<?> actionContext = createActionContext(request, response, requestContext, inboundAction);
-		Transaction t = Cat.getManager().getPeekTransaction();
+      ModuleModel module = requestContext.getModule();
+      InboundActionModel inboundAction = requestContext.getInboundAction();
+      ActionContext<?> actionContext = createActionContext(request, response, requestContext, inboundAction);
+      Transaction t = Cat.getManager().getPeekTransaction();
 
-		if (t == null) { // in case of not CatFilter is configured
-			t = NullMessage.TRANSACTION;
-		}
+      if (t == null) { // in case of not CatFilter is configured
+         t = NullMessage.TRANSACTION;
+      }
 
-		request.setAttribute(CatConstants.CAT_PAGE_URI,
-		      actionContext.getRequestContext().getActionUri(inboundAction.getActionName()));
+      request.setAttribute(CatConstants.CAT_PAGE_URI,
+            actionContext.getRequestContext().getActionUri(inboundAction.getActionName()));
 
-		try {
-			if (!handlePreActions(request, response, module, requestContext, inboundAction, actionContext)) {
-				return;
-			}
+      try {
+         if (!handlePreActions(request, response, module, requestContext, inboundAction, actionContext)) {
+            return;
+         }
 
-			handleInboundAction(module, actionContext);
+         handleInboundAction(module, actionContext);
 
-			t.addData("module", module.getModuleName());
-			t.addData("in", actionContext.getInboundAction());
+         t.addData("module", module.getModuleName());
+         t.addData("in", actionContext.getInboundAction());
 
-			if (actionContext.isProcessStopped()) {
-				t.addData("processStopped=true");
-				return;
-			}
+         if (actionContext.isProcessStopped()) {
+            t.addData("processStopped=true");
+            return;
+         }
 
-			handleTransition(module, actionContext);
+         handleTransition(module, actionContext);
 
-			t.addData("out", actionContext.getOutboundAction());
-			handleOutboundAction(module, actionContext);
-		} catch (ActionException e) {
-			handleException(request, e, actionContext);
-		} catch (Exception e) {
-			handleException(request, e, actionContext);
-		} catch (Error e) {
-			handleException(request, e, actionContext);
-		}
-	}
+         t.addData("out", actionContext.getOutboundAction());
+         handleOutboundAction(module, actionContext);
+      } catch (ActionException e) {
+         handleException(request, e, actionContext);
+      } catch (Exception e) {
+         handleException(request, e, actionContext);
+      } catch (Error e) {
+         handleException(request, e, actionContext);
+      }
+   }
 
-	private void handleTransition(ModuleModel module, ActionContext<?> actionContext) throws ActionException {
-		TransitionModel transition = actionContext.getRequestContext().getTransition();
-		TransitionHandler transitionHandler = m_actionHandlerManager.getTransitionHandler(module, transition);
+   private void handleTransition(ModuleModel module, ActionContext<?> actionContext) throws ActionException {
+      TransitionModel transition = actionContext.getRequestContext().getTransition();
+      TransitionHandler transitionHandler = m_actionHandlerManager.getTransitionHandler(module, transition);
 
-		transitionHandler.handle(actionContext);
-	}
+      transitionHandler.handle(actionContext);
+   }
 
-	@Override
-	public void setServletContext(ServletContext servletContext) {
-		m_servletContext = servletContext;
-	}
+   @Override
+   public void setServletContext(ServletContext servletContext) {
+      m_servletContext = servletContext;
+   }
 
-	private void showPageNotFound(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		response.sendError(HttpServletResponse.SC_NOT_FOUND, "Not found");
-	}
+   private void showPageNotFound(HttpServletRequest request, HttpServletResponse response) throws IOException {
+      response.sendError(HttpServletResponse.SC_NOT_FOUND, "Not found");
+   }
 }

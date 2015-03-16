@@ -1,4 +1,4 @@
-package org.unidal.test;
+package org.unidal.test.build;
 
 import java.util.ArrayList;
 import java.util.List;
