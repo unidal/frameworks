@@ -8,15 +8,22 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
+import org.mortbay.resource.FileResource;
+import org.mortbay.resource.Resource;
+import org.mortbay.resource.URLResource;
 import org.unidal.helper.Scanners;
 import org.unidal.helper.Scanners.FileMatcher;
 import org.unidal.helper.Scanners.JarScanner;
 
-public class WebModuleResourceManager {
-   private Map<String, URL> m_resources = new HashMap<String, URL>();
+public class WebModuleManager {
+   private Map<String, URL> m_urls = new HashMap<String, URL>();
 
-   public WebModuleResourceManager() throws Exception {
+   private ConcurrentMap<String, Resource> m_resources = new ConcurrentHashMap<String, Resource>();
+
+   public WebModuleManager() throws Exception {
       List<URL> webModules = Collections.list(getClass().getClassLoader().getResources("WEB-MODULE"));
 
       for (URL webModule : webModules) {
@@ -24,8 +31,37 @@ public class WebModuleResourceManager {
       }
    }
 
-   public URL getResource(String uri) {
-      return m_resources.get(uri);
+   @SuppressWarnings("serial")
+   public Resource getFallbackResource(String uri) {
+      Resource resource = m_resources.get(uri);
+
+      if (resource == null) {
+         URL url = m_urls.get(uri);
+
+         if (url != null) {
+            try {
+               String protocol = url.getProtocol();
+
+               if (protocol.equals("file")) {
+                  resource = new FileResource(url);
+                  m_resources.put(uri, resource);
+               } else if (protocol.equals("jar")) {
+                  resource = new URLResource(url, null, true) {
+                  };
+                  m_resources.put(uri, resource);
+               }
+            } catch (Exception e) {
+               // ignore it
+               e.printStackTrace();
+            }
+         }
+      }
+
+      return resource;
+   }
+
+   public URL getResourceUrl(String uri) {
+      return m_urls.get(uri);
    }
 
    private void prepareResources(URL webModule) throws IOException {
@@ -79,6 +115,6 @@ public class WebModuleResourceManager {
    }
 
    private void put(String uri, URL url) {
-      m_resources.put(uri, url);
+      m_urls.put(uri, url);
    }
 }

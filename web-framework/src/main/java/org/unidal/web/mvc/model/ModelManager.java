@@ -287,6 +287,9 @@ public class ModelManager extends ContainerHolder implements Initializable {
                return module;
             }
          }
+         
+         // return first module for default action
+         return list.get(0);
       }
 
       return m_defaultModule;

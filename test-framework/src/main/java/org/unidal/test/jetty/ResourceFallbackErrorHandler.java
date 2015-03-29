@@ -15,9 +15,9 @@ import org.unidal.helper.Files.AutoClose;
 public class ResourceFallbackErrorHandler extends ErrorPageErrorHandler {
    private MimeTypes m_mimeTypes = new MimeTypes();
 
-   private WebModuleResourceManager m_manager;
+   private WebModuleManager m_manager;
 
-   public ResourceFallbackErrorHandler(WebModuleResourceManager manager) {
+   public ResourceFallbackErrorHandler(WebModuleManager manager) {
       m_manager = manager;
    }
 
@@ -25,7 +25,7 @@ public class ResourceFallbackErrorHandler extends ErrorPageErrorHandler {
    @Override
    public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch) throws IOException {
       String uri = request.getRequestURI();
-      URL url = m_manager.getResource(uri);
+      URL url = m_manager.getResourceUrl(uri);
 
       if (url != null) {
          if (response instanceof Response && ((Response) response).getStatus() == HttpServletResponse.SC_NOT_FOUND) {

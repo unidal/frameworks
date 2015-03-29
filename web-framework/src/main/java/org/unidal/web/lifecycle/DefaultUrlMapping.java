@@ -2,10 +2,15 @@ package org.unidal.web.lifecycle;
 
 public class DefaultUrlMapping implements UrlMapping {
    private String m_contextPath;
+
    private String m_servletPath;
+
    private String m_module;
+
    private String m_action;
+
    private String m_pathInfo;
+
    private String m_queryString;
 
    public DefaultUrlMapping() {
@@ -78,5 +83,11 @@ public class DefaultUrlMapping implements UrlMapping {
 
    public void setServletPath(String servletPath) {
       m_servletPath = servletPath;
+   }
+
+   @Override
+   public String toString() {
+      return String.format("%s[servletPath=%s, contextPath=%s, module=%s, action=%s, pathInfo=%s, queryString=%s]",
+            m_servletPath, m_contextPath, m_module, m_action, m_pathInfo, m_queryString);
    }
 }

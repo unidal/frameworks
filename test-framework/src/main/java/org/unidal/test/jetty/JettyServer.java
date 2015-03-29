@@ -9,6 +9,7 @@ import java.util.Date;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.context.DefaultContext;
 import org.mortbay.jetty.Server;
+import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.jetty.webapp.WebAppContext;
 import org.unidal.helper.Files;
 import org.unidal.lookup.ContainerHolder;
@@ -18,14 +19,17 @@ import org.unidal.test.browser.BrowserManager;
 public abstract class JettyServer extends ContainerHolder {
    private Server m_server;
 
+   private WebModuleResource m_resource;
+
    @SuppressWarnings("unchecked")
-   protected void configure(WebAppContext context) {
+   protected void configure(WebAppContext context) throws Exception {
       File warRoot = getWarRoot();
 
+      m_resource = new WebModuleResource(warRoot);
       context.getInitParams().put("org.mortbay.jetty.servlet.Default.dirAllowed", "false");
       context.setContextPath(getContextPath());
       context.setDescriptor(new File(warRoot, "WEB-INF/web.xml").getPath());
-      context.setResourceBase(warRoot.getPath());
+      context.setBaseResource(m_resource);
    }
 
    protected void display(String requestUri) throws Exception {
@@ -53,10 +57,10 @@ public abstract class JettyServer extends ContainerHolder {
          // try to mock the web.xml
          File tmpWar = new File("target/tmp-war");
          File webXmlFile = new File(tmpWar, "WEB-INF/web.xml");
-         String webXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
-               "<web-app xmlns=\"http://java.sun.com/xml/ns/javaee\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" + //
-               "   xsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd\"\n" + //
-               "   version=\"2.5\">\n" + //
+         String webXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+               + "<web-app xmlns=\"http://java.sun.com/xml/ns/javaee\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+               + "   xsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd\"\n"
+               + "   version=\"2.5\">\n" + //
                "</web-app>";
 
          try {
@@ -94,6 +98,8 @@ public abstract class JettyServer extends ContainerHolder {
       configure(context);
       server.addHandler(context);
       server.start();
+      context.addServlet(new ServletHolder(new WebModuleServlet(m_resource)), "/*");
+
       postConfigure(context);
 
       m_server = server;
