@@ -98,7 +98,7 @@ public abstract class JettyServer extends ContainerHolder {
       configure(context);
       server.addHandler(context);
       server.start();
-      context.addServlet(new ServletHolder(new WebModuleServlet(m_resource)), "/*");
+      context.addServlet(new ServletHolder(new WebModuleServlet(m_resource)), "/");
 
       postConfigure(context);
 
