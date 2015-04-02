@@ -28,6 +28,7 @@ public class MatchersTest {
       trie.addHandler(".jspx", handler, false);
 
       check(trie, handler, "/js/abc.js", "/js/", true);
+      check(trie, handler, "/js/abc.js", "/js/", true);
       check(trie, handler, "/css/abc.js", "/css/", true);
       check(trie, handler, "/images/a.gif", "/images/", true);
       check(trie, handler, "/cs/abc.jsp", ".jsp", false);

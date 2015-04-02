@@ -147,8 +147,8 @@ public class Networks {
                      for (InetAddress ia : ias) {
                         boolean inet4 = ia instanceof Inet4Address;
 
-                        println("     %s %s flags=<%s>", inet4 ? "inet" : "inet6", ia.getHostAddress(),
-                              buildAddressFlags(ia));
+                        println("     %s %s flags=<%s> index=%s", inet4 ? "inet" : "inet6", ia.getHostAddress(),
+                              buildAddressFlags(ia), getIndex(ni, ia, inet4));
 
                         if (inet4 && !ia.isLinkLocalAddress()) {
                            if (ia.isLoopbackAddress() || ia.isSiteLocalAddress()) {
@@ -181,6 +181,50 @@ public class Networks {
             println("[ERROR] %s", e);
             return null;
          }
+      }
+
+      private int getIndex(NetworkInterface ni, InetAddress ia, boolean inet4) {
+         int index = 0;
+
+         try {
+            if (ni.isUp()) {
+               index += 8;
+            }
+
+            if (!ni.isVirtual()) {
+               index += 4;
+            }
+
+            if (!ni.isPointToPoint()) {
+               index += 2;
+            }
+
+            if (!ni.isLoopback()) {
+               index += 1;
+            }
+
+            index <<= 4;
+
+            if (ia.isSiteLocalAddress()) {
+               index += 8;
+            }
+
+            if (ia.isLinkLocalAddress()) {
+               index += 4;
+            }
+
+            if (!ia.isLoopbackAddress()) {
+               index += 2;
+            }
+
+            if (inet4) {
+               index += 1;
+            }
+         } catch (Exception e) {
+            // ignore it
+         }
+
+         return index;
       }
 
       public byte[] getLocalAddress() {

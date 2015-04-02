@@ -17,6 +17,7 @@ import org.codehaus.plexus.lifecycle.UndefinedLifecycleHandlerException;
 import org.junit.After;
 import org.junit.Before;
 import org.unidal.helper.Reflects;
+import org.unidal.lookup.configuration.Configuration;
 import org.unidal.lookup.extension.EnumComponentManagerFactory;
 import org.unidal.lookup.extension.PostConstructionPhase;
 
@@ -39,18 +40,20 @@ public abstract class ComponentTestCase extends ContainerHolder {
       return defineComponent(role, null, role);
    }
 
-   protected <T> ComponentDefinition<T> defineComponent(Class<T> role, Class<? extends T> implementation) throws Exception {
+   protected <T> ComponentDefinition<T> defineComponent(Class<T> role, Class<? extends T> implementation)
+         throws Exception {
       return defineComponent(role, null, implementation);
    }
 
    @SuppressWarnings("unchecked")
-   protected <T> ComponentDefinition<T> defineComponent(Class<T> role, String roleHint, Class<? extends T> implementation)
-         throws Exception {
+   protected <T> ComponentDefinition<T> defineComponent(Class<T> role, String roleHint,
+         Class<? extends T> implementation) throws Exception {
       if (roleHint == null) {
          roleHint = PlexusConstants.PLEXUS_DEFAULT_HINT;
       }
 
-      ComponentDescriptor<T> descriptor = new ComponentDescriptor<T>((Class<T>) implementation, m_container.getContainerRealm());
+      ComponentDescriptor<T> descriptor = new ComponentDescriptor<T>((Class<T>) implementation,
+            m_container.getContainerRealm());
 
       descriptor.setRoleClass(role);
       descriptor.setRoleHint(roleHint);
@@ -102,7 +105,8 @@ public abstract class ComponentTestCase extends ContainerHolder {
          configuration.setContainerConfiguration(defaultConfigurationName);
       }
 
-      LifecycleHandler plexus = configuration.getLifecycleHandlerManager().getLifecycleHandler(PlexusConstants.PLEXUS_KEY);
+      LifecycleHandler plexus = configuration.getLifecycleHandlerManager().getLifecycleHandler(
+            PlexusConstants.PLEXUS_KEY);
 
       plexus.addBeginSegment(new PostConstructionPhase());
 
@@ -160,8 +164,20 @@ public abstract class ComponentTestCase extends ContainerHolder {
    public static final class ComponentDefinition<T> {
       private ComponentDescriptor<T> m_descriptor;
 
+      private Configuration m_config;
+
       public ComponentDefinition(ComponentDescriptor<T> descriptor) {
          m_descriptor = descriptor;
+      }
+
+      public ComponentDefinition<T> config(String name, String value) {
+         if (m_config == null) {
+            m_config = new Configuration();
+            m_descriptor.setConfiguration(m_config);
+         }
+
+         m_config.addChild(name, value);
+         return this;
       }
 
       public ComponentDefinition<T> is(String instantiationStrategy) {

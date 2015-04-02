@@ -32,64 +32,12 @@ public class JdbcDataSourceDescriptorManager implements Initializable, LogEnable
 
    private String m_defaultBaseDir;
 
-   @Override
-   public void enableLogging(Logger logger) {
-      m_logger = logger;
-   }
-
-   protected JdbcDataSourceDescriptor getDescriptor(DataSourceDef ds) {
-      JdbcDataSourceDescriptor d = new JdbcDataSourceDescriptor();
-      PropertiesDef properties = ds.getProperties();
-      String url = properties.getUrl();
-      String connectionProperties = properties.getConnectionProperties();
-
-      if (connectionProperties != null && connectionProperties.length() > 0) {
-         d.setProperty("url", url + "?" + connectionProperties);
-      } else {
-         d.setProperty("url", url);
-      }
-
-      d.setId(ds.getId());
-      d.setType(ds.getType());
-      d.setProperty("driver", properties.getDriver());
-      d.setProperty("user", properties.getUser());
-      d.setProperty("password", properties.getPassword());
-      d.setProperty("login-timeout", toTime(ds.getConnectionTimeout()));
-      d.setProperty("max-idle-time", toTime(ds.getIdleTimeout()));
-      d.setProperty("min-pool-size", ds.getMinimumPoolSize());
-      d.setProperty("max-pool-size", ds.getMaximumPoolSize());
-
-      return d;
-   }
-
-   public JdbcDataSourceDescriptor getDescriptor(String id) {
-      JdbcDataSourceDescriptor configuration = m_descriptors.get(id);
-
-      if (configuration == null) {
-         if (m_dataSources != null && id != null) {
-            DataSourceDef ds = m_dataSources.findDataSource(id);
-
-            if (ds != null) {
-               configuration = getDescriptor(ds);
-               m_descriptors.put(id, configuration);
-            }
-         }
-      }
-
-      return configuration;
-   }
-
-   public List<String> getDataSourceNames() {
-      List<String> names = new ArrayList<String>();
-
-      for (DataSourceDef ds : m_dataSources.getDataSourcesMap().values()) {
-         names.add(ds.getId());
-      }
-
-      return names;
-   }
-
-   public void initialize() throws InitializationException {
+   /**
+    * Define data sources.
+    * 
+    * @return data source definitions
+    */
+   protected DataSourcesDef defineDatasources() {
       if (m_datasourceFile != null) {
          InputStream is = null;
 
@@ -134,11 +82,84 @@ public class JdbcDataSourceDescriptorManager implements Initializable, LogEnable
 
          if (is != null) {
             try {
-               m_dataSources = DefaultSaxParser.parse(is);
+               return DefaultSaxParser.parse(is);
             } catch (Exception e) {
-               throw new InitializationException("Error when loading data source file: " + file, e);
+               throw new IllegalStateException("Error when loading data source file: " + file, e);
             }
          }
+      }
+
+      return null;
+   }
+
+   @Override
+   public void enableLogging(Logger logger) {
+      m_logger = logger;
+   }
+
+   public List<String> getDataSourceNames() {
+      List<String> names = new ArrayList<String>();
+
+      for (DataSourceDef ds : m_dataSources.getDataSourcesMap().values()) {
+         names.add(ds.getId());
+      }
+
+      return names;
+   }
+
+   protected JdbcDataSourceDescriptor getDescriptor(DataSourceDef ds) {
+      JdbcDataSourceDescriptor d = new JdbcDataSourceDescriptor();
+      PropertiesDef properties = ds.getProperties();
+      String url = properties.getUrl();
+      String connectionProperties = properties.getConnectionProperties();
+
+      if (connectionProperties != null && connectionProperties.length() > 0) {
+         d.setProperty("url", url + "?" + connectionProperties);
+      } else {
+         d.setProperty("url", url);
+      }
+
+      d.setId(ds.getId());
+      d.setType(ds.getType());
+      d.setProperty("driver", properties.getDriver());
+      d.setProperty("user", properties.getUser());
+      d.setProperty("password", properties.getPassword());
+      d.setProperty("login-timeout", toTime(ds.getConnectionTimeout()));
+      d.setProperty("max-idle-time", toTime(ds.getIdleTimeout()));
+      d.setProperty("min-pool-size", ds.getMinimumPoolSize());
+      d.setProperty("max-pool-size", ds.getMaximumPoolSize());
+
+      return d;
+   }
+
+   public JdbcDataSourceDescriptor getDescriptor(String id) {
+      JdbcDataSourceDescriptor configuration = m_descriptors.get(id);
+
+      if (configuration == null) {
+         if (id != null) {
+            DataSourceDef ds = m_dataSources.findDataSource(id);
+
+            if (ds != null) {
+               configuration = getDescriptor(ds);
+               m_descriptors.put(id, configuration);
+            }
+         }
+      }
+
+      return configuration;
+   }
+
+   public void initialize() throws InitializationException {
+      try {
+         DataSourcesDef dataSources = defineDatasources();
+
+         if (dataSources != null) {
+            m_dataSources = dataSources;
+         } else {
+            throw new InitializationException("No datasources defined!");
+         }
+      } catch (RuntimeException e) {
+         throw new InitializationException(e.getMessage(), e);
       }
    }
 
