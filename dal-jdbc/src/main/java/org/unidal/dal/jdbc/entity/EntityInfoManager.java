@@ -5,8 +5,6 @@ public interface EntityInfoManager {
 
    public EntityInfo getEntityInfo(String logicalName);
 
-   public String getQuotedName(String name);
-
    public void register(Class<?> entityClass);
 
 }

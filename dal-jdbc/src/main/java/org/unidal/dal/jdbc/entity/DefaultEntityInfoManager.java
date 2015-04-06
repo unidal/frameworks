@@ -16,13 +16,13 @@ import org.unidal.dal.jdbc.annotation.Entity;
 import org.unidal.dal.jdbc.annotation.Relation;
 import org.unidal.dal.jdbc.annotation.SubObjects;
 import org.unidal.dal.jdbc.annotation.Variable;
-import org.unidal.dal.jdbc.query.ReservedKeyword;
+import org.unidal.dal.jdbc.query.QueryNaming;
 import org.unidal.dal.jdbc.raw.RawEntity;
 import org.unidal.lookup.annotation.Inject;
 
 public class DefaultEntityInfoManager implements EntityInfoManager, LogEnabled {
    @Inject
-   private ReservedKeyword m_reservedKeyword;
+   private QueryNaming m_reservedKeyword;
 
    private Map<String, Class<?>> m_logicalNameToEntityClass = new HashMap<String, Class<?>>();
 
@@ -52,15 +52,6 @@ public class DefaultEntityInfoManager implements EntityInfoManager, LogEnabled {
          throw new IllegalStateException("No Entity is registered with logical name(" + logicalName + ")");
       } else {
          return info;
-      }
-   }
-
-   @Override
-   public String getQuotedName(String name) {
-      if (m_reservedKeyword.isKeyword(name)) {
-         return "`" + name + "`"; // for mysql only
-      } else {
-         return name;
       }
    }
 

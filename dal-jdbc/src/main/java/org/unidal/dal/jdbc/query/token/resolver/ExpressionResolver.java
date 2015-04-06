@@ -34,7 +34,7 @@ public class ExpressionResolver {
             ctx.addParameter(new Parameter(field));
             break;
          default:
-            throw new RuntimeException("Unsupported yet.");
+            throw new RuntimeException("Not supported yet.");
          }
       }
 

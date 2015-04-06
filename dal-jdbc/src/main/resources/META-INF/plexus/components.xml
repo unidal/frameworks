@@ -1,12 +1,12 @@
 <plexus>
 	<components>
 		<component>
-			<role>org.unidal.dal.jdbc.query.ReservedKeyword</role>
-			<implementation>org.unidal.dal.jdbc.msyql.MysqlReservedKeyword</implementation>
+			<role>org.unidal.dal.jdbc.query.QueryNaming</role>
+			<implementation>org.unidal.dal.jdbc.query.msyql.MysqlQueryNaming</implementation>
 		</component>
 		<component>
 			<role>org.unidal.dal.jdbc.query.QueryResolver</role>
-			<implementation>org.unidal.dal.jdbc.msyql.MysqlQueryResolver</implementation>
+			<implementation>org.unidal.dal.jdbc.query.msyql.MysqlQueryResolver</implementation>
 			<requirements>
 				<requirement>
 					<role>org.unidal.dal.jdbc.query.token.TokenParser</role>
@@ -41,7 +41,7 @@
 			<implementation>org.unidal.dal.jdbc.entity.DefaultEntityInfoManager</implementation>
 			<requirements>
 				<requirement>
-					<role>org.unidal.dal.jdbc.query.ReservedKeyword</role>
+					<role>org.unidal.dal.jdbc.query.QueryNaming</role>
 				</requirement>
 			</requirements>
 		</component>
@@ -161,6 +161,9 @@
 				<requirement>
 					<role>org.unidal.dal.jdbc.query.token.resolver.ExpressionResolver</role>
 				</requirement>
+				<requirement>
+					<role>org.unidal.dal.jdbc.query.QueryNaming</role>
+				</requirement>
 			</requirements>
 		</component>
 		<component>
@@ -174,6 +177,9 @@
 				<requirement>
 					<role>org.unidal.dal.jdbc.query.token.resolver.ExpressionResolver</role>
 				</requirement>
+				<requirement>
+					<role>org.unidal.dal.jdbc.query.QueryNaming</role>
+				</requirement>
 			</requirements>
 		</component>
 		<component>
@@ -184,6 +190,9 @@
 				<requirement>
 					<role>org.unidal.dal.jdbc.mapping.TableProviderManager</role>
 				</requirement>
+				<requirement>
+					<role>org.unidal.dal.jdbc.query.QueryNaming</role>
+				</requirement>
 			</requirements>
 		</component>
 		<component>
@@ -193,6 +202,9 @@
 			<requirements>
 				<requirement>
 					<role>org.unidal.dal.jdbc.mapping.TableProviderManager</role>
+				</requirement>
+				<requirement>
+					<role>org.unidal.dal.jdbc.query.QueryNaming</role>
 				</requirement>
 			</requirements>
 		</component>

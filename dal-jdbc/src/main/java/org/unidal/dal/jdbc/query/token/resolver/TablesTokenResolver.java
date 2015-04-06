@@ -10,14 +10,20 @@ import org.unidal.dal.jdbc.engine.QueryContext;
 import org.unidal.dal.jdbc.entity.EntityInfo;
 import org.unidal.dal.jdbc.mapping.TableProvider;
 import org.unidal.dal.jdbc.mapping.TableProviderManager;
+import org.unidal.dal.jdbc.query.QueryNaming;
 import org.unidal.dal.jdbc.query.token.Token;
 import org.unidal.dal.jdbc.query.token.TokenType;
+import org.unidal.lookup.annotation.Inject;
 
 /**
  * &lt;tables /&gt;
  */
 public class TablesTokenResolver implements TokenResolver {
+   @Inject
    private TableProviderManager m_manager;
+
+   @Inject
+   private QueryNaming m_naming;
 
    private String getPhysicalName(QueryContext ctx, String logicalName) {
       TableProvider tableProvider = m_manager.getTableProvider(logicalName);
@@ -36,8 +42,9 @@ public class TablesTokenResolver implements TokenResolver {
          EntityInfo entityInfo = ctx.getEntityInfo();
          SubObjects subobject = entityInfo.getSubobjects(ctx.getReadset());
          StringBuilder sb = new StringBuilder(256);
+         String table = getPhysicalName(ctx, entityInfo.getLogicalName());
 
-         sb.append(getPhysicalName(ctx, entityInfo.getLogicalName())).append(' ').append(entityInfo.getAlias());
+         sb.append(m_naming.getTable(table, entityInfo.getAlias()));
 
          if (subobject != null) {
             String[] names = subobject.value();
@@ -56,8 +63,9 @@ public class TablesTokenResolver implements TokenResolver {
 
                   Relation relation = entityInfo.getRelation(name);
 
-                  sb.append(", ").append(getPhysicalName(ctx, relation.logicalName()));
-                  sb.append(' ').append(relation.alias());
+                  sb.append(", ");
+
+                  sb.append(m_naming.getTable(getPhysicalName(ctx, relation.logicalName()), relation.alias()));
                }
             }
          }

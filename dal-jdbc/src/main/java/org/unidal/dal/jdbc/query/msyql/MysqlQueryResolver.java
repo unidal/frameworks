@@ -1,4 +1,4 @@
-package org.unidal.dal.jdbc.msyql;
+package org.unidal.dal.jdbc.query.msyql;
 
 import java.util.Collections;
 import java.util.HashMap;

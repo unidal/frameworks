@@ -24,12 +24,12 @@ import org.unidal.dal.jdbc.mapping.DefaultTableProviderManager;
 import org.unidal.dal.jdbc.mapping.RawTableProvider;
 import org.unidal.dal.jdbc.mapping.TableProvider;
 import org.unidal.dal.jdbc.mapping.TableProviderManager;
-import org.unidal.dal.jdbc.msyql.MysqlQueryResolver;
-import org.unidal.dal.jdbc.msyql.MysqlReservedKeyword;
 import org.unidal.dal.jdbc.query.DefaultQueryExecutor;
 import org.unidal.dal.jdbc.query.QueryExecutor;
+import org.unidal.dal.jdbc.query.QueryNaming;
 import org.unidal.dal.jdbc.query.QueryResolver;
-import org.unidal.dal.jdbc.query.ReservedKeyword;
+import org.unidal.dal.jdbc.query.msyql.MysqlQueryNaming;
+import org.unidal.dal.jdbc.query.msyql.MysqlQueryResolver;
 import org.unidal.dal.jdbc.query.token.DefaultTokenParser;
 import org.unidal.dal.jdbc.query.token.TokenParser;
 import org.unidal.dal.jdbc.query.token.TokenType;
@@ -63,7 +63,7 @@ public final class ComponentsConfigurator extends AbstractResourceConfigurator {
    public List<Component> defineComponents() {
       List<Component> all = new ArrayList<Component>();
 
-      all.add(C(ReservedKeyword.class, MysqlReservedKeyword.class));
+      all.add(C(QueryNaming.class, MysqlQueryNaming.class));
       all.add(C(QueryResolver.class, MysqlQueryResolver.class) //
             .req(TokenParser.class));
 
@@ -73,7 +73,7 @@ public final class ComponentsConfigurator extends AbstractResourceConfigurator {
       all.add(C(QueryContext.class, DefaultQueryContext.class) //
             .is(PER_LOOKUP));
       all.add(C(EntityInfoManager.class, DefaultEntityInfoManager.class) //
-            .req(ReservedKeyword.class));
+            .req(QueryNaming.class));
       all.add(C(DataObjectAccessor.class, DefaultDataObjectAccessor.class) //
             .req(DataObjectNaming.class));
       all.add(C(DataObjectAssembly.class, DefaultDataObjectAssembly.class) //
@@ -112,13 +112,13 @@ public final class ComponentsConfigurator extends AbstractResourceConfigurator {
       all.add(C(TokenResolver.class, TokenType.PARAM, ParameterTokenResolver.class) //
             .req(DataObjectAccessor.class));
       all.add(C(TokenResolver.class, TokenType.FIELD, FieldTokenResolver.class) //
-            .req(EntityInfoManager.class, ExpressionResolver.class));
+            .req(EntityInfoManager.class, ExpressionResolver.class, QueryNaming.class));
       all.add(C(TokenResolver.class, TokenType.FIELDS, FieldsTokenResolver.class) //
-            .req(EntityInfoManager.class, ExpressionResolver.class));
+            .req(EntityInfoManager.class, ExpressionResolver.class, QueryNaming.class));
       all.add(C(TokenResolver.class, TokenType.TABLE, TableTokenResolver.class) //
-            .req(TableProviderManager.class));
+            .req(TableProviderManager.class, QueryNaming.class));
       all.add(C(TokenResolver.class, TokenType.TABLES, TablesTokenResolver.class) //
-            .req(TableProviderManager.class));
+            .req(TableProviderManager.class, QueryNaming.class));
       all.add(C(TokenResolver.class, TokenType.VALUES, ValuesTokenResolver.class) //
             .req(ExpressionResolver.class));
       all.add(C(TokenResolver.class, TokenType.JOINS, JoinsTokenResolver.class));

@@ -4,15 +4,21 @@ import org.unidal.dal.jdbc.DalRuntimeException;
 import org.unidal.dal.jdbc.engine.QueryContext;
 import org.unidal.dal.jdbc.mapping.TableProvider;
 import org.unidal.dal.jdbc.mapping.TableProviderManager;
+import org.unidal.dal.jdbc.query.QueryNaming;
 import org.unidal.dal.jdbc.query.token.SimpleTagToken;
 import org.unidal.dal.jdbc.query.token.Token;
 import org.unidal.dal.jdbc.query.token.TokenType;
+import org.unidal.lookup.annotation.Inject;
 
 /**
  * &lt;table [name="<i>table-name</i>"] [alias="<i>new-table-alias</i>"] /&gt;
  */
 public class TableTokenResolver implements TokenResolver {
+   @Inject
    private TableProviderManager m_manager;
+
+   @Inject
+   private QueryNaming m_naming;
 
    public String resolve(Token token, QueryContext ctx) {
       if (token.getType() != TokenType.TABLE) {
@@ -24,19 +30,18 @@ public class TableTokenResolver implements TokenResolver {
       String[] logicalNameAndAlias = ctx.getEntityInfo().getLogicalNameAndAlias(tableName);
       TableProvider tableProvider = m_manager.getTableProvider(logicalNameAndAlias[0]);
       String physicalTableName = tableProvider.getPhysicalTableName(ctx.getQueryHints());
-      String quotedTableName = "`" + physicalTableName + "`";
 
       switch (ctx.getQuery().getType()) {
       case SELECT:
          String alias = table.getAttribute("alias", logicalNameAndAlias[1]);
 
-         return quotedTableName + " " + alias;
+         return m_naming.getTable(physicalTableName, alias);
       case INSERT:
-         return quotedTableName;
+         return m_naming.getTable(physicalTableName);
       case UPDATE:
-         return quotedTableName;
+         return m_naming.getTable(physicalTableName);
       case DELETE:
-         return quotedTableName;
+         return m_naming.getTable(physicalTableName);
       default:
          throw new DalRuntimeException("TABLE token does not support query type: " + ctx.getQuery().getType());
       }

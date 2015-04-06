@@ -17,6 +17,7 @@ import org.unidal.dal.jdbc.engine.QueryContext;
 import org.unidal.dal.jdbc.entity.EntityInfo;
 import org.unidal.dal.jdbc.entity.EntityInfoManager;
 import org.unidal.dal.jdbc.query.Parameter;
+import org.unidal.dal.jdbc.query.QueryNaming;
 import org.unidal.dal.jdbc.query.token.SimpleTagToken;
 import org.unidal.dal.jdbc.query.token.Token;
 import org.unidal.dal.jdbc.query.token.TokenType;
@@ -31,6 +32,9 @@ public class FieldsTokenResolver implements TokenResolver {
 
    @Inject
    private ExpressionResolver m_expressionResolver;
+   
+   @Inject
+   private QueryNaming m_naming;
 
    @SuppressWarnings("unchecked")
    public String resolve(Token token, QueryContext ctx) {
@@ -84,7 +88,7 @@ public class FieldsTokenResolver implements TokenResolver {
                   if (attribute.selectExpr().length() > 0) {
                      sb.append(m_expressionResolver.resolve(ctx, attribute.selectExpr()));
                   } else {
-                     sb.append(alias).append('.').append(m_manager.getQuotedName(attribute.field()));
+                     sb.append(alias).append('.').append(m_naming.getField(attribute.field()));
                   }
 
                   if ("true".equals(output)) {
@@ -108,7 +112,7 @@ public class FieldsTokenResolver implements TokenResolver {
                      sb.append(',');
                   }
 
-                  sb.append(m_manager.getQuotedName(attribute.field()));
+                  sb.append(m_naming.getField(attribute.field()));
                }
             } else {
                throw new DalRuntimeException("Internal error: No Attribute annotation defined for field: " + field);
