@@ -19,7 +19,9 @@ import org.unidal.dal.jdbc.annotation.Variable;
 import org.unidal.dal.jdbc.query.QueryNaming;
 import org.unidal.dal.jdbc.raw.RawEntity;
 import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
 
+@Named(type = EntityInfoManager.class)
 public class DefaultEntityInfoManager implements EntityInfoManager, LogEnabled {
    @Inject
    private QueryNaming m_reservedKeyword;
@@ -79,7 +81,8 @@ public class DefaultEntityInfoManager implements EntityInfoManager, LogEnabled {
 
          if (type == DataField.class) {
             if (!Modifier.isStatic(field.getModifiers())) {
-               throw new DalRuntimeException("Field " + field.getName() + " of " + entityClass + " should be modified as static");
+               throw new DalRuntimeException("Field " + field.getName() + " of " + entityClass
+                     + " should be modified as static");
             }
 
             Relation relation = field.getAnnotation(Relation.class);
@@ -112,7 +115,8 @@ public class DefaultEntityInfoManager implements EntityInfoManager, LogEnabled {
             index++;
          } else if (type == Readset.class) {
             if (!Modifier.isStatic(field.getModifiers())) {
-               throw new DalRuntimeException("Readset " + field.getName() + " of " + entityClass + " should be modified as static");
+               throw new DalRuntimeException("Readset " + field.getName() + " of " + entityClass
+                     + " should be modified as static");
             }
 
             SubObjects subobject = field.getAnnotation(SubObjects.class);

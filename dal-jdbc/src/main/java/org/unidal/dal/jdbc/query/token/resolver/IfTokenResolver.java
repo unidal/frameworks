@@ -14,8 +14,17 @@ import org.unidal.dal.jdbc.query.token.EndTagToken;
 import org.unidal.dal.jdbc.query.token.StartTagToken;
 import org.unidal.dal.jdbc.query.token.Token;
 import org.unidal.dal.jdbc.query.token.TokenType;
+import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
 
+
+/**
+ * &lt;IF field="..." type="NULL|NOT_NULL|ZERO|NOT_ZERO|EQ|NE|GT|GE|LT|LE" [value="..."]&gt;<br>
+ * &lt;/IF&gt;
+ */
+@Named(type = TokenResolver.class, value = "IF")
 public class IfTokenResolver implements TokenResolver, Initializable {
+   @Inject
    private DataObjectAccessor m_accessor;
 
    private Map<String, Expression> m_expressions = new HashMap<String, Expression>();

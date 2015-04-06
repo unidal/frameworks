@@ -10,10 +10,12 @@ import org.unidal.dal.jdbc.query.Parameter;
 import org.unidal.dal.jdbc.query.token.Token;
 import org.unidal.dal.jdbc.query.token.TokenType;
 import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
 
 /**
- * &lt;values /&gt;
+ * &lt;VALUES /&gt;
  */
+@Named(type = TokenResolver.class, value = "VALUES")
 public class ValuesTokenResolver implements TokenResolver {
    @Inject
    private ExpressionResolver m_expressionResolver;

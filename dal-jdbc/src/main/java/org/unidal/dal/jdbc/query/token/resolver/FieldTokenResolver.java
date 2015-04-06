@@ -10,10 +10,12 @@ import org.unidal.dal.jdbc.query.token.SimpleTagToken;
 import org.unidal.dal.jdbc.query.token.Token;
 import org.unidal.dal.jdbc.query.token.TokenType;
 import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
 
 /**
- * &lt;field name="<i>field-name</i>" [table="<i>table-name</i>"] /&gt;
+ * &lt;FIELD name="<i>field-name</i>" [table="<i>table-name</i>"] /&gt;
  */
+@Named(type = TokenResolver.class, value = "FIELD")
 public class FieldTokenResolver implements TokenResolver {
    @Inject
    private EntityInfoManager m_manager;

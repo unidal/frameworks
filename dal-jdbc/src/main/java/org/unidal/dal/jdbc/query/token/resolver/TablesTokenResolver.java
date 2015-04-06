@@ -14,10 +14,12 @@ import org.unidal.dal.jdbc.query.QueryNaming;
 import org.unidal.dal.jdbc.query.token.Token;
 import org.unidal.dal.jdbc.query.token.TokenType;
 import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
 
 /**
- * &lt;tables /&gt;
+ * &lt;TABLES /&gt;
  */
+@Named(type = TokenResolver.class, value = "TABLES")
 public class TablesTokenResolver implements TokenResolver {
    @Inject
    private TableProviderManager m_manager;

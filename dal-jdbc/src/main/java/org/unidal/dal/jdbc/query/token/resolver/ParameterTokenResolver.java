@@ -12,11 +12,15 @@ import org.unidal.dal.jdbc.query.Parameter;
 import org.unidal.dal.jdbc.query.token.ParameterToken;
 import org.unidal.dal.jdbc.query.token.Token;
 import org.unidal.dal.jdbc.query.token.TokenType;
+import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
 
 /**
  * ${<i>parameter-name</i>} or #{<i>parameter-name</i>}
  */
+@Named(type = TokenResolver.class, value = "PARAM")
 public class ParameterTokenResolver implements TokenResolver {
+   @Inject
    private DataObjectAccessor m_accessor;
 
    public String resolve(Token token, QueryContext ctx) {

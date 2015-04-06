@@ -18,19 +18,21 @@ import org.unidal.dal.jdbc.query.QueryResolver;
 import org.unidal.dal.jdbc.transaction.TransactionManager;
 import org.unidal.lookup.ContainerHolder;
 import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
 
+@Named(type = QueryEngine.class)
 public class DefaultQueryEngine extends ContainerHolder implements QueryEngine {
    @Inject
    private EntityInfoManager m_entityManager;
-
-   @Inject
-   private QueryResolver m_queryResolver;
 
    @Inject
    private QueryExecutor m_queryExecutor;
 
    @Inject
    private TransactionManager m_transactionManager;
+
+   @Inject
+   private QueryResolver m_queryResolver;
 
    protected <T extends DataObject> QueryContext createContext(QueryDef query, T proto) {
       QueryContext ctx = new DefaultQueryContext();

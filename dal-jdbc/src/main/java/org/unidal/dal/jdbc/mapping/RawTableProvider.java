@@ -2,9 +2,10 @@ package org.unidal.dal.jdbc.mapping;
 
 import java.util.Map;
 
-public class RawTableProvider implements TableProvider {
-   private String m_logicalTableName;
+import org.unidal.lookup.annotation.Named;
 
+@Named(type = TableProvider.class, value = "raw")
+public class RawTableProvider implements TableProvider {
    private static ThreadLocal<String> s_threadLocalData = new ThreadLocal<String>() {
       @Override
       protected String initialValue() {
@@ -27,15 +28,11 @@ public class RawTableProvider implements TableProvider {
 
    @Override
    public String getLogicalTableName() {
-      return m_logicalTableName;
+      return "raw";
    }
 
    @Override
    public String getPhysicalTableName(Map<String, Object> hints) {
       throw new UnsupportedOperationException("This table provider is only used by RawDao!");
-   }
-
-   public void setLogicalTableName(String logicalTableName) {
-      m_logicalTableName = logicalTableName;
    }
 }

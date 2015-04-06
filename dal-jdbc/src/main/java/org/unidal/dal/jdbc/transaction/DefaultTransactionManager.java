@@ -12,9 +12,11 @@ import org.unidal.dal.jdbc.engine.QueryContext;
 import org.unidal.dal.jdbc.mapping.TableProvider;
 import org.unidal.dal.jdbc.mapping.TableProviderManager;
 import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
 
 import com.dianping.cat.Cat;
 
+@Named(type = TransactionManager.class)
 public class DefaultTransactionManager implements TransactionManager, LogEnabled {
    private static ThreadLocalTransactionInfo m_threadLocalData = new ThreadLocalTransactionInfo();
 

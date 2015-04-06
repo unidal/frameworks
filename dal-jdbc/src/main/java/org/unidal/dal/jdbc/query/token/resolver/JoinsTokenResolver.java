@@ -7,10 +7,12 @@ import org.unidal.dal.jdbc.engine.QueryContext;
 import org.unidal.dal.jdbc.entity.EntityInfo;
 import org.unidal.dal.jdbc.query.token.Token;
 import org.unidal.dal.jdbc.query.token.TokenType;
+import org.unidal.lookup.annotation.Named;
 
 /**
- * &lt;joins /&gt;
+ * &lt;JOINS /&gt;
  */
+@Named(type = TokenResolver.class, value = "JOINS")
 public class JoinsTokenResolver implements TokenResolver {
    public String resolve(Token token, QueryContext ctx) {
       if (token.getType() != TokenType.JOINS) {

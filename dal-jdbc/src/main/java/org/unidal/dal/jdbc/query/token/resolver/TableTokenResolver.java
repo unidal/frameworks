@@ -9,10 +9,12 @@ import org.unidal.dal.jdbc.query.token.SimpleTagToken;
 import org.unidal.dal.jdbc.query.token.Token;
 import org.unidal.dal.jdbc.query.token.TokenType;
 import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
 
 /**
- * &lt;table [name="<i>table-name</i>"] [alias="<i>new-table-alias</i>"] /&gt;
+ * &lt;TABLE [name="<i>table-name</i>"] [alias="<i>new-table-alias</i>"] /&gt;
  */
+@Named(type = TokenResolver.class, value = "TABLE")
 public class TableTokenResolver implements TokenResolver {
    @Inject
    private TableProviderManager m_manager;

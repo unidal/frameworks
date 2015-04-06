@@ -7,7 +7,9 @@ import org.unidal.dal.jdbc.DalException;
 import org.unidal.dal.jdbc.QueryDef;
 import org.unidal.dal.jdbc.QueryType;
 import org.unidal.dal.jdbc.mapping.RawTableProvider;
+import org.unidal.lookup.annotation.Named;
 
+@Named
 public class RawDao extends AbstractDao {
    @Override
    protected Class<?>[] getEntityClasses() {

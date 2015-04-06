@@ -11,10 +11,12 @@ import org.unidal.dal.jdbc.query.token.SimpleTagToken;
 import org.unidal.dal.jdbc.query.token.Token;
 import org.unidal.dal.jdbc.query.token.TokenType;
 import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
 
 /**
  * &lt;value name="<i>field-name</i>" /&gt;
  */
+@Named(type = TokenResolver.class, value = "VALUE")
 public class ValueTokenResolver implements TokenResolver {
    @Inject
    private ExpressionResolver m_expressionResolver;

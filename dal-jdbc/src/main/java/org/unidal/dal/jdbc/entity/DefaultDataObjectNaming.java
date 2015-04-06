@@ -6,7 +6,9 @@ import java.util.Date;
 
 import org.unidal.dal.jdbc.DalRuntimeException;
 import org.unidal.dal.jdbc.DataObject;
+import org.unidal.lookup.annotation.Named;
 
+@Named(type = DataObjectNaming.class)
 public class DefaultDataObjectNaming implements DataObjectNaming {
    public Method getGetMethod(Class<? extends DataObject> clazz, String name) {
       Method method = null;

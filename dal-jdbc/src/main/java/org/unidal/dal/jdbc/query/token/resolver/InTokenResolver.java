@@ -6,10 +6,12 @@ import org.unidal.dal.jdbc.query.token.EndTagToken;
 import org.unidal.dal.jdbc.query.token.StartTagToken;
 import org.unidal.dal.jdbc.query.token.Token;
 import org.unidal.dal.jdbc.query.token.TokenType;
+import org.unidal.lookup.annotation.Named;
 
 /**
  * &lt;IN&gt;...&lt/IN&gt;
  */
+@Named(type = TokenResolver.class, value = "IN")
 public class InTokenResolver implements TokenResolver {
    public String resolve(Token token, QueryContext ctx) {
       if (token.getType() != TokenType.IN) {

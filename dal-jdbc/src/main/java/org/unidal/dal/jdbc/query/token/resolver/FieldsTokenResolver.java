@@ -22,10 +22,12 @@ import org.unidal.dal.jdbc.query.token.SimpleTagToken;
 import org.unidal.dal.jdbc.query.token.Token;
 import org.unidal.dal.jdbc.query.token.TokenType;
 import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
 
 /**
- * &lt;fields /&gt;
+ * &lt;FIELDS /&gt;
  */
+@Named(type = TokenResolver.class, value = "FIELDS")
 public class FieldsTokenResolver implements TokenResolver {
    @Inject
    private EntityInfoManager m_manager;

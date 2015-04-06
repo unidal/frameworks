@@ -8,7 +8,9 @@ import java.util.Map;
 
 import org.unidal.lookup.ContainerHolder;
 import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
 
+@Named(type = DataSourceManager.class)
 public class DefaultDataSourceManager extends ContainerHolder implements DataSourceManager {
    @Inject
    private JdbcDataSourceDescriptorManager m_manager;

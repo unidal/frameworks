@@ -6,9 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.unidal.dal.jdbc.DalRuntimeException;
+import org.unidal.lookup.annotation.Named;
 
+@Named(type = TokenParser.class)
 public class DefaultTokenParser implements TokenParser {
-
    public List<Token> parse(String pattern) {
       List<Token> tokens = new ArrayList<Token>();
       int len = pattern.length();
@@ -89,7 +90,8 @@ public class DefaultTokenParser implements TokenParser {
                   hasStartSlash = false;
                   hasEndSlash = false;
                } else {
-                  throw new DalRuntimeException("Illegal TAG usage, parsed tokens: " + tokens + ". Statement: " + pattern);
+                  throw new DalRuntimeException("Illegal TAG usage, parsed tokens: " + tokens + ". Statement: "
+                        + pattern);
                }
             } else {
                sb.append(ch);

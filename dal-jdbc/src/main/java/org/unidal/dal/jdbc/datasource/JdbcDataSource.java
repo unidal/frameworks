@@ -7,10 +7,12 @@ import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Disposable;
 import org.unidal.helper.Codes;
+import org.unidal.lookup.annotation.Named;
 
 import com.dianping.cat.Cat;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
+@Named(type = DataSource.class, value = "jdbc", instantiationStrategy = Named.PER_LOOKUP)
 public class JdbcDataSource implements DataSource, Disposable, LogEnabled {
    private ComboPooledDataSource m_cpds;
 
@@ -82,17 +84,19 @@ public class JdbcDataSource implements DataSource, Disposable, LogEnabled {
          cpds.setPreferredTestQuery("SELECT 1");
          cpds.setLoginTimeout(d.getIntProperty("login-timeout", 30));
 
-         m_logger.info(String.format("Connecting to JDBC data source(%s) with properties(driver=%s, url=%s, user=%s) ...", id,
-               driver, url, user));
+         m_logger.info(String.format(
+               "Connecting to JDBC data source(%s) with properties(driver=%s, url=%s, user=%s) ...", id, driver, url,
+               user));
          m_cpds = cpds;
          m_cpds.getConnection().close();
          m_logger.info(String.format("Connected to JDBC data source(%s).", id));
       } catch (Throwable e) {
          cpds.close();
-         
-         throw new DataSourceException(String.format(
-               "Error when connecting to JDBC data source(%s) with properties (driver=%s, url=%s, user=%s). Error message=%s", id,
-               driver, url, user, e), e);
+
+         throw new DataSourceException(
+               String.format(
+                     "Error when connecting to JDBC data source(%s) with properties (driver=%s, url=%s, user=%s). Error message=%s",
+                     id, driver, url, user, e), e);
       }
    }
 }

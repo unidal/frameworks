@@ -15,10 +15,15 @@ import org.unidal.dal.jdbc.DataField;
 import org.unidal.dal.jdbc.DataObject;
 import org.unidal.dal.jdbc.engine.QueryContext;
 import org.unidal.dal.jdbc.raw.RawEntity;
+import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
 
+@Named(type = DataObjectAssembly.class)
 public class DefaultDataObjectAssembly implements DataObjectAssembly {
+   @Inject
    private DataObjectAccessor m_accessor;
 
+   @Inject
    private DataObjectNaming m_naming;
 
    private Map<Class<?>, Map<String, Method>> m_subObjectsMap = new HashMap<Class<?>, Map<String, Method>>();
@@ -58,7 +63,7 @@ public class DefaultDataObjectAssembly implements DataObjectAssembly {
                   setMethod.invoke(row, new Object[] { subObject });
                } catch (Exception e) {
                   throw new DalRuntimeException("Error when setting SubObject(" + subObject + " to DataObject(" + row
-                           + ")");
+                        + ")");
                }
 
                m_cache.put(setMethod, subObject);

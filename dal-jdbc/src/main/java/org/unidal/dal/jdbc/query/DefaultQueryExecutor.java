@@ -27,20 +27,22 @@ import org.unidal.dal.jdbc.entity.EntityInfo;
 import org.unidal.dal.jdbc.transaction.TransactionManager;
 import org.unidal.helper.Stringizers;
 import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
 
 import com.dianping.cat.message.Message;
 import com.dianping.cat.message.MessageProducer;
 import com.dianping.cat.message.Transaction;
 
+@Named(type = QueryExecutor.class)
 public class DefaultQueryExecutor implements QueryExecutor {
    @Inject
-   private DataObjectAssembly m_assembly;
+   private TransactionManager m_transactionManager;
 
    @Inject
    private DataObjectAccessor m_accessor;
 
    @Inject
-   private TransactionManager m_transactionManager;
+   private DataObjectAssembly m_assembly;
 
    @Inject
    private DataSourceManager m_dataSourceManager;

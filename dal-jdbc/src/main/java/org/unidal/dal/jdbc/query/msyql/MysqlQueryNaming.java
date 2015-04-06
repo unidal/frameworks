@@ -4,7 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.unidal.dal.jdbc.query.QueryNaming;
+import org.unidal.lookup.annotation.Named;
 
+@Named(type = QueryNaming.class)
 public class MysqlQueryNaming implements QueryNaming {
    private String[] KEYWORDS = { "ADD", "ALL", "ALTER", "ANALYZE", "AND", "AS", "ASC", "ASENSITIVE", "BEFORE",
          "BETWEEN", "BIGINT", "BINARY", "BLOB", "BOTH", "BY", "CALL", "CASCADE", "CASE", "CHANGE", "CHAR", "CHARACTER",
