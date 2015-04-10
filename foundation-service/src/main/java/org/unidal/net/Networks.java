@@ -29,7 +29,7 @@ public class Networks {
          initialize();
       }
 
-      private Object buildAddressFlags(InetAddress ia) {
+      private String buildAddressFlags(InetAddress ia) {
          StringBuilder sb = new StringBuilder(64);
 
          try {
@@ -136,42 +136,30 @@ public class Networks {
          try {
             List<NetworkInterface> nis = Collections.list(NetworkInterface.getNetworkInterfaces());
             InetAddress found = null;
+            int maxIndex = 0;
 
             for (NetworkInterface ni : nis) {
                println("%s: flags=<%s> mtu %s", ni.getDisplayName(), buildInterfaceFlags(ni), ni.getMTU());
 
-               if (ni.isUp()) {
-                  try {
-                     List<InetAddress> ias = Collections.list(ni.getInetAddresses());
+               try {
+                  List<InetAddress> ias = Collections.list(ni.getInetAddresses());
 
-                     for (InetAddress ia : ias) {
-                        boolean inet4 = ia instanceof Inet4Address;
+                  for (InetAddress ia : ias) {
+                     boolean inet4 = ia instanceof Inet4Address;
+                     int index = getIndex(ni, ia, inet4);
+                     String address = ia.getHostAddress();
+                     String flags = buildAddressFlags(ia);
 
-                        println("     %s %s flags=<%s> index=%s", inet4 ? "inet" : "inet6", ia.getHostAddress(),
-                              buildAddressFlags(ia), getIndex(ni, ia, inet4));
+                     println("     %s %s flags=<%s> index=%s", inet4 ? "inet" : "inet6", address, flags, index);
 
-                        if (inet4 && !ia.isLinkLocalAddress()) {
-                           if (ia.isLoopbackAddress() || ia.isSiteLocalAddress()) {
-                              if (found == null) {
-                                 found = ia;
-                              } else if (found.isLoopbackAddress() && ia.isSiteLocalAddress()) {
-                                 // site local address has higher priority than
-                                 // loopback address
-                                 found = ia;
-                              } else if (found.isSiteLocalAddress() && ia.isSiteLocalAddress()) {
-                                 // site local address with a host name has higher
-                                 // priority than one without host name
-                                 if (found.getHostName().equals(found.getHostAddress())
-                                       && !ia.getHostName().equals(ia.getHostAddress())) {
-                                    found = ia;
-                                 }
-                              }
-                           }
-                        }
+                     if (index > maxIndex) {
+                        found = ia;
+                        maxIndex = index;
                      }
-                  } catch (Exception e) {
-                     // ignore
                   }
+               } catch (Exception e) {
+                  // ignore
+                  System.err.println(e);
                }
             }
 
