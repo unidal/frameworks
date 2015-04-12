@@ -40,11 +40,21 @@ public abstract class JdbcTestCase extends ComponentTestCase {
       maker.make(getDefaultDataSource(), in);
    }
 
-   protected void dumpTo(File dataFile, String table) throws DalException, IOException {
+   protected void dumpTo(String dataXml, String table) throws DalException, IOException {
       DatabaseDumper dumper = lookup(DatabaseDumper.class);
       DatabaseModel model = dumper.dump(getDefaultDataSource(), table);
+      File base = new File("src/test/resources");
+      File file;
 
-      Files.forIO().writeTo(dataFile, model.toString());
+      if (dataXml.startsWith("/")) {
+         file = new File(base, dataXml);
+      } else {
+         String packageName = getClass().getPackage().getName();
+
+         file = new File(base, packageName.replace('.', '/') + "/" + dataXml);
+      }
+
+      Files.forIO().writeTo(file, model.toString());
    }
 
    protected List<RawDataObject> executeQuery(String sql) throws DalException {

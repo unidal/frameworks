@@ -9,7 +9,7 @@ import org.unidal.dal.jdbc.test.JdbcTestCase;
 public class UserTest extends JdbcTestCase {
    @Before
    public void before() throws Exception {
-      super.createTables("user");
+      createTables("user");
    }
 
    @Override
@@ -19,15 +19,11 @@ public class UserTest extends JdbcTestCase {
 
    @Test
    public void testUser() throws Exception {
-      //      executeUpdate("insert into user(user_id, full_name, creation_date, last_modified_date) values (1, 'Frankie', now(), now())");
-      //      executeUpdate("insert into user(user_id, full_name, creation_date, last_modified_date) values (2, 'Daniel', now(), now())");
-      //      executeUpdate("insert into user(user_id, full_name, creation_date, last_modified_date) values (3, 'Bob', now(), now())");
-
       loadFrom("user.xml");
 
-      showQuery("select * from user");
+      // dumpTo("user.xml", "user");
 
-      // dumpTo(new File("src/test/resources/org/unidal/dal/jdbc/user/user.xml"), "user");
+      showQuery("select * from user");
 
       UserDao dao = lookup(UserDao.class);
       User user = dao.findByPK(1, UserEntity.READSET_FULL);
