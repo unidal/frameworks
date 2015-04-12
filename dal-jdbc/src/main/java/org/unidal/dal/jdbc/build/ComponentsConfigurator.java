@@ -30,6 +30,11 @@ import org.unidal.dal.jdbc.query.token.resolver.TablesTokenResolver;
 import org.unidal.dal.jdbc.query.token.resolver.ValueTokenResolver;
 import org.unidal.dal.jdbc.query.token.resolver.ValuesTokenResolver;
 import org.unidal.dal.jdbc.raw.RawDao;
+import org.unidal.dal.jdbc.test.DatabaseDumper;
+import org.unidal.dal.jdbc.test.QueryResultBuilder;
+import org.unidal.dal.jdbc.test.TableLoader;
+import org.unidal.dal.jdbc.test.TableMaker;
+import org.unidal.dal.jdbc.test.TableSchemaBuilder;
 import org.unidal.dal.jdbc.transaction.DefaultTransactionManager;
 import org.unidal.lookup.configuration.AbstractResourceConfigurator;
 import org.unidal.lookup.configuration.Component;
@@ -64,6 +69,13 @@ public final class ComponentsConfigurator extends AbstractResourceConfigurator {
 
       all.add(A(RawTableProvider.class));
       all.add(A(RawDao.class));
+
+      // for DAL test
+      all.add(A(TableSchemaBuilder.class));
+      all.add(A(QueryResultBuilder.class));
+      all.add(A(DatabaseDumper.class));
+      all.add(A(TableMaker.class));
+      all.add(A(TableLoader.class));
 
       return all;
    }

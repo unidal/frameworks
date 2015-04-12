@@ -23,9 +23,20 @@ public class RawDao extends AbstractDao {
       RawTableProvider.setDataSourceName(dataSource);
 
       try {
-         List<RawDataObject> list = getQueryEngine().queryMultiple(query, proto, RawEntity.READSET_FULL);
+         return getQueryEngine().queryMultiple(query, proto, RawEntity.READSET_FULL);
+      } finally {
+         RawTableProvider.reset();
+      }
+   }
 
-         return list;
+   public int executeUpdate(String dataSource, String sql) throws DalException {
+      RawDataObject proto = new RawDataObject();
+      QueryDef query = new QueryDef("raw", RawEntity.class, QueryType.UPDATE, sql);
+
+      RawTableProvider.setDataSourceName(dataSource);
+
+      try {
+         return getQueryEngine().updateSingle(query, proto, RawEntity.UPDATESET_FULL);
       } finally {
          RawTableProvider.reset();
       }

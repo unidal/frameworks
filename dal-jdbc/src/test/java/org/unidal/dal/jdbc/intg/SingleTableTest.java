@@ -3,127 +3,145 @@ package org.unidal.dal.jdbc.intg;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.unidal.dal.jdbc.QueryEngine;
 import org.unidal.dal.jdbc.datasource.DataSourceException;
+import org.unidal.dal.jdbc.datasource.DataSourceManager;
 import org.unidal.dal.jdbc.entity.EntityInfoManager;
+import org.unidal.dal.jdbc.mapping.SimpleTableProvider;
+import org.unidal.dal.jdbc.mapping.TableProvider;
+import org.unidal.dal.jdbc.raw.RawDao;
+import org.unidal.dal.jdbc.test.TestDataSourceManager;
 import org.unidal.lookup.ComponentTestCase;
 import org.unidal.test.user.address.dal.UserAddressEntity;
 import org.unidal.test.user.dal.User;
 import org.unidal.test.user.dal.UserEntity;
 
 public class SingleTableTest extends ComponentTestCase {
-	private EntityInfoManager m_entityManager;
+   @Before
+   public void before() throws Exception {
+      defineComponent(DataSourceManager.class, TestDataSourceManager.class);
+      defineComponent(TableProvider.class, "user", SimpleTableProvider.class) //
+            .config("data-source-name", "user") //
+            .config("logical-table-name", "user");
 
-	protected void delete(int id) throws Exception {
-		QueryEngine queryEngine = lookup(QueryEngine.class);
-		User proto = new User();
+      EntityInfoManager manager = lookup(EntityInfoManager.class);
 
-		proto.setKeyUserId(id);
+      manager.register(UserEntity.class);
+      manager.register(UserAddressEntity.class);
 
-		queryEngine.deleteSingle(UserEntity.DELETE_BY_PK, proto);
-	}
+      RawDao dao = lookup(RawDao.class);
+      String sql = "create table user(user_id int primary key, full_name varchar(30), encrypted_password varchar(30), creation_date datetime default now(), last_modified_date timestamp default now())";
 
-	protected void insert(int id, String userName) throws Exception {
-		QueryEngine queryEngine = lookup(QueryEngine.class);
-		User proto = new User();
+      dao.executeUpdate("user", sql);
+      dao.executeUpdate("user", "insert into user(user_id, full_name) values (1, 'frankie')");
+//      dao.executeUpdate("user", "delete from user where user_id = 1");
 
-		proto.setUserId(id);
-		proto.setUserName(userName);
-		proto.setPassword("");
+      System.out.println(dao.executeQuery("user", "show databases"));
+      System.out.println(dao.executeQuery("user", "show tables"));
 
-		queryEngine.insertSingle(UserEntity.INSERT, proto);
-	}
+      select(1, "frankie");
+   }
 
-	protected void select(int id, String userName) throws Exception {
-		QueryEngine queryEngine = lookup(QueryEngine.class);
-		User proto = new User();
+   protected void delete(int id) throws Exception {
+      QueryEngine queryEngine = lookup(QueryEngine.class);
+      User proto = new User();
 
-		proto.setKeyUserId(id);
+      proto.setKeyUserId(id);
 
-		User user = queryEngine.querySingle(UserEntity.FIND_BY_PK, proto, UserEntity.READSET_FULL);
+      queryEngine.deleteSingle(UserEntity.DELETE_BY_PK, proto);
+   }
 
-		Assert.assertNotNull(user);
-		Assert.assertEquals(proto.getKeyUserId(), user.getUserId());
-		Assert.assertEquals(userName, user.getUserName());
-		Assert.assertNotNull(user.getCreationDate());
-		Assert.assertNotNull(user.getLastModifiedDate());
-	}
+   protected void insert(int id, String userName) throws Exception {
+      QueryEngine queryEngine = lookup(QueryEngine.class);
+      User proto = new User();
 
-	protected void selectWithStoreProcedure(int count) throws Exception {
-		QueryEngine queryEngine = lookup(QueryEngine.class);
-		User proto = new User();
+      proto.setUserId(id);
+      proto.setUserName(userName);
 
-		proto.setPageSize(count);
-		List<User> users = queryEngine.queryMultiple(UserEntity.FIND_ALL_USERS, proto, UserEntity.READSET_COMPACT);
+      queryEngine.insertSingle(UserEntity.INSERT, proto);
+   }
 
-		Assert.assertNotNull(users);
-		Assert.assertEquals(2, users.size());
-		Assert.assertEquals(3, proto.getPageSize());
-	}
+   protected void select(int id, String expectedUserName) throws Exception {
+      QueryEngine queryEngine = lookup(QueryEngine.class);
+      User proto = new User();
 
-	@Override
-	public void setUp() throws Exception {
-		super.setUp();
+      proto.setKeyUserId(id);
 
-		m_entityManager = lookup(EntityInfoManager.class);
+      User user = queryEngine.querySingle(UserEntity.FIND_BY_PK, proto, UserEntity.READSET_FULL);
 
-		m_entityManager.register(UserEntity.class);
-		m_entityManager.register(UserAddressEntity.class);
-	}
+      Assert.assertNotNull(user);
+      Assert.assertEquals(proto.getKeyUserId(), user.getUserId());
+      Assert.assertEquals(expectedUserName, user.getUserName());
+      Assert.assertNotNull(user.getCreationDate());
+      Assert.assertNotNull(user.getLastModifiedDate());
+   }
 
-	@Test
-	public void testSingle() throws Exception {
-		try {
-			delete(1);
-			insert(1, "user 1");
-			update(1, "user 11");
-			select(1, "user 11");
-			delete(1);
-		} catch (DataSourceException e) {
-			if (e.isDataSourceDown()) {
-				System.out.println("Can't connect to database, gave up");
-			} else {
-				throw e;
-			}
-		}
-	}
+   protected void selectWithStoreProcedure(int count) throws Exception {
+      QueryEngine queryEngine = lookup(QueryEngine.class);
+      User proto = new User();
 
-	@Test
-	public void testMultiple() throws Exception {
-		try {
-			delete(1);
-			delete(2);
-			delete(3);
-			insert(1, "user 1");
-			insert(2, "user 2");
-			insert(3, "user 3");
-			update(1, "user 11");
-			update(3, "user 31");
-			select(1, "user 11");
-			select(2, "user 2");
-			select(3, "user 31");
-			// TODO remove temporary
-			// selectWithStoreProcedure(3);
-			delete(1);
-			delete(2);
-			delete(3);
-		} catch (DataSourceException e) {
-			if (e.isDataSourceDown()) {
-				System.out.println("Can't connect to database, gave up");
-			} else {
-				throw e;
-			}
-		}
-	}
+      proto.setPageSize(count);
+      List<User> users = queryEngine.queryMultiple(UserEntity.FIND_ALL_USERS, proto, UserEntity.READSET_COMPACT);
 
-	protected void update(int id, String userName) throws Exception {
-		QueryEngine queryEngine = lookup(QueryEngine.class);
-		User proto = new User();
+      Assert.assertNotNull(users);
+      Assert.assertEquals(2, users.size());
+      Assert.assertEquals(3, proto.getPageSize());
+   }
 
-		proto.setKeyUserId(id);
-		proto.setUserName(userName);
+   @Test
+   public void testMultiple() throws Exception {
+      try {
+         delete(1);
+         delete(2);
+         delete(3);
+         insert(1, "user 1");
+         insert(2, "user 2");
+         insert(3, "user 3");
+         update(1, "user 11");
+         update(3, "user 31");
+         select(1, "user 11");
+         select(2, "user 2");
+         select(3, "user 31");
+         // TODO remove temporary
+         // selectWithStoreProcedure(3);
+         delete(1);
+         delete(2);
+         delete(3);
+      } catch (DataSourceException e) {
+         if (e.isDataSourceDown()) {
+            System.out.println("Can't connect to database, gave up");
+         } else {
+            throw e;
+         }
+      }
+   }
 
-		queryEngine.updateSingle(UserEntity.UPDATE_BY_PK, proto, UserEntity.UPDATESET_FULL);
-	}
+   @Test
+   public void testSingle() throws Exception {
+      try {
+         delete(1);
+         insert(1, "user 1");
+         update(1, "user 11");
+         select(1, "user 11");
+         delete(1);
+      } catch (DataSourceException e) {
+         if (e.isDataSourceDown()) {
+            System.out.println("Can't connect to database, gave up");
+         } else {
+            throw e;
+         }
+      }
+   }
+
+   protected void update(int id, String userName) throws Exception {
+      QueryEngine queryEngine = lookup(QueryEngine.class);
+      User proto = new User();
+
+      proto.setKeyUserId(id);
+      proto.setUserName(userName);
+
+      queryEngine.updateSingle(UserEntity.UPDATE_BY_PK, proto, UserEntity.UPDATESET_FULL);
+   }
 }

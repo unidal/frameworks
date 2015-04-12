@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wizard package="org.unidal.framework.jdbc">
+   <model package="org.unidal.dal.jdbc.test.meta" name="meta">
+      <sample-model>src/test/resources/META-INF/dal/jdbc/user-codegen.xml</sample-model>
+   </model>
+   <model package="org.unidal.dal.jdbc.test.data" name="data">
+      <sample-model>src/test/resources/org/unidal/dal/jdbc/user/user.xml</sample-model>
+   </model>
+</wizard>

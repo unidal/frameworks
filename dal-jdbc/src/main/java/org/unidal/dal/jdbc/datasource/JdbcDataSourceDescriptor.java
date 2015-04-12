@@ -126,6 +126,7 @@ public class JdbcDataSourceDescriptor implements DataSourceDescriptor {
 
       sb.append("JdbcDataSourceDescriptor[");
       sb.append("id:").append(m_id);
+      sb.append(",type:").append(m_type);
       sb.append(",properties:").append(m_properties);
       sb.append("]");
 

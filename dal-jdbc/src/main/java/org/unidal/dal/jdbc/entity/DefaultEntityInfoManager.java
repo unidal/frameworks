@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.unidal.dal.jdbc.DalRuntimeException;
 import org.unidal.dal.jdbc.DataField;
 import org.unidal.dal.jdbc.Readset;
@@ -22,7 +24,7 @@ import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.annotation.Named;
 
 @Named(type = EntityInfoManager.class)
-public class DefaultEntityInfoManager implements EntityInfoManager, LogEnabled {
+public class DefaultEntityInfoManager implements EntityInfoManager, LogEnabled, Initializable {
    @Inject
    private QueryNaming m_reservedKeyword;
 
@@ -150,5 +152,10 @@ public class DefaultEntityInfoManager implements EntityInfoManager, LogEnabled {
       EntityInfo info = new EntityInfo(entity, relations, attributes, variables, subobjects);
 
       m_entityClassToEntityInfo.put(entityClass, info);
+   }
+
+   @Override
+   public void initialize() throws InitializationException {
+      register(RawEntity.class);
    }
 }

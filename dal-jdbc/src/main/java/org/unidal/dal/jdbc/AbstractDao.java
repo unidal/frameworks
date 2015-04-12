@@ -3,7 +3,6 @@ package org.unidal.dal.jdbc;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.unidal.dal.jdbc.entity.EntityInfoManager;
-import org.unidal.dal.jdbc.raw.RawEntity;
 import org.unidal.lookup.ContainerHolder;
 import org.unidal.lookup.annotation.Inject;
 
@@ -22,8 +21,6 @@ public abstract class AbstractDao extends ContainerHolder implements Initializab
 
       // register relevant entity class
       EntityInfoManager entityInfoManager = lookup(EntityInfoManager.class);
-
-      entityInfoManager.register(RawEntity.class);
 
       for (Class<?> entityClass : getEntityClasses()) {
          entityInfoManager.register(entityClass);

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entities>
+  <entity name="user" table="user" alias="u">
+    <member name="user-id" field="user_id" value-type="int" length="10" nullable="false" key="true" auto-increment="true" />
+    <member name="full-name" field="full_name" value-type="String" length="50" nullable="false" />
+    <member name="creation-date" field="creation_date" value-type="Date" nullable="false" insert-expr="NOW()" />
+    <member name="last-modified-date" field="last_modified_date" value-type="Date" nullable="false" insert-expr="NOW()" update-expr="NOW()" />
+    <var name="key-user-id" value-type="int" key-member="user-id" />
+    <primary-key name="PRIMARY" members="user_id" />
+    <readsets>
+      <readset name="FULL" all="true" />
+    </readsets>
+    <updatesets>
+      <updateset name="FULL" all="true" />
+    </updatesets>
+    <query-defs>
+      <query name="find-by-PK" type="SELECT">
+        <param name="key-user-id" />
+        <statement><![CDATA[SELECT <FIELDS/>
+        FROM <TABLE/>
+        WHERE <FIELD name='user-id'/> = ${key-user-id}]]></statement>
+      </query>
+      <query name="insert" type="INSERT">
+        <statement><![CDATA[INSERT INTO <TABLE/>(<FIELDS/>)
+        VALUES(<VALUES/>)]]></statement>
+      </query>
+      <query name="update-by-PK" type="UPDATE">
+        <param name="key-user-id" />
+        <statement><![CDATA[UPDATE <TABLE/>
+        SET <FIELDS/>
+        WHERE <FIELD name='user-id'/> = ${key-user-id}]]></statement>
+      </query>
+      <query name="delete-by-PK" type="DELETE">
+        <param name="key-user-id" />
+        <statement><![CDATA[DELETE FROM <TABLE/>
+        WHERE <FIELD name='user-id'/> = ${key-user-id}]]></statement>
+      </query>
+    </query-defs>
+  </entity>
+</entities>
+

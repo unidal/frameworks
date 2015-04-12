@@ -262,5 +262,42 @@
 				</requirement>
 			</requirements>
 		</component>
+		<component>
+			<role>org.unidal.dal.jdbc.test.TableSchemaBuilder</role>
+			<implementation>org.unidal.dal.jdbc.test.TableSchemaBuilder</implementation>
+			<instantiation-strategy>per-lookup</instantiation-strategy>
+		</component>
+		<component>
+			<role>org.unidal.dal.jdbc.test.QueryResultBuilder</role>
+			<implementation>org.unidal.dal.jdbc.test.QueryResultBuilder</implementation>
+		</component>
+		<component>
+			<role>org.unidal.dal.jdbc.test.DatabaseDumper</role>
+			<implementation>org.unidal.dal.jdbc.test.DatabaseDumper</implementation>
+			<requirements>
+				<requirement>
+					<role>org.unidal.dal.jdbc.raw.RawDao</role>
+				</requirement>
+			</requirements>
+		</component>
+		<component>
+			<role>org.unidal.dal.jdbc.test.TableMaker</role>
+			<implementation>org.unidal.dal.jdbc.test.TableMaker</implementation>
+			<requirements>
+				<requirement>
+					<role>org.unidal.dal.jdbc.raw.RawDao</role>
+				</requirement>
+			</requirements>
+		</component>
+		<component>
+			<role>org.unidal.dal.jdbc.test.TableLoader</role>
+			<implementation>org.unidal.dal.jdbc.test.TableLoader</implementation>
+			<instantiation-strategy>per-lookup</instantiation-strategy>
+			<requirements>
+				<requirement>
+					<role>org.unidal.dal.jdbc.raw.RawDao</role>
+				</requirement>
+			</requirements>
+		</component>
 	</components>
 </plexus>

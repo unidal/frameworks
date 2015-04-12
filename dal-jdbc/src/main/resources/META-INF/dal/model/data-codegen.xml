@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model>
+  <entity name="database" root="true">
+    <entity-ref name="table" type="list" names="tables" />
+  </entity>
+  <entity name="table">
+    <attribute name="name" value-type="String" />
+    <entity-ref name="row" type="list" names="rows" />
+  </entity>
+  <entity name="row">
+    <attribute name="status" value-type="String" />
+    <entity-ref name="col" type="list" names="cols" />
+  </entity>
+  <entity name="col">
+    <attribute name="name" value-type="String" />
+    <attribute name="key" value-type="boolean" />
+    <element name="text" value-type="String" text="true" />
+  </entity>
+</model>
+

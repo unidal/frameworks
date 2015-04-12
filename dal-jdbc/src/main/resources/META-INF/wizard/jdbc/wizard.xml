@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <wizard package="org.unidal.dal.jdbc">
-   <jdbc package="org.unidal.dal.jdbc.cat" name="cat">
+   <jdbc package="org.unidal.dal.jdbc" name="user">
       <datasource>
          <driver>com.mysql.jdbc.Driver</driver>
-         <url>jdbc:mysql://192.168.7.43:3306/cat</url>
-         <user>dpcom_cat</user>
-         <password>password</password>
+         <url>jdbc:mysql://localhost:3306/user</url>
+         <user>root</user>
+         <password>~{f4f8f380b1f0f0f0f9f0bb3e7ea02}</password>
          <properties>useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true</properties>
       </datasource>
-      <group name="metrics" package="org.unidal.dal.jdbc.cat.metrics">
-         <table name="businessReport"/>
+      <group name="user" package="org.unidal.dal.jdbc.user">
+         <table name="user"/>
       </group>
    </jdbc>
 </wizard>

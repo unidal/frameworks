@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model>
+  <entity name="entities" root="true">
+    <entity-ref name="entity" type="list" names="entities" />
+  </entity>
+  <entity name="entity">
+    <attribute name="name" value-type="String" />
+    <attribute name="table" value-type="String" />
+    <attribute name="alias" value-type="String" />
+    <entity-ref name="member" type="list" names="members" />
+    <entity-ref name="var" />
+    <entity-ref name="primary-key" />
+    <entity-ref name="readsets" />
+    <entity-ref name="updatesets" />
+    <entity-ref name="query" type="list" names="query-defs" xml-indent="true" />
+    <entity-ref name="index" type="list" names="indexs" />
+  </entity>
+  <entity name="member">
+    <attribute name="name" value-type="String" />
+    <attribute name="field" value-type="String" />
+    <attribute name="value-type" value-type="String" />
+    <attribute name="length" value-type="int" />
+    <attribute name="nullable" value-type="boolean" />
+    <attribute name="key" value-type="boolean" />
+    <attribute name="auto-increment" value-type="boolean" />
+    <attribute name="insert-expr" value-type="String" />
+    <attribute name="update-expr" value-type="String" />
+  </entity>
+  <entity name="var">
+    <attribute name="name" value-type="String" />
+    <attribute name="value-type" value-type="String" />
+    <attribute name="key-member" value-type="String" />
+  </entity>
+  <entity name="primary-key">
+    <attribute name="name" value-type="String" />
+    <attribute name="members" value-type="String" />
+  </entity>
+  <entity name="readsets">
+    <entity-ref name="readset" />
+  </entity>
+  <entity name="readset">
+    <attribute name="name" value-type="String" />
+    <attribute name="all" value-type="boolean" />
+  </entity>
+  <entity name="updatesets">
+    <entity-ref name="updateset" />
+  </entity>
+  <entity name="updateset">
+    <attribute name="name" value-type="String" />
+    <attribute name="all" value-type="boolean" />
+  </entity>
+  <entity name="query">
+    <attribute name="name" value-type="String" />
+    <attribute name="type" value-type="String" />
+    <element name="statement" value-type="String" />
+    <entity-ref name="param" />
+  </entity>
+  <entity name="param">
+    <attribute name="name" value-type="String" />
+  </entity>
+  <entity name="index">
+    <attribute name="name" value-type="String" />
+    <attribute name="members" value-type="String" />
+    <attribute name="unique" value-type="boolean" />
+  </entity>
+</model>
+

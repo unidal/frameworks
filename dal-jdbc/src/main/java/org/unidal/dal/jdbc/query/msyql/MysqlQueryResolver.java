@@ -51,7 +51,7 @@ public class MysqlQueryResolver extends ContainerHolder implements QueryResolver
          }
       }
 
-      // add tag <FIELDS/> on the fly for Store Proceduce Query
+      // add tag <FIELDS/> on the fly for Store Procedure Query
       if (ctx.getQuery().isStoreProcedure() && ctx.getQuery().getType() == QueryType.SELECT
             && ctx.getOutFields().isEmpty()) {
          TokenResolver resolver = m_map.get(TokenType.FIELDS.name());

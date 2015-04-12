@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model model-package="org.unidal.dal.jdbc.test.data" enable-sax-parser="true" enable-base-visitor2="true" class-suffix="Model">
+  <entity name="table">
+    <attribute name="name" value-type="String" key="true" />
+  </entity>
+</model>
+
