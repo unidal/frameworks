@@ -57,6 +57,23 @@ public class TokenParserTest extends ComponentTestCase {
 	}
 	
 	@Test
+	public void testParseBug1() {
+	     TokenParser parser = lookup(TokenParser.class);
+	      Assert.assertNotNull(parser);
+
+	      String pattern = "SELECT <FIELDS/> FROM <TABLE/> WHERE <FIELD name='id' /> IN (SELECT MAX(<FIELD name='id' />) FROM <TABLE/> GROUP BY <FIELD name='name'/>)";
+	      List<Token> tokens = parser.parse(pattern);
+	      StringBuilder sb = new StringBuilder(pattern.length());
+
+	      for (Token token : tokens) {
+	         sb.append(token);
+	      }
+
+	      String expected = "SELECT <FIELDS/> FROM <TABLE/> WHERE <FIELD name='id'/> IN (SELECT MAX(<FIELD name='id'/>) FROM <TABLE/> GROUP BY <FIELD name='name'/>)";
+	      Assert.assertEquals(expected, sb.toString());
+	}
+	
+	@Test
 	public void testParseQuote() throws Exception {
 	   TokenParser parser = lookup(TokenParser.class);
 	   Assert.assertNotNull(parser);

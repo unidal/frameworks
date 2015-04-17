@@ -45,7 +45,7 @@ public abstract class AbstractJdbcResourceConfigurator extends AbstractResourceC
 	protected Component defineSimpleTableProviderComponent(String dataSource, String logicalTableName,
 	      String physicalTableName) {
 		return C(TableProvider.class, logicalTableName, SimpleTableProvider.class).config(
-		      E("logical-table-name").value(logicalTableName), E("physical-table-name").value(physicalTableName),
+		      E("physical-table-name").value(physicalTableName),
 		      E("data-source-name").value(dataSource));
 	}
 

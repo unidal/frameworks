@@ -56,7 +56,7 @@ public class DefaultTokenParser implements TokenParser {
             if (numTags > 0) {
                if (sb.length() == 0 && pattern.charAt(i - 1) == '<') { // </...>
                   hasStartSlash = true;
-               } else if (inTag) { // <.../>
+               } else if (inTag || hasWhiteSpace) { // <.../>
                   hasEndSlash = true;
                } else {
                   sb.append(ch);

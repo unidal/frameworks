@@ -22,17 +22,12 @@ public class RawTableProvider implements TableProvider {
    }
 
    @Override
-   public String getDataSourceName(Map<String, Object> hints) {
+   public String getDataSourceName(Map<String, Object> hints, String logicalTableName) {
       return s_threadLocalData.get();
    }
 
    @Override
-   public String getLogicalTableName() {
-      return "raw";
-   }
-
-   @Override
-   public String getPhysicalTableName(Map<String, Object> hints) {
+   public String getPhysicalTableName(Map<String, Object> hints, String logicalTableName) {
       throw new UnsupportedOperationException("This table provider is only used by RawDao!");
    }
 }

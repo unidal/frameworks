@@ -31,7 +31,7 @@ public class TableTokenResolver implements TokenResolver {
       String tableName = table.getAttribute("name", ctx.getEntityInfo().getLogicalName());
       String[] logicalNameAndAlias = ctx.getEntityInfo().getLogicalNameAndAlias(tableName);
       TableProvider tableProvider = m_manager.getTableProvider(logicalNameAndAlias[0]);
-      String physicalTableName = tableProvider.getPhysicalTableName(ctx.getQueryHints());
+      String physicalTableName = tableProvider.getPhysicalTableName(ctx.getQueryHints(), tableName);
 
       switch (ctx.getQuery().getType()) {
       case SELECT:

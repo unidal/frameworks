@@ -24,7 +24,7 @@ public class SingleTableTest extends ComponentTestCase {
       defineComponent(DataSourceManager.class, TestDataSourceManager.class);
       defineComponent(TableProvider.class, "user", SimpleTableProvider.class) //
             .config("data-source-name", "user") //
-            .config("logical-table-name", "user");
+            .config("physical-table-name", "user");
 
       EntityInfoManager manager = lookup(EntityInfoManager.class);
 

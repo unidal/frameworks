@@ -29,7 +29,7 @@ public class TablesTokenResolver implements TokenResolver {
 
    private String getPhysicalName(QueryContext ctx, String logicalName) {
       TableProvider tableProvider = m_manager.getTableProvider(logicalName);
-      String physicalTableName = tableProvider.getPhysicalTableName(ctx.getQueryHints());
+      String physicalTableName = tableProvider.getPhysicalTableName(ctx.getQueryHints(), logicalName);
 
       return physicalTableName;
    }

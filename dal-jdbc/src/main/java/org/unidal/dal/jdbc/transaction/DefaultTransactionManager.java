@@ -69,8 +69,9 @@ public class DefaultTransactionManager implements TransactionManager, LogEnabled
    }
 
    public Connection getConnection(QueryContext ctx) {
-      TableProvider tableProvider = m_tableProviderManager.getTableProvider(ctx.getEntityInfo().getLogicalName());
-      String dataSourceName = tableProvider.getDataSourceName(ctx.getQueryHints());
+      String logicalName = ctx.getEntityInfo().getLogicalName();
+      TableProvider tableProvider = m_tableProviderManager.getTableProvider(logicalName);
+      String dataSourceName = tableProvider.getDataSourceName(ctx.getQueryHints(), logicalName);
       TransactionInfo trxInfo = m_threadLocalData.get();
 
       ctx.setDataSourceName(dataSourceName);

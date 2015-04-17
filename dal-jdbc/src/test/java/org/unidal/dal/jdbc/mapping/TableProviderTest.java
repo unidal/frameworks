@@ -38,7 +38,8 @@ public class TableProviderTest extends ComponentTestCase {
 
       dao.findByPK(123, UserEntity.READSET_FULL);
 
-      Assert.assertEquals("SELECT u.user_id,u.full_name,u.creation_date,u.last_modified_date FROM user_3 u WHERE u.user_id = ?",
+      Assert.assertEquals(
+            "SELECT u.user_id,u.full_name,u.creation_date,u.last_modified_date FROM user_3 u WHERE u.user_id = ?",
             executor.getSql());
    }
 
@@ -71,33 +72,22 @@ public class TableProviderTest extends ComponentTestCase {
    }
 
    public static class MockUserTableProvider implements TableProvider {
-      private String m_logicalTableName = "user";
-
       private String m_dataSourceName = "user";
 
       @Override
-      public String getDataSourceName(Map<String, Object> hints) {
+      public String getDataSourceName(Map<String, Object> hints, String logicalTableName) {
          return m_dataSourceName;
       }
 
       @Override
-      public String getLogicalTableName() {
-         return m_logicalTableName;
-      }
-
-      @Override
-      public String getPhysicalTableName(Map<String, Object> hints) {
+      public String getPhysicalTableName(Map<String, Object> hints, String logicalTableName) {
          User user = (User) hints.get(QueryEngine.HINT_DATA_OBJECT);
 
-         return m_logicalTableName + "_" + (user.getKeyUserId() % 10);
+         return "user_" + (user.getKeyUserId() % 10);
       }
 
       public void setDataSourceName(String dataSourceName) {
          m_dataSourceName = dataSourceName;
-      }
-
-      public void setLogicalTableName(String logicalTableName) {
-         m_logicalTableName = logicalTableName;
       }
    }
 }

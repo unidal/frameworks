@@ -203,11 +203,11 @@ public class DefaultQueryExecutor implements QueryExecutor {
       try {
          ps = createPreparedStatement(ctx);
 
-         if (ctx.getQuery().isStoreProcedure()) {
-            if (!inTransaction) {
-               ps.getConnection().setAutoCommit(false);
-            }
+         if (!inTransaction) {
+            ps.getConnection().setAutoCommit(false);
+         }
 
+         if (ctx.getQuery().isStoreProcedure()) {
             for (int i = 0; i < protos.length; i++) {
                // Call beforeSave() to do some custom data manipulation
                protos[i].beforeSave();
@@ -222,7 +222,6 @@ public class DefaultQueryExecutor implements QueryExecutor {
 
                // Execute the query
                rowCounts[i] = ps.executeUpdate();
-
                updated = true;
 
                // Get OUT parameters if have
@@ -232,11 +231,6 @@ public class DefaultQueryExecutor implements QueryExecutor {
                if (ctx.getQuery().getType() == QueryType.INSERT) {
                   retrieveGeneratedKeys(ctx, ps, protos[i]);
                }
-            }
-
-            if (!inTransaction && updated) {
-               ps.getConnection().commit();
-               ps.getConnection().setAutoCommit(true);
             }
          } else {
             for (int i = 0; i < protos.length; i++) {
@@ -255,9 +249,15 @@ public class DefaultQueryExecutor implements QueryExecutor {
             }
 
             rowCounts = ps.executeBatch();
+            updated = true;
 
             // Unfortunately, getGeneratedKeys() is not supported by
             // executeBatch()
+         }
+
+         if (!inTransaction && updated) {
+            ps.getConnection().commit();
+            ps.getConnection().setAutoCommit(true);
          }
 
          t.setStatus(Transaction.SUCCESS);
