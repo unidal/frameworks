@@ -25,13 +25,13 @@ public class PlexusConfigurator extends AbstractJdbcResourceConfigurator {
 		      .toString()));
 
 		all.add(C(TableProvider.class, "user", SimpleTableProvider.class).config(E("data-source-name").value("jdbc-dal"),
-		      E("logical-table-name").value("user")));
+		      E("physical-table-name").value("user")));
 
 		all.add(C(TableProvider.class, "user2", SimpleTableProvider.class).config(
-		      E("data-source-name").value("jdbc-dal"), E("logical-table-name").value("user2")));
+		      E("data-source-name").value("jdbc-dal"), E("physical-table-name").value("user2")));
 
 		all.add(C(TableProvider.class, "user-address", SimpleTableProvider.class).config(
-		      E("data-source-name").value("jdbc-dal"), E("logical-table-name").value("user-address"),
+		      E("data-source-name").value("jdbc-dal"),
 		      E("physical-table-name").value("user_address")));
 
 		all.add(C(UserDao.class).req(QueryEngine.class));

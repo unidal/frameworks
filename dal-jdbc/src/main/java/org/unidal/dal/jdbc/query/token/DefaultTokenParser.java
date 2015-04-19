@@ -182,7 +182,7 @@ public class DefaultTokenParser implements TokenParser {
                   }
                }
 
-               if (i + 1 >= len) {
+               if (i + 1 > len) {
                   throw new DalRuntimeException("Quote(" + ch + ") is not paired. Statement: " + pattern);
                }
             }

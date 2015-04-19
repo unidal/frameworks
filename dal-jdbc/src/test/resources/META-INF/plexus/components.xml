@@ -13,7 +13,7 @@
 			<implementation>org.unidal.dal.jdbc.mapping.SimpleTableProvider</implementation>
 			<configuration>
 				<data-source-name>jdbc-dal</data-source-name>
-				<logical-table-name>user</logical-table-name>
+				<physical-table-name>user</physical-table-name>
 			</configuration>
 		</component>
 		<component>
@@ -22,7 +22,7 @@
 			<implementation>org.unidal.dal.jdbc.mapping.SimpleTableProvider</implementation>
 			<configuration>
 				<data-source-name>jdbc-dal</data-source-name>
-				<logical-table-name>user2</logical-table-name>
+				<physical-table-name>user2</physical-table-name>
 			</configuration>
 		</component>
 		<component>
@@ -31,7 +31,6 @@
 			<implementation>org.unidal.dal.jdbc.mapping.SimpleTableProvider</implementation>
 			<configuration>
 				<data-source-name>jdbc-dal</data-source-name>
-				<logical-table-name>user-address</logical-table-name>
 				<physical-table-name>user_address</physical-table-name>
 			</configuration>
 		</component>
