@@ -7,21 +7,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.unidal.dal.jdbc.QueryEngine;
 import org.unidal.dal.jdbc.datasource.DataSourceException;
-import org.unidal.dal.jdbc.datasource.DataSourceManager;
 import org.unidal.dal.jdbc.entity.EntityInfoManager;
 import org.unidal.dal.jdbc.mapping.SimpleTableProvider;
 import org.unidal.dal.jdbc.mapping.TableProvider;
-import org.unidal.dal.jdbc.raw.RawDao;
-import org.unidal.dal.jdbc.test.TestDataSourceManager;
-import org.unidal.lookup.ComponentTestCase;
+import org.unidal.dal.jdbc.test.JdbcTestCase;
 import org.unidal.test.user.address.dal.UserAddressEntity;
 import org.unidal.test.user.dal.User;
 import org.unidal.test.user.dal.UserEntity;
 
-public class SingleTableTest extends ComponentTestCase {
+public class SingleTableTest extends JdbcTestCase {
    @Before
    public void before() throws Exception {
-      defineComponent(DataSourceManager.class, TestDataSourceManager.class);
       defineComponent(TableProvider.class, "user", SimpleTableProvider.class) //
             .config("data-source-name", "user") //
             .config("physical-table-name", "user");
@@ -31,15 +27,11 @@ public class SingleTableTest extends ComponentTestCase {
       manager.register(UserEntity.class);
       manager.register(UserAddressEntity.class);
 
-      RawDao dao = lookup(RawDao.class);
-      String sql = "create table user(user_id int primary key, full_name varchar(30), encrypted_password varchar(30), creation_date datetime default now(), last_modified_date timestamp default now())";
+      executeUpdate("create table user(user_id int primary key, full_name varchar(30), encrypted_password varchar(30), creation_date datetime default now(), last_modified_date timestamp default now())");
+      executeUpdate("insert into user(user_id, full_name) values (1, 'frankie')");
+      // executeUpdate("delete from user where user_id = 1");
 
-      dao.executeUpdate("user", sql);
-      dao.executeUpdate("user", "insert into user(user_id, full_name) values (1, 'frankie')");
-//      dao.executeUpdate("user", "delete from user where user_id = 1");
-
-      System.out.println(dao.executeQuery("user", "show databases"));
-      System.out.println(dao.executeQuery("user", "show tables"));
+      System.out.println(executeQuery("show tables"));
 
       select(1, "frankie");
    }
@@ -51,6 +43,11 @@ public class SingleTableTest extends ComponentTestCase {
       proto.setKeyUserId(id);
 
       queryEngine.deleteSingle(UserEntity.DELETE_BY_PK, proto);
+   }
+
+   @Override
+   protected String getDefaultDataSource() {
+      return "user";
    }
 
    protected void insert(int id, String userName) throws Exception {

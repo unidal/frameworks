@@ -2,7 +2,10 @@ package org.unidal.dal.jdbc.test;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.unidal.dal.jdbc.datasource.DataSource;
@@ -11,14 +14,23 @@ import org.unidal.dal.jdbc.datasource.DataSourceManager;
 import org.unidal.dal.jdbc.datasource.JdbcDataSourceDescriptor;
 
 public class TestDataSourceManager implements DataSourceManager {
+   private Map<String, TestDataSource> m_dataSources = new LinkedHashMap<String, TestDataSource>();
+
    @Override
-   public List<String> getDataSourceNames() {
-      throw new UnsupportedOperationException("Not used yet!");
+   public synchronized DataSource getDataSource(String dataSourceName) {
+      TestDataSource dataSource = m_dataSources.get(dataSourceName);
+
+      if (dataSource == null) {
+         dataSource = new TestDataSource(dataSourceName);
+         m_dataSources.put(dataSourceName, dataSource);
+      }
+
+      return dataSource;
    }
 
    @Override
-   public DataSource getDataSource(String dataSourceName) {
-      return new TestDataSource(dataSourceName);
+   public synchronized List<String> getDataSourceNames() {
+      return new ArrayList<String>(m_dataSources.keySet());
    }
 
    static class TestDataSource implements DataSource {
@@ -50,6 +62,10 @@ public class TestDataSourceManager implements DataSourceManager {
 
       @Override
       public void initialize(DataSourceDescriptor descriptor) {
+      }
+
+      public void reset() {
+         m_pool.dispose();
       }
    }
 }

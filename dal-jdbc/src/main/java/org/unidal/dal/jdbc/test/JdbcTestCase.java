@@ -3,15 +3,21 @@ package org.unidal.dal.jdbc.test;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.List;
 
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.LoggerManager;
 import org.junit.Before;
 import org.unidal.dal.jdbc.DalException;
 import org.unidal.dal.jdbc.datasource.DataSourceManager;
 import org.unidal.dal.jdbc.raw.RawDao;
 import org.unidal.dal.jdbc.raw.RawDataObject;
 import org.unidal.dal.jdbc.test.data.entity.DatabaseModel;
+import org.unidal.dal.jdbc.test.function.StringFunction;
 import org.unidal.helper.Files;
+import org.unidal.helper.Reflects;
+import org.unidal.helper.Reflects.MethodFilter;
 import org.unidal.lookup.ComponentTestCase;
 
 /**
@@ -27,6 +33,8 @@ import org.unidal.lookup.ComponentTestCase;
  * </xmp>
  */
 public abstract class JdbcTestCase extends ComponentTestCase {
+   private LoggerManager m_loggerManager;
+
    protected void createTables(String name) throws Exception {
       String resource = String.format("/META-INF/dal/jdbc/%s-codegen.xml", name);
       InputStream in = getClass().getResourceAsStream(resource);
@@ -38,6 +46,27 @@ public abstract class JdbcTestCase extends ComponentTestCase {
       TableMaker maker = lookup(TableMaker.class);
 
       maker.make(getDefaultDataSource(), in);
+   }
+
+   protected Logger getLogger() {
+      return m_loggerManager.getLoggerForComponent("");
+   }
+
+   protected void defineFunctions(Class<?> functionClass) throws DalException {
+      List<Method> methods = Reflects.forMethod().getMethods(functionClass, MethodFilter.PUBLIC_STATIC);
+
+      for (Method method : methods) {
+         if (method.getReturnType() == Void.TYPE) {
+            getLogger().warn(String.format("Method(%s) return void, IGNORED!", method));
+            continue;
+         }
+
+         String name = method.getName();
+         String className = functionClass.getName();
+
+         executeUpdate(String
+               .format("CREATE ALIAS IF NOT EXISTS %s FOR \"%s.%s\"", name.toUpperCase(), className, name));
+      }
    }
 
    protected void dumpTo(String dataXml, String table) throws DalException, IOException {
@@ -87,9 +116,14 @@ public abstract class JdbcTestCase extends ComponentTestCase {
    @Before
    @Override
    public void setUp() throws Exception {
+      System.setProperty("devMode", "true");
+
       super.setUp();
 
+      m_loggerManager = lookup(LoggerManager.class);
+
       defineComponent(DataSourceManager.class, TestDataSourceManager.class);
+      defineFunctions(StringFunction.class);
    }
 
    protected void showQuery(String sql) throws DalException {
@@ -100,5 +134,12 @@ public abstract class JdbcTestCase extends ComponentTestCase {
       System.out.println(new QueryResultBuilder().build(rowset));
       System.out.println(String.format("%s rows in set (%.3f sec)", rowset.size(), (end - start) / 1000.0));
       System.out.println();
+   }
+
+   @Override
+   public void tearDown() throws Exception {
+      executeUpdate("SHUTDOWN");
+
+      super.tearDown();
    }
 }
