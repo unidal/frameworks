@@ -1,3 +1,60 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<entities do-package="org.unidal.dal.jdbc.user" gen="true" />
+<?xml version="1.0" encoding="utf-8"?>
 
+<entities do-package="org.unidal.dal.jdbc.user" gen="true">
+   <entity name="user">
+      <relation name="home-address" entity-name="user-address" entity-alias="hua" join="u.user_id=hua.user_id and hua.type='H'" />
+      <relation name="office-address" entity-name="user-address" entity-alias="oua" join="u.user_id=oua.user_id and hua.type='O'" />
+      <relation name="billing-address" entity-name="user-address" entity-alias="bua" join="u.user_id=bua.user_id and hua.type='B'" />
+      <member name="user-id" auto-increment="true"/>
+      <member name="creation-date" insert-expr="NOW()"/>
+      <member name="last-modified-date" insert-expr="NOW()" update-expr="NOW()"/>
+      <readsets>
+         <readset name="FULL_HOME">
+            <readset-ref name="FULL"/>
+            <readset-ref name="FULL" relation-name="home-address"/>
+         </readset>
+         <readset name="FULL_OFFICE">
+            <readset-ref name="FULL"/>
+            <readset-ref name="FULL" relation-name="office-address"/>
+         </readset>
+         <readset name="FULL_HOME_OFFICE">
+            <readset-ref name="FULL"/>
+            <readset-ref name="FULL" relation-name="home-address"/>
+            <readset-ref name="FULL" relation-name="office-address"/>
+         </readset>
+         <readset name="FULL_HOME_OFFICE_BILLING">
+            <readset-ref name="FULL"/>
+            <readset-ref name="FULL" relation-name="home-address"/>
+            <readset-ref name="FULL" relation-name="office-address"/>
+            <readset-ref name="FULL" relation-name="billing-address"/>
+         </readset>
+      </readsets>
+      <query-defs>
+         <query name="find-all" type="SELECT" multiple="true">
+            <statement><![CDATA[
+            SELECT <FIELDS/>
+            FROM <TABLE/>
+            ]]></statement>
+         </query>
+         <query name="insert" enabled="false"/>
+         <query name="delete-by-PK" enabled="false"/>
+      </query-defs>
+      <snippet lang="java">
+      // comment
+      </snippet>
+   </entity>
+   <entity name="user-address">
+      <member name="creation-date" insert-expr="NOW()"/>
+      <member name="last-modified-date" insert-expr="NOW()" update-expr="NOW()"/>
+      <query-defs>
+         <query name="find-all-by-user-id" type="SELECT" multiple="true">
+            <param name="user-id"/>
+            <statement><![CDATA[
+            SELECT <FIELDS/>
+            FROM <TABLE/>
+            WHERE <FIELD name='user-id'/> = ${user-id}
+            ]]></statement>
+         </query>
+      </query-defs>
+   </entity>
+</entities>

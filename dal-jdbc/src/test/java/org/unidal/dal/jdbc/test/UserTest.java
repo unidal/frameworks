@@ -1,10 +1,13 @@
-package org.unidal.dal.jdbc.user;
+package org.unidal.dal.jdbc.test;
 
 import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.unidal.dal.jdbc.test.JdbcTestCase;
+import org.unidal.dal.jdbc.user.User;
+import org.unidal.dal.jdbc.user.UserDao;
+import org.unidal.dal.jdbc.user.UserEntity;
 
 public class UserTest extends JdbcTestCase {
    @Before
@@ -24,10 +27,11 @@ public class UserTest extends JdbcTestCase {
       // dumpTo("user.xml", "user");
 
       showQuery("select * from user");
+      showQuery("select * from user_address");
 
       UserDao dao = lookup(UserDao.class);
       User user = dao.findByPK(1, UserEntity.READSET_FULL);
 
-      Assert.assertEquals("Frankie", user.getFullName());
+      Assert.assertEquals("Frankie", user.getUserName());
    }
 }

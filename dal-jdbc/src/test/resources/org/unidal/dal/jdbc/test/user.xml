@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database>
+   <table name="user">
+      <row>
+         <col name="USER_ID">1</col>
+         <col name="FULL_NAME">Frankie</col>
+         <col name="CREATION_DATE">2015-04-12 17:02:34.996</col>
+         <col name="LAST_MODIFIED_DATE">2015-04-12 17:02:34.996</col>
+      </row>
+      <row>
+         <col name="USER_ID">2</col>
+         <col name="FULL_NAME">Daniel</col>
+         <col name="CREATION_DATE">2015-04-12 17:02:35.0</col>
+         <col name="LAST_MODIFIED_DATE">2015-04-12 17:02:35.0</col>
+      </row>
+      <row>
+         <col name="USER_ID">3</col>
+         <col name="FULL_NAME">Bob</col>
+         <col name="CREATION_DATE">2015-04-12 17:02:35.001</col>
+         <col name="LAST_MODIFIED_DATE">2015-04-12 17:02:35.001</col>
+      </row>
+   </table>
+   <table name="user_address">
+      <row>
+         <col name="USER_ID">1</col>
+         <col name="TYPE">H</col>
+         <col name="ADDRESS">Home address 1</col>
+         <col name="CREATION_DATE">2015-04-12 17:02:34.996</col>
+         <col name="LAST_MODIFIED_DATE">2015-04-12 17:02:34.996</col>
+      </row>
+      <row>
+         <col name="USER_ID">1</col>
+         <col name="TYPE">O</col>
+         <col name="ADDRESS">Office address 1</col>
+         <col name="CREATION_DATE">2015-04-12 17:02:35.0</col>
+         <col name="LAST_MODIFIED_DATE">2015-04-12 17:02:35.0</col>
+      </row>
+      <row>
+         <col name="USER_ID">2</col>
+         <col name="TYPE">H</col>
+         <col name="ADDRESS">Home address</col>
+         <col name="CREATION_DATE">2015-04-12 17:02:35.001</col>
+         <col name="LAST_MODIFIED_DATE">2015-04-12 17:02:35.001</col>
+      </row>
+      <row>
+         <col name="USER_ID">3</col>
+         <col name="TYPE">H</col>
+         <col name="ADDRESS">Home address 2</col>
+         <col name="CREATION_DATE">2015-04-12 17:02:35.996</col>
+         <col name="LAST_MODIFIED_DATE">2015-04-12 17:02:35.996</col>
+      </row>
+   </table>
+</database>

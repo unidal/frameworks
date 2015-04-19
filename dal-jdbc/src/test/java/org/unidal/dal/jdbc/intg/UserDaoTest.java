@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.unidal.dal.jdbc.datasource.DataSourceException;
 import org.unidal.dal.jdbc.entity.EntityInfoManager;
-import org.unidal.lookup.ComponentTestCase;
+import org.unidal.dal.jdbc.test.JdbcTestCase;
 import org.unidal.test.user.address.dal.UserAddress;
 import org.unidal.test.user.address.dal.UserAddressDao;
 import org.unidal.test.user.address.dal.UserAddressEntity;
@@ -12,7 +12,7 @@ import org.unidal.test.user.dal.User;
 import org.unidal.test.user.dal.UserDao;
 import org.unidal.test.user.dal.UserEntity;
 
-public class UserDaoTest extends ComponentTestCase {
+public class UserDaoTest extends JdbcTestCase {
    private EntityInfoManager m_entityManager;
 
    @Override
@@ -80,5 +80,10 @@ public class UserDaoTest extends ComponentTestCase {
             throw e;
          }
       }
+   }
+
+   @Override
+   protected String getDefaultDataSource() {
+      return "jdbc-dal";
    }
 }

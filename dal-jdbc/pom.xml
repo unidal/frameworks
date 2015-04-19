@@ -74,7 +74,7 @@
                   </goals>
                   <configuration>
                      <manifest><![CDATA[
-                        ${basedir}/src/main/resources/META-INF/dal/jdbc/user-manifest.xml,
+                        ${basedir}/src/test/resources/META-INF/dal/jdbc/user-manifest.xml,
                      ]]></manifest>
                      <sourceDir>${basedir}/target/generated-sources/dal-jdbc</sourceDir>
                      <test>true</test>

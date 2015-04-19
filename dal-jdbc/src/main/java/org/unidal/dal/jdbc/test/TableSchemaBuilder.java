@@ -7,6 +7,7 @@ import org.unidal.dal.jdbc.test.meta.entity.EntityModel;
 import org.unidal.dal.jdbc.test.meta.entity.MemberModel;
 import org.unidal.dal.jdbc.test.meta.entity.PrimaryKeyModel;
 import org.unidal.dal.jdbc.test.meta.transform.BaseVisitor2;
+import org.unidal.helper.Splitters;
 import org.unidal.lookup.annotation.Named;
 
 @Named(instantiationStrategy = Named.PER_LOOKUP)
@@ -58,6 +59,21 @@ public class TableSchemaBuilder extends BaseVisitor2 {
       return "`" + field + "`";
    }
 
+   private String quotes(String fieldList) {
+      List<String> fields = Splitters.by(',').trim().split(fieldList);
+      StringBuilder sb = new StringBuilder(32);
+
+      for (String field : fields) {
+         if (sb.length() > 0) {
+            sb.append(", ");
+         }
+
+         sb.append("`").append(field).append("`");
+      }
+
+      return sb.toString();
+   }
+
    private void trimComma() {
       int len = m_sb.length();
 
@@ -107,7 +123,7 @@ public class TableSchemaBuilder extends BaseVisitor2 {
    @Override
    protected void visitPrimaryKeyChildren(PrimaryKeyModel primaryKey) {
       m_sb.append("  PRIMARY KEY (");
-      m_sb.append(quote(primaryKey.getMembers()));
+      m_sb.append(quotes(primaryKey.getMembers()));
       m_sb.append("),\r\n");
    }
 }

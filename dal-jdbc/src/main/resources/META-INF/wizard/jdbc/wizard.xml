@@ -10,6 +10,7 @@
       </datasource>
       <group name="user" package="org.unidal.dal.jdbc.user">
          <table name="user"/>
+         <table name="user_address"/>
       </group>
    </jdbc>
 </wizard>

@@ -1,4 +1,4 @@
-package org.unidal.dal.jdbc.user;
+package org.unidal.dal.jdbc.test;
 
 import java.util.ArrayList;
 import java.util.List;

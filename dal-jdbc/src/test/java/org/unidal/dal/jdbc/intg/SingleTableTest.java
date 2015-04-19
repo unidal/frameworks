@@ -29,9 +29,6 @@ public class SingleTableTest extends JdbcTestCase {
 
       executeUpdate("create table user(user_id int primary key, full_name varchar(30), encrypted_password varchar(30), creation_date datetime default now(), last_modified_date timestamp default now())");
       executeUpdate("insert into user(user_id, full_name) values (1, 'frankie')");
-      // executeUpdate("delete from user where user_id = 1");
-
-      System.out.println(executeQuery("show tables"));
 
       select(1, "frankie");
    }
@@ -120,6 +117,7 @@ public class SingleTableTest extends JdbcTestCase {
       try {
          delete(1);
          insert(1, "user 1");
+         select(1, "user 1");
          update(1, "user 11");
          select(1, "user 11");
          delete(1);
