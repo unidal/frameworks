@@ -69,21 +69,24 @@ public abstract class JdbcTestCase extends ComponentTestCase {
       }
    }
 
-   protected void dumpTo(String dataXml, String table) throws DalException, IOException {
-      DatabaseDumper dumper = lookup(DatabaseDumper.class);
-      DatabaseModel model = dumper.dump(getDefaultDataSource(), table);
-      File base = new File("src/test/resources");
-      File file;
+   protected void dumpTo(String dataXml, String... tables) throws DalException, IOException {
+      if (tables.length > 0) {
+         DatabaseDumper dumper = lookup(DatabaseDumper.class);
+         File base = new File("src/test/resources");
+         File file;
 
-      if (dataXml.startsWith("/")) {
-         file = new File(base, dataXml);
-      } else {
-         String packageName = getClass().getPackage().getName();
+         if (dataXml.startsWith("/")) {
+            file = new File(base, dataXml);
+         } else {
+            String packageName = getClass().getPackage().getName();
 
-         file = new File(base, packageName.replace('.', '/') + "/" + dataXml);
+            file = new File(base, packageName.replace('.', '/') + "/" + dataXml);
+         }
+
+         DatabaseModel model = dumper.dump(getDefaultDataSource(), tables);
+
+         Files.forIO().writeTo(file, model.toString());
       }
-
-      Files.forIO().writeTo(file, model.toString());
    }
 
    protected List<RawDataObject> executeQuery(String sql) throws DalException {

@@ -23,6 +23,7 @@ import org.unidal.dal.jdbc.query.token.resolver.TableTokenResolverTest;
 import org.unidal.dal.jdbc.query.token.resolver.TablesTokenResolverTest;
 import org.unidal.dal.jdbc.query.token.resolver.ValueTokenResolverTest;
 import org.unidal.dal.jdbc.query.token.resolver.ValuesTokenResolverTest;
+import org.unidal.dal.jdbc.test.UserTest;
 import org.unidal.dal.jdbc.transaction.TransactionManagerTest;
 
 @RunWith(Suite.class)
@@ -68,7 +69,9 @@ ValuesTokenResolverTest.class,
 
 ValueTokenResolverTest.class,
 
-TransactionManagerTest.class
+TransactionManagerTest.class,
+
+UserTest.class
 
 })
 public class AllTests {

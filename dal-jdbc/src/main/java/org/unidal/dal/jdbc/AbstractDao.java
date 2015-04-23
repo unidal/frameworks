@@ -4,10 +4,8 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.unidal.dal.jdbc.entity.EntityInfoManager;
 import org.unidal.lookup.ContainerHolder;
-import org.unidal.lookup.annotation.Inject;
 
 public abstract class AbstractDao extends ContainerHolder implements Initializable {
-   @Inject
    private QueryEngine m_queryEngine;
 
    protected QueryEngine getQueryEngine() {

@@ -2,12 +2,10 @@
 
 <entities do-package="org.unidal.dal.jdbc.user" gen="true">
    <entity name="user">
+   	  <member name="full-name" alias="user-name"/>
       <relation name="home-address" entity-name="user-address" entity-alias="hua" join="u.user_id=hua.user_id and hua.type='H'" />
-      <relation name="office-address" entity-name="user-address" entity-alias="oua" join="u.user_id=oua.user_id and hua.type='O'" />
-      <relation name="billing-address" entity-name="user-address" entity-alias="bua" join="u.user_id=bua.user_id and hua.type='B'" />
-      <member name="user-id" auto-increment="true"/>
-      <member name="creation-date" insert-expr="NOW()"/>
-      <member name="last-modified-date" insert-expr="NOW()" update-expr="NOW()"/>
+      <relation name="office-address" entity-name="user-address" entity-alias="oua" join="u.user_id=oua.user_id and oua.type='O'" />
+      <relation name="billing-address" entity-name="user-address" entity-alias="bua" join="u.user_id=bua.user_id and bua.type='B'" />
       <readsets>
          <readset name="FULL_HOME">
             <readset-ref name="FULL"/>
@@ -30,6 +28,14 @@
          </readset>
       </readsets>
       <query-defs>
+	     <query name="find-by-PK" type="SELECT">
+	        <param name="key-user-id" />
+	        <statement><![CDATA[
+	        SELECT <FIELDS/>
+	        FROM <TABLES/>
+	        WHERE <JOINS/> AND <FIELD name='user-id'/> = ${key-user-id}
+	        ]]></statement>
+	     </query>
          <query name="find-all" type="SELECT" multiple="true">
             <statement><![CDATA[
             SELECT <FIELDS/>
@@ -44,8 +50,6 @@
       </snippet>
    </entity>
    <entity name="user-address">
-      <member name="creation-date" insert-expr="NOW()"/>
-      <member name="last-modified-date" insert-expr="NOW()" update-expr="NOW()"/>
       <query-defs>
          <query name="find-all-by-user-id" type="SELECT" multiple="true">
             <param name="user-id"/>

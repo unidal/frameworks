@@ -38,14 +38,21 @@
       <row>
          <col name="USER_ID">2</col>
          <col name="TYPE">H</col>
-         <col name="ADDRESS">Home address</col>
+         <col name="ADDRESS">Home address 2</col>
          <col name="CREATION_DATE">2015-04-12 17:02:35.001</col>
          <col name="LAST_MODIFIED_DATE">2015-04-12 17:02:35.001</col>
       </row>
       <row>
+         <col name="USER_ID">1</col>
+         <col name="TYPE">B</col>
+         <col name="ADDRESS">Billing address 1</col>
+         <col name="CREATION_DATE">2015-04-12 17:02:35.003</col>
+         <col name="LAST_MODIFIED_DATE">2015-04-12 17:02:35.003</col>
+      </row>
+      <row>
          <col name="USER_ID">3</col>
          <col name="TYPE">H</col>
-         <col name="ADDRESS">Home address 2</col>
+         <col name="ADDRESS">Home address 3</col>
          <col name="CREATION_DATE">2015-04-12 17:02:35.996</col>
          <col name="LAST_MODIFIED_DATE">2015-04-12 17:02:35.996</col>
       </row>
