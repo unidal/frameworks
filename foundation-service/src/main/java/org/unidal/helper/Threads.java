@@ -447,14 +447,14 @@ public class Threads {
       public ExecutorService getCachedThreadPool(String name) {
          ExecutorService service = m_services.get(name);
 
+         if (service != null && service.isShutdown()) {
+            m_services.remove(name);
+            service = null;
+         }
+
          if (service == null) {
             synchronized (this) {
                service = m_services.get(name);
-
-               if (service != null && service.isShutdown()) {
-                  m_services.remove(name);
-                  service = null;
-               }
 
                if (service == null) {
                   DefaultThreadFactory factory = newThreadFactory(name);
@@ -472,14 +472,14 @@ public class Threads {
       public ExecutorService getFixedThreadPool(String name, int nThreads) {
          ExecutorService service = m_services.get(name);
 
+         if (service != null && service.isShutdown()) {
+            m_services.remove(name);
+            service = null;
+         }
+
          if (service == null) {
             synchronized (this) {
                service = m_services.get(name);
-
-               if (service != null && service.isShutdown()) {
-                  m_services.remove(name);
-                  service = null;
-               }
 
                if (service == null) {
                   DefaultThreadFactory factory = newThreadFactory(name);
