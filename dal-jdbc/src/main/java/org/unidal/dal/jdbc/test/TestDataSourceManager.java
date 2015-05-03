@@ -40,7 +40,7 @@ public class TestDataSourceManager implements DataSourceManager {
 
       public TestDataSource(String dataSourceName) {
          JdbcDataSourceDescriptor descriptor = new JdbcDataSourceDescriptor();
-         String url = String.format("jdbc:h2:mem:%s?MODE=MySQL", dataSourceName);
+         String url = String.format("jdbc:h2:mem:%s;MODE=MySQL", dataSourceName);
 
          descriptor.setId(dataSourceName);
          descriptor.setType("h2");
