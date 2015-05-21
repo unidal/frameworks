@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.unidal.dal.jdbc.datasource.DefaultDataSourceManager;
 import org.unidal.dal.jdbc.datasource.JdbcDataSource;
+import org.unidal.dal.jdbc.datasource.JdbcDataSourceDescriptorManager;
 import org.unidal.dal.jdbc.engine.DefaultQueryContext;
 import org.unidal.dal.jdbc.engine.DefaultQueryEngine;
 import org.unidal.dal.jdbc.entity.DefaultDataObjectAccessor;
@@ -64,6 +65,7 @@ public final class ComponentsConfigurator extends AbstractResourceConfigurator {
 
       all.add(A(JdbcDataSource.class));
       all.add(A(DefaultDataSourceManager.class));
+      all.add(A(JdbcDataSourceDescriptorManager.class));
 
       all.addAll(defineTokenResolverComponents());
 

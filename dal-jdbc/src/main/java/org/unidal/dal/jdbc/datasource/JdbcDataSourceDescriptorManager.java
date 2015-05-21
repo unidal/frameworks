@@ -1,101 +1,23 @@
 package org.unidal.dal.jdbc.datasource;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.plexus.logging.LogEnabled;
-import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.unidal.dal.jdbc.datasource.model.entity.DataSourceDef;
 import org.unidal.dal.jdbc.datasource.model.entity.DataSourcesDef;
 import org.unidal.dal.jdbc.datasource.model.entity.PropertiesDef;
-import org.unidal.dal.jdbc.datasource.model.transform.DefaultSaxParser;
-import org.unidal.helper.Properties;
+import org.unidal.lookup.ContainerHolder;
+import org.unidal.lookup.annotation.Named;
 
-public class JdbcDataSourceDescriptorManager implements Initializable, LogEnabled {
-   private String m_datasourceFile;
-
-   private DataSourcesDef m_dataSources;
-
+@Named
+public class JdbcDataSourceDescriptorManager extends ContainerHolder implements Initializable {
    private Map<String, JdbcDataSourceDescriptor> m_descriptors = new HashMap<String, JdbcDataSourceDescriptor>();
 
-   private String m_baseDirRef;
-
-   private Logger m_logger;
-
-   private String m_defaultBaseDir;
-
-   /**
-    * Define data sources.
-    * 
-    * @return data source definitions
-    */
-   protected DataSourcesDef defineDatasources() {
-      if (m_datasourceFile != null) {
-         InputStream is = null;
-
-         // check configuration file from file system for most case
-         File file;
-
-         if (m_datasourceFile.startsWith("/")) {
-            file = new File(m_datasourceFile);
-         } else {
-            String baseDir = Properties.forString().fromEnv().fromSystem().getProperty(m_baseDirRef, m_defaultBaseDir);
-
-            if (baseDir != null) {
-               file = new File(baseDir, m_datasourceFile);
-            } else {
-               file = new File(m_datasourceFile);
-            }
-         }
-
-         if (file.canRead()) {
-            m_logger.info(String.format("Loading data sources from %s ...", file));
-
-            try {
-               is = new FileInputStream(file);
-            } catch (FileNotFoundException e) {
-               // ignore it
-            }
-         } else {
-            m_logger.warn(String.format("Data source configuration(%s) is not found!", file, m_datasourceFile));
-
-            // check configuration file from classpath for hadoop map-reduce jobs etc.
-            // since it's distributed everywhere and no configuration file during runtime environment
-            is = Thread.currentThread().getContextClassLoader().getResourceAsStream(m_datasourceFile);
-
-            if (is == null) {
-               is = getClass().getResourceAsStream(m_datasourceFile);
-            }
-
-            if (is != null) {
-               m_logger.info(String.format("Loading data sources from resource(%s)", m_datasourceFile));
-            }
-         }
-
-         if (is != null) {
-            try {
-               return DefaultSaxParser.parse(is);
-            } catch (Exception e) {
-               throw new IllegalStateException("Error when loading data source file: " + file, e);
-            }
-         }
-      }
-
-      return null;
-   }
-
-   @Override
-   public void enableLogging(Logger logger) {
-      m_logger = logger;
-   }
+   private DataSourcesDef m_dataSources;
 
    public List<String> getDataSourceNames() {
       List<String> names = new ArrayList<String>();
@@ -150,29 +72,29 @@ public class JdbcDataSourceDescriptorManager implements Initializable, LogEnable
    }
 
    public void initialize() throws InitializationException {
-      try {
-         DataSourcesDef dataSources = defineDatasources();
+      DataSourcesDef dataSources = new DataSourcesDef();
 
-         if (dataSources != null) {
-            m_dataSources = dataSources;
-         } else {
-            throw new InitializationException("No datasources defined!");
+      try {
+         List<DataSourceProvider> providers = lookupList(DataSourceProvider.class);
+         int size = providers.size();
+
+         for (int i = size - 1; i >= 0; i--) {
+            DataSourceProvider provider = providers.get(i);
+            DataSourcesDef def = provider.defineDatasources();
+
+            for (DataSourceDef dataSource : def.getDataSourcesMap().values()) {
+               dataSources.addDataSource(dataSource);
+            }
          }
       } catch (RuntimeException e) {
          throw new InitializationException(e.getMessage(), e);
       }
-   }
 
-   public void setBaseDirRef(String baseDirRef) {
-      m_baseDirRef = baseDirRef;
-   }
+      if (dataSources.getDataSourcesMap().isEmpty()) {
+         throw new InitializationException("No datasources defined!");
+      }
 
-   public void setDatasourceFile(String datasourceFile) {
-      m_datasourceFile = datasourceFile;
-   }
-
-   public void setDefaultBaseDir(String defaultBaseDir) {
-      m_defaultBaseDir = defaultBaseDir;
+      m_dataSources = dataSources;
    }
 
    protected int toTime(String source) {
