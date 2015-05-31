@@ -5,6 +5,7 @@ import static org.unidal.lookup.util.ReflectUtils.invokeMethod;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
@@ -39,6 +40,19 @@ public class DefaultInboundActionHandler extends ContainerHolder implements Inbo
 
    private Logger m_logger;
 
+   private PayloadProvider createPayloadProviderInstance(Class<? extends PayloadProvider> clazz) {
+      if (hasComponent(clazz)) {
+         return lookup(clazz);
+      } else {
+         // create a POJO instance with default constructor
+         return ReflectUtils.createInstance(clazz);
+      }
+   }
+
+   public void enableLogging(Logger logger) {
+      m_logger = logger;
+   }
+
    public void handle(ActionContext ctx) throws ActionException {
       Transaction t = m_cat.newTransaction("MVC", "InboundPhase");
 
@@ -70,15 +84,6 @@ public class DefaultInboundActionHandler extends ContainerHolder implements Inbo
       }
    }
 
-   private PayloadProvider createPayloadProviderInstance(Class<? extends PayloadProvider> clazz) {
-      if (hasComponent(clazz)) {
-         return lookup(clazz);
-      } else {
-         // create a POJO instance with default constructor
-         return ReflectUtils.createInstance(clazz);
-      }
-   }
-
    public void initialize(InboundActionModel inboundAction) {
       m_inboundAction = inboundAction;
       m_payloadClass = inboundAction.getPayloadClass();
@@ -95,7 +100,21 @@ public class DefaultInboundActionHandler extends ContainerHolder implements Inbo
          m_payloadProvider.register(m_payloadClass);
       }
 
+      prepareValidators(inboundAction);
+
+      m_logger.debug(getClass().getSimpleName() + " initialized for  " + inboundAction.getActionName());
+   }
+
+   private void prepareValidators(InboundActionModel inboundAction) {
+      Map<String, Validator> validators = lookupMap(Validator.class);
+
       m_validators = new ArrayList<Validator<ActionContext<?>>>();
+
+      for (Map.Entry<String, Validator> e : validators.entrySet()) {
+         if (e.getKey().startsWith("^")) {
+            m_validators.add(e.getValue());
+         }
+      }
 
       for (Class<?> validatorClass : inboundAction.getValidationClasses()) {
          Validator<ActionContext<?>> validator = createInstance(validatorClass);
@@ -103,10 +122,10 @@ public class DefaultInboundActionHandler extends ContainerHolder implements Inbo
          m_validators.add(validator);
       }
 
-      m_logger.debug(getClass().getSimpleName() + " initialized for  " + inboundAction.getActionName());
-   }
-
-   public void enableLogging(Logger logger) {
-      m_logger = logger;
+      for (Map.Entry<String, Validator> e : validators.entrySet()) {
+         if (!e.getKey().startsWith("^")) {
+            m_validators.add(e.getValue());
+         }
+      }
    }
 }
