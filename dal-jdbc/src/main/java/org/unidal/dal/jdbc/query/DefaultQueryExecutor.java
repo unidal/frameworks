@@ -16,7 +16,6 @@ import org.unidal.dal.jdbc.DataField;
 import org.unidal.dal.jdbc.DataObject;
 import org.unidal.dal.jdbc.QueryDef;
 import org.unidal.dal.jdbc.QueryType;
-import org.unidal.dal.jdbc.annotation.Attribute;
 import org.unidal.dal.jdbc.datasource.DataSource;
 import org.unidal.dal.jdbc.datasource.DataSourceException;
 import org.unidal.dal.jdbc.datasource.DataSourceManager;
@@ -158,7 +157,7 @@ public class DefaultQueryExecutor implements QueryExecutor {
 
          // Retrieve Generated Keys if have
          if (ctx.getQuery().getType() == QueryType.INSERT) {
-            retrieveGeneratedKeys(ctx, ps, proto);
+            retrieveGeneratedKeys(ctx, ps.getGeneratedKeys(), proto);
          }
 
          t.setStatus(Transaction.SUCCESS);
@@ -229,7 +228,7 @@ public class DefaultQueryExecutor implements QueryExecutor {
 
                // Retrieve Generated Keys if have
                if (ctx.getQuery().getType() == QueryType.INSERT) {
-                  retrieveGeneratedKeys(ctx, ps, protos[i]);
+                  retrieveGeneratedKeys(ctx, ps.getGeneratedKeys(), protos[i]);
                }
             }
          } else {
@@ -251,8 +250,10 @@ public class DefaultQueryExecutor implements QueryExecutor {
             rowCounts = ps.executeBatch();
             updated = true;
 
-            // Unfortunately, getGeneratedKeys() is not supported by
-            // executeBatch()
+            // Retrieve Generated Keys if have
+            if (ctx.getQuery().getType() == QueryType.INSERT) {
+               retrieveGeneratedKeys(ctx, ps.getGeneratedKeys(), protos);
+            }
          }
 
          if (!inTransaction && updated) {
@@ -316,26 +317,28 @@ public class DefaultQueryExecutor implements QueryExecutor {
       m_cat.logEvent("SQL.Database", url, Message.SUCCESS, null);
    }
 
-   protected void retrieveGeneratedKeys(QueryContext ctx, PreparedStatement ps, DataObject proto) throws SQLException {
+   protected void retrieveGeneratedKeys(QueryContext ctx, ResultSet generatedKeys, DataObject proto)
+         throws SQLException {
       EntityInfo entityInfo = ctx.getEntityInfo();
-      ResultSet generatedKeys = null;
-      boolean retrieved = false;
+      DataField field = entityInfo.getAutoIncrementField();
 
-      for (DataField field : entityInfo.getAttributeFields()) {
-         Attribute attribute = entityInfo.getAttribute(field);
+      if (generatedKeys != null && generatedKeys.next()) {
+         Object key = generatedKeys.getObject(1);
 
-         if (attribute != null && attribute.autoIncrement()) {
-            if (!retrieved) {
-               generatedKeys = ps.getGeneratedKeys();
-               retrieved = true;
-            }
+         m_accessor.setFieldValue(proto, field, key);
+      }
+   }
 
-            if (generatedKeys != null && generatedKeys.next()) {
-               Object key = generatedKeys.getObject(1);
-               m_accessor.setFieldValue(proto, field, key);
+   protected void retrieveGeneratedKeys(QueryContext ctx, ResultSet generatedKeys, DataObject[] protos)
+         throws SQLException {
+      EntityInfo entityInfo = ctx.getEntityInfo();
+      DataField field = entityInfo.getAutoIncrementField();
 
-               break;
-            }
+      for (DataObject proto : protos) {
+         if (generatedKeys != null && generatedKeys.next()) {
+            Object key = generatedKeys.getObject(1);
+
+            m_accessor.setFieldValue(proto, field, key);
          }
       }
    }

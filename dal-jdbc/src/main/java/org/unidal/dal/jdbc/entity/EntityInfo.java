@@ -24,6 +24,8 @@ public class EntityInfo {
 
    private Map<Readset<?>, SubObjects> m_subobjects;
 
+   private DataField m_autoIncrementField;
+
    public EntityInfo(Entity entity, Map<DataField, Relation> relations, Map<DataField, Attribute> attributes,
          Map<DataField, Variable> variables, Map<Readset<?>, SubObjects> subobjects) {
       m_entity = entity;
@@ -31,65 +33,23 @@ public class EntityInfo {
       m_attributes = attributes;
       m_variables = variables;
       m_subobjects = subobjects;
-   }
 
-   public String getLogicalName() {
-      return m_entity.logicalName();
+      for (Map.Entry<DataField, Attribute> e : attributes.entrySet()) {
+         Attribute attribute = e.getValue();
+
+         if (attribute != null && attribute.autoIncrement()) {
+            m_autoIncrementField = e.getKey();
+            break;
+         }
+      }
    }
 
    public String getAlias() {
       return m_entity.alias();
    }
 
-   public String[] getLogicalNameAndAlias(String name) {
-      if (m_entity.logicalName().equals(name)) {
-         return new String[] { name, m_entity.alias() };
-      } else {
-         // is it a Relation?
-         for (Map.Entry<DataField, Relation> e : m_relations.entrySet()) {
-            if (e.getKey().getName().equals(name)) {
-               return new String[] { e.getValue().logicalName(), e.getValue().alias() };
-            }
-         }
-      }
-
-      throw new DalRuntimeException("Table(" + name + ") has no relationship with table(" + m_entity.logicalName()
-            + ")");
-   }
-
-   public List<DataField> getAttributeFields() {
-      List<DataField> dataFields = new ArrayList<DataField>(m_attributes.size());
-
-      dataFields.addAll(m_attributes.keySet());
-      return dataFields;
-   }
-
-   public Variable getVariable(DataField dataField) {
-      return m_variables.get(dataField);
-   }
-
    public Attribute getAttribute(DataField dataField) {
       return m_attributes.get(dataField);
-   }
-
-   public Relation getRelation(String logicalName) {
-      for (Map.Entry<DataField, Relation> e : m_relations.entrySet()) {
-         if (e.getKey().getName().equals(logicalName)) {
-            return e.getValue();
-         }
-      }
-
-      return null;
-   }
-
-   public boolean isRelation(String logicalName) {
-      for (DataField dataField : m_relations.keySet()) {
-         if (dataField.getName().equals(logicalName)) {
-            return true;
-         }
-      }
-
-      return false;
    }
 
    public Attribute getAttribute(String fieldName) {
@@ -106,6 +66,17 @@ public class EntityInfo {
       } else {
          return null;
       }
+   }
+
+   public List<DataField> getAttributeFields() {
+      List<DataField> dataFields = new ArrayList<DataField>(m_attributes.size());
+
+      dataFields.addAll(m_attributes.keySet());
+      return dataFields;
+   }
+
+   public DataField getAutoIncrementField() {
+      return m_autoIncrementField;
    }
 
    public DataField getFieldByName(String fieldName) {
@@ -151,7 +122,51 @@ public class EntityInfo {
       return sb.toString();
    }
 
+   public String getLogicalName() {
+      return m_entity.logicalName();
+   }
+
+   public String[] getLogicalNameAndAlias(String name) {
+      if (m_entity.logicalName().equals(name)) {
+         return new String[] { name, m_entity.alias() };
+      } else {
+         // is it a Relation?
+         for (Map.Entry<DataField, Relation> e : m_relations.entrySet()) {
+            if (e.getKey().getName().equals(name)) {
+               return new String[] { e.getValue().logicalName(), e.getValue().alias() };
+            }
+         }
+      }
+
+      throw new DalRuntimeException("Table(" + name + ") has no relationship with table(" + m_entity.logicalName()
+            + ")");
+   }
+
+   public Relation getRelation(String logicalName) {
+      for (Map.Entry<DataField, Relation> e : m_relations.entrySet()) {
+         if (e.getKey().getName().equals(logicalName)) {
+            return e.getValue();
+         }
+      }
+
+      return null;
+   }
+
    public SubObjects getSubobjects(Readset<?> readset) {
       return m_subobjects.get(readset);
+   }
+
+   public Variable getVariable(DataField dataField) {
+      return m_variables.get(dataField);
+   }
+
+   public boolean isRelation(String logicalName) {
+      for (DataField dataField : m_relations.keySet()) {
+         if (dataField.getName().equals(logicalName)) {
+            return true;
+         }
+      }
+
+      return false;
    }
 }
