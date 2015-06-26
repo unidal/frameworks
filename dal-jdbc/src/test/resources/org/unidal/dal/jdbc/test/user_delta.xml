@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database>
+   <table name="user">
+      <row>
+         <col name="USER_ID">1</col>
+         <col name="FULL_NAME">Frankie</col>
+         <col name="CREATION_DATE">2015-04-12 17:02:34.996</col>
+         <col name="LAST_MODIFIED_DATE">2015-04-12 17:02:34.996</col>
+      </row>
+      <row>
+         <col name="USER_ID">2</col>
+         <col name="FULL_NAME">Daniel</col>
+         <col name="CREATION_DATE">2015-04-12 17:02:35.0</col>
+         <col name="LAST_MODIFIED_DATE">2015-04-12 17:02:35.0</col>
+      </row>
+      <row>
+         <col name="USER_ID">3</col>
+         <col name="FULL_NAME">Bob</col>
+         <col name="CREATION_DATE">2015-04-12 17:02:35.001</col>
+         <col name="LAST_MODIFIED_DATE">2015-04-12 17:02:35.001</col>
+      </row>
+      <row>
+         <col name="USER_ID">10</col>
+         <col name="FULL_NAME">User 10</col>
+         <col name="CREATION_DATE">2015-05-31 19:35:53.232</col>
+         <col name="LAST_MODIFIED_DATE">2015-05-31 19:35:53.232</col>
+      </row>
+      <row>
+         <col name="USER_ID">11</col>
+         <col name="FULL_NAME">User 11</col>
+         <col name="CREATION_DATE">2015-05-31 19:35:53.235</col>
+         <col name="LAST_MODIFIED_DATE">2015-05-31 19:35:53.235</col>
+      </row>
+      <row>
+         <col name="USER_ID">12</col>
+         <col name="FULL_NAME">User 12</col>
+         <col name="CREATION_DATE">2015-05-31 19:35:53.236</col>
+         <col name="LAST_MODIFIED_DATE">2015-05-31 19:35:53.236</col>
+      </row>
+      <row>
+         <col name="USER_ID">13</col>
+         <col name="FULL_NAME">User 13</col>
+         <col name="CREATION_DATE">2015-05-31 19:35:53.237</col>
+         <col name="LAST_MODIFIED_DATE">2015-05-31 19:35:53.237</col>
+      </row>
+      <row>
+         <col name="USER_ID">14</col>
+         <col name="FULL_NAME">User 14</col>
+         <col name="CREATION_DATE">2015-05-31 19:35:53.238</col>
+         <col name="LAST_MODIFIED_DATE">2015-05-31 19:35:53.238</col>
+      </row>
+   </table>
+</database>

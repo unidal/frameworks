@@ -36,7 +36,11 @@ public class DefaultInboundActionHandler extends ContainerHolder implements Inbo
 
    private PayloadProvider m_payloadProvider;
 
+   private List<Validator<ActionContext<?>>> m_preValidators;
+
    private List<Validator<ActionContext<?>>> m_validators;
+
+   private List<Validator<ActionContext<?>>> m_postValidators;
 
    private Logger m_logger;
 
@@ -57,6 +61,10 @@ public class DefaultInboundActionHandler extends ContainerHolder implements Inbo
       Transaction t = m_cat.newTransaction("MVC", "InboundPhase");
 
       try {
+         for (Validator<ActionContext<?>> validator : m_preValidators) {
+            validator.validate(ctx);
+         }
+
          if (m_payloadClass != null) {
             RequestContext requestContext = ctx.getRequestContext();
             ActionPayload payload = createInstance(m_payloadClass);
@@ -72,6 +80,11 @@ public class DefaultInboundActionHandler extends ContainerHolder implements Inbo
          }
 
          invokeMethod(m_inboundAction.getActionMethod(), m_inboundAction.getModuleInstance(), ctx);
+
+         for (Validator<ActionContext<?>> validator : m_postValidators) {
+            validator.validate(ctx);
+         }
+
          t.setStatus(Transaction.SUCCESS);
       } catch (Exception e) {
          String actionName = m_inboundAction.getActionName();
@@ -108,13 +121,9 @@ public class DefaultInboundActionHandler extends ContainerHolder implements Inbo
    private void prepareValidators(InboundActionModel inboundAction) {
       Map<String, Validator> validators = lookupMap(Validator.class);
 
+      m_preValidators = new ArrayList<Validator<ActionContext<?>>>();
       m_validators = new ArrayList<Validator<ActionContext<?>>>();
-
-      for (Map.Entry<String, Validator> e : validators.entrySet()) {
-         if (e.getKey().startsWith("^")) {
-            m_validators.add(e.getValue());
-         }
-      }
+      m_postValidators = new ArrayList<Validator<ActionContext<?>>>();
 
       for (Class<?> validatorClass : inboundAction.getValidationClasses()) {
          Validator<ActionContext<?>> validator = createInstance(validatorClass);
@@ -123,7 +132,11 @@ public class DefaultInboundActionHandler extends ContainerHolder implements Inbo
       }
 
       for (Map.Entry<String, Validator> e : validators.entrySet()) {
-         if (!e.getKey().startsWith("^")) {
+         if (e.getKey().startsWith("^")) {
+            m_preValidators.add(e.getValue());
+         } else if (e.getKey().startsWith("$")) {
+            m_postValidators.add(e.getValue());
+         } else {
             m_validators.add(e.getValue());
          }
       }

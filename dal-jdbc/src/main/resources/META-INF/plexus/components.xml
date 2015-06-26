@@ -136,6 +136,10 @@
 			</requirements>
 		</component>
 		<component>
+			<role>org.unidal.dal.jdbc.datasource.JdbcDataSourceDescriptorManager</role>
+			<implementation>org.unidal.dal.jdbc.datasource.JdbcDataSourceDescriptorManager</implementation>
+		</component>
+		<component>
 			<role>org.unidal.dal.jdbc.query.token.resolver.TokenResolver</role>
 			<role-hint>STRING</role-hint>
 			<implementation>org.unidal.dal.jdbc.query.token.resolver.StringTokenResolver</implementation>
@@ -256,11 +260,6 @@
 		<component>
 			<role>org.unidal.dal.jdbc.raw.RawDao</role>
 			<implementation>org.unidal.dal.jdbc.raw.RawDao</implementation>
-			<requirements>
-				<requirement>
-					<role>org.unidal.dal.jdbc.QueryEngine</role>
-				</requirement>
-			</requirements>
 		</component>
 		<component>
 			<role>org.unidal.dal.jdbc.test.TableSchemaBuilder</role>

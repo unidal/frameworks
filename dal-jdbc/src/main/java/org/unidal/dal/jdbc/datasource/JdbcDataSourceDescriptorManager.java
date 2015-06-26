@@ -17,19 +17,9 @@ import org.unidal.lookup.annotation.Named;
 public class JdbcDataSourceDescriptorManager extends ContainerHolder implements Initializable {
    private Map<String, JdbcDataSourceDescriptor> m_descriptors = new HashMap<String, JdbcDataSourceDescriptor>();
 
-   private DataSourcesDef m_dataSources;
+   private List<DataSourceProvider> m_providers;
 
-   public List<String> getDataSourceNames() {
-      List<String> names = new ArrayList<String>();
-
-      for (DataSourceDef ds : m_dataSources.getDataSourcesMap().values()) {
-         names.add(ds.getId());
-      }
-
-      return names;
-   }
-
-   protected JdbcDataSourceDescriptor getDescriptor(DataSourceDef ds) {
+   protected JdbcDataSourceDescriptor buildDescriptor(DataSourceDef ds) {
       JdbcDataSourceDescriptor d = new JdbcDataSourceDescriptor();
       PropertiesDef properties = ds.getProperties();
       String url = properties.getUrl();
@@ -54,17 +44,49 @@ public class JdbcDataSourceDescriptorManager extends ContainerHolder implements 
       return d;
    }
 
+   private DataSourceDef findDataSource(String id) {
+      for (DataSourceProvider provider : m_providers) {
+         DataSourcesDef def = provider.defineDatasources();
+
+         if (def != null) {
+            DataSourceDef ds = def.findDataSource(id);
+
+            if (ds != null) {
+               return ds;
+            }
+         }
+      }
+
+      return null;
+   }
+
+   public List<String> getDataSourceNames() {
+      List<String> names = new ArrayList<String>();
+
+      for (DataSourceProvider provider : m_providers) {
+         DataSourcesDef def = provider.defineDatasources();
+
+         if (def != null) {
+            for (String name : def.getDataSourcesMap().keySet()) {
+               if (!names.contains(name)) {
+                  names.add(name);
+               }
+            }
+         }
+      }
+
+      return names;
+   }
+
    public JdbcDataSourceDescriptor getDescriptor(String id) {
       JdbcDataSourceDescriptor configuration = m_descriptors.get(id);
 
       if (configuration == null) {
-         if (id != null) {
-            DataSourceDef ds = m_dataSources.findDataSource(id);
+         DataSourceDef ds = findDataSource(id);
 
-            if (ds != null) {
-               configuration = getDescriptor(ds);
-               m_descriptors.put(id, configuration);
-            }
+         if (ds != null) {
+            configuration = buildDescriptor(ds);
+            m_descriptors.put(id, configuration);
          }
       }
 
@@ -72,29 +94,11 @@ public class JdbcDataSourceDescriptorManager extends ContainerHolder implements 
    }
 
    public void initialize() throws InitializationException {
-      DataSourcesDef dataSources = new DataSourcesDef();
+      m_providers = new ArrayList<DataSourceProvider>(lookupList(DataSourceProvider.class));
 
-      try {
-         List<DataSourceProvider> providers = lookupList(DataSourceProvider.class);
-         int size = providers.size();
-
-         for (int i = size - 1; i >= 0; i--) {
-            DataSourceProvider provider = providers.get(i);
-            DataSourcesDef def = provider.defineDatasources();
-
-            for (DataSourceDef dataSource : def.getDataSourcesMap().values()) {
-               dataSources.addDataSource(dataSource);
-            }
-         }
-      } catch (RuntimeException e) {
-         throw new InitializationException(e.getMessage(), e);
+      if (m_providers.isEmpty()) {
+         throw new InitializationException("No DataSourceProvider found!");
       }
-
-      if (dataSources.getDataSourcesMap().isEmpty()) {
-         throw new InitializationException("No datasources defined!");
-      }
-
-      m_dataSources = dataSources;
    }
 
    protected int toTime(String source) {

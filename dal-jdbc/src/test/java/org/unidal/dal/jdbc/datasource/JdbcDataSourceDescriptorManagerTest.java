@@ -1,21 +1,85 @@
 package org.unidal.dal.jdbc.datasource;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
+import org.unidal.dal.jdbc.datasource.model.entity.DataSourceDef;
+import org.unidal.dal.jdbc.datasource.model.entity.DataSourcesDef;
+import org.unidal.dal.jdbc.datasource.model.entity.PropertiesDef;
 import org.unidal.lookup.ComponentTestCase;
 
 public class JdbcDataSourceDescriptorManagerTest extends ComponentTestCase {
-   @Test
-   public void testMarshal() throws Exception {
-      JdbcDataSourceDescriptorManager manager = lookup(JdbcDataSourceDescriptorManager.class);
-      JdbcDataSourceDescriptor userConfig = manager.getDescriptor("user");
-      JdbcDataSourceDescriptor historyConfig = manager.getDescriptor("history");
+   private void checkNames(JdbcDataSourceDescriptorManager manager, String... expected) {
+      List<String> actual = manager.getDataSourceNames();
+      
+      Assert.assertEquals(Arrays.asList(expected).toString(), actual.toString());
+   }
 
-      Assert.assertEquals("user", userConfig.getProperty("user", null));
-      Assert.assertEquals("jdbc:mysql://localhost:3306/user?useUnicode=true&autoReconnect=true",
-            userConfig.getProperty("url", null));
-      Assert.assertEquals("history", historyConfig.getProperty("user", null));
-      Assert.assertEquals("jdbc:mysql://localhost:3306/history?useUnicode=true&autoReconnect=true",
-            historyConfig.getProperty("url", null));
+   private void checkProperty(JdbcDataSourceDescriptor descriptor, String property, String expected) {
+      String actual = descriptor.getProperty(property, null);
+
+      Assert.assertEquals(expected, actual);
+   }
+
+   @Test
+   public void testDynamic() throws Exception {
+      defineComponent(DataSourceProvider.class, "overwrite", OverwriteMockDataSourceProvider.class);
+      defineComponent(DataSourceProvider.class, "mock", MockDataSourceProvider.class);
+
+      JdbcDataSourceDescriptorManager manager = lookup(JdbcDataSourceDescriptorManager.class);
+      JdbcDataSourceDescriptor mock1 = manager.getDescriptor("mock1");
+      JdbcDataSourceDescriptor mock2 = manager.getDescriptor("mock2");
+
+      checkProperty(mock1, "user", "overwrite user user");
+      checkProperty(mock1, "url", "overwrite user url");
+
+      checkProperty(mock2, "user", "history user");
+      checkProperty(mock2, "url", "history url");
+
+      checkNames(manager, "jdbc-dal", "user", "history", "mock1", "mock2");
+   }
+
+   @Test
+   public void testStatic() throws Exception {
+      JdbcDataSourceDescriptorManager manager = lookup(JdbcDataSourceDescriptorManager.class);
+      JdbcDataSourceDescriptor user = manager.getDescriptor("user");
+      JdbcDataSourceDescriptor history = manager.getDescriptor("history");
+
+      checkProperty(user, "user", "user");
+      checkProperty(user, "url", "jdbc:mysql://localhost:3306/user?useUnicode=true&autoReconnect=true");
+
+      checkProperty(history, "user", "history");
+      checkProperty(history, "url", "jdbc:mysql://localhost:3306/history?useUnicode=true&autoReconnect=true");
+
+      checkNames(manager, "jdbc-dal", "user", "history");
+   }
+
+   public static class MockDataSourceProvider implements DataSourceProvider {
+      @Override
+      public DataSourcesDef defineDatasources() {
+         DataSourcesDef def = new DataSourcesDef();
+
+         def.addDataSource(new DataSourceDef("mock1").setProperties( //
+               new PropertiesDef().setUrl("user url").setUser("user user")));
+
+         def.addDataSource(new DataSourceDef("mock2").setProperties( //
+               new PropertiesDef().setUrl("history url").setUser("history user")));
+
+         return def;
+      }
+   }
+
+   public static class OverwriteMockDataSourceProvider implements DataSourceProvider {
+      @Override
+      public DataSourcesDef defineDatasources() {
+         DataSourcesDef def = new DataSourcesDef();
+
+         def.addDataSource(new DataSourceDef("mock1").setProperties( //
+               new PropertiesDef().setUrl("overwrite user url").setUser("overwrite user user")));
+
+         return def;
+      }
    }
 }
