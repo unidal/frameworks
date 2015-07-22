@@ -59,8 +59,11 @@ public class DefaultRequestLifecycle implements RequestLifecycle, LogEnabled {
    public void handle(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
       RequestContext context = m_builder.build(request);
 
-      handleRequest(request, response, context);
-      m_builder.reset(context);
+      try {
+         handleRequest(request, response, context);
+      } finally {
+         m_builder.reset(context);
+      }
    }
 
    private void handleException(HttpServletRequest request, Throwable e, ActionContext<?> actionContext) {
