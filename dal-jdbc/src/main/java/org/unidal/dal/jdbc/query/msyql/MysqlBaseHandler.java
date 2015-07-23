@@ -64,7 +64,7 @@ public abstract class MysqlBaseHandler {
       String params = ctx.getParameterValues() == null ? null : Stringizers.forJson().from(ctx.getParameterValues());
 
       Cat.logEvent("SQL.Method", ctx.getQuery().getType().name(), Message.SUCCESS, params);
-      Cat.logEvent("SQL.Database", url, Message.SUCCESS, null);
+      Cat.logEvent("SQL.Database", url);
    }
 
    protected void retrieveGeneratedKeys(QueryContext ctx, ResultSet generatedKeys, DataObject proto)

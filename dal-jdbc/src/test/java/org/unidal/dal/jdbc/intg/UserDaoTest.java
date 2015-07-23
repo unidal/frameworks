@@ -27,6 +27,8 @@ public class UserDaoTest extends JdbcTestCase {
 
    @Test
    public void testFindByPK() throws Exception {
+      super.createTables("user");
+      
       try {
          UserDao userDao = lookup(UserDao.class);
          UserAddressDao userAddressDao = lookup(UserAddressDao.class);

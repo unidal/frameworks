@@ -1,7 +1,6 @@
 package org.unidal.dal.jdbc.test;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -11,9 +10,11 @@ import org.codehaus.plexus.logging.LoggerManager;
 import org.junit.Before;
 import org.unidal.dal.jdbc.DalException;
 import org.unidal.dal.jdbc.datasource.DataSourceManager;
+import org.unidal.dal.jdbc.datasource.JdbcDataSourceDescriptorManager;
 import org.unidal.dal.jdbc.raw.RawDao;
 import org.unidal.dal.jdbc.raw.RawDataObject;
 import org.unidal.dal.jdbc.test.data.entity.DatabaseModel;
+import org.unidal.dal.jdbc.test.data.transform.DefaultSaxParser;
 import org.unidal.dal.jdbc.test.function.StringFunction;
 import org.unidal.helper.Files;
 import org.unidal.helper.Reflects;
@@ -35,8 +36,8 @@ import org.unidal.lookup.ComponentTestCase;
 public abstract class JdbcTestCase extends ComponentTestCase {
    private LoggerManager m_loggerManager;
 
-   protected void createTables(String name) throws Exception {
-      String resource = String.format("/META-INF/dal/jdbc/%s-codegen.xml", name);
+   protected void createTables(String dataSource) throws Exception {
+      String resource = String.format("/META-INF/dal/jdbc/%s-codegen.xml", dataSource);
       InputStream in = getClass().getResourceAsStream(resource);
 
       if (in == null) {
@@ -46,10 +47,6 @@ public abstract class JdbcTestCase extends ComponentTestCase {
       TableMaker maker = lookup(TableMaker.class);
 
       maker.make(getDefaultDataSource(), in);
-   }
-
-   protected Logger getLogger() {
-      return m_loggerManager.getLoggerForComponent("");
    }
 
    protected void defineFunctions(Class<?> functionClass) throws DalException {
@@ -69,24 +66,49 @@ public abstract class JdbcTestCase extends ComponentTestCase {
       }
    }
 
-   protected void dumpTo(String dataXml, String... tables) throws DalException, IOException {
+   protected void dumpDeltaTo(String dataXml, String deltaXml, String... tables) throws Exception {
       if (tables.length > 0) {
          DatabaseDumper dumper = lookup(DatabaseDumper.class);
-         File base = new File("src/test/resources");
-         File file;
+         String ds = getDefaultDataSource();
+         DatabaseModel model = null;
 
-         if (dataXml.startsWith("/")) {
-            file = new File(base, dataXml);
+         if (dataXml != null) {
+            File base = getTestResourceFile(dataXml);
+
+            if (base.exists()) {
+               String xml = Files.forIO().readFrom(base, "utf-8");
+               DatabaseModel baseModel = DefaultSaxParser.parse(xml);
+
+               model = dumper.dump(baseModel, ds, tables);
+            } else {
+               throw new IllegalStateException(String.format("Resource(%s) is not found!", base.getCanonicalPath()));
+            }
          } else {
-            String packageName = getClass().getPackage().getName();
-
-            file = new File(base, packageName.replace('.', '/') + "/" + dataXml);
+            model = dumper.dump(null, ds, tables);
          }
 
-         DatabaseModel model = dumper.dump(getDefaultDataSource(), tables);
-
-         Files.forIO().writeTo(file, model.toString());
+         File target = getTestResourceFile(deltaXml);
+         Files.forIO().writeTo(target, model.toString());
       }
+   }
+
+   private File getTestResourceFile(String deltaXml) {
+      File base = new File("src/test/resources");
+      File file;
+
+      if (deltaXml.startsWith("/")) {
+         file = new File(base, deltaXml);
+      } else {
+         String packageName = getClass().getPackage().getName();
+
+         file = new File(base, packageName.replace('.', '/') + "/" + deltaXml);
+      }
+
+      return file;
+   }
+
+   protected void dumpTo(String dataXml, String... tables) throws Exception {
+      dumpDeltaTo(null, dataXml, tables);
    }
 
    protected List<RawDataObject> executeQuery(String sql) throws DalException {
@@ -102,6 +124,10 @@ public abstract class JdbcTestCase extends ComponentTestCase {
    }
 
    protected abstract String getDefaultDataSource();
+
+   protected Logger getLogger() {
+      return m_loggerManager.getLoggerForComponent("");
+   }
 
    protected void loadFrom(String dataXml) throws Exception {
       InputStream in = getClass().getResourceAsStream(dataXml);
@@ -125,7 +151,8 @@ public abstract class JdbcTestCase extends ComponentTestCase {
 
       m_loggerManager = lookup(LoggerManager.class);
 
-      defineComponent(DataSourceManager.class, TestDataSourceManager.class);
+      defineComponent(DataSourceManager.class, TestDataSourceManager.class) //
+            .req(JdbcDataSourceDescriptorManager.class);
       defineFunctions(StringFunction.class);
    }
 

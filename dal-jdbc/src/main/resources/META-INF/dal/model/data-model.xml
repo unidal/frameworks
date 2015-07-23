@@ -2,6 +2,13 @@
 <model model-package="org.unidal.dal.jdbc.test.data" enable-sax-parser="true" enable-base-visitor2="true" class-suffix="Model">
   <entity name="table">
     <attribute name="name" value-type="String" key="true" />
+    <entity-ref name="row" type="list" names="rows" method-find-or-create="true" />
+  </entity>
+  <entity name="row">
+    <attribute name="id" value-type="String" key="true" render="false" />
+  </entity>
+  <entity name="col">
+    <attribute name="name" value-type="String" key="true" />
   </entity>
 </model>
 

@@ -8,7 +8,8 @@ import org.unidal.lookup.ComponentTestCase;
 public class DataSourceTest extends ComponentTestCase {
    @Test
    public void testJdbcDataSource() throws Exception {
-      defineComponent(DataSourceManager.class, TestDataSourceManager.class);
+      defineComponent(DataSourceManager.class, TestDataSourceManager.class) //
+            .req(JdbcDataSourceDescriptorManager.class);
 
       try {
          DataSourceManager manager = lookup(DataSourceManager.class);

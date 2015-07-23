@@ -3,6 +3,8 @@
 <entities do-package="org.unidal.dal.jdbc.user" gen="true">
    <entity name="user">
    	  <member name="full-name" alias="user-name"/>
+      <member name="encrypted-password"  insert-expr="password(${password})" update-expr="password(${password})"/>
+      <var name="password" value-type="String" />
       <relation name="home-address" entity-name="user-address" entity-alias="hua" join="u.user_id=hua.user_id and hua.type='H'" />
       <relation name="office-address" entity-name="user-address" entity-alias="oua" join="u.user_id=oua.user_id and oua.type='O'" />
       <relation name="billing-address" entity-name="user-address" entity-alias="bua" join="u.user_id=bua.user_id and bua.type='B'" />
@@ -42,7 +44,6 @@
             FROM <TABLE/>
             ]]></statement>
          </query>
-         <query name="insert" enabled="false"/>
          <query name="delete-by-PK" enabled="false"/>
       </query-defs>
       <snippet lang="java">

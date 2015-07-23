@@ -1,7 +1,9 @@
 package org.unidal.dal.jdbc.test;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.unidal.dal.jdbc.DalException;
 import org.unidal.dal.jdbc.raw.RawDao;
@@ -14,12 +16,14 @@ import org.unidal.dal.jdbc.test.data.transform.BaseVisitor2;
 import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.annotation.Named;
 
+import com.dianping.cat.Cat;
+
 @Named
 public class DatabaseDumper {
    @Inject
    private RawDao m_dao;
 
-   public DatabaseModel dump(String ds, String... tables) throws DalException {
+   public DatabaseModel dump(DatabaseModel base, String ds, String... tables) throws DalException {
       DatabaseModel model = new DatabaseModel();
 
       for (String table : tables) {
@@ -29,7 +33,57 @@ public class DatabaseDumper {
          model.accept(builder);
       }
 
+      base.accept(new DeltaRemoval(model, ds));
+
       return model;
+   }
+
+   class DeltaRemoval extends BaseVisitor2 {
+      private DatabaseModel m_database;
+
+      private TableModel m_table;
+
+      private Set<String> m_keys = new LinkedHashSet<String>();
+
+      private String m_ds;
+
+      public DeltaRemoval(DatabaseModel database, String ds) {
+         m_database = database;
+         m_ds = ds;
+      }
+
+      @Override
+      protected void visitRowChildren(RowModel row) {
+         super.visitRowChildren(row);
+      }
+
+      @Override
+      protected void visitTableChildren(TableModel table) {
+         m_table = table;
+
+         fetchIndexColumns(table.getName());
+
+         super.visitTableChildren(table);
+      }
+
+      private void fetchIndexColumns(String table) {
+         m_keys.clear();
+
+         try {
+            String sql = String.format("select COLUMN_NAME from INFORMATION_SCHEMA.INDEXES "
+                  + "where TABLE_NAME='%s' and PRIMARY_KEY='true' order by PRIMARY_KEY", table.toUpperCase());
+
+            List<RawDataObject> list = m_dao.executeQuery(m_ds, sql);
+
+            for (RawDataObject item : list) {
+               Object key = item.getFieldValue("COLUMN_NAME");
+
+               m_keys.add(key.toString());
+            }
+         } catch (DalException e) {
+            Cat.logError(e);
+         }
+      }
    }
 
    static class TableBuilder extends BaseVisitor2 {
