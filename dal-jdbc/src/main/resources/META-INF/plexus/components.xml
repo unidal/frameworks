@@ -14,6 +14,41 @@
 			</requirements>
 		</component>
 		<component>
+			<role>org.unidal.dal.jdbc.query.ReadHandler</role>
+			<role-hint>mysql</role-hint>
+			<implementation>org.unidal.dal.jdbc.query.msyql.MysqlReadHandler</implementation>
+			<requirements>
+				<requirement>
+					<role>org.unidal.dal.jdbc.transaction.TransactionManager</role>
+				</requirement>
+				<requirement>
+					<role>org.unidal.dal.jdbc.entity.DataObjectAssembly</role>
+				</requirement>
+				<requirement>
+					<role>org.unidal.dal.jdbc.entity.DataObjectAccessor</role>
+				</requirement>
+				<requirement>
+					<role>org.unidal.dal.jdbc.datasource.DataSourceManager</role>
+				</requirement>
+			</requirements>
+		</component>
+		<component>
+			<role>org.unidal.dal.jdbc.query.WriteHandler</role>
+			<role-hint>mysql</role-hint>
+			<implementation>org.unidal.dal.jdbc.query.msyql.MysqlWriteHandler</implementation>
+			<requirements>
+				<requirement>
+					<role>org.unidal.dal.jdbc.transaction.TransactionManager</role>
+				</requirement>
+				<requirement>
+					<role>org.unidal.dal.jdbc.entity.DataObjectAccessor</role>
+				</requirement>
+				<requirement>
+					<role>org.unidal.dal.jdbc.datasource.DataSourceManager</role>
+				</requirement>
+			</requirements>
+		</component>
+		<component>
 			<role>org.unidal.dal.jdbc.QueryEngine</role>
 			<implementation>org.unidal.dal.jdbc.engine.DefaultQueryEngine</implementation>
 			<requirements>
@@ -79,19 +114,12 @@
 			<implementation>org.unidal.dal.jdbc.query.DefaultQueryExecutor</implementation>
 			<requirements>
 				<requirement>
-					<role>org.unidal.dal.jdbc.transaction.TransactionManager</role>
+					<role>org.unidal.dal.jdbc.query.ReadHandler</role>
+					<role-hint>mysql</role-hint>
 				</requirement>
 				<requirement>
-					<role>org.unidal.dal.jdbc.entity.DataObjectAccessor</role>
-				</requirement>
-				<requirement>
-					<role>org.unidal.dal.jdbc.entity.DataObjectAssembly</role>
-				</requirement>
-				<requirement>
-					<role>org.unidal.dal.jdbc.datasource.DataSourceManager</role>
-				</requirement>
-				<requirement>
-					<role>com.dianping.cat.message.MessageProducer</role>
+					<role>org.unidal.dal.jdbc.query.WriteHandler</role>
+					<role-hint>mysql</role-hint>
 				</requirement>
 			</requirements>
 		</component>

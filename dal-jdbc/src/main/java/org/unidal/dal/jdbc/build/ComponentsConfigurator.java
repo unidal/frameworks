@@ -17,6 +17,8 @@ import org.unidal.dal.jdbc.mapping.RawTableProvider;
 import org.unidal.dal.jdbc.query.DefaultQueryExecutor;
 import org.unidal.dal.jdbc.query.msyql.MysqlQueryNaming;
 import org.unidal.dal.jdbc.query.msyql.MysqlQueryResolver;
+import org.unidal.dal.jdbc.query.msyql.MysqlReadHandler;
+import org.unidal.dal.jdbc.query.msyql.MysqlWriteHandler;
 import org.unidal.dal.jdbc.query.token.DefaultTokenParser;
 import org.unidal.dal.jdbc.query.token.resolver.ExpressionResolver;
 import org.unidal.dal.jdbc.query.token.resolver.FieldTokenResolver;
@@ -51,6 +53,9 @@ public final class ComponentsConfigurator extends AbstractResourceConfigurator {
 
       all.add(A(MysqlQueryNaming.class));
       all.add(A(MysqlQueryResolver.class));
+      all.add(A(MysqlReadHandler.class));
+      all.add(A(MysqlWriteHandler.class));
+
       all.add(A(DefaultQueryEngine.class));
       all.add(A(DefaultQueryContext.class));
       all.add(A(DefaultEntityInfoManager.class));
