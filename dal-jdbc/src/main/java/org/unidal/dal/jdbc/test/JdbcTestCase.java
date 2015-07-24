@@ -36,8 +36,8 @@ import org.unidal.lookup.ComponentTestCase;
 public abstract class JdbcTestCase extends ComponentTestCase {
    private LoggerManager m_loggerManager;
 
-   protected void createTables(String dataSource) throws Exception {
-      String resource = String.format("/META-INF/dal/jdbc/%s-codegen.xml", dataSource);
+   protected void createTables(String group) throws Exception {
+      String resource = String.format("/META-INF/dal/jdbc/%s-codegen.xml", group);
       InputStream in = getClass().getResourceAsStream(resource);
 
       if (in == null) {
