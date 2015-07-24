@@ -1,6 +1,7 @@
 package org.unidal.dal.jdbc.entity;
 
 import java.lang.reflect.Method;
+import java.sql.Blob;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
@@ -69,6 +70,16 @@ public class DefaultDataObjectAccessor implements DataObjectAccessor, LogEnabled
       } else if (clazz == Date.class) {
          if (value instanceof Timestamp) {
             return value;
+         }
+      } else if (clazz == byte[].class) {
+         if (value instanceof Blob) {
+            Blob blob = (Blob) value;
+
+            try {
+               return blob.getBytes(0L, (int) blob.length());
+            } catch (Exception e) {
+               throw new DalRuntimeException("Error when converting Blob to byte[]!", e);
+            }
          }
       }
 
