@@ -101,9 +101,9 @@ public class ModelManager extends ContainerHolder implements Initializable {
 
       InboundActionModel existed = module.getInbounds().get(inMeta.name());
 
-      if (existed != null) {
-         throw new RuntimeException("Duplicated name(" + inMeta.name() + ") found between " + method.getName()
-               + "() and " + existed.getActionMethod().getName() + "() of " + module.getModuleClass());
+      if (existed != null && !existed.getActionMethod().equals(method)) {
+         throw new RuntimeException(String.format("Duplicated name(%s) found between %s() and %s() of %s",
+               inMeta.name(), method.getName(), existed.getActionMethod().getName(), module.getModuleClass()));
       }
 
       assertParameter(method);
@@ -287,7 +287,7 @@ public class ModelManager extends ContainerHolder implements Initializable {
                return module;
             }
          }
-         
+
          // return first module for default action
          return list.get(0);
       }

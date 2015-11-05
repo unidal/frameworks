@@ -33,7 +33,9 @@ public class DatabaseDumper {
          model.accept(builder);
       }
 
-      base.accept(new DeltaRemoval(model, ds));
+      if (base != null) {
+         base.accept(new DeltaRemoval(model, ds));
+      }
 
       return model;
    }

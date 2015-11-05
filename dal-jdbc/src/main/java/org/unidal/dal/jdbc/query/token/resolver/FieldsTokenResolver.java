@@ -133,9 +133,9 @@ public class FieldsTokenResolver implements TokenResolver {
                   }
 
                   if (!proto.isFieldUsed(field) && attribute.updateExpr().length() > 0) {
-                     sb.append(attribute.field()).append('=').append(m_expressionResolver.resolve(ctx, attribute.updateExpr()));
+                     sb.append(m_naming.getField(attribute.field())).append('=').append(m_expressionResolver.resolve(ctx, attribute.updateExpr()));
                   } else {
-                     sb.append(attribute.field()).append("=?");
+                     sb.append(m_naming.getField(attribute.field())).append("=?");
                      ctx.addParameter(new Parameter(field));
                   }
                }
