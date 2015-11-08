@@ -16,12 +16,26 @@ public class StringFunction {
       md.update(text.getBytes("utf-8"));
       md.digest(data, 0, data.length);
 
-      StringBuilder sb = new StringBuilder();
+      StringBuilder sb = new StringBuilder(data.length * 2 + 1);
 
       sb.append('*');
 
       for (int i = 0; i < data.length; i++) {
          byte b = data[i];
+
+         sb.append(hexDigits[(b >> 4) & 0x0F]);
+         sb.append(hexDigits[b & 0x0F]);
+      }
+
+      return sb.toString();
+   }
+
+   public static String binary(String text) throws Exception {
+      byte[] data = text.getBytes("utf-8");
+      StringBuilder sb = new StringBuilder(data.length);
+
+      for (int i = 0; i < data.length; i++) {
+         byte b = (byte) (data[i] & 0xFF);
 
          sb.append(hexDigits[(b >> 4) & 0x0F]);
          sb.append(hexDigits[b & 0x0F]);
