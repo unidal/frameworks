@@ -42,6 +42,16 @@ public class DefaultTransactionManager implements TransactionManager, LogEnabled
       }
    }
 
+   private void closeConnection(Connection connection) {
+      if (connection != null) {
+         try {
+            connection.close();
+         } catch (SQLException e) {
+            // ignore it
+         }
+      }
+   }
+
    public void commitTransaction() {
       TransactionInfo trxInfo = m_threadLocalData.get();
 
@@ -102,13 +112,7 @@ public class DefaultTransactionManager implements TransactionManager, LogEnabled
 
          // retry once if pooled connection is closed by server side
          if (exception != null) {
-            if (connection != null) {
-               try {
-                  connection.close();
-               } catch (SQLException e) {
-                  // ignore it
-               }
-            }
+            closeConnection(connection);
 
             m_logger.warn(String.format("Iffy database(%s) connection closed, try to reconnect.", dataSourceName),
                   exception);
@@ -116,7 +120,9 @@ public class DefaultTransactionManager implements TransactionManager, LogEnabled
             try {
                connection = dataSource.getConnection();
                connection.setAutoCommit(true);
+               exception = null;
             } catch (SQLException e) {
+               closeConnection(connection);
                m_logger.warn(String.format("Unable to reconnect to database(%s).", dataSourceName), e);
             }
          }
@@ -187,15 +193,16 @@ public class DefaultTransactionManager implements TransactionManager, LogEnabled
                "Can't start transaction while another transaction has not been committed or rollbacked!");
       } else {
          DataSource ds = m_dataSourceManager.getDataSource(datasource);
+         Connection connection = null;
 
          try {
-            Connection connection = ds.getConnection();
-
+            connection = ds.getConnection();
             connection.setAutoCommit(false);
             trxInfo.setConnection(connection);
             trxInfo.setDataSourceName(datasource);
             trxInfo.setInTransaction(true);
          } catch (SQLException e) {
+            closeConnection(connection);
             throw new DalRuntimeException("Error when getting connection from DataSource(" + datasource
                   + "), message: " + e, e);
          }
