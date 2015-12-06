@@ -26,9 +26,9 @@ public class FormatsTest {
       Assert.assertEquals("12.1KB", Formats.forNumber().format(12345, "0.#", "B"));
       Assert.assertEquals("12.06Kbps", Formats.forNumber().format(12345, "0.0#", "bps"));
 
-      Assert.assertEquals("12.34s", Formats.forNumber().format(12.345, "0.##", "s"));
-      Assert.assertEquals("123.4ms", Formats.forNumber().format(0.12345, "0.#", "s"));
-      Assert.assertEquals("123.4us", Formats.forNumber().format(0.00012345, "0.#", "s"));
+      Assert.assertEquals("12.34s", Formats.forNumber().format(12.344, "0.##", "s"));
+      Assert.assertEquals("123.4ms", Formats.forNumber().format(0.12344, "0.#", "s"));
+      Assert.assertEquals("123.4us", Formats.forNumber().format(0.00012344, "0.#", "s"));
 
       Assert.assertEquals("11.21GB", Formats.forNumber().format(11.21, "0.##", "GB"));
       Assert.assertEquals("-11.21GB", Formats.forNumber().format(-11.21, "0.##", "GB"));

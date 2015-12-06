@@ -2,7 +2,7 @@ package org.unidal.helper;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -25,7 +25,7 @@ public class StringizersTest {
    }
 
    private Map<String, Object> map(Object forth) {
-      Map<String, Object> map = new HashMap<String, Object>();
+      Map<String, Object> map = new LinkedHashMap<String, Object>();
 
       map.put("first", new Pojo(1, "x"));
       map.put("second", new Pojo(2, "y"));
@@ -47,9 +47,9 @@ public class StringizersTest {
       checkLimit("xyz", "\"xyz\"");
       checkLimit("xyzabc", "\"x...c\"");
       checkLimit("123456789", "\"1...9\"");
-      checkLimit(map("hello, world"), "{\"forth\":\"h...d\",\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"...");
+      checkLimit(map("hello, world"), "{\"first\":{\"x\":1,\"y\":\"x\"},\"second\":{\"x\":2,\"y\":\"y\"},\"third...");
       checkLimit(map(map(map("hello, world"))), //
-            "{\"forth\":{\"forth\":{\"forth\":\"h...d\",\"second\":{\"x\":2,\"y\":\"y\"},\"...");
+            "{\"first\":{\"x\":1,\"y\":\"x\"},\"second\":{\"x\":2,\"y\":\"y\"},\"third...");
    }
 
    @Test
@@ -59,7 +59,7 @@ public class StringizersTest {
       check(new Date(1330079278861L), "\"2012-02-24 18:27:58\"");
       check(Date.class, "\"class java.util.Date\"");
       check(new Object[] { "x", "y", new Object[] { 1, 2.3, true, map(null) } }, //
-            "[\"x\",\"y\",[1,2.3,true,{\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"y\":\"z\"},\"first\":{\"x\":1,\"y\":\"x\"}}]]");
+            "[\"x\",\"y\",[1,2.3,true,{\"first\":{\"x\":1,\"y\":\"x\"},\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"y\":\"z\"}}]]");
    }
 
    @Test
@@ -78,9 +78,9 @@ public class StringizersTest {
       check(new Pojo(3, null), "{\"x\":3}");
       check(new Pojo(3, "a"), "{\"x\":3,\"y\":\"a\"}");
       check(map(null),
-            "{\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"y\":\"z\"},\"first\":{\"x\":1,\"y\":\"x\"}}");
+            "{\"first\":{\"x\":1,\"y\":\"x\"},\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"y\":\"z\"}}");
       check(map(map(map(null))), //
-            "{\"forth\":{\"forth\":{\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"y\":\"z\"},\"first\":{\"x\":1,\"y\":\"x\"}},\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"y\":\"z\"},\"first\":{\"x\":1,\"y\":\"x\"}},\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"y\":\"z\"},\"first\":{\"x\":1,\"y\":\"x\"}}");
+            "{\"first\":{\"x\":1,\"y\":\"x\"},\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"y\":\"z\"},\"forth\":{\"first\":{\"x\":1,\"y\":\"x\"},\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"y\":\"z\"},\"forth\":{\"first\":{\"x\":1,\"y\":\"x\"},\"second\":{\"x\":2,\"y\":\"y\"},\"third\":{\"x\":3,\"y\":\"z\"}}}}");
    }
 
    public static class Loop1 {

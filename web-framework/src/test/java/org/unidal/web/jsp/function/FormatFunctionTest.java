@@ -18,11 +18,11 @@ public class FormatFunctionTest {
 
    @Test
    public void testFormatNumber() {
-      Assert.assertEquals("12.1KB", FormatFunction.formatNumber(12345, "0.#", "B"));
-      Assert.assertEquals("12.06Kb", FormatFunction.formatNumber(12345, "0.0#", "b"));
+      Assert.assertEquals("12.1KB", FormatFunction.formatNumber(12344, "0.#", "B"));
+      Assert.assertEquals("12.05Kb", FormatFunction.formatNumber(12344, "0.0#", "b"));
 
-      Assert.assertEquals("12.34s", FormatFunction.formatNumber(12.345, "0.##", "s"));
-      Assert.assertEquals("123.4ms", FormatFunction.formatNumber(0.12345, "0.#", "s"));
-      Assert.assertEquals("123.4us", FormatFunction.formatNumber(0.00012345, "0.#", "s"));
+      Assert.assertEquals("12.34s", FormatFunction.formatNumber(12.344, "0.##", "s"));
+      Assert.assertEquals("123.4ms", FormatFunction.formatNumber(0.12344, "0.#", "s"));
+      Assert.assertEquals("123.4us", FormatFunction.formatNumber(0.00012344, "0.#", "s"));
    }
 }
