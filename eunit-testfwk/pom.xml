@@ -4,28 +4,27 @@
    <parent>
       <groupId>org.unidal.framework</groupId>
       <artifactId>parent</artifactId>
-      <version>2.3.0</version>
+      <version>2.4.0</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.unidal.framework</groupId>
    <artifactId>eunit-testfwk</artifactId>
+   <version>2.4.0</version>
    <name>Eunit Test Framework</name>
    <dependencies>
       <dependency>
          <groupId>org.unidal.framework</groupId>
          <artifactId>foundation-service</artifactId>
-         <version>2.3.0</version>
+         <version>2.4.0</version>
       </dependency>
       <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
-         <version>4.8.1</version>
       </dependency>
       <dependency>
          <groupId>org.testng</groupId>
          <artifactId>testng</artifactId>
-         <version>6.0.1</version>
          <optional>true</optional>
       </dependency>
    </dependencies>
@@ -34,7 +33,7 @@
          <plugin>
             <groupId>org.unidal.maven.plugins</groupId>
             <artifactId>codegen-maven-plugin</artifactId>
-            <version>2.3.2</version>
+            <version>${codegen.plugin.version}</version>
             <executions>
                <execution>
                   <id>generate model</id>
