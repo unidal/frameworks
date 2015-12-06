@@ -40,6 +40,7 @@ public class DatabaseDumper {
       return model;
    }
 
+   @SuppressWarnings("unused")
    class DeltaRemoval extends BaseVisitor2 {
       private DatabaseModel m_database;
 

@@ -14,6 +14,7 @@ import org.unidal.helper.ThreadsTest;
 import org.unidal.lookup.ComponentTestCaseTest;
 import org.unidal.lookup.ContainerHolderTest;
 import org.unidal.lookup.ContainerLoaderTest;
+import org.unidal.lookup.PlexusContainerTest;
 import org.unidal.lookup.configuration.ConfiguratorTest;
 import org.unidal.lookup.logger.TimedConsoleLoggerTest;
 import org.unidal.net.SocketsTest;
@@ -45,6 +46,8 @@ ComponentTestCaseTest.class,
 ContainerHolderTest.class,
 
 ContainerLoaderTest.class,
+
+PlexusContainerTest.class,
 
 TimedConsoleLoggerTest.class,
 
