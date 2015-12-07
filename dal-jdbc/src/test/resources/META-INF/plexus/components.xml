@@ -4,7 +4,7 @@
 			<role>org.unidal.dal.jdbc.datasource.DataSourceProvider</role>
 			<implementation>org.unidal.dal.jdbc.datasource.DefaultDataSourceProvider</implementation>
 			<configuration>
-				<datasourceFile>/Users/qmwu/project/frameworks/dal-jdbc/target/test-classes/org/unidal/dal/jdbc/datasource/datasource.xml</datasourceFile>
+				<datasourceFile>org/unidal/dal/jdbc/datasource/datasource.xml</datasourceFile>
 			</configuration>
 		</component>
 		<component>

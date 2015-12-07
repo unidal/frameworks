@@ -37,9 +37,9 @@ public class UserTest extends JdbcTestCase {
          dao.insert(user);
       }
 
-      showQuery("select * from user");
-      showQuery("show tables from INFORMATION_SCHEMA");
-      showQuery("select COLUMN_NAME,* from INFORMATION_SCHEMA.INDEXES where TABLE_NAME='USER'");
+      //showQuery("select * from user");
+      //showQuery("show tables from INFORMATION_SCHEMA");
+      //showQuery("select COLUMN_NAME,* from INFORMATION_SCHEMA.INDEXES where TABLE_NAME='USER'");
 
       dumpDeltaTo("user.xml", "user_delta.xml", "user");
    }

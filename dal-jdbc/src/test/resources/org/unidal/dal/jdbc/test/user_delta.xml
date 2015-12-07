@@ -26,36 +26,36 @@
          <col name="USER_ID">10</col>
          <col name="FULL_NAME">User 10</col>
          <col name="ENCRYPTED_PASSWORD"></col>
-         <col name="CREATION_DATE">2015-12-05 22:25:53.358</col>
-         <col name="LAST_MODIFIED_DATE">2015-12-05 22:25:53.358</col>
+         <col name="CREATION_DATE">2015-12-07 22:13:14.014</col>
+         <col name="LAST_MODIFIED_DATE">2015-12-07 22:13:14.014</col>
       </row>
       <row>
          <col name="USER_ID">11</col>
          <col name="FULL_NAME">User 11</col>
          <col name="ENCRYPTED_PASSWORD"></col>
-         <col name="CREATION_DATE">2015-12-05 22:25:53.36</col>
-         <col name="LAST_MODIFIED_DATE">2015-12-05 22:25:53.36</col>
+         <col name="CREATION_DATE">2015-12-07 22:13:14.017</col>
+         <col name="LAST_MODIFIED_DATE">2015-12-07 22:13:14.017</col>
       </row>
       <row>
          <col name="USER_ID">12</col>
          <col name="FULL_NAME">User 12</col>
          <col name="ENCRYPTED_PASSWORD"></col>
-         <col name="CREATION_DATE">2015-12-05 22:25:53.362</col>
-         <col name="LAST_MODIFIED_DATE">2015-12-05 22:25:53.362</col>
+         <col name="CREATION_DATE">2015-12-07 22:13:14.017</col>
+         <col name="LAST_MODIFIED_DATE">2015-12-07 22:13:14.017</col>
       </row>
       <row>
          <col name="USER_ID">13</col>
          <col name="FULL_NAME">User 13</col>
          <col name="ENCRYPTED_PASSWORD"></col>
-         <col name="CREATION_DATE">2015-12-05 22:25:53.362</col>
-         <col name="LAST_MODIFIED_DATE">2015-12-05 22:25:53.362</col>
+         <col name="CREATION_DATE">2015-12-07 22:13:14.018</col>
+         <col name="LAST_MODIFIED_DATE">2015-12-07 22:13:14.018</col>
       </row>
       <row>
          <col name="USER_ID">14</col>
          <col name="FULL_NAME">User 14</col>
          <col name="ENCRYPTED_PASSWORD"></col>
-         <col name="CREATION_DATE">2015-12-05 22:25:53.363</col>
-         <col name="LAST_MODIFIED_DATE">2015-12-05 22:25:53.363</col>
+         <col name="CREATION_DATE">2015-12-07 22:13:14.019</col>
+         <col name="LAST_MODIFIED_DATE">2015-12-07 22:13:14.019</col>
       </row>
    </table>
 </database>
