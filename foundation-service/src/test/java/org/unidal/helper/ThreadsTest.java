@@ -30,6 +30,7 @@ public class ThreadsTest {
       Threads.addListener(m_listener);
    }
 
+   @Ignore
    @Test
    public void testThreadGroup() throws InterruptedException {
       ThreadGroupManager group = Threads.forGroup();
