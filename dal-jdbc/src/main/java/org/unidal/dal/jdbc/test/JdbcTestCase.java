@@ -168,7 +168,11 @@ public abstract class JdbcTestCase extends ComponentTestCase {
 
    @Override
    public void tearDown() throws Exception {
-      executeUpdate("SHUTDOWN");
+      try {
+         executeUpdate("SHUTDOWN");
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
 
       super.tearDown();
    }
