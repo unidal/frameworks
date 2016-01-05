@@ -10,7 +10,6 @@ import org.codehaus.plexus.logging.LoggerManager;
 import org.junit.Before;
 import org.unidal.dal.jdbc.DalException;
 import org.unidal.dal.jdbc.datasource.DataSourceManager;
-import org.unidal.dal.jdbc.datasource.JdbcDataSourceDescriptorManager;
 import org.unidal.dal.jdbc.raw.RawDao;
 import org.unidal.dal.jdbc.raw.RawDataObject;
 import org.unidal.dal.jdbc.test.data.entity.DatabaseModel;
@@ -151,8 +150,7 @@ public abstract class JdbcTestCase extends ComponentTestCase {
 
       m_loggerManager = lookup(LoggerManager.class);
 
-      defineComponent(DataSourceManager.class, TestDataSourceManager.class) //
-            .req(JdbcDataSourceDescriptorManager.class);
+      defineComponent(DataSourceManager.class, TestDataSourceManager.class);
       defineFunctions(StringFunction.class);
    }
 

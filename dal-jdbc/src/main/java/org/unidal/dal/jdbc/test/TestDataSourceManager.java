@@ -12,13 +12,8 @@ import org.unidal.dal.jdbc.datasource.DataSource;
 import org.unidal.dal.jdbc.datasource.DataSourceDescriptor;
 import org.unidal.dal.jdbc.datasource.DataSourceManager;
 import org.unidal.dal.jdbc.datasource.JdbcDataSourceDescriptor;
-import org.unidal.dal.jdbc.datasource.JdbcDataSourceDescriptorManager;
-import org.unidal.lookup.annotation.Inject;
 
 public class TestDataSourceManager implements DataSourceManager {
-   @Inject
-   private JdbcDataSourceDescriptorManager m_manager;
-
    private Map<String, TestDataSource> m_dataSources = new LinkedHashMap<String, TestDataSource>();
 
    @Override
@@ -30,12 +25,6 @@ public class TestDataSourceManager implements DataSourceManager {
             dataSource = m_dataSources.get(name);
 
             if (dataSource == null) {
-               DataSourceDescriptor descriptor = m_manager.getDescriptor(name);
-
-               if (descriptor == null) {
-                  throw new RuntimeException(String.format("No data source(%s) defined!", name));
-               }
-
                dataSource = new TestDataSource(name);
 
                m_dataSources.put(name, dataSource);

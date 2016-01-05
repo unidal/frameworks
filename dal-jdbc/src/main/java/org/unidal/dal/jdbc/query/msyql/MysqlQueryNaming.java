@@ -11,7 +11,8 @@ public class MysqlQueryNaming implements QueryNaming {
 	/**
 	 * http://dev.mysql.com/doc/refman/5.7/en/keywords.html
 	 */
-	private String[] KEYWORDS = { "ACCESSIBLE", "ACCOUNT", "ACTION", "ADD",
+	private String[] KEYWORDS = { 
+	      "ACCESSIBLE", "ACCOUNT", "ACTION", "ADD",
 			"AFTER", "AGAINST", "AGGREGATE", "ALGORITHM", "ALL", "ALTER",
 			"ALWAYS", "ANALYSE", "ANALYZE", "AND", "ANY", "AS", "ASC", "ASCII",
 			"ASENSITIVE", "AT", "AUTOEXTEND_SIZE", "AUTO_INCREMENT", "AVG",
@@ -131,7 +132,9 @@ public class MysqlQueryNaming implements QueryNaming {
 			"VARIABLES", "VARYING", "VIEW", "VIRTUAL", "WAIT", "WARNINGS",
 			"WEEK", "WEIGHT_STRING", "WHEN", "WHERE", "WHILE", "WITH",
 			"WITHOUT", "WORK", "WRAPPER", "WRITE", "X509", "XA", "XID", "XML",
-			"XOR", "YEAR", "YEAR_MONTH", "ZEROFILL" };
+			"XOR", "YEAR", "YEAR_MONTH", "ZEROFILL",
+			"OFFSET" // for H2
+			};
    
    private Set<String> m_keywords = new HashSet<String>();
 
