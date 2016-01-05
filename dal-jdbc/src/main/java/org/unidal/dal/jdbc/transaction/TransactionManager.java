@@ -13,8 +13,6 @@ public interface TransactionManager {
 
    public boolean isInTransaction();
 
-   public void reset();
-
    public void rollbackTransaction();
 
    public void startTransaction(String datasource);
