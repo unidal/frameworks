@@ -75,7 +75,7 @@ public class FieldsTokenResolverTest extends AbstractTokenResolverTest {
       QueryContext ctx = getSelectContext(query, user, readset);
 
       m_queryResolver.resolve(ctx);
-      Assert.assertEquals("u.user_id,u.full_name,u.creation_date,u.last_modified_date,hua.user_id,hua.type,hua.address",
+      Assert.assertEquals("u.user_id,u.full_name,u.creation_date,u.last_modified_date,hua.user_id,hua.`type`,hua.address",
             ctx.getSqlStatement());
       Assert.assertEquals(null, ctx.getOutSubObjectNames().get(0));
       Assert.assertEquals("home-address", ctx.getOutSubObjectNames().get(4));
@@ -90,7 +90,7 @@ public class FieldsTokenResolverTest extends AbstractTokenResolverTest {
 
       m_queryResolver.resolve(ctx);
       Assert.assertEquals(
-            "u.user_id,u.full_name,u.creation_date,u.last_modified_date,hua.user_id,hua.type,hua.address,oua.user_id,oua.type,oua.address",
+            "u.user_id,u.full_name,u.creation_date,u.last_modified_date,hua.user_id,hua.`type`,hua.address,oua.user_id,oua.`type`,oua.address",
             ctx.getSqlStatement());
       Assert.assertEquals(null, ctx.getOutSubObjectNames().get(0));
       Assert.assertEquals("home-address", ctx.getOutSubObjectNames().get(4));

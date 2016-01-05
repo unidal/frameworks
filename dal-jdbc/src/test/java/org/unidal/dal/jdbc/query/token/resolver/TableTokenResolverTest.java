@@ -58,7 +58,7 @@ public class TableTokenResolverTest extends AbstractTokenResolverTest {
       QueryContext ctx = getSelectContext(query, user, readset);
 
       m_queryResolver.resolve(ctx);
-      Assert.assertEquals("user u", ctx.getSqlStatement());
+      Assert.assertEquals("`user` u", ctx.getSqlStatement());
    }
 
    @Test
@@ -69,7 +69,7 @@ public class TableTokenResolverTest extends AbstractTokenResolverTest {
       QueryContext ctx = getSelectContext(query, user, readset);
 
       m_queryResolver.resolve(ctx);
-      Assert.assertEquals("user u", ctx.getSqlStatement());
+      Assert.assertEquals("`user` u", ctx.getSqlStatement());
    }
 
    @Test
@@ -80,7 +80,7 @@ public class TableTokenResolverTest extends AbstractTokenResolverTest {
       QueryContext ctx = getSelectContext(query, user, readset);
 
       m_queryResolver.resolve(ctx);
-      Assert.assertEquals("user user", ctx.getSqlStatement());
+      Assert.assertEquals("`user` user", ctx.getSqlStatement());
    }
 
    @Test
@@ -106,7 +106,7 @@ public class TableTokenResolverTest extends AbstractTokenResolverTest {
       QueryContext ctx = getSelectContext(query, user, null);
 
       m_queryResolver.resolve(ctx);
-      Assert.assertEquals("user", ctx.getSqlStatement());
+      Assert.assertEquals("`user`", ctx.getSqlStatement());
    }
 
    @Test
@@ -117,7 +117,7 @@ public class TableTokenResolverTest extends AbstractTokenResolverTest {
       QueryContext ctx = getUpdateContext(query, user, updateset);
 
       m_queryResolver.resolve(ctx);
-      Assert.assertEquals("user", ctx.getSqlStatement());
+      Assert.assertEquals("`user`", ctx.getSqlStatement());
    }
 
    @Test
@@ -127,6 +127,6 @@ public class TableTokenResolverTest extends AbstractTokenResolverTest {
       QueryContext ctx = getSelectContext(query, user, null);
 
       m_queryResolver.resolve(ctx);
-      Assert.assertEquals("user", ctx.getSqlStatement());
+      Assert.assertEquals("`user`", ctx.getSqlStatement());
    }
 }
