@@ -64,13 +64,11 @@ public class MysqlReadHandler extends MysqlBaseHandler implements ReadHandler {
       } catch (DataSourceException e) {
          t.setStatus(e.getClass().getSimpleName());
          Cat.logError(e);
-         m_transactionManager.reset();
 
          throw e;
       } catch (Throwable e) {
          t.setStatus(e.getClass().getSimpleName());
          Cat.logError(e);
-         m_transactionManager.reset();
 
          throw new DalException(String.format("Error when executing query(%s) failed, proto: %s, message: %s.",
                ctx.getSqlStatement(), proto, e), e);

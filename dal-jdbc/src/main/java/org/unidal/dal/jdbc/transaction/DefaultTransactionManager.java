@@ -145,24 +145,6 @@ public class DefaultTransactionManager implements TransactionManager, LogEnabled
       return trxInfo.isInTransaction();
    }
 
-   @Override
-   public void reset() {
-      TransactionInfo trxInfo = m_threadLocalData.get();
-
-      if (trxInfo != null) {
-         Connection conn = trxInfo.getConnection();
-
-         if (conn != null) {
-            try {
-               conn.close();
-            } catch (SQLException e) {
-               m_logger.error("Error when closing connection!", e);
-            }
-         }
-      }
-      m_threadLocalData.remove();
-   }
-
    public void rollbackTransaction() {
       TransactionInfo trxInfo = m_threadLocalData.get();
 
@@ -251,6 +233,7 @@ public class DefaultTransactionManager implements TransactionManager, LogEnabled
          m_connection = null;
          m_dataSourceName = null;
          m_inTransaction = false;
+         m_threadLocalData.remove();
       }
 
       public void setConnection(Connection connection) {

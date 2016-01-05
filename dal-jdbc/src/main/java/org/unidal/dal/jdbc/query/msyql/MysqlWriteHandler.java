@@ -58,13 +58,11 @@ public class MysqlWriteHandler extends MysqlBaseHandler implements WriteHandler 
       } catch (DataSourceException e) {
          t.setStatus(e.getClass().getSimpleName());
          Cat.logError(e);
-         m_transactionManager.reset();
 
          throw e;
       } catch (Throwable e) {
          t.setStatus(e.getClass().getSimpleName());
          Cat.logError(e);
-         m_transactionManager.reset();
 
          throw new DalException(String.format("Error when executing update(%s) failed, proto: %s, message: %s.",
                ctx.getSqlStatement(), proto, e), e);
@@ -159,7 +157,6 @@ public class MysqlWriteHandler extends MysqlBaseHandler implements WriteHandler 
       } catch (DataSourceException e) {
          t.setStatus(e.getClass().getSimpleName());
          Cat.logError(e);
-         m_transactionManager.reset();
 
          throw e;
       } catch (Throwable e) {
@@ -176,7 +173,6 @@ public class MysqlWriteHandler extends MysqlBaseHandler implements WriteHandler 
 
          t.setStatus(e.getClass().getSimpleName());
          Cat.logError(e);
-         m_transactionManager.reset();
 
          throw new DalException(String.format("Error when executing batch update(%s) failed, proto: %s, message: %s.",
                ctx.getSqlStatement(), ctx.getProto(), e), e);
