@@ -54,25 +54,4 @@
          <scope>provided</scope>
       </dependency>
    </dependencies>
-   <build>
-      <plugins>
-         <plugin>
-            <groupId>org.unidal.maven.plugins</groupId>
-            <artifactId>plexus-maven-plugin</artifactId>
-            <version>${plexus.plugin.version}</version>
-            <executions>
-               <execution>
-                  <id>generate plexus component descriptor</id>
-                  <phase>process-classes</phase>
-                  <goals>
-                     <goal>plexus</goal>
-                  </goals>
-                  <configuration>
-                     <className>org.unidal.build.ComponentsConfigurator</className>
-                  </configuration>
-               </execution>
-            </executions>
-         </plugin>
-      </plugins>
-   </build>
 </project>
