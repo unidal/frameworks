@@ -81,7 +81,7 @@ public class EmbeddedServerManager {
 
    public static int getUniquePort() {
       String portStr = System.getProperty("server.port");
-      int port = -1;
+      int port;
 
       if (portStr == null) {
          // http://www.iana.org/assignments/port-numbers

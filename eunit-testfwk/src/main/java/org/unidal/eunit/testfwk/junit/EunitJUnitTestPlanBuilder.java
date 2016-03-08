@@ -56,7 +56,7 @@ public class EunitJUnitTestPlanBuilder extends BaseVisitor implements ITestPlanB
          super.visitEunitMethod(eunitMethod);
 
          Registry registry = m_ctx.getRegistry();
-         ITestCase<JUnitCallback> testCase = null;
+         ITestCase<JUnitCallback> testCase;
 
 //         if (!eunitMethod.isIgnored()) {
         @SuppressWarnings("unchecked")
