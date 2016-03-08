@@ -71,15 +71,13 @@ public class DefaultDataObjectAccessor implements DataObjectAccessor, LogEnabled
          if (value instanceof Timestamp) {
             return value;
          }
-      } else if (clazz == byte[].class) {
-         if (value instanceof Blob) {
-            Blob blob = (Blob) value;
+      } else if (clazz == byte[].class && value instanceof Blob) {
+         Blob blob = (Blob) value;
 
-            try {
-               return blob.getBytes(0L, (int) blob.length());
-            } catch (Exception e) {
-               throw new DalRuntimeException("Error when converting Blob to byte[]!", e);
-            }
+         try {
+            return blob.getBytes(0L, (int) blob.length());
+         } catch (Exception e) {
+            throw new DalRuntimeException("Error when converting Blob to byte[]!", e);
          }
       }
 
