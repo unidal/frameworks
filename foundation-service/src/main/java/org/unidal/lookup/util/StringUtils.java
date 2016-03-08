@@ -3,6 +3,9 @@ package org.unidal.lookup.util;
 import java.util.Collection;
 
 public class StringUtils {
+   private StringUtils() {
+   }
+
    public static final boolean isEmpty(String str) {
       return str == null || str.length() == 0;
    }

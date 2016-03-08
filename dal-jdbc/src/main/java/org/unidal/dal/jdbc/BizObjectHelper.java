@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BizObjectHelper {
+   private BizObjectHelper() {
+   }
+
    @SuppressWarnings("unchecked")
    private static <T extends BizObject> Constructor<T> getBoConstructor(Class<T> boClass) {
       try {
