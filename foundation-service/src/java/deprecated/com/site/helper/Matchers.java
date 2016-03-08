@@ -5,7 +5,7 @@ public class Matchers {
 		return StringMatcher.CASE_SENSITIVE;
 	}
 
-	public static enum StringMatcher {
+	public enum StringMatcher {
 		CASE_SENSITIVE(true),
 
 		CASE_INSENSITIVE(false);

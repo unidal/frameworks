@@ -137,7 +137,7 @@ public class EunitLauncher {
       }
    }
 
-   public static enum ConsoleHandler implements IHandler {
+   public enum ConsoleHandler implements IHandler {
       INSTANCE;
 
       @Override

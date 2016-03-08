@@ -19,7 +19,7 @@ public class Stringizers {
       return JsonStringizer.DEFAULT;
    }
 
-   public static enum JsonStringizer {
+   public enum JsonStringizer {
       DEFAULT(false),
 
       COMPACT(true);

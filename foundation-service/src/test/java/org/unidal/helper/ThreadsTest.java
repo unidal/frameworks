@@ -116,7 +116,7 @@ public class ThreadsTest {
             "Excepiton:BadPool-5:java.lang.RuntimeException|Pool:BadPool", m_listener.getResult());
    }
 
-   static enum MockBadRunnable implements Runnable {
+   enum MockBadRunnable implements Runnable {
       INSTANCE;
 
       @Override
@@ -125,7 +125,7 @@ public class ThreadsTest {
       }
    }
 
-   static enum MockRunnable implements Runnable {
+   enum MockRunnable implements Runnable {
       INSTANCE;
 
       @Override

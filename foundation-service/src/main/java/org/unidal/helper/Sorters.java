@@ -23,7 +23,7 @@ public class Sorters {
       return SetSorter.ASC;
    }
 
-   public static enum ListSorter {
+   public enum ListSorter {
       ASC(true),
 
       DESC(false);
@@ -56,7 +56,7 @@ public class Sorters {
       }
    }
 
-   public static enum MapSorter {
+   public enum MapSorter {
       ASC(true),
 
       DESC(false);
@@ -107,7 +107,7 @@ public class Sorters {
       }
    }
 
-   public static enum SetSorter {
+   public enum SetSorter {
       ASC(true),
 
       DESC(false);

@@ -206,7 +206,7 @@ public class ConfiguratorTest {
       }
 
       @Named(type = AT4.class)
-      public static enum AC42 implements AT4 {
+      public enum AC42 implements AT4 {
          E1, E2;
       }
 
@@ -346,7 +346,7 @@ public class ConfiguratorTest {
       public static class LC41 implements LT4 {
       }
 
-      public static enum LC42 implements LT4 {
+      public enum LC42 implements LT4 {
          E1, E2;
       }
 

@@ -39,7 +39,7 @@ public class Reflects {
       return ResourceReflector.INSTANCE;
    }
 
-   public static enum ClassReflector {
+   public enum ClassReflector {
       INSTANCE;
 
       /**
@@ -151,7 +151,7 @@ public class Reflects {
       }
    }
 
-   public static enum ConstructorReflector {
+   public enum ConstructorReflector {
       INSTANCE;
 
       public Object createInstance(Class<?> clazz, Object... typesAndParameters) {
@@ -169,7 +169,7 @@ public class Reflects {
       }
    }
 
-   public static enum FieldFilter implements IMemberFilter<Field> {
+   public enum FieldFilter implements IMemberFilter<Field> {
       PUBLIC {
          public boolean filter(Field field) {
             return ModifierReflector.INSTANCE.isPublic(field);
@@ -189,7 +189,7 @@ public class Reflects {
       };
    }
 
-   public static enum FieldReflector {
+   public enum FieldReflector {
       INSTANCE;
 
       public List<Field> getAllDeclaredFields(Class<?> clazz, IMemberFilter<Field> filter) {
@@ -354,7 +354,7 @@ public class Reflects {
       public boolean filter(T member);
    }
 
-   public static enum MethodFilter implements IMemberFilter<Method> {
+   public enum MethodFilter implements IMemberFilter<Method> {
       PUBLIC {
          public boolean filter(Method method) {
             return ModifierReflector.INSTANCE.isPublic(method);
@@ -374,7 +374,7 @@ public class Reflects {
       };
    }
 
-   public static enum MethodReflector {
+   public enum MethodReflector {
       INSTANCE;
 
       public Method getDeclaredMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
@@ -549,7 +549,7 @@ public class Reflects {
       }
    }
 
-   public static enum ModifierReflector {
+   public enum ModifierReflector {
       INSTANCE;
 
       public boolean isAbstract(Class<?> clazz) {
@@ -577,7 +577,7 @@ public class Reflects {
       }
    }
 
-   public static enum ResourceReflector {
+   public enum ResourceReflector {
       INSTANCE;
 
       public Properties getResource(Class<?> anchorClass, String resName) {

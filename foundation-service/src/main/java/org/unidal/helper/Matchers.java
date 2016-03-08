@@ -12,7 +12,7 @@ public class Matchers {
       return new StringTrie();
    }
 
-   public static enum StringMatcher {
+   public enum StringMatcher {
       CASE_SENSITIVE(true),
 
       CASE_INSENSITIVE(false);

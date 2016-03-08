@@ -198,7 +198,7 @@ public class XmlModelBuilder implements ModelBuilder {
       return str;
    }
 
-   static enum XmlBuilder {
+   enum XmlBuilder {
       ENTITY {
          @Override
          public void build(StringBuilder sb, String tag, Object value) {

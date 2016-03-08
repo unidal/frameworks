@@ -135,7 +135,7 @@ public class MVCFilter implements Filter {
       return uri;
    }
 
-   static enum Handlers implements TrieHandler {
+   enum Handlers implements TrieHandler {
       SKIP_REST {
          @Override
          public void handle(String str, int start, int end, boolean prefixOrSuffix, Object[] arguments) throws IOException,

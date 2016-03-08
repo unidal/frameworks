@@ -8,7 +8,7 @@ public class Lookups {
       return ClasspathLookup.INSTANCE;
    }
 
-   public static enum ClasspathLookup {
+   public enum ClasspathLookup {
       INSTANCE;
 
       public URL byResource(String resourceName) {
