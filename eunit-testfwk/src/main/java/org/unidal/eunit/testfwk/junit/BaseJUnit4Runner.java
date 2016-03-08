@@ -201,7 +201,7 @@ public abstract class BaseJUnit4Runner extends ParentRunner<Entry> implements IT
       }
 
       public boolean hasFailures() {
-         return m_exceptions.size() > 0;
+         return !m_exceptions.isEmpty();
       }
 
       @Override

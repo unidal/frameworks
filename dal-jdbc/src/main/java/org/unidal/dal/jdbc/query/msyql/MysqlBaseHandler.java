@@ -173,7 +173,7 @@ public abstract class MysqlBaseHandler {
             }
          }
 
-         if (prepareParameterValues && m_parameterValues.size() > 0) {
+         if (prepareParameterValues && !m_parameterValues.isEmpty()) {
             ctx.setParameterValues(m_parameterValues.toArray(new Object[0]));
          }
       }
