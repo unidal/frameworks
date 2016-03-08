@@ -12,11 +12,19 @@ public class Sockets {
       return new Server();
    }
 
+   /**
+    * @deprecated kept for backward compatibility 
+    * @return
+     */
    @Deprecated
    public static SocketClient forClient() {
       return new SocketClient();
    }
 
+   /**
+    * @deprecated kept for backward compatibility 
+    * @return
+     */
    @Deprecated
    public static SocketServer forServer() {
       return new SocketServer();
@@ -115,6 +123,9 @@ public class Sockets {
       }
    }
 
+    /**
+     * @deprecated kept for backward compatibility 
+     */
    @Deprecated
    public static class SocketClient {
       private int m_port;
@@ -152,6 +163,9 @@ public class Sockets {
       }
    }
 
+   /**
+    * @deprecated kept for backward compatibility 
+    */
    @Deprecated
    public static class SocketServer {
       private String m_host;

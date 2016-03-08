@@ -24,6 +24,9 @@ import org.unidal.helper.Threads;
 import org.unidal.helper.Threads.Task;
 import org.unidal.lookup.logger.LoggerFactory;
 
+/**
+ * @deprecated kept for backward compatibility 
+ */
 @Deprecated
 class MessageSender implements Task {
    private MessageDelegate m_delegate;

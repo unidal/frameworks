@@ -25,6 +25,9 @@ import org.jboss.netty.util.ThreadRenamingRunnable;
 import org.unidal.helper.Threads;
 import org.unidal.lookup.logger.LoggerFactory;
 
+/**
+ * @deprecated kept for backward compatibility 
+ */
 @Deprecated
 class MessageReceiver {
    private MessageDelegate m_delegate;
