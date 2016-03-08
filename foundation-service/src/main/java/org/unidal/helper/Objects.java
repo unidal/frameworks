@@ -85,7 +85,7 @@ public class Objects {
          if (value == null) {
             m_sb.append("null");
          } else {
-            String str = value.toString();
+            String str = value;
 
             int len = str.length();
 
@@ -557,7 +557,7 @@ public class Objects {
          if (value == null) {
             m_sb.append("null");
          } else {
-            String str = value.toString();
+            String str = value;
 
             int len = str.length();
 

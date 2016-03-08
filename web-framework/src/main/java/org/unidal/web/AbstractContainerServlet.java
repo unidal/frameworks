@@ -69,7 +69,7 @@ public abstract class AbstractContainerServlet extends HttpServlet {
 
 	protected <T> T lookup(Class<T> role, String roleHint) throws LookupException {
 		try {
-			return (T) m_container.lookup(role, roleHint == null ? "default" : roleHint.toString());
+			return (T) m_container.lookup(role, roleHint == null ? "default" : roleHint);
 		} catch (ComponentLookupException e) {
 			throw new LookupException("Component(" + role.getName() + ") lookup failure. details: " + e.getMessage(), e);
 		}

@@ -35,9 +35,9 @@ public abstract class ContainerHolder implements Contextualizable {
 
    protected <T> T lookup(Class<T> role, String roleHint) throws LookupException {
       try {
-         return (T) m_container.lookup(role, roleHint == null ? "default" : roleHint.toString());
+         return (T) m_container.lookup(role, roleHint == null ? "default" : roleHint);
       } catch (ComponentLookupException e) {
-         String key = role.getName() + ":" + (roleHint == null ? "default" : roleHint.toString());
+         String key = role.getName() + ":" + (roleHint == null ? "default" : roleHint);
 
          throw new LookupException("Unable to lookup component(" + key + ").", e);
       }
@@ -51,7 +51,7 @@ public abstract class ContainerHolder implements Contextualizable {
       try {
          return ContainerLoader.lookupById(role, roleHint, id);
       } catch (ComponentLookupException e) {
-         String key = role.getName() + ":" + (roleHint == null ? "default" : roleHint.toString()) + "@" + id;
+         String key = role.getName() + ":" + (roleHint == null ? "default" : roleHint) + "@" + id;
 
          throw new LookupException("Unable to lookup component(" + key + ").", e);
       }
