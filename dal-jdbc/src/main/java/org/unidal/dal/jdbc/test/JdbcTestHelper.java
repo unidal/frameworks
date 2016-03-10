@@ -65,7 +65,7 @@ public class JdbcTestHelper extends ContainerHolder {
    public void dumpDeltaTo(String dataSource, String dataXml, String deltaXml, String... tables) throws Exception {
       if (tables.length > 0) {
          DatabaseDumper dumper = lookup(DatabaseDumper.class);
-         DatabaseModel model = null;
+         DatabaseModel model;
 
          if (dataXml != null) {
             File base = getTestResourceFile(dataXml);

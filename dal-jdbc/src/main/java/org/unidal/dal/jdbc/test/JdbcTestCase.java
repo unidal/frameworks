@@ -69,7 +69,7 @@ public abstract class JdbcTestCase extends ComponentTestCase {
       if (tables.length > 0) {
          DatabaseDumper dumper = lookup(DatabaseDumper.class);
          String ds = getDefaultDataSource();
-         DatabaseModel model = null;
+         DatabaseModel model;
 
          if (dataXml != null) {
             File base = getTestResourceFile(dataXml);

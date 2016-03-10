@@ -41,7 +41,7 @@ public class MVC extends AbstractContainerServlet {
 
    private void initializeCat(ServletConfig config) {
       String catClientXml = config.getInitParameter("cat-client-xml");
-      File clientXmlFile = null;
+      File clientXmlFile;
 
       if (catClientXml == null) {
          clientXmlFile = new File(Cat.getCatHome(), "config/client.xml");

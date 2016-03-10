@@ -105,7 +105,7 @@ public class Reflects {
        * @return class from current context class loader
        */
       public Class<?> getClass2(String className, ClassLoader classloader) {
-         Class<?> clazz = null;
+         Class<?> clazz;
          String name = className;
 
          while (true) {

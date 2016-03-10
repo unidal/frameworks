@@ -80,7 +80,7 @@ public class DataSourceTestHelper extends ContainerHolder implements LogEnabled 
       if (tables.length > 0) {
          DatabaseDumper dumper = lookup(DatabaseDumper.class);
          String ds = getDefaultDataSource();
-         DatabaseModel model = null;
+         DatabaseModel model;
 
          if (baseXmlFile != null) {
             File base = getTestResourceFile(baseXmlFile);
