@@ -13,6 +13,10 @@ public @interface Inject {
 
    String[] value() default {};
 
+   /**
+    * @deprecated kept for backward compatibility 
+    * @return
+     */
    @Deprecated
    String instantiationStrategy() default "";
 
