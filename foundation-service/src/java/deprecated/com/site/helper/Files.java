@@ -25,7 +25,7 @@ public class Files {
       return Zip.INSTANCE;
    }
 
-   public static enum AutoClose {
+   public enum AutoClose {
       NONE,
 
       INPUT,
@@ -59,7 +59,7 @@ public class Files {
       }
    }
 
-   public static enum Dir {
+   public enum Dir {
       INSTANCE;
 
       public void copyDir(File from, File to) throws IOException {
@@ -118,7 +118,7 @@ public class Files {
       }
    }
 
-   public static enum IO {
+   public enum IO {
       INSTANCE;
 
       public void copy(InputStream is, OutputStream os) throws IOException {
@@ -226,7 +226,7 @@ public class Files {
       }
    }
 
-   public static enum Zip {
+   public enum Zip {
       INSTANCE;
 
       public List<String> copyDir(ZipInputStream zis, File baseDir) throws IOException {

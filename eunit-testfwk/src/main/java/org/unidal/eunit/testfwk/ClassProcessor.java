@@ -168,7 +168,7 @@ public class ClassProcessor implements IClassProcessor {
       public Collection<Method> getMethods(Class<?> clazz);
    }
 
-   static enum Scanner implements IScanner {
+   enum Scanner implements IScanner {
       INSTANCE;
 
       protected void collectFields(Map<String, Field> result, Class<?> clazz) {

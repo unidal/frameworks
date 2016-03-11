@@ -9,7 +9,7 @@ public class Counters {
       return StringCounter.CASE_SENSITIVE;
    }
 
-   public static enum CharCounter {
+   public enum CharCounter {
       CASE_SENSITIVE(true),
 
       CASE_INSENSITIVE(false);
@@ -44,7 +44,7 @@ public class Counters {
       }
    }
 
-   public static enum StringCounter {
+   public enum StringCounter {
       CASE_SENSITIVE(true),
 
       CASE_INSENSITIVE(false);

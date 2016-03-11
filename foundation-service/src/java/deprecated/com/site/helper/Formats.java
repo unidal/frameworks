@@ -13,7 +13,7 @@ public class Formats {
 		return ObjectFormat.INSTANCE;
 	}
 
-	public static enum NumberFormat {
+	public enum NumberFormat {
 		INSTANCE;
 
 		public String percentage(double divisor, double divident, int precision) {
@@ -112,7 +112,7 @@ public class Formats {
 		}
 	}
 
-	public static enum ObjectFormat {
+	public enum ObjectFormat {
 		INSTANCE;
 
 		public String shorten(String str, int maxLength) {

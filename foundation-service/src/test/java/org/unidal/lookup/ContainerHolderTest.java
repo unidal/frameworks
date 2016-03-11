@@ -195,7 +195,7 @@ public class ContainerHolderTest extends ComponentTestCase {
    public static class MockContainer extends ContainerHolder {
    }
 
-   public static enum MockEnum implements MockInterface, RoleHintEnabled {
+   public enum MockEnum implements MockInterface, RoleHintEnabled {
       FIELD1,
 
       FIELD2;

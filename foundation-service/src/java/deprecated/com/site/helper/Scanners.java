@@ -30,7 +30,7 @@ public class Scanners {
 		}
 	}
 
-	public static enum DirScanner {
+	public enum DirScanner {
 		INSTANCE;
 
 		public List<File> scan(File base, IMatcher<File> matcher) {
@@ -130,7 +130,7 @@ public class Scanners {
 
 		public Direction matches(T base, String path);
 
-		public static enum Direction {
+		public enum Direction {
 			MATCHED,
 
 			DOWN,
@@ -151,7 +151,7 @@ public class Scanners {
 		}
 	}
 
-	public static enum JarScanner {
+	public enum JarScanner {
 		INSTANCE;
 
 		public ZipEntry getEntry(String jarFileName, String name) {

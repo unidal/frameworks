@@ -12,7 +12,7 @@ public class Transformers {
 		public T build(S from);
 	}
 
-	public static enum ListTransformer {
+	public enum ListTransformer {
 		INSTANCE;
 
 		public <S, T> List<T> transform(List<S> fromList, IBuilder<S, T> builder) {
