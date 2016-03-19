@@ -219,6 +219,40 @@ public class Scanners {
          return files;
       }
 
+      public List<String> scan(ZipFile zipFile, IMatcher<ZipEntry> matcher) {
+         List<String> files = new ArrayList<String>();
+         scanForEntries(zipFile, matcher, false, files);
+
+         return files;
+      }
+
+      private void scanForEntries(ZipFile zipFile, IMatcher<ZipEntry> matcher, boolean foundFirst, List<String> names) {
+         Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+         while (entries.hasMoreElements()) {
+            ZipEntry entry = entries.nextElement();
+            String name = entry.getName();
+
+            if (matcher.isDirEligible() && entry.isDirectory()) {
+               IMatcher.Direction direction = matcher.matches(entry, name);
+
+               if (direction.isMatched()) {
+                  names.add(name);
+               }
+            } else if (matcher.isFileElegible() && !entry.isDirectory()) {
+               IMatcher.Direction direction = matcher.matches(entry, name);
+
+               if (direction.isMatched()) {
+                  names.add(name);
+               }
+            }
+
+            if (foundFirst && names.size() > 0) {
+               break;
+            }
+         }
+      }
+
       private void scanForFiles(File jarFile, IMatcher<File> matcher, boolean foundFirst, List<String> names) {
          ZipFile zipFile = null;
 
@@ -267,5 +301,19 @@ public class Scanners {
             return files.get(0);
          }
       }
+   }
+
+   public static abstract class ZipEntryMatcher implements IMatcher<ZipEntry> {
+      @Override
+      public boolean isDirEligible() {
+         return false;
+      }
+
+      @Override
+      public boolean isFileElegible() {
+         return true;
+      }
+
+      public abstract Direction matches(ZipEntry entry, String path);
    }
 }

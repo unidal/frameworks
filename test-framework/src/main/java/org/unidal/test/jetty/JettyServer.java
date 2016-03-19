@@ -51,7 +51,11 @@ public abstract class JettyServer extends ContainerHolder {
    protected abstract int getServerPort();
 
    protected File getWarRoot() {
-      if (isWebXmlDefined()) {
+      String warRoot = System.getProperty("warRoot");
+
+      if (warRoot != null) {
+         return new File(warRoot);
+      } else if (isWebXmlDefined()) {
          return new File("src/main/webapp");
       } else {
          // try to mock the web.xml
@@ -112,7 +116,7 @@ public abstract class JettyServer extends ContainerHolder {
    protected void waitForAnyKey() throws IOException {
       String timestamp = new SimpleDateFormat("MM-dd HH:mm:ss.SSS").format(new Date());
 
-      System.out.println(String.format("[%s] [INFO] Press any key to stop server ... ", timestamp));
+      System.out.println(String.format("[%s] [INFO] Press ENTER to stop server ... ", timestamp));
       System.in.read();
    }
 }
