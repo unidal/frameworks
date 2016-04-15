@@ -58,12 +58,16 @@ public class TimedConsoleLogger extends AbstractLogger implements Logger {
          // IllegalArgumentException will be thrown for invalid pattern
          m_logFileFormat.format(new Object[] { new Date() });
       }
+   }
 
+   private boolean isDevMode() {
       // override by command line
       String mode = System.getProperty("devMode", "false");
 
       if ("true".equals(mode)) {
-         m_devMode = true;
+         return true;
+      } else {
+         return m_devMode;
       }
    }
 
@@ -181,7 +185,7 @@ public class TimedConsoleLogger extends AbstractLogger implements Logger {
       try {
          String timedMessage = getTimedMessage(severity, message);
 
-         if (m_devMode || m_logFilePattern == null || m_logFilePattern.length() == 0) {
+         if (isDevMode() || m_logFilePattern == null || m_logFilePattern.length() == 0) {
             System.out.println(timedMessage);
 
             if (throwable != null) {

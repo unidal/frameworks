@@ -153,6 +153,8 @@ public abstract class ComponentTestCase extends ContainerHolder {
       m_container = (MutablePlexusContainer) ContainerLoader.getDefaultContainer(getConfiguration());
       m_container.getComponentRegistry().registerComponentManagerFactory(new EnumComponentManagerFactory());
 
+      System.setProperty("devMode", "true");
+
       super.setContainer(m_container);
    }
 
