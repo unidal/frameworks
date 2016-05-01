@@ -103,13 +103,13 @@ public class ModelManager extends ContainerHolder implements Initializable {
 
       if (existing != null) {
          if (existing.getActionMethod().getName().equals(method.getName())
-               && existing.getActionMethod().getDeclaringClass() == method.getDeclaringClass()) {
+               && existing.getActionMethod().getDeclaringClass().equals(method.getDeclaringClass())) {
             return existing;
          }
 
-         throw new RuntimeException(String.format("Duplicated name(%s) found between %s() of %s and %s() of %s",
-               inMeta.name(), method.getName(), method.getDeclaringClass(), existing.getActionMethod().getName(),
-               module.getModuleClass()));
+         throw new RuntimeException(String.format("Duplicated name(%s) found between %s.%s() and %s.%s()",
+               inMeta.name(), method.getDeclaringClass().getName(), method.getName(), existing.getActionMethod()
+                     .getDeclaringClass().getName(), existing.getActionMethod().getName()));
       }
 
       assertParameter(method);

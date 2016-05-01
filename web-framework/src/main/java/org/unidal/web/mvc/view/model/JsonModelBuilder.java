@@ -1,219 +1,88 @@
 package org.unidal.web.mvc.view.model;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Map;
 
-import org.unidal.helper.Objects;
-import org.unidal.helper.Objects.JsonBuilder;
 import org.unidal.lookup.annotation.Named;
-import org.unidal.web.mvc.view.annotation.AttributeMeta;
-import org.unidal.web.mvc.view.annotation.ElementMeta;
-import org.unidal.web.mvc.view.annotation.EntityMeta;
-import org.unidal.web.mvc.view.annotation.PojoMeta;
+
+import com.google.gson.FieldNamingStrategy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 @Named(type = ModelBuilder.class, value = "json")
 public class JsonModelBuilder implements ModelBuilder {
+   private FieldNamingStrategy m_fieldNamingStrategy = new FieldNamingStrategy() {
+      @Override
+      public String translateName(Field f) {
+         String name = f.getName();
+
+         if (name.startsWith("m_")) {
+            return name.substring(2);
+         } else {
+            return name;
+         }
+      }
+   };
+
    @Override
    public String build(ModelDescriptor descriptor, Object model) {
-      JsonBuilder sb = Objects.newJsonBuilder(8192);
+      Gson gson = new GsonBuilder() //
+            .registerTypeAdapter(Timestamp.class, new TimestampTypeAdapter()) //
+            .registerTypeAdapter(Double.class, new DoubleTypeAdapter()) //
+            .setDateFormat("yyyy-MM-dd HH:mm:ss") //
+            .setFieldNamingStrategy(m_fieldNamingStrategy) //
+            .setPrettyPrinting() //
+            .create();
 
-      sb.raw("{");
-      buildAttributes(sb, descriptor, model);
-      buildElements(sb, descriptor, model);
-      buildEntities(sb, descriptor, model);
-      buildPojos(sb, descriptor, model);
-
-      sb.trimComma();
-      sb.raw("}\r\n");
-
-      return sb.toString();
+      return gson.toJson(model);
    }
 
-   private void buildAttributes(JsonBuilder sb, ModelDescriptor descriptor, Object model) {
-      for (Field field : descriptor.getAttributeFields()) {
-         AttributeMeta attribute = field.getAnnotation(AttributeMeta.class);
-         Object value = getFieldValue(field, model);
+   static class DoubleTypeAdapter implements JsonSerializer<Double> {
+      @Override
+      public JsonElement serialize(Double d, Type type, JsonSerializationContext context) {
+         DecimalFormat format = new DecimalFormat("0.0000");
+         String temp = format.format(d);
+         JsonPrimitive pri = new JsonPrimitive(temp);
 
-         if (value != null) {
-            String name = getNormalizedName(attribute.value(), field);
-            String str = getString(value, attribute.format());
-
-            sb.key(name).colon().value(str).comma();
-         }
+         return pri;
       }
    }
 
-   @SuppressWarnings("unchecked")
-   private void buildElements(JsonBuilder sb, ModelDescriptor descriptor, Object model) {
-      for (Field field : descriptor.getElementFields()) {
-         ElementMeta element = field.getAnnotation(ElementMeta.class);
-         Object value = getFieldValue(field, model);
+   static class TimestampTypeAdapter implements JsonSerializer<Timestamp>, JsonDeserializer<Timestamp> {
+      private DateFormat m_format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-         if (value != null) {
-            String name = getNormalizedName(element.value(), field);
-
-            sb.key(name).colon();
-
-            if (element.multiple()) {
-               sb.raw("[");
-
-               if (value instanceof Collection) {
-                  for (Object item : (Collection<Object>) value) {
-                     if (item != null) {
-                        String str = getString(item, element.format());
-
-                        sb.value(str).comma();
-                     }
-                  }
-               } else if (value.getClass().isArray()) {
-                  int len = Array.getLength(value);
-
-                  for (int i = 0; i < len; i++) {
-                     Object item = Array.get(value, i);
-
-                     if (item != null) {
-                        String str = getString(item, element.format());
-
-                        sb.value(str).comma();
-                     }
-                  }
-               } else if (value instanceof Map) {
-                  for (Object item : ((Map<Object, Object>) value).values()) {
-                     if (item != null) {
-                        String str = getString(item, element.format());
-
-                        sb.value(str).comma();
-                     }
-                  }
-               } else {
-                  throw new UnsupportedOperationException(String.format(
-                        "%s(multiple=true) is not support for type(%s)", ElementMeta.class.getSimpleName(),
-                        value.getClass()));
-               }
-
-               sb.trimComma();
-               sb.raw("]").comma();
-            } else {
-               String str = getString(value, element.format());
-
-               sb.value(str).comma();
-            }
-         }
-      }
-   }
-
-   @SuppressWarnings("unchecked")
-   private void buildEntities(JsonBuilder sb, ModelDescriptor descriptor, Object model) {
-      for (Field field : descriptor.getEntityFields()) {
-         EntityMeta entity = field.getAnnotation(EntityMeta.class);
-         Object value = getFieldValue(field, model);
-
-         if (value != null) {
-            String name = getNormalizedName(entity.value(), field);
-
-            sb.key(name).colon();
-
-            if (entity.multiple()) {
-               sb.raw("[");
-
-               if (value instanceof Collection) {
-                  for (Object item : (Collection<Object>) value) {
-                     if (item != null) {
-                        sb.raw(String.format("%#s", item)).comma();
-                     }
-                  }
-               } else if (value.getClass().isArray()) {
-                  int len = Array.getLength(value);
-
-                  for (int i = 0; i < len; i++) {
-                     Object item = Array.get(value, i);
-
-                     if (item != null) {
-                        sb.raw(String.format("%#s", item)).comma();
-                     }
-                  }
-               } else if (value instanceof Map) {
-                  for (Object item : ((Map<Object, Object>) value).values()) {
-                     if (item != null) {
-                        sb.raw(String.format("%#s", item)).comma();
-                     }
-                  }
-               } else {
-                  throw new UnsupportedOperationException(String.format(
-                        "%s(multiple=true) is not support for type(%s)", EntityMeta.class.getSimpleName(),
-                        value.getClass()));
-               }
-
-               sb.trimComma();
-               sb.raw("]");
-            } else {
-               sb.raw(String.format("%#s", value)).comma();
-            }
-         }
-      }
-   }
-
-   private void buildPojos(JsonBuilder sb, ModelDescriptor descriptor, Object model) {
-      for (Field field : descriptor.getPojoFields()) {
-         PojoMeta entity = field.getAnnotation(PojoMeta.class);
-         Object value = getFieldValue(field, model);
-
-         if (value != null) {
-            String name = getNormalizedName(entity.value(), field);
-            String str = Objects.forJson().from(value);
-
-            sb.key(name).colon().value(str).comma();
-         }
-      }
-   }
-
-   private Object getFieldValue(Field field, Object instance) {
-      try {
-         if (!field.isAccessible()) {
-            field.setAccessible(true);
+      public Timestamp deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+            throws JsonParseException {
+         if (!(json instanceof JsonPrimitive)) {
+            throw new JsonParseException("The date should be a string value");
          }
 
-         return field.get(instance);
-      } catch (Exception e) {
-         throw new RuntimeException(String.format("Error when getting value of field(%s) of %s", field.getName(),
-               instance.getClass()));
-      }
-   }
+         try {
+            Date date = m_format.parse(json.getAsString());
 
-   private String getNormalizedName(String name, Field field) {
-      if (name.length() > 0) {
-         return name;
-      }
-
-      String fieldName = field.getName();
-
-      if (fieldName.startsWith("m_")) {
-         return fieldName.substring(2);
-      } else {
-         return fieldName;
-      }
-   }
-
-   private String getString(Object value, String format) {
-      String str;
-
-      if (format != null && format.length() > 0) {
-         if (value instanceof Date) {
-            str = new SimpleDateFormat(format).format(value);
-         } else if (value instanceof Number) {
-            str = new DecimalFormat(format).format(value);
-         } else {
-            str = value.toString();
+            return new Timestamp(date.getTime());
+         } catch (ParseException e) {
+            throw new JsonParseException(e);
          }
-      } else {
-         str = value.toString();
       }
 
-      return str;
+      public JsonElement serialize(Timestamp src, Type arg1, JsonSerializationContext arg2) {
+         String str = m_format.format(src);
+
+         return new JsonPrimitive(str);
+      }
    }
 }

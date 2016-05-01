@@ -3,11 +3,11 @@ package org.unidal.web.mvc;
 import org.unidal.web.mvc.lifecycle.RequestContext;
 
 public abstract class ViewModel<P extends Page, A extends Action, M extends ActionContext<?>> {
-	private M m_actionContext;
+	private transient M m_actionContext;
 
-	private P m_page;
+	private transient P m_page;
 
-	private A m_action;
+	private transient A m_action;
 
 	public ViewModel(M actionContext) {
 		m_actionContext = actionContext;
