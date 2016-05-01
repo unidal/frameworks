@@ -65,14 +65,8 @@ public class DefaultInboundActionHandler extends ContainerHolder implements Inbo
             validator.validate(ctx);
          }
 
-         if (m_payloadClass != null) {
-            RequestContext requestContext = ctx.getRequestContext();
-            ActionPayload payload = createInstance(m_payloadClass);
-
-            payload.setPage(requestContext.getAction());
-            m_payloadProvider.process(requestContext.getUrlMapping(), requestContext.getParameterProvider(), payload);
-            payload.validate(ctx);
-            ctx.setPayload(payload);
+         if (ctx.getPayload() == null) {
+            preparePayload(ctx);
          }
 
          for (Validator<ActionContext<?>> validator : m_validators) {
@@ -116,6 +110,19 @@ public class DefaultInboundActionHandler extends ContainerHolder implements Inbo
       prepareValidators(inboundAction);
 
       m_logger.debug(getClass().getSimpleName() + " initialized for  " + inboundAction.getActionName());
+   }
+
+   @Override
+   public void preparePayload(ActionContext ctx) {
+      if (m_payloadClass != null) {
+         RequestContext requestContext = ctx.getRequestContext();
+         ActionPayload payload = createInstance(m_payloadClass);
+
+         payload.setPage(requestContext.getAction());
+         m_payloadProvider.process(requestContext.getUrlMapping(), requestContext.getParameterProvider(), payload);
+         payload.validate(ctx);
+         ctx.setPayload(payload);
+      }
    }
 
    private void prepareValidators(InboundActionModel inboundAction) {

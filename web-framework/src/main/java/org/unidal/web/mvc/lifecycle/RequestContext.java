@@ -125,4 +125,12 @@ public class RequestContext {
    public void setUrlMapping(UrlMapping urlMapping) {
       m_urlMapping = urlMapping;
    }
+
+   @Override
+   public String toString() {
+      String handlerClassName = m_inboundAction.getActionMethod().getDeclaringClass().getName();
+      String actionName = m_inboundAction.getActionName();
+
+      return String.format("%s[action=%s, handler=%s]", getClass().getSimpleName(), actionName, handlerClassName);
+   }
 }

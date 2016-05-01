@@ -8,4 +8,6 @@ public interface InboundActionHandler {
    public void handle(ActionContext<?> context) throws ActionException;
 
    public void initialize(InboundActionModel inboundAction);
+
+   public void preparePayload(ActionContext<?> ctx);
 }
