@@ -121,6 +121,11 @@ public class Threads {
       }
 
       @Override
+      public void enableLogging(Logger logger) {
+         m_logger = logger;
+      }
+
+      @Override
       public void onThreadGroupCreated(ThreadGroup group, String name) {
          m_logger.info(String.format("Thread group(%s) created.", name));
       }
@@ -144,11 +149,6 @@ public class Threads {
       public boolean onUncaughtException(Thread thread, Throwable e) {
          m_logger.error(String.format("Uncaught exception thrown out of thread(%s)!", thread.getName()), e);
          return true;
-      }
-
-      @Override
-      public void enableLogging(Logger logger) {
-         m_logger = logger;
       }
    }
 
@@ -328,10 +328,6 @@ public class Threads {
          m_deamon = true;
       }
 
-      public boolean isActive() {
-         return m_active;
-      }
-
       public void awaitTermination(long time, TimeUnit unit) {
          long remaining = unit.toNanos(time);
 
@@ -364,6 +360,10 @@ public class Threads {
 
       public ThreadGroup getThreadGroup() {
          return m_threadGroup;
+      }
+
+      public boolean isActive() {
+         return m_active;
       }
 
       public ThreadGroupManager nonDaemon() {

@@ -27,5 +27,50 @@
 			<role-hint>logger</role-hint>
 			<implementation>org.unidal.helper.Threads$LoggerThreadListener</implementation>
 		</component>
+		<component>
+			<role>org.unidal.net.ClientTransport</role>
+			<implementation>org.unidal.net.transport.DefaultClientTransport</implementation>
+			<instantiation-strategy>per-lookup</instantiation-strategy>
+			<requirements>
+				<requirement>
+					<role>org.unidal.net.transport.ClientTransportHandler</role>
+				</requirement>
+			</requirements>
+		</component>
+		<component>
+			<role>org.unidal.net.ServerTransport</role>
+			<implementation>org.unidal.net.transport.DefaultServerTransport</implementation>
+			<instantiation-strategy>per-lookup</instantiation-strategy>
+			<requirements>
+				<requirement>
+					<role>org.unidal.net.transport.ServerTransportHandler</role>
+				</requirement>
+			</requirements>
+		</component>
+		<component>
+			<role>org.unidal.net.transport.ClientTransportHandler</role>
+			<implementation>org.unidal.net.transport.ClientTransportHandler</implementation>
+			<instantiation-strategy>per-lookup</instantiation-strategy>
+			<requirements>
+				<requirement>
+					<role>org.unidal.net.TransportRepository</role>
+				</requirement>
+			</requirements>
+		</component>
+		<component>
+			<role>org.unidal.net.transport.ServerTransportHandler</role>
+			<implementation>org.unidal.net.transport.ServerTransportHandler</implementation>
+			<instantiation-strategy>per-lookup</instantiation-strategy>
+			<requirements>
+				<requirement>
+					<role>org.unidal.net.TransportRepository</role>
+				</requirement>
+			</requirements>
+		</component>
+		<component>
+			<role>org.unidal.net.TransportRepository</role>
+			<implementation>org.unidal.net.transport.DefaultTransportRepository</implementation>
+			<instantiation-strategy>per-lookup</instantiation-strategy>
+		</component>
 	</components>
 </plexus>

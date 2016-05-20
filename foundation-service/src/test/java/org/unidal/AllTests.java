@@ -17,7 +17,6 @@ import org.unidal.lookup.ContainerLoaderTest;
 import org.unidal.lookup.PlexusContainerTest;
 import org.unidal.lookup.configuration.ConfiguratorTest;
 import org.unidal.lookup.logger.TimedConsoleLoggerTest;
-import org.unidal.net.SocketsTest;
 import org.unidal.tuple.TupleTest;
 
 @RunWith(Suite.class)
@@ -50,8 +49,6 @@ ContainerLoaderTest.class,
 PlexusContainerTest.class,
 
 TimedConsoleLoggerTest.class,
-
-SocketsTest.class,
 
 TupleTest.class
 

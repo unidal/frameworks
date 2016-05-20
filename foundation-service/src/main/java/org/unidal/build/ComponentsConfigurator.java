@@ -10,6 +10,11 @@ import org.unidal.initialization.DefaultModuleInitializer;
 import org.unidal.initialization.DefaultModuleManager;
 import org.unidal.lookup.configuration.AbstractResourceConfigurator;
 import org.unidal.lookup.configuration.Component;
+import org.unidal.net.transport.ClientTransportHandler;
+import org.unidal.net.transport.DefaultClientTransport;
+import org.unidal.net.transport.DefaultServerTransport;
+import org.unidal.net.transport.DefaultTransportRepository;
+import org.unidal.net.transport.ServerTransportHandler;
 
 class ComponentsConfigurator extends AbstractResourceConfigurator {
    @Override
@@ -21,6 +26,12 @@ class ComponentsConfigurator extends AbstractResourceConfigurator {
       all.add(A(DefaultModuleContext.class));
       all.add(A(DateFormatter.class));
       all.add(A(LoggerThreadListener.class));
+
+      all.add(A(DefaultClientTransport.class));
+      all.add(A(DefaultServerTransport.class));
+      all.add(A(ClientTransportHandler.class));
+      all.add(A(ServerTransportHandler.class));
+      all.add(A(DefaultTransportRepository.class));
 
       return all;
    }
