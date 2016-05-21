@@ -57,6 +57,7 @@
 		<attribute name="name" value-type="String" />
 		<attribute name="format" value-type="String" />
 		<attribute name="file" value-type="boolean" />
+		<attribute name="raw" value-type="boolean" />
 		<attribute name="defaultValue" value-type="String" />
 		<attribute name="multipleValues" value-type="boolean" />
 		<element name="field" value-type="java.lang.reflect.Field" render="false"/>

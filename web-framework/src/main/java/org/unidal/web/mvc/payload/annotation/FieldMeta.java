@@ -15,7 +15,9 @@ public @interface FieldMeta {
 
    String format() default "";
 
-   boolean file() default false;
+   boolean file() default false; // file of multipart/form-data
+
+   boolean raw() default false; // raw request content
 
    String value();
 }

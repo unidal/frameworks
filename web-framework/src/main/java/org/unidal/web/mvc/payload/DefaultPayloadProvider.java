@@ -256,7 +256,13 @@ public class DefaultPayloadProvider extends ContainerHolder implements PayloadPr
          throws IOException {
       String name = fieldModel.getName();
 
-      if (fieldModel.isMultipleValues()) {
+      if (fieldModel.isRaw()) {
+         InputStream value = provider.getRequest().getInputStream();
+
+         if (value != null) {
+            injectFieldValue(payload, fieldModel, value);
+         }
+      } else if (fieldModel.isMultipleValues()) {
          String[] values = provider.getParameterValues(name);
 
          if (values == null && fieldModel.getDefaultValue() != null) {
@@ -383,6 +389,7 @@ public class DefaultPayloadProvider extends ContainerHolder implements PayloadPr
       payloadFieldModel.setName(fieldMeta.value());
       payloadFieldModel.setFormat(fieldMeta.format().length() == 0 ? null : fieldMeta.format());
       payloadFieldModel.setFile(fieldMeta.file());
+      payloadFieldModel.setRaw(fieldMeta.raw());
       payloadFieldModel.setField(field);
       payloadFieldModel.setMethod(getSetMethod(payloadClass, field));
       payloadFieldModel.setMultipleValues(isMultipleValues(field, payloadFieldModel.getMethod()));
@@ -390,6 +397,8 @@ public class DefaultPayloadProvider extends ContainerHolder implements PayloadPr
       if (payloadFieldModel.isFile()) {
          if (payloadFieldModel.isMultipleValues()) {
             throw new RuntimeException("Can't use file() and multiple values together!");
+         } else if (payloadFieldModel.isRaw()) {
+            throw new RuntimeException("Can't use file() and raw() together!");
          } else {
             Method m = payloadFieldModel.getMethod();
             Field f = payloadFieldModel.getField();
@@ -399,6 +408,15 @@ public class DefaultPayloadProvider extends ContainerHolder implements PayloadPr
             } else if (f != null && f.getType() != InputStream.class) {
                throw new RuntimeException("Only InputStream is allowed as type of " + f);
             }
+         }
+      } else if (payloadFieldModel.isRaw()) {
+         Method m = payloadFieldModel.getMethod();
+         Field f = payloadFieldModel.getField();
+
+         if (m != null && m.getParameterTypes()[0] != InputStream.class) {
+            throw new RuntimeException("Only InputStream is allowed as parameter type of " + m);
+         } else if (f != null && f.getType() != InputStream.class) {
+            throw new RuntimeException("Only InputStream is allowed as type of " + f);
          }
       }
 
