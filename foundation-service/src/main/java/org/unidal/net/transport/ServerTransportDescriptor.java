@@ -1,7 +1,6 @@
 package org.unidal.net.transport;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.ServerChannel;
@@ -10,6 +9,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 
@@ -24,7 +24,11 @@ public class ServerTransportDescriptor implements TransportDescriptor {
 
    private Map<ChannelOption<Object>, Object> m_options = new HashMap<ChannelOption<Object>, Object>();
 
-   private ChannelInitializer<Channel> m_initializer;
+   private Map<String, ChannelHandler> m_handlers = new LinkedHashMap<String, ChannelHandler>();
+
+   public void addHandler(String name, ChannelHandler handler) {
+      m_handlers.put(name, handler);
+   }
 
    public EventLoopGroup getBossGroup() {
       ThreadFactory factory = new ThreadFactory() {
@@ -62,6 +66,11 @@ public class ServerTransportDescriptor implements TransportDescriptor {
       return new NioEventLoopGroup(m_workerThreads, factory);
    }
 
+   @Override
+   public Map<String, ChannelHandler> getHandlers() {
+      return m_handlers;
+   }
+
    public InetSocketAddress getLocalAddress() {
       return m_localAddress;
    }
@@ -94,15 +103,5 @@ public class ServerTransportDescriptor implements TransportDescriptor {
 
    @Override
    public void validate() {
-
-   }
-
-   public void setInitializer(ChannelInitializer<Channel> initializer) {
-      m_initializer = initializer;
-   }
-
-   @Override
-   public ChannelInitializer<Channel> getInitializer() {
-      return m_initializer;
    }
 }

@@ -5,9 +5,7 @@ import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +29,8 @@ public class TransportsTest {
             .option(ChannelOption.TCP_NODELAY, true) //
             .option(ChannelOption.SO_KEEPALIVE, true) //
             .withThreads(10) //
-            .start(new ChannelInitializer<Channel>() {
-               @Override
-               protected void initChannel(Channel ch) throws Exception {
-                  ChannelPipeline pipeline = ch.pipeline();
-
-                  pipeline.addLast("encoder", new MockMessageEncoder());
-               }
-            });
+            .handler("encoder", new MockMessageEncoder()) //
+            .start();
    }
 
    @Test
@@ -49,15 +41,9 @@ public class TransportsTest {
             .option(ChannelOption.SO_KEEPALIVE, true) //
             .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT) //
             .withBossThreads(1).withWorkerThreads(10) //
-            .start(new ChannelInitializer<Channel>() {
-               @Override
-               protected void initChannel(Channel ch) throws Exception {
-                  ChannelPipeline pipeline = ch.pipeline();
-
-                  pipeline.addLast("decoder", new MockMessageDecoder());
-                  pipeline.addLast("message", new MockMessageHandler());
-               }
-            });
+            .handler("decoder", new MockMessageDecoder()) //
+            .handler("message", new MockMessageHandler()) //
+            .start();
    }
 
    @Test
@@ -67,34 +53,21 @@ public class TransportsTest {
             .option(ChannelOption.TCP_NODELAY, true) //
             .option(ChannelOption.SO_KEEPALIVE, true) //
             .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT) //
-            .start(new ChannelInitializer<Channel>() {
-               @Override
-               protected void initChannel(Channel ch) throws Exception {
-                  ChannelPipeline pipeline = ch.pipeline();
-
-                  pipeline.addLast("decoder", new MockMessageDecoder());
-                  pipeline.addLast("encoder", new MockMessageEncoder());
-                  pipeline.addLast("message", new MockMessageHandler());
-               }
-            });
+            .handler("decoder", new MockMessageDecoder()) //
+            .handler("encoder", new MockMessageEncoder()) //
+            .handler("message", new MockMessageHandler()) //
+            .start();
 
       List<ClientTransport> cts = new ArrayList<ClientTransport>();
 
       for (int j = 0; j < 3; j++) {
-         ClientTransport ct = Transports.asClient().name("Test") //
-               .connect("localhost", 2345) //
+         ClientTransport ct = Transports.asClient().name("Test").connect("localhost", 2345) //
                .option(ChannelOption.TCP_NODELAY, true) //
                .option(ChannelOption.SO_KEEPALIVE, true) //
-               .start(new ChannelInitializer<Channel>() {
-                  @Override
-                  protected void initChannel(Channel ch) throws Exception {
-                     ChannelPipeline pipeline = ch.pipeline();
-
-                     pipeline.addLast("decoder", new MockMessageDecoder());
-                     pipeline.addLast("encoder", new MockMessageEncoder());
-                     pipeline.addLast("message", new MockMessageHandler());
-                  }
-               });
+               .handler("decoder", new MockMessageDecoder()) //
+               .handler("encoder", new MockMessageEncoder()) //
+               .handler("message", new MockMessageHandler()) //
+               .start();
 
          for (int i = 0; i < 10; i++) {
             ct.write("PING " + j + ":" + i);
@@ -104,8 +77,7 @@ public class TransportsTest {
       }
 
       st.write("Hello");
-
-      st.stop(500, TimeUnit.MILLISECONDS);
+      st.stop(300, TimeUnit.MILLISECONDS);
 
       for (ClientTransport ct : cts) {
          ct.stop(100, TimeUnit.MILLISECONDS);
@@ -118,7 +90,12 @@ public class TransportsTest {
       Assert.assertEquals(pings.toString(), pongs.toString());
    }
 
-   static class MockMessageDecoder extends FrameMessageDecoder<String> {
+   static class MockMessageDecoder extends FrameMessageDecoder<String> implements Cloneable {
+      @Override
+      public Object clone() throws CloneNotSupportedException {
+         return super.clone();
+      }
+
       @Override
       protected String frameToMessage(ChannelHandlerContext ctx, ByteBuf frame) {
          byte[] data = new byte[frame.readableBytes()];
@@ -128,19 +105,19 @@ public class TransportsTest {
       }
    }
 
-   static class MockMessageEncoder extends FrameMessageEncoder<String> {
+   static class MockMessageEncoder extends FrameMessageEncoder<String> implements Cloneable {
       @Override
       protected void messageToFrame(ChannelHandlerContext ctx, String msg, ByteBuf frame) {
          frame.writeBytes(msg.getBytes());
       }
    }
 
-   static class MockMessageHandler extends ChannelInboundHandlerAdapter {
+   static class MockMessageHandler extends ChannelInboundHandlerAdapter implements Cloneable {
       @Override
       public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
          Channel channel = ctx.channel();
          String str = String.valueOf(msg);
-         System.out.println("Message received from " + channel.remoteAddress() + ", content: " + str);
+         // System.out.println("Message received from " + channel.remoteAddress() + ", content: " + str);
 
          if (str.startsWith("PING ")) {
             AtomicInteger count = new AtomicInteger();

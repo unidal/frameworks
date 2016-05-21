@@ -3,10 +3,17 @@ package org.unidal.net.transport;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.ServerChannel;
+import io.netty.channel.group.ChannelGroup;
 
+import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -15,6 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
+import org.unidal.helper.Reflects;
 import org.unidal.helper.Threads.Task;
 import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.annotation.Named;
@@ -58,7 +66,7 @@ public class ServerTransportHandler implements Task, LogEnabled {
       Class<? extends ServerChannel> channelClass = m_descriptor.getChannelClass();
 
       bootstrap.group(bossGroup, workerGroup).channel(channelClass);
-      bootstrap.childHandler(m_descriptor.getInitializer());
+      bootstrap.childHandler(new ServerChannelInitializer());
 
       for (Map.Entry<ChannelOption<Object>, Object> e : m_descriptor.getOptions().entrySet()) {
          bootstrap.childOption(e.getKey(), e.getValue());
@@ -120,6 +128,49 @@ public class ServerTransportHandler implements Task, LogEnabled {
          return m_repository.put(message);
       } else {
          return false;
+      }
+   }
+
+   private static class ServerChannelManager extends ChannelInboundHandlerAdapter {
+      private ChannelGroup m_group;
+
+      public ServerChannelManager(ChannelGroup group) {
+         m_group = group;
+      }
+
+      @Override
+      public void channelActive(ChannelHandlerContext ctx) throws Exception {
+         m_group.add(ctx.channel());
+
+         super.channelActive(ctx);
+      }
+
+      @Override
+      public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+         super.channelInactive(ctx);
+
+         m_group.remove(ctx.channel());
+      }
+   }
+
+   class ServerChannelInitializer extends ChannelInitializer<Channel> {
+      @Override
+      protected void initChannel(Channel ch) throws Exception {
+         ChannelPipeline pipeline = ch.pipeline();
+
+         for (Map.Entry<String, ChannelHandler> e : m_descriptor.getHandlers().entrySet()) {
+            String name = e.getKey();
+            ChannelHandler handler = e.getValue();
+
+            if (handler instanceof Cloneable) {
+               Method method = Reflects.forMethod().getDeclaredMethod(Object.class, "clone");
+
+               method.setAccessible(true);
+               pipeline.addLast(name, (ChannelHandler) method.invoke(handler));
+            } else {
+               pipeline.addLast(name, handler);
+            }
+         }
       }
    }
 }

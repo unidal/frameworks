@@ -1,7 +1,6 @@
 package org.unidal.net.transport;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
 
 import java.net.InetSocketAddress;
@@ -27,6 +26,12 @@ public class DefaultClientTransport implements ClientTransport {
    }
 
    @Override
+   public ClientTransport handler(String name, ChannelHandler handler) {
+      m_desc.addHandler(name, handler);
+      return this;
+   }
+
+   @Override
    public ClientTransport name(String name) {
       m_desc.setName(name);
       return this;
@@ -40,8 +45,7 @@ public class DefaultClientTransport implements ClientTransport {
    }
 
    @Override
-   public ClientTransport start(ChannelInitializer<Channel> initializer) {
-      m_desc.setInitializer(initializer);
+   public ClientTransport start() {
       m_desc.validate();
       m_handler.setDescriptor(m_desc);
 

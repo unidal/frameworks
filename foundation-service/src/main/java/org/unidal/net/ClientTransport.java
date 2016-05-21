@@ -1,19 +1,20 @@
 package org.unidal.net;
 
-import java.util.concurrent.TimeUnit;
-
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
+
+import java.util.concurrent.TimeUnit;
 
 public interface ClientTransport {
    public ClientTransport connect(String host, int port);
+
+   public ClientTransport handler(String name, ChannelHandler handler);
 
    public ClientTransport name(String name);
 
    public <T> ClientTransport option(ChannelOption<T> option, T value);
 
-   public ClientTransport start(ChannelInitializer<Channel> initializer);
+   public ClientTransport start();
 
    public void stop(int timeout, TimeUnit unit) throws InterruptedException;
 
