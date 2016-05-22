@@ -25,6 +25,12 @@ public class DefaultServerTransport implements ServerTransport {
    }
 
    @Override
+   public ServerTransport handler(String name, ChannelHandler handler) {
+      m_desc.addHandler(name, handler);
+      return this;
+   }
+
+   @Override
    public ServerTransport name(String name) {
       m_desc.setName(name);
       return this;
@@ -43,6 +49,13 @@ public class DefaultServerTransport implements ServerTransport {
       m_handler.setDescriptor(m_desc);
 
       Threads.forGroup(m_desc.getName()).start(m_handler);
+
+      try {
+         m_handler.awaitWarmup();
+      } catch (InterruptedException e) {
+         // ignore it
+      }
+
       return this;
    }
 
@@ -67,11 +80,5 @@ public class DefaultServerTransport implements ServerTransport {
    @Override
    public boolean write(Object message) {
       return m_handler.write(message);
-   }
-
-   @Override
-   public ServerTransport handler(String name, ChannelHandler handler) {
-      m_desc.addHandler(name, handler);
-      return this;
    }
 }

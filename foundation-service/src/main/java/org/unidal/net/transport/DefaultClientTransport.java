@@ -50,6 +50,7 @@ public class DefaultClientTransport implements ClientTransport {
       m_handler.setDescriptor(m_desc);
 
       Threads.forGroup(m_desc.getName()).start(m_handler);
+      m_handler.awaitWarmup();
       return this;
    }
 

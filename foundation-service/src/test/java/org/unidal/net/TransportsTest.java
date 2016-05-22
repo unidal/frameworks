@@ -48,7 +48,7 @@ public class TransportsTest {
 
    @Test
    public void test() throws Exception {
-      ServerTransport st = Transports.asServer().name("Test").bind(2345) //
+      ServerTransport st = Transports.asServer().name("Cat").bind(2345) //
             .option(ChannelOption.SO_REUSEADDR, true) //
             .option(ChannelOption.TCP_NODELAY, true) //
             .option(ChannelOption.SO_KEEPALIVE, true) //
@@ -61,7 +61,7 @@ public class TransportsTest {
       List<ClientTransport> cts = new ArrayList<ClientTransport>();
 
       for (int j = 0; j < 3; j++) {
-         ClientTransport ct = Transports.asClient().name("Test").connect("localhost", 2345) //
+         ClientTransport ct = Transports.asClient().name("Cat").connect("localhost", 2345) //
                .option(ChannelOption.TCP_NODELAY, true) //
                .option(ChannelOption.SO_KEEPALIVE, true) //
                .handler("decoder", new MockMessageDecoder()) //
@@ -76,7 +76,9 @@ public class TransportsTest {
          cts.add(ct);
       }
 
-      st.write("Hello");
+      Thread.sleep(100);
+
+      // st.write("Hello");
       st.stop(300, TimeUnit.MILLISECONDS);
 
       for (ClientTransport ct : cts) {
@@ -142,17 +144,9 @@ public class TransportsTest {
       }
 
       @Override
-      public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
-         Channel channel = ctx.channel();
-
-         System.out.println("Client " + channel.remoteAddress() + " connected on " + channel.localAddress());
-      }
-
-      @Override
-      public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
-         Channel channel = ctx.channel();
-
-         System.out.println("Client " + channel.remoteAddress() + " disconnected on " + channel.localAddress());
+      public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+         ctx.channel().close();
+         cause.printStackTrace();
       }
    }
 }

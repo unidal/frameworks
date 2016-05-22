@@ -21,6 +21,7 @@ import org.unidal.helper.Threads.Task;
 import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.annotation.Named;
 import org.unidal.net.TransportRepository;
+import org.unidal.net.transport.handler.ClientStateHandler;
 
 @Named(type = ClientTransportHandler.class, instantiationStrategy = Named.PER_LOOKUP)
 public class ClientTransportHandler implements Task, LogEnabled {
@@ -35,7 +36,17 @@ public class ClientTransportHandler implements Task, LogEnabled {
 
    private CountDownLatch m_latch = new CountDownLatch(1);
 
+   private CountDownLatch m_warmup = new CountDownLatch(1);
+
    private Logger m_logger;
+
+   public void awaitWarmup() {
+      try {
+         m_warmup.await();
+      } catch (InterruptedException e) {
+         // ignore it
+      }
+   }
 
    public void awaitTermination(int timeout, TimeUnit unit) throws InterruptedException {
       m_latch.await(timeout, unit);
@@ -53,17 +64,25 @@ public class ClientTransportHandler implements Task, LogEnabled {
 
    @Override
    public void run() {
-      m_channelManager = new ClientChannelManager();
-      
       try {
+         m_channelManager = new ClientChannelManager();
+
+         while (m_channelManager.getActiveChannel() == null) {
+            TimeUnit.MILLISECONDS.sleep(1);
+         }
+
+         m_warmup.countDown();
+
          run0();
       } catch (Throwable e) {
          m_logger.error(e.getMessage(), e);
       } finally {
-         m_channelManager.close();
-      }
+         if (m_channelManager != null) {
+            m_channelManager.close();
+         }
 
-      m_latch.countDown();
+         m_latch.countDown();
+      }
    }
 
    private void run0() throws InterruptedException {
@@ -123,10 +142,12 @@ public class ClientTransportHandler implements Task, LogEnabled {
       return m_repository.put(message);
    }
 
-   class ClientChannelInitializer extends ChannelInitializer<Channel> {
+   private class ClientChannelInitializer extends ChannelInitializer<Channel> {
       @Override
       protected void initChannel(Channel ch) throws Exception {
          ChannelPipeline pipeline = ch.pipeline();
+
+         pipeline.addLast(new ClientStateHandler(m_descriptor.getName()));
 
          for (Map.Entry<String, ChannelHandler> e : m_descriptor.getHandlers().entrySet()) {
             pipeline.addLast(e.getKey(), e.getValue());
@@ -162,7 +183,7 @@ public class ClientTransportHandler implements Task, LogEnabled {
 
          m_bootstrap = bootstrap;
       }
-      
+
       public void close() {
          m_descriptor.getGroup().shutdownGracefully();
 
@@ -187,6 +208,8 @@ public class ClientTransportHandler implements Task, LogEnabled {
                      m_channel.close();
                   }
 
+                  // m_logger.info(String.format("Connected to %s server(%s:%s)", m_descriptor.getName(),
+                  // address.getHostName(), address.getPort()));
                   m_channel = future.channel();
                   m_index = i;
                   break;

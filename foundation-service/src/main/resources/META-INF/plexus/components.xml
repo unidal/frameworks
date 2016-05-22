@@ -61,11 +61,6 @@
 			<role>org.unidal.net.transport.ServerTransportHandler</role>
 			<implementation>org.unidal.net.transport.ServerTransportHandler</implementation>
 			<instantiation-strategy>per-lookup</instantiation-strategy>
-			<requirements>
-				<requirement>
-					<role>org.unidal.net.TransportRepository</role>
-				</requirement>
-			</requirements>
 		</component>
 		<component>
 			<role>org.unidal.net.TransportRepository</role>
