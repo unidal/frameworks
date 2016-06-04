@@ -7,6 +7,7 @@ import org.unidal.helper.BytesTest;
 import org.unidal.helper.CodesTest;
 import org.unidal.helper.DatesTest;
 import org.unidal.helper.FormatsTest;
+import org.unidal.helper.InetsTest;
 import org.unidal.helper.PropertiesTest;
 import org.unidal.helper.SplittersTest;
 import org.unidal.helper.StringizersTest;
@@ -29,6 +30,8 @@ CodesTest.class,
 DatesTest.class,
 
 FormatsTest.class,
+
+InetsTest.class,
 
 StringizersTest.class,
 
