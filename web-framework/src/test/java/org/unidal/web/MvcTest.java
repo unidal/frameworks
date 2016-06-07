@@ -36,17 +36,17 @@ public class MvcTest extends HttpTestCase {
 
    @Test
    public void testElse() throws Exception {
-      checkRequest("/book/else", "==>doElse==>no payload==>transition==>showList[]");
+      checkRequest("/book/else", "==>signin==>doElse==>no payload==>transition==>showList[]");
 
-      checkRequest("/book/else?id=1", "==>doElse==>no payload==>transition==>error:No method annotated by @"
+      checkRequest("/book/else?id=1", "==>signin==>doElse==>no payload==>transition==>error:No method annotated by @"
             + OutboundActionMeta.class.getSimpleName() + "(unknown) found in " + BookModule.class);
    }
 
    @Test
    public void testList() throws Exception {
-      checkRequest("/book/list", "==>doList==>transition==>showList[]");
-      checkRequest("/book/list/1", "==>doList==>transition==>showList[]");
+      checkRequest("/book/list", "==>signin==>doList==>transition==>showList[]");
+      checkRequest("/book/list/1", "==>signin==>doList==>transition==>showList[]");
 
-      checkRequest("/book/list?id=1", "==>doList==>error:Error occured during handling transition(default)");
+      checkRequest("/book/list?id=1", "==>signin==>doList==>error:Error occured during handling transition(default)");
    }
 }

@@ -15,12 +15,13 @@ import org.unidal.web.mvc.annotation.TransitionMeta;
 import org.unidal.web.mvc.annotation.ValidationMeta;
 
 @ModuleMeta(name = "book", defaultInboundAction = "list", defaultTransition = "default", defaultErrorAction = "default")
+@ValidationMeta({ SigninValidator.class })
 public class BookModule extends AbstractModule {
    @Inject
    private BookManager m_bookManager;
 
    @PayloadMeta(BookPayload.class)
-   @ValidationMeta({ SigninValidator.class, PermissionValidator.class })
+   @ValidationMeta({ PermissionValidator.class })
    @InboundActionMeta(name = "add")
    public void doAdd(BookContext ctx) throws IOException {
       if (!ctx.hasErrors()) {

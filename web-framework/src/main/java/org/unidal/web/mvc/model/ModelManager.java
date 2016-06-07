@@ -131,11 +131,22 @@ public class ModelManager extends ContainerHolder implements Initializable {
       if (payloadMeta != null) {
          inbound.setPayloadClass(payloadMeta.value());
       }
+      
+      ValidationMeta moduleValidationMeta = module.getModuleClass().getAnnotation(ValidationMeta.class);
+      if (moduleValidationMeta != null) {
+         for (Class<?> validationClass : moduleValidationMeta.value()) {
+            if (!inbound.getValidationClasses().contains(validationClass)) {
+               inbound.addValidationClass(validationClass);
+            }
+         }
+      }
 
-      ValidationMeta validationMeta = method.getAnnotation(ValidationMeta.class);
-      if (validationMeta != null) {
-         for (Class<?> validationClass : validationMeta.value()) {
-            inbound.addValidationClass(validationClass);
+      ValidationMeta actionValidationMeta = method.getAnnotation(ValidationMeta.class);
+      if (actionValidationMeta != null) {
+         for (Class<?> validationClass : actionValidationMeta.value()) {
+            if (!inbound.getValidationClasses().contains(validationClass)) {
+               inbound.addValidationClass(validationClass);
+            }
          }
       }
 

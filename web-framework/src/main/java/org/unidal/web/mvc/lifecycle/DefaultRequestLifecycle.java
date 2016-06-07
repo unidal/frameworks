@@ -156,7 +156,7 @@ public class DefaultRequestLifecycle implements RequestLifecycle, LogEnabled {
       ActionContext<?> actionContext = createActionContext(request, response, requestContext, inboundAction);
       Transaction t = Cat.getManager().getPeekTransaction();
 
-      if (t == null) { // in case of not CatFilter is configured
+      if (t == null) { // in case of no CatFilter is configured
          t = NullMessage.TRANSACTION;
       }
 
@@ -186,11 +186,7 @@ public class DefaultRequestLifecycle implements RequestLifecycle, LogEnabled {
 
          t.addData("out", actionContext.getOutboundAction());
          handleOutboundAction(module, actionContext);
-      } catch (ActionException e) {
-         handleException(request, e, actionContext);
-      } catch (Exception e) {
-         handleException(request, e, actionContext);
-      } catch (Error e) {
+      } catch (Throwable e) {
          handleException(request, e, actionContext);
       }
    }
