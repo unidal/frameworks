@@ -4,8 +4,10 @@ import java.io.File;
 
 import junit.framework.Assert;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class TimedConsoleLoggerTest {
    @Test
    public void testWithBaseDirRef() throws Exception {
