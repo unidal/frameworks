@@ -77,6 +77,7 @@ public class ThreadsTest {
    }
 
    @Test
+   @Ignore
    public void testThreadPool() throws InterruptedException {
       ExecutorService pool = Threads.forPool().getFixedThreadPool("Test", 10);
 
