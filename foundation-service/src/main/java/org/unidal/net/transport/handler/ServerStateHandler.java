@@ -23,7 +23,7 @@ public class ServerStateHandler extends ChannelInboundHandlerAdapter implements 
       Channel channel = ctx.channel();
       InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
 
-      m_logger.info(String.format("%s client(%s:%s) joined", m_name, address.getHostName(), address.getPort()));
+      m_logger.info(String.format("%s client at %s:%s joined", m_name, address.getHostName(), address.getPort()));
       super.channelActive(ctx);
    }
 
@@ -32,7 +32,7 @@ public class ServerStateHandler extends ChannelInboundHandlerAdapter implements 
       Channel channel = ctx.channel();
       InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
 
-      m_logger.info(String.format("%s client(%s:%s) left", m_name, address.getHostName(), address.getPort()));
+      m_logger.info(String.format("%s client at %s:%s left", m_name, address.getHostName(), address.getPort()));
       super.channelInactive(ctx);
    }
 

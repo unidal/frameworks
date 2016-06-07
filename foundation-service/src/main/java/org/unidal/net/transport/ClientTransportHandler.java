@@ -219,7 +219,7 @@ public class ClientTransportHandler implements Task, LogEnabled {
             return m_channel;
          } else {
             // closed by peer
-            if (m_channel.closeFuture().isSuccess()) {
+            if (m_channel != null && m_channel.closeFuture().isSuccess()) {
                // TODO
             }
 
@@ -244,7 +244,7 @@ public class ClientTransportHandler implements Task, LogEnabled {
                }
             }
 
-            if (m_channel.isOpen() && m_channel.isActive()) {
+            if (m_channel != null && m_channel.isOpen() && m_channel.isActive()) {
                return m_channel;
             } else {
                return null;

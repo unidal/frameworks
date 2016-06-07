@@ -3,9 +3,14 @@ package org.unidal.net;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
 
+import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
 public interface ClientTransport {
+   public ClientTransport connect(InetSocketAddress... addresses);
+
+   public ClientTransport connect(SocketAddressProvider provider);
+
    public ClientTransport connect(String host, int port);
 
    public ClientTransport handler(String name, ChannelHandler handler);

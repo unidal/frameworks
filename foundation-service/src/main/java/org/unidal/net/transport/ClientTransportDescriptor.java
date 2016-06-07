@@ -14,10 +14,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 
+import org.unidal.net.SocketAddressProvider;
+
 public class ClientTransportDescriptor implements TransportDescriptor {
    private String m_name;
 
-   private List<InetSocketAddress> m_remoteAddresses;
+   private SocketAddressProvider m_addressProvider;
 
    private int m_threads = 3;
 
@@ -66,15 +68,15 @@ public class ClientTransportDescriptor implements TransportDescriptor {
    }
 
    public List<InetSocketAddress> getRemoteAddresses() {
-      return m_remoteAddresses;
+      return m_addressProvider.getAddresses();
+   }
+
+   public void setAddressProvider(SocketAddressProvider addressProvider) {
+      m_addressProvider = addressProvider;
    }
 
    public void setName(String name) {
       m_name = name;
-   }
-
-   public void setRemoteAddresses(List<InetSocketAddress> remoteAddresses) {
-      m_remoteAddresses = remoteAddresses;
    }
 
    public void setThreads(int threads) {

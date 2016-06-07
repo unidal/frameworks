@@ -5,12 +5,14 @@ import io.netty.channel.ChannelOption;
 
 import java.net.InetSocketAddress;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.unidal.helper.Threads;
 import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.annotation.Named;
 import org.unidal.net.ClientTransport;
+import org.unidal.net.SocketAddressProvider;
 
 @Named(type = ClientTransport.class, instantiationStrategy = Named.PER_LOOKUP)
 public class DefaultClientTransport implements ClientTransport {
@@ -20,9 +22,28 @@ public class DefaultClientTransport implements ClientTransport {
    private ClientTransportDescriptor m_desc = new ClientTransportDescriptor();
 
    @Override
-   public ClientTransport connect(String host, int port) {
-      m_desc.setRemoteAddresses(Arrays.asList(new InetSocketAddress(host, port)));
+   public ClientTransport connect(InetSocketAddress... addresses) {
+      final List<InetSocketAddress> list = Arrays.asList(addresses);
+
+      m_desc.setAddressProvider(new SocketAddressProvider() {
+         @Override
+         public List<InetSocketAddress> getAddresses() {
+            return list;
+         }
+      });
+
       return this;
+   }
+
+   @Override
+   public ClientTransport connect(SocketAddressProvider provider) {
+      m_desc.setAddressProvider(provider);
+      return this;
+   }
+
+   @Override
+   public ClientTransport connect(String host, int port) {
+      return connect(new InetSocketAddress(host, port));
    }
 
    @Override
