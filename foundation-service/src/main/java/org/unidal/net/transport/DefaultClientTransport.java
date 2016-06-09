@@ -66,7 +66,8 @@ public class DefaultClientTransport implements ClientTransport {
    }
 
    @Override
-   public ClientTransport start() {
+   public ClientTransport start(TransportHub hub) {
+      m_desc.setHub(hub);
       m_desc.validate();
       m_handler.setDescriptor(m_desc);
 
@@ -85,10 +86,5 @@ public class DefaultClientTransport implements ClientTransport {
    public ClientTransport withThreads(int threads) {
       m_desc.setThreads(threads);
       return this;
-   }
-
-   @Override
-   public boolean write(Object message) {
-      return m_handler.write(message);
    }
 }

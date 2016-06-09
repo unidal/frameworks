@@ -44,7 +44,8 @@ public class DefaultServerTransport implements ServerTransport {
    }
 
    @Override
-   public ServerTransport start() {
+   public ServerTransport start(TransportHub hub) {
+      m_desc.setHub(hub);
       m_desc.validate();
       m_handler.setDescriptor(m_desc);
 
@@ -75,10 +76,5 @@ public class DefaultServerTransport implements ServerTransport {
    public ServerTransport withWorkerThreads(int workerThreads) {
       m_desc.setWorkerThreads(workerThreads);
       return this;
-   }
-
-   @Override
-   public boolean write(Object message) {
-      return m_handler.write(message);
    }
 }

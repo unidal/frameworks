@@ -26,6 +26,8 @@ public class ServerTransportDescriptor implements TransportDescriptor {
 
    private Map<String, ChannelHandler> m_handlers = new LinkedHashMap<String, ChannelHandler>();
 
+   private TransportHub m_hub;
+
    public void addHandler(String name, ChannelHandler handler) {
       m_handlers.put(name, handler);
    }
@@ -43,6 +45,11 @@ public class ServerTransportDescriptor implements TransportDescriptor {
       };
 
       return new NioEventLoopGroup(m_bossThreads, factory);
+   }
+
+   @Override
+   public TransportHub getHub() {
+      return m_hub;
    }
 
    @Override
@@ -87,6 +94,10 @@ public class ServerTransportDescriptor implements TransportDescriptor {
 
    public void setBossThreads(int bossThreads) {
       m_bossThreads = bossThreads;
+   }
+
+   public void setHub(TransportHub hub) {
+      m_hub = hub;
    }
 
    public void setLocalAddress(InetSocketAddress localAddress) {

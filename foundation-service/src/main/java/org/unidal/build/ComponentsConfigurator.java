@@ -13,7 +13,6 @@ import org.unidal.lookup.configuration.Component;
 import org.unidal.net.transport.ClientTransportHandler;
 import org.unidal.net.transport.DefaultClientTransport;
 import org.unidal.net.transport.DefaultServerTransport;
-import org.unidal.net.transport.DefaultTransportRepository;
 import org.unidal.net.transport.ServerTransportHandler;
 
 class ComponentsConfigurator extends AbstractResourceConfigurator {
@@ -31,7 +30,6 @@ class ComponentsConfigurator extends AbstractResourceConfigurator {
       all.add(A(DefaultServerTransport.class));
       all.add(A(ClientTransportHandler.class));
       all.add(A(ServerTransportHandler.class));
-      all.add(A(DefaultTransportRepository.class));
 
       return all;
    }

@@ -4,11 +4,12 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelOption;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -17,8 +18,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.unidal.net.transport.AbstractTransportHub;
+import org.unidal.net.transport.TransportHub;
 import org.unidal.net.transport.codec.FrameMessageDecoder;
-import org.unidal.net.transport.codec.FrameMessageEncoder;
 
 public class TransportsTest {
    private static ConcurrentMap<String, AtomicInteger> MAP = new ConcurrentHashMap<String, AtomicInteger>();
@@ -29,8 +31,7 @@ public class TransportsTest {
             .option(ChannelOption.TCP_NODELAY, true) //
             .option(ChannelOption.SO_KEEPALIVE, true) //
             .withThreads(10) //
-            .handler("encoder", new MockMessageEncoder()) //
-            .start();
+            .start(new MockTransportHub());
    }
 
    @Test
@@ -41,22 +42,18 @@ public class TransportsTest {
             .option(ChannelOption.SO_KEEPALIVE, true) //
             .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT) //
             .withBossThreads(1).withWorkerThreads(10) //
-            .handler("decoder", new MockMessageDecoder()) //
-            .handler("message", new MockMessageHandler()) //
-            .start();
+            .start(new MockTransportHub());
    }
 
    @Test
    public void test() throws Exception {
+      MockTransportHub hub = new MockTransportHub();
       ServerTransport st = Transports.asServer().name("Cat").bind(2345) //
             .option(ChannelOption.SO_REUSEADDR, true) //
             .option(ChannelOption.TCP_NODELAY, true) //
             .option(ChannelOption.SO_KEEPALIVE, true) //
             .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT) //
-            .handler("decoder", new MockMessageDecoder()) //
-            .handler("encoder", new MockMessageEncoder()) //
-            .handler("message", new MockMessageHandler()) //
-            .start();
+            .start(hub);
 
       List<ClientTransport> cts = new ArrayList<ClientTransport>();
 
@@ -64,13 +61,10 @@ public class TransportsTest {
          ClientTransport ct = Transports.asClient().name("Cat").connect("localhost", 2345) //
                .option(ChannelOption.TCP_NODELAY, true) //
                .option(ChannelOption.SO_KEEPALIVE, true) //
-               .handler("decoder", new MockMessageDecoder()) //
-               .handler("encoder", new MockMessageEncoder()) //
-               .handler("message", new MockMessageHandler()) //
-               .start();
+               .start(hub);
 
          for (int i = 0; i < 10; i++) {
-            ct.write("PING " + j + ":" + i);
+            hub.write("PING " + j + ":" + i);
          }
 
          cts.add(ct);
@@ -107,21 +101,28 @@ public class TransportsTest {
       }
    }
 
-   static class MockMessageEncoder extends FrameMessageEncoder<String> implements Cloneable {
+   static class MockTransportHub extends AbstractTransportHub<String> implements TransportHub {
+      private BlockingQueue<String> m_queue = new ArrayBlockingQueue<String>(100);
+
       @Override
-      protected void messageToFrame(ChannelHandlerContext ctx, String msg, ByteBuf frame) {
-         frame.writeBytes(msg.getBytes());
+      protected String decode(ByteBuf buf) {
+         int size = buf.readableBytes();
+         byte[] data = new byte[size];
+
+         buf.readBytes(data);
+
+         String message = new String(data);
+         return message;
       }
-   }
 
-   static class MockMessageHandler extends ChannelInboundHandlerAdapter implements Cloneable {
       @Override
-      public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-         Channel channel = ctx.channel();
-         String str = String.valueOf(msg);
-         // System.out.println("Message received from " + channel.remoteAddress() + ", content: " + str);
+      protected void encode(ByteBuf buf, String message) {
+         buf.writeBytes(message.getBytes());
+      }
 
-         if (str.startsWith("PING ")) {
+      @Override
+      protected void handle(String message, Channel channel) {
+         if (message.startsWith("PING ")) {
             AtomicInteger count = new AtomicInteger();
             AtomicInteger c;
 
@@ -130,8 +131,9 @@ public class TransportsTest {
             }
 
             count.incrementAndGet();
-            channel.writeAndFlush("PONG " + str.substring(4));
-         } else if (str.startsWith("PONG ")) {
+
+            write("PONG " + message.substring(5));
+         } else if (message.startsWith("PONG ")) {
             AtomicInteger count = new AtomicInteger();
             AtomicInteger c;
 
@@ -144,9 +146,12 @@ public class TransportsTest {
       }
 
       @Override
-      public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-         ctx.channel().close();
-         cause.printStackTrace();
+      protected String nextMessage() {
+         return m_queue.poll();
+      }
+
+      public boolean write(String message) {
+         return m_queue.offer(message);
       }
    }
 }

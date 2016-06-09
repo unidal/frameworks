@@ -5,6 +5,8 @@ import io.netty.channel.ChannelOption;
 
 import java.util.concurrent.TimeUnit;
 
+import org.unidal.net.transport.TransportHub;
+
 public interface ServerTransport {
    public ServerTransport bind(int port);
 
@@ -14,13 +16,11 @@ public interface ServerTransport {
 
    public <T> ServerTransport option(ChannelOption<T> option, T value);
 
-   public ServerTransport start();
+   public ServerTransport start(TransportHub hub);
 
    public void stop(int timeout, TimeUnit unit) throws InterruptedException;
 
    public ServerTransport withBossThreads(int bossThreads);
 
    public ServerTransport withWorkerThreads(int workerThreads);
-
-   public boolean write(Object message);
 }

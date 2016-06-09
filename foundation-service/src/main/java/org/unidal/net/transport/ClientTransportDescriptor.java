@@ -27,8 +27,15 @@ public class ClientTransportDescriptor implements TransportDescriptor {
 
    private Map<String, ChannelHandler> m_handlers = new LinkedHashMap<String, ChannelHandler>();
 
+   private TransportHub m_hub;
+
    public void addHandler(String name, ChannelHandler handler) {
       m_handlers.put(name, handler);
+   }
+
+   @Override
+   public TransportHub getHub() {
+      return m_hub;
    }
 
    @Override
@@ -75,6 +82,10 @@ public class ClientTransportDescriptor implements TransportDescriptor {
       m_addressProvider = addressProvider;
    }
 
+   public void setHub(TransportHub hub) {
+      m_hub = hub;
+   }
+
    public void setName(String name) {
       m_name = name;
    }
@@ -85,6 +96,5 @@ public class ClientTransportDescriptor implements TransportDescriptor {
 
    @Override
    public void validate() {
-
    }
 }

@@ -1,6 +1,8 @@
 package org.unidal.net.transport;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
@@ -18,16 +20,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.unidal.helper.Threads.Task;
-import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.annotation.Named;
-import org.unidal.net.TransportRepository;
 import org.unidal.net.transport.handler.ClientStateHandler;
 
 @Named(type = ClientTransportHandler.class, instantiationStrategy = Named.PER_LOOKUP)
 public class ClientTransportHandler implements Task, LogEnabled {
-   @Inject
-   private TransportRepository m_repository;
-
    private ClientTransportDescriptor m_descriptor;
 
    private ClientChannelManager m_channelManager;
@@ -40,16 +37,16 @@ public class ClientTransportHandler implements Task, LogEnabled {
 
    private Logger m_logger;
 
+   public void awaitTermination(int timeout, TimeUnit unit) throws InterruptedException {
+      m_latch.await(timeout, unit);
+   }
+
    public void awaitWarmup() {
       try {
          m_warmup.await();
       } catch (InterruptedException e) {
          // ignore it
       }
-   }
-
-   public void awaitTermination(int timeout, TimeUnit unit) throws InterruptedException {
-      m_latch.await(timeout, unit);
    }
 
    @Override
@@ -86,15 +83,17 @@ public class ClientTransportHandler implements Task, LogEnabled {
    }
 
    private void run0() throws InterruptedException {
+      TransportHub hub = m_descriptor.getHub();
+      ByteBuf buf = PooledByteBufAllocator.DEFAULT.buffer(4 * 1024); // 4K
+
       while (m_active.get()) {
          Channel channel = m_channelManager.getActiveChannel();
 
          if (channel != null && channel.isWritable()) {
             do {
-               Object message = m_repository.get();
-
-               if (message != null) {
-                  channel.writeAndFlush(message);
+               if (hub.fill(buf)) {
+                  channel.writeAndFlush(buf);
+                  buf = PooledByteBufAllocator.DEFAULT.buffer(4 * 1024);
                } else {
                   break;
                }
@@ -106,15 +105,14 @@ public class ClientTransportHandler implements Task, LogEnabled {
 
       long end = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(3); // 3s timeout
 
-      while (!m_repository.isEmpty()) {
+      while (true) {
          Channel channel = m_channelManager.getActiveChannel();
 
          if (channel != null && channel.isWritable()) {
             do {
-               Object message = m_repository.get();
-
-               if (message != null) {
-                  channel.writeAndFlush(message);
+               if (hub.fill(buf)) {
+                  channel.writeAndFlush(buf);
+                  buf = PooledByteBufAllocator.DEFAULT.buffer(4 * 1024);
                } else {
                   break;
                }
@@ -122,7 +120,7 @@ public class ClientTransportHandler implements Task, LogEnabled {
          }
 
          if (System.currentTimeMillis() >= end) {
-            throw new InterruptedException("Timeout while there are still messages in the queue!");
+            throw new InterruptedException("Timeout while there are still messages left in the queue!");
          }
 
          TimeUnit.MILLISECONDS.sleep(1); // 1ms
@@ -136,10 +134,6 @@ public class ClientTransportHandler implements Task, LogEnabled {
    @Override
    public void shutdown() {
       m_active.set(false);
-   }
-
-   public boolean write(Object message) {
-      return m_repository.put(message);
    }
 
    private class ClientChannelInitializer extends ChannelInitializer<Channel> {

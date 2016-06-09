@@ -6,6 +6,8 @@ import io.netty.channel.ChannelOption;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
+import org.unidal.net.transport.TransportHub;
+
 public interface ClientTransport {
    public ClientTransport connect(InetSocketAddress... addresses);
 
@@ -19,11 +21,9 @@ public interface ClientTransport {
 
    public <T> ClientTransport option(ChannelOption<T> option, T value);
 
-   public ClientTransport start();
+   public ClientTransport start(TransportHub hub);
 
    public void stop(int timeout, TimeUnit unit) throws InterruptedException;
 
    public ClientTransport withThreads(int threads);
-
-   public boolean write(Object message);
 }

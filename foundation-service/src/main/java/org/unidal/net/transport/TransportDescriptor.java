@@ -14,6 +14,8 @@ public interface TransportDescriptor {
 
    public Map<String, ChannelHandler> getHandlers();
 
+   public TransportHub getHub();
+
    public String getName();
 
    public Map<ChannelOption<Object>, Object> getOptions();

@@ -1,6 +1,7 @@
 package org.unidal.net.transport;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
@@ -12,10 +13,13 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.ServerChannel;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.handler.codec.DecoderException;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -105,17 +109,7 @@ public class ServerTransportHandler implements Task, LogEnabled {
       m_active.set(false);
    }
 
-   public boolean write(Object message) {
-      if (m_active.get()) {
-         // broadcast directly
-         m_channelGroup.writeAndFlush(message);
-         return true;
-      } else {
-         return false;
-      }
-   }
-
-   private class ChannelGroupHandler extends ChannelInboundHandlerAdapter {
+   private class ChannelGroupHandler extends ChannelInboundHandlerAdapter implements Cloneable {
       @Override
       public void channelActive(ChannelHandlerContext ctx) throws Exception {
          Channel channel = ctx.channel();
@@ -131,6 +125,34 @@ public class ServerTransportHandler implements Task, LogEnabled {
          m_channelGroup.remove(channel);
          super.channelInactive(ctx);
       }
+
+      @Override
+      public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+         ctx.channel().close();
+      }
+   }
+
+   private class ChannelInboundHandler extends ByteToMessageDecoder implements Cloneable {
+      @Override
+      protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
+         if (buf.readableBytes() < 6) {
+            return;
+         }
+
+         int index = buf.readerIndex();
+         short b1 = buf.getUnsignedByte(index);
+         short b2 = buf.getUnsignedByte(index + 1);
+         int length = buf.getInt(index + 2);
+
+         if (b1 != 0xCA || b2 != 0xFE) { // not 0xCAFE
+            throw new DecoderException("Bad header bytes!");
+         } else if (buf.readableBytes() >= length + 6) {
+            ByteBuf frame = buf.slice(index + 6, length);
+
+            buf.readerIndex(index + 6 + length);
+            m_descriptor.getHub().onMessage(frame, ctx.channel());
+         }
+      }
    }
 
    private class ServerChannelInitializer extends ChannelInitializer<Channel> {
@@ -139,6 +161,7 @@ public class ServerTransportHandler implements Task, LogEnabled {
          ChannelPipeline pipeline = ch.pipeline();
 
          pipeline.addLast(new ChannelGroupHandler());
+         pipeline.addLast(new ChannelInboundHandler());
          pipeline.addLast(new ServerStateHandler(m_descriptor.getName()));
 
          for (Map.Entry<String, ChannelHandler> e : m_descriptor.getHandlers().entrySet()) {

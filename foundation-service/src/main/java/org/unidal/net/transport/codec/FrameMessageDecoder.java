@@ -25,16 +25,11 @@ public abstract class FrameMessageDecoder<T> extends ByteToMessageDecoder {
          ByteBuf frame = buf.slice(index + 6, length);
 
          buf.readerIndex(index + 6 + length);
-         frame.retain();
 
-         try {
-            Object msg = frameToMessage(ctx, frame);
+         Object msg = frameToMessage(ctx, frame);
 
-            if (msg != null) {
-               out.add(msg);
-            }
-         } finally {
-            frame.release();
+         if (msg != null) {
+            out.add(msg);
          }
       }
    }
