@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
@@ -38,13 +37,13 @@ public class ServerTransportHandler implements Task, LogEnabled {
 
    private ChannelGroup m_channelGroup = new DefaultChannelGroup("Cat", GlobalEventExecutor.INSTANCE);
 
-   private AtomicBoolean m_active = new AtomicBoolean(true);
-
    private CountDownLatch m_latch = new CountDownLatch(1);
 
    private CountDownLatch m_warmup = new CountDownLatch(1);
 
    private Logger m_logger;
+
+   private Channel m_channel;
 
    public void awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
       m_latch.await(timeout, unit);
@@ -88,9 +87,8 @@ public class ServerTransportHandler implements Task, LogEnabled {
             m_logger.info(String.format("%s server is listening on %s:%s", m_descriptor.getName(), address, port));
          }
 
-         Channel channel = future.channel();
-
-         channel.closeFuture().sync();
+         m_channel = future.channel();
+         m_channel.closeFuture().sync();
       } catch (Throwable e) {
          m_logger.error(e.getMessage(), e);
       } finally {
@@ -106,7 +104,7 @@ public class ServerTransportHandler implements Task, LogEnabled {
 
    @Override
    public void shutdown() {
-      m_active.set(false);
+      m_channel.close();
    }
 
    private class ChannelGroupHandler extends ChannelInboundHandlerAdapter implements Cloneable {

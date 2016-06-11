@@ -64,15 +64,17 @@ public class ClientTransportHandler implements Task, LogEnabled {
       try {
          m_channelManager = new ClientChannelManager();
 
-         while (m_channelManager.getActiveChannel() == null) {
+         long expireTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(1);
+
+         while (m_channelManager.getActiveChannel() == null && System.currentTimeMillis() < expireTime) {
             TimeUnit.MILLISECONDS.sleep(1);
          }
 
          m_warmup.countDown();
-
          run0();
       } catch (Throwable e) {
          m_logger.error(e.getMessage(), e);
+         m_warmup.countDown();
       } finally {
          if (m_channelManager != null) {
             m_channelManager.close();
