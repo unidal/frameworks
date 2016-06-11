@@ -1,5 +1,7 @@
 package org.unidal.net.transport;
 
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -47,9 +49,14 @@ public class ServerTransportDescriptor implements TransportDescriptor {
       return new NioEventLoopGroup(m_bossThreads, factory);
    }
 
-   @Override
-   public TransportHub getHub() {
-      return m_hub;
+   public ByteBufAllocator getByteBufAllocator() {
+      Object allocator = m_options.get(ChannelOption.ALLOCATOR);
+
+      if (allocator == null) {
+         return PooledByteBufAllocator.DEFAULT;
+      } else {
+         return (ByteBufAllocator) allocator;
+      }
    }
 
    @Override
@@ -76,6 +83,11 @@ public class ServerTransportDescriptor implements TransportDescriptor {
    @Override
    public Map<String, ChannelHandler> getHandlers() {
       return m_handlers;
+   }
+
+   @Override
+   public TransportHub getHub() {
+      return m_hub;
    }
 
    public InetSocketAddress getLocalAddress() {

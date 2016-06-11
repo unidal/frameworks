@@ -2,7 +2,7 @@ package org.unidal.net.transport;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
@@ -83,8 +83,10 @@ public class ClientTransportHandler implements Task, LogEnabled {
    }
 
    private void run0() throws InterruptedException {
+      ByteBufAllocator allocator = m_descriptor.getByteBufAllocator();
+      int initialCapacity = 4 * 1024; // 4K
+      ByteBuf buf = allocator.buffer(initialCapacity);
       TransportHub hub = m_descriptor.getHub();
-      ByteBuf buf = PooledByteBufAllocator.DEFAULT.buffer(4 * 1024); // 4K
 
       while (m_active.get()) {
          Channel channel = m_channelManager.getActiveChannel();
@@ -93,7 +95,7 @@ public class ClientTransportHandler implements Task, LogEnabled {
             do {
                if (hub.fill(buf)) {
                   channel.writeAndFlush(buf);
-                  buf = PooledByteBufAllocator.DEFAULT.buffer(4 * 1024);
+                  buf = allocator.buffer(initialCapacity);
                } else {
                   break;
                }
@@ -112,7 +114,7 @@ public class ClientTransportHandler implements Task, LogEnabled {
             do {
                if (hub.fill(buf)) {
                   channel.writeAndFlush(buf);
-                  buf = PooledByteBufAllocator.DEFAULT.buffer(4 * 1024);
+                  buf = allocator.buffer(initialCapacity);
                } else {
                   break;
                }
@@ -120,7 +122,7 @@ public class ClientTransportHandler implements Task, LogEnabled {
          }
 
          if (System.currentTimeMillis() >= end) {
-            throw new InterruptedException("Timeout while there are still messages left in the queue!");
+            throw new InterruptedException("Timeout with messages left in the queue!");
          }
 
          TimeUnit.MILLISECONDS.sleep(1); // 1ms
