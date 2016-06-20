@@ -40,11 +40,11 @@ public class Dates {
       public Date asDate() {
          return m_cal.getTime();
       }
-      
+
       public long asLong() {
          return m_cal.getTimeInMillis();
       }
-      
+
       public String asString(String format) {
          return new SimpleDateFormat(format).format(m_cal.getTime());
       }
@@ -100,6 +100,14 @@ public class Dates {
          }
 
          return this;
+      }
+
+      public int day() {
+         return m_cal.get(Calendar.DATE);
+      }
+      
+      public int dayOfWeek() {
+         return m_cal.get(Calendar.DAY_OF_WEEK);
       }
 
       public DateHelper day(int delta) {
@@ -165,13 +173,48 @@ public class Dates {
          return this;
       }
 
+      public int hour() {
+         return m_cal.get(Calendar.HOUR_OF_DAY);
+      }
+
       public DateHelper hour(int delta) {
          m_cal.add(Calendar.HOUR, delta);
          return this;
       }
 
+      public int minute() {
+         return m_cal.get(Calendar.MINUTE);
+      }
+
       public DateHelper minute(int delta) {
          m_cal.add(Calendar.MINUTE, delta);
+         return this;
+      }
+      
+      public int month() {
+         return m_cal.get(Calendar.MONTH);
+      }
+
+      public DateHelper month(int delta) {
+         m_cal.add(Calendar.MONTH, delta);
+         return this;
+      }
+
+      public int second() {
+         return m_cal.get(Calendar.SECOND);
+      }
+
+      public DateHelper second(int delta) {
+         m_cal.add(Calendar.SECOND, delta);
+         return this;
+      }
+      
+      public int year() {
+         return m_cal.get(Calendar.YEAR);
+      }
+
+      public DateHelper year(int delta) {
+         m_cal.add(Calendar.YEAR, delta);
          return this;
       }
    }
