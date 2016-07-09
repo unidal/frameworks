@@ -189,7 +189,7 @@ public class ModelManager extends ContainerHolder implements Initializable {
          int modifier = method.getModifiers();
 
          // ignore static, abstract and bridge methods
-         if (Modifier.isStatic(modifier) || Modifier.isAbstract(modifier) || method.isBridge()) {
+         if (Modifier.isStatic(modifier) || Modifier.isAbstract(modifier) || method.isBridge() || method.isSynthetic()) {
             continue;
          }
 
