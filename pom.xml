@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.unidal.framework</groupId>
 	<artifactId>parent</artifactId>
-	<version>2.4.0</version>
+	<version>2.5.0</version>
 	<name>Parent POM</name>
 	<packaging>pom</packaging>
 	<modules>
@@ -155,12 +155,12 @@
 				<plugin>
 					<groupId>org.unidal.maven.plugins</groupId>
 					<artifactId>codegen-maven-plugin</artifactId>
-					<version>2.4.0</version>
+					<version>${codegen.plugin.version}</version>
 				</plugin>
 				<plugin>
 					<groupId>org.unidal.maven.plugins</groupId>
 					<artifactId>plexus-maven-plugin</artifactId>
-					<version>2.4.0</version>
+					<version>${plexus.plugin.version}</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
@@ -210,11 +210,11 @@
 							<file>
 								<name>.settings/org.eclipse.jdt.core.prefs</name>
 								<content><![CDATA[
-org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.6
-eclipse.preferences.version=1
-org.eclipse.jdt.core.compiler.source=1.6
-org.eclipse.jdt.core.compiler.compliance=1.6
-                        ]]></content>
+                                 org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.6
+                                 eclipse.preferences.version=1
+                                 org.eclipse.jdt.core.compiler.source=1.6
+                                 org.eclipse.jdt.core.compiler.compliance=1.6
+                                 ]]></content>
 							</file>
 						</additionalConfig>
 					</configuration>
