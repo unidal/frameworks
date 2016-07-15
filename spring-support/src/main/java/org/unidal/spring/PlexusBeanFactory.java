@@ -1,4 +1,4 @@
-package org.unidal.lookup.spring;
+package org.unidal.spring;
 
 import java.util.List;
 

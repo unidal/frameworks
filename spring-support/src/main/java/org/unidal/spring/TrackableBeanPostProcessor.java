@@ -130,7 +130,7 @@ public class TrackableBeanPostProcessor implements BeanPostProcessor {
 
             Object value = method.invoke(m_bean, args);
 
-            t.setStatus(Message.SUCCESS + "0");
+            t.setStatus(Message.SUCCESS);
             return value;
          } catch (Throwable e) {
             t.setStatus(e);

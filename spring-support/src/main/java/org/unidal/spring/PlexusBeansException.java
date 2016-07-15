@@ -1,4 +1,4 @@
-package org.unidal.lookup.spring;
+package org.unidal.spring;
 
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.springframework.beans.BeansException;
