@@ -122,28 +122,28 @@ public class EunitExceptionValveTest extends BaseJUnit4RunnerTest {
       checkMethod(MultipleExceptionsTest.class, "m9", AssertionError.class);
    }
 
-   static class BadTest1 {
+   public static class BadTest1 {
       @Test
       @ExpectedException(type = Exception.class, message = "...", pattern = "...")
       public void b1() {
       }
    }
 
-   static class BadTest2 {
+   public static class BadTest2 {
       @Test(expected = RuntimeException.class)
       @ExpectedException(type = Exception.class)
       public void b2() {
       }
    }
 
-   static class BadTest3 {
+   public static class BadTest3 {
       @Test(expected = RuntimeException.class)
       @ExpectedExceptions(@ExpectedException(type = Exception.class))
       public void b3() {
       }
    }
 
-   static class MultipleExceptionsTest {
+   public static class MultipleExceptionsTest {
       @Test
       @ExpectedExceptions({ //
       @ExpectedException(type = RuntimeException.class), @ExpectedException(type = Throwable.class) //
@@ -154,7 +154,8 @@ public class EunitExceptionValveTest extends BaseJUnit4RunnerTest {
 
       @Test
       @ExpectedExceptions({ //
-      @ExpectedException(type = RuntimeException.class), @ExpectedException(type = Throwable.class, message = "throwable") //
+      @ExpectedException(type = RuntimeException.class),
+            @ExpectedException(type = Throwable.class, message = "throwable") //
       })
       public void m2() throws Exception {
          throw new Exception("exception");
@@ -205,7 +206,7 @@ public class EunitExceptionValveTest extends BaseJUnit4RunnerTest {
       }
    }
 
-   static class SingleExceptionTest {
+   public static class SingleExceptionTest {
       @Test
       @ExpectedException(type = Exception.class)
       public void a1() throws Exception {

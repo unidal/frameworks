@@ -34,13 +34,13 @@ public class InterceptHandlerTest extends BaseJUnit4RunnerTest {
       check("b8", "[before, b8, onError(Exception), after]");
    }
 
-   static class NormalTest {
+   public static class NormalTest {
       protected void after() {
          s_list.add("after");
       }
 
       @Test
-      @Intercept()
+      @Intercept
       public void b1() {
          s_list.add("b1");
       }
