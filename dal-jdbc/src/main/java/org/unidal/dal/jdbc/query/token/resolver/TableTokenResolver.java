@@ -37,6 +37,7 @@ public class TableTokenResolver implements TokenResolver {
       case SELECT:
          String alias = table.getAttribute("alias", logicalNameAndAlias[1]);
 
+         ctx.setTableResolved(true);
          return m_naming.getTable(physicalTableName, alias);
       case INSERT:
          return m_naming.getTable(physicalTableName);

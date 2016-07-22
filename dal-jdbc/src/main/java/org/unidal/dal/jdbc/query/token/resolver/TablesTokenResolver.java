@@ -72,6 +72,7 @@ public class TablesTokenResolver implements TokenResolver {
             }
          }
 
+         ctx.setTableResolved(true);
          return sb.toString();
       case INSERT:
          throw new DalRuntimeException("TABLES token does not support query type: " + ctx.getQuery().getType());

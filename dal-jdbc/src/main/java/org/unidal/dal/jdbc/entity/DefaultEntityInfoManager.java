@@ -111,10 +111,8 @@ public class DefaultEntityInfoManager implements EntityInfoManager, LogEnabled, 
 
             if (dataField != null) {
                dataField.setEntityClass(entityClass);
-               dataField.setIndex(index);
+               dataField.setIndex(index++);
             }
-
-            index++;
          } else if (type == Readset.class) {
             if (!Modifier.isStatic(field.getModifiers())) {
                throw new DalRuntimeException("Readset " + field.getName() + " of " + entityClass

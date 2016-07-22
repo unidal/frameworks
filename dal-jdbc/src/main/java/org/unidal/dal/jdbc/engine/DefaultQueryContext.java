@@ -39,6 +39,8 @@ public class DefaultQueryContext implements QueryContext {
 
    private boolean m_withinIfToken;
 
+   private boolean m_tableResolved;
+
    private boolean m_sqlResolveEnabled;
 
    private boolean m_rawSql;
@@ -127,6 +129,11 @@ public class DefaultQueryContext implements QueryContext {
       return m_sqlResolveEnabled;
    }
 
+   @Override
+   public boolean isTableResolved() {
+      return m_tableResolved;
+   }
+
    public boolean isWithinIfToken() {
       return m_withinIfToken;
    }
@@ -179,6 +186,11 @@ public class DefaultQueryContext implements QueryContext {
 
    public void setSqlStatement(String sqlStatement) {
       m_sqlStatement = sqlStatement;
+   }
+
+   @Override
+   public void setTableResolved(boolean tableResolved) {
+      m_tableResolved = tableResolved;
    }
 
    public void setUpdateset(Updateset<?> updateset) {

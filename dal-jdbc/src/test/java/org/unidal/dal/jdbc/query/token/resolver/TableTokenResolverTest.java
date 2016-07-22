@@ -59,6 +59,7 @@ public class TableTokenResolverTest extends AbstractTokenResolverTest {
 
       m_queryResolver.resolve(ctx);
       Assert.assertEquals("`user` u", ctx.getSqlStatement());
+      Assert.assertEquals(true, ctx.isTableResolved());
    }
 
    @Test
@@ -70,6 +71,7 @@ public class TableTokenResolverTest extends AbstractTokenResolverTest {
 
       m_queryResolver.resolve(ctx);
       Assert.assertEquals("`user` u", ctx.getSqlStatement());
+      Assert.assertEquals(true, ctx.isTableResolved());
    }
 
    @Test
@@ -81,6 +83,7 @@ public class TableTokenResolverTest extends AbstractTokenResolverTest {
 
       m_queryResolver.resolve(ctx);
       Assert.assertEquals("`user` user", ctx.getSqlStatement());
+      Assert.assertEquals(true, ctx.isTableResolved());
    }
 
    @Test

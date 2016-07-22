@@ -1,6 +1,7 @@
 package org.unidal.dal.jdbc.query.token.resolver;
 
 import org.unidal.dal.jdbc.DalRuntimeException;
+import org.unidal.dal.jdbc.DataField;
 import org.unidal.dal.jdbc.annotation.Attribute;
 import org.unidal.dal.jdbc.engine.QueryContext;
 import org.unidal.dal.jdbc.entity.EntityInfo;
@@ -41,6 +42,12 @@ public class FieldTokenResolver implements TokenResolver {
       if (attribute != null) {
          switch (ctx.getQuery().getType()) {
          case SELECT:
+            if (!ctx.isTableResolved()) {
+               DataField f = entityInfo.getFieldByName(fieldName);
+
+               ctx.addOutField(f);
+            }
+
             if (attribute.selectExpr().length() > 0) {
                return m_expressionResolver.resolve(ctx, attribute.selectExpr());
             } else {

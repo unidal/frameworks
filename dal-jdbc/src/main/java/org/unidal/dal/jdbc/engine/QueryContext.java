@@ -12,67 +12,71 @@ import org.unidal.dal.jdbc.entity.EntityInfo;
 import org.unidal.dal.jdbc.query.Parameter;
 
 public interface QueryContext {
-	public void addOutField(DataField field);
+   public void addOutField(DataField field);
 
-	public void addOutSubObjectName(String subObjectName);
+   public void addOutSubObjectName(String subObjectName);
 
-	public void addParameter(Parameter value);
+   public void addParameter(Parameter value);
 
-	public String getDataSourceName();
+   public String getDataSourceName();
 
-	public EntityInfo getEntityInfo();
+   public EntityInfo getEntityInfo();
 
-	public int getFetchSize();
+   public int getFetchSize();
 
-	public List<DataField> getOutFields();
+   public List<DataField> getOutFields();
 
-	public List<String> getOutSubObjectNames();
+   public List<String> getOutSubObjectNames();
 
-	public List<Parameter> getParameters();
+   public List<Parameter> getParameters();
 
-	public Object[] getParameterValues();
+   public Object[] getParameterValues();
 
-	public DataObject getProto();
+   public DataObject getProto();
 
-	public QueryDef getQuery();
+   public QueryDef getQuery();
 
-	public Map<String, Object> getQueryHints();
+   public Map<String, Object> getQueryHints();
 
-	public Readset<?> getReadset();
+   public Readset<?> getReadset();
 
-	public String getSqlStatement();
+   public String getSqlStatement();
 
-	public Updateset<?> getUpdateset();
+   public Updateset<?> getUpdateset();
 
-	public boolean isSqlResolveDisabled();
+   public boolean isSqlResolveDisabled();
 
-	public boolean isWithinIfToken();
+   public boolean isTableResolved();
 
-	public boolean isWithinInToken();
+   public boolean isWithinIfToken();
 
-	public void setDataSourceName(String dataSourceName);
+   public boolean isWithinInToken();
 
-	public void setEntityInfo(EntityInfo entityInfo);
+   public void setDataSourceName(String dataSourceName);
 
-	public void setFetchSize(int fetchSize);
+   public void setEntityInfo(EntityInfo entityInfo);
 
-	public void setParameterValues(Object[] values);
+   public void setFetchSize(int fetchSize);
 
-	public void setProto(DataObject proto);
+   public void setParameterValues(Object[] values);
 
-	public void setQuery(QueryDef query);
+   public void setProto(DataObject proto);
 
-	public void setQueryHints(Map<String, Object> queryHints);
+   public void setQuery(QueryDef query);
 
-	public void setReadset(Readset<?> readset);
+   public void setQueryHints(Map<String, Object> queryHints);
 
-	public void setSqlResolveDisabled(boolean sqlResolveDisabled);
+   public void setReadset(Readset<?> readset);
 
-	public void setSqlStatement(String sqlStatement);
+   public void setSqlResolveDisabled(boolean sqlResolveDisabled);
 
-	public void setUpdateset(Updateset<?> updateset);
+   public void setSqlStatement(String sqlStatement);
 
-	public void setWithinIfToken(boolean withinIfToken);
+   public void setTableResolved(boolean tableResolved);
 
-	public void setWithinInToken(boolean withinInToken);
+   public void setUpdateset(Updateset<?> updateset);
+
+   public void setWithinIfToken(boolean withinIfToken);
+
+   public void setWithinInToken(boolean withinInToken);
 }

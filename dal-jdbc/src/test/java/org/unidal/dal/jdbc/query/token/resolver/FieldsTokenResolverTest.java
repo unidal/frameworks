@@ -2,7 +2,6 @@ package org.unidal.dal.jdbc.query.token.resolver;
 
 import org.junit.Assert;
 import org.junit.Test;
-
 import org.unidal.dal.jdbc.DalRuntimeException;
 import org.unidal.dal.jdbc.QueryDef;
 import org.unidal.dal.jdbc.QueryType;
@@ -23,6 +22,7 @@ public class FieldsTokenResolverTest extends AbstractTokenResolverTest {
       m_queryResolver.resolve(ctx);
       Assert.assertEquals("u.user_id,u.full_name,u.creation_date,u.last_modified_date", ctx.getSqlStatement());
       Assert.assertEquals(null, ctx.getOutSubObjectNames().get(0));
+      Assert.assertEquals("[user-id, user-name, creation-date, last-modified-date]", ctx.getOutFields().toString());
    }
 
    @Test
@@ -36,6 +36,7 @@ public class FieldsTokenResolverTest extends AbstractTokenResolverTest {
       Assert.assertEquals("u.user_id,u.full_name,u.creation_date,u.last_modified_date,upper(full_name)", ctx.getSqlStatement());
       Assert.assertEquals(null, ctx.getOutSubObjectNames().get(0));
       Assert.assertEquals(null, ctx.getOutSubObjectNames().get(4));
+      Assert.assertEquals("[user-id, user-name, creation-date, last-modified-date, upper-user-name]", ctx.getOutFields().toString());
    }
    
    @Test
@@ -52,6 +53,7 @@ public class FieldsTokenResolverTest extends AbstractTokenResolverTest {
       Assert.assertEquals(2, ctx.getOutFields().size());
       Assert.assertEquals(UserEntity.USER_ID, ctx.getOutFields().get(0));
       Assert.assertEquals(UserEntity.CREATION_DATE, ctx.getOutFields().get(1));
+      Assert.assertEquals("[user-id, creation-date]", ctx.getOutFields().toString());
    }
 
    @Test
@@ -65,6 +67,7 @@ public class FieldsTokenResolverTest extends AbstractTokenResolverTest {
       Assert.assertEquals("u.user_id,u.full_name,u.creation_date,u.last_modified_date u.user_id,u.creation_date", ctx.getSqlStatement());
       Assert.assertEquals(4, ctx.getOutSubObjectNames().size());
       Assert.assertEquals(4, ctx.getOutFields().size());
+      Assert.assertEquals("[user-id, user-name, creation-date, last-modified-date]", ctx.getOutFields().toString());
    }
    
    @Test
@@ -79,6 +82,7 @@ public class FieldsTokenResolverTest extends AbstractTokenResolverTest {
             ctx.getSqlStatement());
       Assert.assertEquals(null, ctx.getOutSubObjectNames().get(0));
       Assert.assertEquals("home-address", ctx.getOutSubObjectNames().get(4));
+      Assert.assertEquals("[user-id, user-name, creation-date, last-modified-date, user-id, type, address]", ctx.getOutFields().toString());
    }
 
    @Test
@@ -94,6 +98,7 @@ public class FieldsTokenResolverTest extends AbstractTokenResolverTest {
             ctx.getSqlStatement());
       Assert.assertEquals(null, ctx.getOutSubObjectNames().get(0));
       Assert.assertEquals("home-address", ctx.getOutSubObjectNames().get(4));
+      Assert.assertEquals("[user-id, user-name, creation-date, last-modified-date, user-id, type, address, user-id, type, address]", ctx.getOutFields().toString());
    }
 
    @Test
