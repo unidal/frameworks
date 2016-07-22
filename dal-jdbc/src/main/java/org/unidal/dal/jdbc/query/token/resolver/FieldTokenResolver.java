@@ -46,6 +46,7 @@ public class FieldTokenResolver implements TokenResolver {
                DataField f = entityInfo.getFieldByName(fieldName);
 
                ctx.addOutField(f);
+               ctx.addOutSubObjectName(null);
             }
 
             if (attribute.selectExpr().length() > 0) {
