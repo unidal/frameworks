@@ -8,14 +8,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.Assert;
-
 import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.MutablePlexusContainer;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.lifecycle.LifecycleHandler;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
+import org.junit.Assert;
 import org.junit.Test;
 import org.unidal.helper.Files;
 import org.unidal.lookup.ContainerLoader;

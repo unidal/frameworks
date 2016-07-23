@@ -1,8 +1,7 @@
 package org.unidal.lookup;
 
-import junit.framework.Assert;
-
 import org.apache.xbean.recipe.MissingAccessorException;
+import org.junit.Assert;
 import org.junit.Test;
 
 @SuppressWarnings("unused")

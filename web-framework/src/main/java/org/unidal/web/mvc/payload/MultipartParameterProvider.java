@@ -15,9 +15,9 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadBase.SizeLimitExceededException;
 import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.codehaus.plexus.logging.LogEnabled;
@@ -36,7 +36,7 @@ public class MultipartParameterProvider implements ParameterProvider, LogEnabled
 
    private Map<String, List<String>> m_parameters = new HashMap<String, List<String>>();
 
-   private Map<String, DiskFileItem> m_files = new HashMap<String, DiskFileItem>();
+   private Map<String, FileItem> m_files = new HashMap<String, FileItem>();
 
    private Logger m_logger;
 
@@ -49,7 +49,7 @@ public class MultipartParameterProvider implements ParameterProvider, LogEnabled
 
    @Override
    public InputStream getFile(String name) throws IOException {
-      DiskFileItem file = m_files.get(name);
+      FileItem file = m_files.get(name);
 
       if (file == null) {
          return null;
@@ -115,7 +115,6 @@ public class MultipartParameterProvider implements ParameterProvider, LogEnabled
       return m_request;
    }
 
-   @SuppressWarnings("unchecked")
    private void initialize(HttpServletRequest request) {
       DiskFileItemFactory factory = new DiskFileItemFactory();
       ServletFileUpload upload = new ServletFileUpload(factory);
@@ -128,9 +127,9 @@ public class MultipartParameterProvider implements ParameterProvider, LogEnabled
       upload.setSizeMax(m_maxUploadFileSize);
 
       try {
-         List<DiskFileItem> items = upload.parseRequest(request);
+         List<FileItem> items = upload.parseRequest(request);
 
-         for (DiskFileItem item : items) {
+         for (FileItem item : items) {
             String name = item.getFieldName();
 
             if (item.isFormField()) {
@@ -209,11 +208,11 @@ public class MultipartParameterProvider implements ParameterProvider, LogEnabled
    }
 
    public static final class ItemStream extends InputStream {
-      private DiskFileItem m_file;
+      private FileItem m_file;
 
       private InputStream m_stream;
 
-      public ItemStream(DiskFileItem file) throws IOException {
+      public ItemStream(FileItem file) throws IOException {
          m_file = file;
          m_stream = file.getInputStream();
       }

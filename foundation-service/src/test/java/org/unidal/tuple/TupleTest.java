@@ -5,13 +5,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
-import org.unidal.tuple.Pair;
-import org.unidal.tuple.Quad;
-import org.unidal.tuple.Ref;
-import org.unidal.tuple.Triple;
 
 public class TupleTest {
 	@Test

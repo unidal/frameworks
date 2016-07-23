@@ -2,7 +2,7 @@ package org.unidal.web.jsp.function;
 
 import java.util.Date;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Test;
 

@@ -30,7 +30,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.xbean.recipe.ReflectionUtil.*;
+import org.apache.xbean.recipe.ReflectionUtil.ConstructorFactory;
+import org.apache.xbean.recipe.ReflectionUtil.Factory;
+import org.apache.xbean.recipe.ReflectionUtil.StaticFactory;
 
 /**
  * @version $Rev: 6688 $ $Date: 2005-12-29T02:08:29.200064Z $

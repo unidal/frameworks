@@ -2,8 +2,7 @@ package org.unidal.helper;
 
 import java.util.Calendar;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 public class DatesTest {

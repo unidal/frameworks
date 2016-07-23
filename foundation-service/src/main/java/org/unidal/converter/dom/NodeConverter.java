@@ -5,15 +5,14 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import org.unidal.converter.Converter;
 import org.unidal.converter.ConverterException;
 import org.unidal.converter.ConverterManager;
 import org.unidal.converter.ConverterUtil;
 import org.unidal.converter.TypeUtil;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class NodeConverter implements Converter<Object> {
 

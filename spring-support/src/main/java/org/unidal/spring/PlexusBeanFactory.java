@@ -11,6 +11,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
+import org.springframework.core.ResolvableType;
 import org.unidal.lookup.ContainerLoader;
 import org.unidal.tuple.Pair;
 
@@ -50,6 +51,11 @@ public class PlexusBeanFactory implements BeanFactory {
       default:
          throw new NoUniqueBeanDefinitionException(requiredType);
       }
+   }
+
+   @Override
+   public <T> T getBean(Class<T> requiredType, Object... args) throws BeansException {
+      return getBean(requiredType);
    }
 
    @Override
@@ -191,6 +197,11 @@ public class PlexusBeanFactory implements BeanFactory {
       } else {
          throw new NoSuchBeanDefinitionException(name);
       }
+   }
+
+   @Override
+   public boolean isTypeMatch(String name, ResolvableType typeToMatch) throws NoSuchBeanDefinitionException {
+      return false;
    }
 
    private Pair<String, String> parseName(String name) {

@@ -2,11 +2,10 @@ package org.unidal.converter.dom;
 
 import java.lang.reflect.Type;
 
-import org.w3c.dom.Node;
-
 import org.unidal.converter.Converter;
 import org.unidal.converter.ConverterException;
 import org.unidal.converter.TypeUtil;
+import org.w3c.dom.Node;
 
 public class NodeValueConverter implements Converter<String> {
    public boolean canConvert(Type fromType, Type targetType) {

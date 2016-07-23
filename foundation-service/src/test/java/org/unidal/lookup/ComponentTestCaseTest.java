@@ -2,9 +2,8 @@ package org.unidal.lookup;
 
 import java.util.Date;
 
-import junit.framework.Assert;
-
 import org.codehaus.plexus.MutablePlexusContainer;
+import org.junit.Assert;
 import org.junit.Test;
 import org.unidal.formatter.Formatter;
 import org.unidal.formatter.FormatterException;

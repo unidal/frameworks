@@ -5,13 +5,12 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import org.unidal.converter.Converter;
 import org.unidal.converter.ConverterException;
 import org.unidal.converter.ConverterManager;
 import org.unidal.converter.TypeUtil;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class NodeArrayConverter implements Converter<Object> {
    public boolean canConvert(Type fromType, Type targetType) {

@@ -1,9 +1,8 @@
 package org.unidal.lookup;
 
-import junit.framework.Assert;
-
 import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.PlexusContainer;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class ContainerLoaderTest {

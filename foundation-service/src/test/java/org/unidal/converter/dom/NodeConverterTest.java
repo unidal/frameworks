@@ -8,11 +8,10 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import junit.framework.TestCase;
 
+import org.unidal.converter.ConverterManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
-import org.unidal.converter.ConverterManager;
 
 public class NodeConverterTest extends TestCase {
    ConverterManager m_manager = ConverterManager.getInstance();

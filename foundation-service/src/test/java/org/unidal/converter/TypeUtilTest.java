@@ -1,7 +1,5 @@
 package org.unidal.converter;
 
-import org.unidal.converter.TypeUtil;
-
 import junit.framework.TestCase;
 
 public class TypeUtilTest extends TestCase {

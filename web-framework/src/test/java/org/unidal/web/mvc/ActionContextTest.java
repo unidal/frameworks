@@ -2,7 +2,7 @@ package org.unidal.web.mvc;
 
 import java.util.LinkedHashMap;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Test;
 

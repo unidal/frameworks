@@ -17,15 +17,24 @@ package org.codehaus.plexus.component.builder;
 
 import static org.apache.xbean.recipe.RecipeHelper.toClass;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.xbean.recipe.AbstractRecipe;
 import org.apache.xbean.recipe.ConstructionException;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.RecipeHelper;
+import org.codehaus.plexus.ComponentRegistry;
 import org.codehaus.plexus.MutablePlexusContainer;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.ComponentRegistry;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.MapOrientedComponent;
 import org.codehaus.plexus.component.collections.ComponentList;
@@ -53,15 +62,6 @@ import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.PhaseExecutionException;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.LinkedHashSet;
 
 // TODO hack of plexus-container-default-1.6, need to follow up bug fix in the future versions
 @SuppressWarnings({"serial", "rawtypes", "unchecked", "unused"})

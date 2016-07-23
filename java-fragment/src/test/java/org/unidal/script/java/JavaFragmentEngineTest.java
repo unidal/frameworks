@@ -8,7 +8,7 @@ import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Ignore;
 import org.junit.Test;

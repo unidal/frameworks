@@ -1,7 +1,6 @@
 package org.unidal.helper;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.unidal.helper.Matchers.StringTrie;
 import org.unidal.helper.Matchers.TrieHandler;
