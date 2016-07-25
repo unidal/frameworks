@@ -88,6 +88,6 @@ public class DefaultUrlMapping implements UrlMapping {
    @Override
    public String toString() {
       return String.format("%s[servletPath=%s, contextPath=%s, module=%s, action=%s, pathInfo=%s, queryString=%s]",
-            m_servletPath, m_contextPath, m_module, m_action, m_pathInfo, m_queryString);
+            getClass().getSimpleName(), m_servletPath, m_contextPath, m_module, m_action, m_pathInfo, m_queryString);
    }
 }

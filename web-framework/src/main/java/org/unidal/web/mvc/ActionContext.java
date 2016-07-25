@@ -4,10 +4,15 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.URLEncoder;
+import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
@@ -129,6 +134,10 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
 
    public T getPayload() {
       return m_payload;
+   }
+
+   public Query getQuery() {
+      return new Query(getHttpServletRequest(), true);
    }
 
    public RequestContext getRequestContext() {
@@ -323,10 +332,90 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
       sb.append('}');
       return sb.toString();
    }
-
+   
    public void write(String data) throws IOException {
       Writer writer = m_httpServletResponse.getWriter();
 
       writer.write(data);
+   }
+
+   public static class Query extends AbstractMap<Object, Query> {
+      private boolean m_compact;
+
+      private Map<String, String> m_map = new LinkedHashMap<String, String>();
+
+      private String m_key;
+
+      private boolean m_inKey;
+
+      @SuppressWarnings("unchecked")
+      public Query(HttpServletRequest req, boolean compact) {
+         m_compact = compact;
+
+         Enumeration<String> names = req.getParameterNames();
+
+         while (names.hasMoreElements()) {
+            String name = names.nextElement();
+            String value = req.getParameter(name);
+
+            if (!compact || value != null && value.length() > 0) {
+               m_map.put(name, value);
+            }
+         }
+      }
+
+      @Override
+      public boolean containsKey(Object key) {
+         return true;
+      }
+
+      @Override
+      public Set<Map.Entry<Object, Query>> entrySet() {
+         throw new UnsupportedOperationException("Not implemented!");
+      }
+
+      @Override
+      public Query get(Object key) {
+         String str = String.valueOf(key);
+
+         if (!m_inKey) {
+            m_key = str;
+            m_inKey = true;
+         } else {
+            if (m_compact && str.length() == 0) {
+               m_map.remove(m_key);
+            } else {
+               m_map.put(m_key, str);
+            }
+
+            m_key = null;
+            m_inKey = false;
+         }
+
+         return this;
+      }
+
+      @Override
+      public String toString() {
+         StringBuilder sb = new StringBuilder(256);
+
+         for (Map.Entry<String, String> e : m_map.entrySet()) {
+            if (sb.length() > 0) {
+               sb.append('&');
+            }
+
+            sb.append(e.getKey()).append('=').append(urlEncode(e.getValue()));
+         }
+
+         return sb.toString();
+      }
+
+      private String urlEncode(String value) {
+         try {
+            return URLEncoder.encode(value, "utf-8");
+         } catch (Exception e) {
+            return value;
+         }
+      }
    }
 }
