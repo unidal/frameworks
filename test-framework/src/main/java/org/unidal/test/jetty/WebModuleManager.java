@@ -24,7 +24,7 @@ public class WebModuleManager {
    private ConcurrentMap<String, Resource> m_resources = new ConcurrentHashMap<String, Resource>();
 
    public WebModuleManager() throws Exception {
-      List<URL> webModules = Collections.list(getClass().getClassLoader().getResources("WEB-MODULE"));
+      List<URL> webModules = Collections.list(getClass().getClassLoader().getResources("META-INF/resources"));
 
       for (URL webModule : webModules) {
          prepareResources(webModule);

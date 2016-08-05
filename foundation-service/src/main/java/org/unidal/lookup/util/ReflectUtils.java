@@ -14,7 +14,7 @@ public class ReflectUtils {
             return (T) clazz.newInstance();
          }
       } catch (Exception e) {
-         throw new RuntimeException("Error occured during creating instance of " + clazz);
+         throw new RuntimeException("Error occured during creating instance of " + clazz, e);
       }
    }
 

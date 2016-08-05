@@ -21,9 +21,9 @@ public class DefaultUrlMapping implements UrlMapping {
 
       m_contextPath = sections[index++];
       m_servletPath = sections[index++];
-      m_module = sections[index++];
-      m_action = sections[index++];
-      m_pathInfo = sections[index++];
+      m_module = trim(sections[index++]);
+      m_action = trim(sections[index++]);
+      m_pathInfo = trim(sections[index++]);
       m_queryString = sections[index++];
    }
 
@@ -89,5 +89,17 @@ public class DefaultUrlMapping implements UrlMapping {
    public String toString() {
       return String.format("%s[servletPath=%s, contextPath=%s, module=%s, action=%s, pathInfo=%s, queryString=%s]",
             getClass().getSimpleName(), m_servletPath, m_contextPath, m_module, m_action, m_pathInfo, m_queryString);
+   }
+
+   private String trim(String str) {
+      if (str != null) {
+         int pos = str.indexOf(';');
+
+         if (pos > 0) {
+            return str.substring(0, pos);
+         }
+      }
+
+      return str;
    }
 }

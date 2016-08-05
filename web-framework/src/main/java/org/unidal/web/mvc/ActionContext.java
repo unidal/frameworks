@@ -332,7 +332,7 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
       sb.append('}');
       return sb.toString();
    }
-   
+
    public void write(String data) throws IOException {
       Writer writer = m_httpServletResponse.getWriter();
 
@@ -348,9 +348,14 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
 
       private boolean m_inKey;
 
+      private String m_webapp;
+
+      private String m_uri;
+
       @SuppressWarnings("unchecked")
       public Query(HttpServletRequest req, boolean compact) {
          m_compact = compact;
+         m_webapp = req.getContextPath();
 
          Enumeration<String> names = req.getParameterNames();
 
@@ -374,6 +379,11 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
          throw new UnsupportedOperationException("Not implemented!");
       }
 
+      public Query uri(String uri) {
+         m_uri = uri;
+         return this;
+      }
+
       @Override
       public Query get(Object key) {
          String str = String.valueOf(key);
@@ -382,7 +392,7 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
             m_key = str;
             m_inKey = true;
          } else {
-            if (m_compact && str.length() == 0) {
+            if (m_compact && (str == null || str.length() == 0)) {
                m_map.remove(m_key);
             } else {
                m_map.put(m_key, str);
@@ -398,6 +408,14 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
       @Override
       public String toString() {
          StringBuilder sb = new StringBuilder(256);
+
+         if (m_uri != null) {
+            if (m_webapp != null) {
+               sb.append(m_webapp);
+            }
+
+            sb.append(m_uri);
+         }
 
          for (Map.Entry<String, String> e : m_map.entrySet()) {
             if (sb.length() > 0) {
