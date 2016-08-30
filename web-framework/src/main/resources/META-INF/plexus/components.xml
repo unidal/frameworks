@@ -95,6 +95,11 @@
 			<instantiation-strategy>per-lookup</instantiation-strategy>
 		</component>
 		<component>
+			<role>org.unidal.web.mvc.payload.ParameterProvider</role>
+			<implementation>org.unidal.web.mvc.payload.DefaultParameterProvider</implementation>
+			<instantiation-strategy>per-lookup</instantiation-strategy>
+		</component>
+		<component>
 			<role>org.unidal.web.mvc.view.model.ModelHandler</role>
 			<implementation>org.unidal.web.mvc.view.model.DefaultModelHandler</implementation>
 			<requirements>

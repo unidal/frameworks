@@ -15,6 +15,7 @@ import org.unidal.web.mvc.lifecycle.DefaultRequestLifecycle;
 import org.unidal.web.mvc.lifecycle.DefaultTransitionHandler;
 import org.unidal.web.mvc.model.AnnotationMatrix;
 import org.unidal.web.mvc.model.ModelManager;
+import org.unidal.web.mvc.payload.DefaultParameterProvider;
 import org.unidal.web.mvc.payload.DefaultPayloadProvider;
 import org.unidal.web.mvc.payload.MultipartParameterProvider;
 import org.unidal.web.mvc.payload.UrlEncodedParameterProvider;
@@ -38,8 +39,11 @@ class ComponentsConfigurator extends AbstractResourceConfigurator {
       all.add(A(DefaultActionHandlerManager.class));
       all.add(A(DefaultRequestLifecycle.class));
       all.add(A(DefaultRequestContextBuilder.class));
+      
       all.add(A(UrlEncodedParameterProvider.class));
       all.add(A(MultipartParameterProvider.class));
+      all.add(A(DefaultParameterProvider.class));
+      
       all.add(A(DefaultModelHandler.class));
       all.add(A(XmlModelBuilder.class));
       all.add(A(JsonModelBuilder.class));

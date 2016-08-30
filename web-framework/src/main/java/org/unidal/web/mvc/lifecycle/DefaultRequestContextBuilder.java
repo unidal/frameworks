@@ -53,7 +53,13 @@ public class DefaultRequestContextBuilder extends ContainerHolder implements Req
    private ParameterProvider buildParameterProvider(final HttpServletRequest request) {
       String contentType = request.getContentType();
       String mimeType = getMimeType(contentType);
-      ParameterProvider provider = lookup(ParameterProvider.class, mimeType);
+      ParameterProvider provider;
+
+      try {
+         provider = lookup(ParameterProvider.class, mimeType);
+      } catch (Exception e) {
+         provider = lookup(ParameterProvider.class);
+      }
 
       provider.setRequest(request);
 

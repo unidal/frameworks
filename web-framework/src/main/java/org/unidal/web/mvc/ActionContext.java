@@ -415,10 +415,15 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
             }
 
             sb.append(m_uri);
+            sb.append('?');
          }
 
+         boolean first = true;
+
          for (Map.Entry<String, String> e : m_map.entrySet()) {
-            if (sb.length() > 0) {
+            if (first) {
+               first = false;
+            } else {
                sb.append('&');
             }
 
