@@ -374,14 +374,14 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
          return true;
       }
 
+      public Query empty() {
+         m_map.clear();
+         return this;
+      }
+
       @Override
       public Set<Map.Entry<Object, Query>> entrySet() {
          throw new UnsupportedOperationException("Not implemented!");
-      }
-
-      public Query uri(String uri) {
-         m_uri = uri;
-         return this;
       }
 
       @Override
@@ -431,6 +431,11 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
          }
 
          return sb.toString();
+      }
+
+      public Query uri(String uri) {
+         m_uri = uri;
+         return this;
       }
 
       private String urlEncode(String value) {

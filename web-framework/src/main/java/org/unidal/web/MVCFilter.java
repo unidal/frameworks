@@ -36,7 +36,8 @@ public class MVCFilter implements Filter {
    }
 
    @Override
-   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
+         ServletException {
       HttpServletRequest req = (HttpServletRequest) request;
       String uri = getRelativeUri(req);
 
@@ -66,26 +67,28 @@ public class MVCFilter implements Filter {
 
    @Override
    public void init(FilterConfig config) throws ServletException {
-      m_mvc = new MVC();
-      m_mvc.init(new ServletConfigAdaptor(config));
+      if (m_mvc == null) {
+         m_mvc = new MVC();
+         m_mvc.init(new ServletConfigAdaptor(config));
 
-      String skipCurrent = config.getInitParameter("skip-current");
-      String skipRest = config.getInitParameter("skip-rest");
-      String pathPrefix = config.getInitParameter("path-prefix");
+         String skipCurrent = config.getInitParameter("skip-current");
+         String skipRest = config.getInitParameter("skip-rest");
+         String pathPrefix = config.getInitParameter("path-prefix");
 
-      if (skipCurrent == null) {
-         skipCurrent = config.getInitParameter("excludes"); // deprecated
+         if (skipCurrent == null) {
+            skipCurrent = config.getInitParameter("excludes"); // deprecated
+         }
+
+         if (skipCurrent != null) {
+            initSkipCurrents(skipCurrent);
+         }
+
+         if (skipRest != null) {
+            initSkipRests(skipRest);
+         }
+
+         m_pathPrefix = pathPrefix;
       }
-
-      if (skipCurrent != null) {
-         initSkipCurrents(skipCurrent);
-      }
-
-      if (skipRest != null) {
-         initSkipRests(skipRest);
-      }
-
-      m_pathPrefix = pathPrefix;
    }
 
    private void initSkipCurrents(String excludes) {
@@ -138,8 +141,8 @@ public class MVCFilter implements Filter {
    enum Handlers implements TrieHandler {
       SKIP_REST {
          @Override
-         public void handle(String str, int start, int end, boolean prefixOrSuffix, Object[] arguments) throws IOException,
-               ServletException {
+         public void handle(String str, int start, int end, boolean prefixOrSuffix, Object[] arguments)
+               throws IOException, ServletException {
             HttpServletRequest request = (HttpServletRequest) arguments[0];
             HttpServletResponse response = (HttpServletResponse) arguments[1];
             FilterChain chain = (FilterChain) arguments[2];
@@ -162,8 +165,8 @@ public class MVCFilter implements Filter {
 
       SKIP_CURRENT {
          @Override
-         public void handle(String str, int start, int end, boolean prefixOrSuffix, Object[] arguments) throws IOException,
-               ServletException {
+         public void handle(String str, int start, int end, boolean prefixOrSuffix, Object[] arguments)
+               throws IOException, ServletException {
             HttpServletRequest request = (HttpServletRequest) arguments[0];
             HttpServletResponse response = (HttpServletResponse) arguments[1];
             FilterChain chain = (FilterChain) arguments[2];

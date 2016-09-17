@@ -55,7 +55,9 @@ public abstract class AbstractResourceConfigurator {
       Component component = new Component((Class<Object>) role, roleHint, clazz);
 
       if (enumField != null) {
-         component.is(ENUM);
+         if (clazz.isEnum()) {
+            component.is(ENUM);
+         }
       } else if (named.instantiationStrategy().length() > 0) {
          component.is(named.instantiationStrategy());
       }

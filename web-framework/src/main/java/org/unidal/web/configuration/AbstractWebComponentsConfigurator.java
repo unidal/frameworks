@@ -3,7 +3,9 @@ package org.unidal.web.configuration;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.unidal.helper.Reflects;
 import org.unidal.helper.Reflects.IMemberFilter;
@@ -19,38 +21,40 @@ public abstract class AbstractWebComponentsConfigurator extends AbstractResource
    protected void defineInjectableComponent(List<Component> all, Class<?> clazz) {
       Component component = C(clazz);
 
-      if (!isAutoConfigurable(clazz) || all.contains(component)) {
+      if (!shouldAutoConfigure(clazz) || all.contains(component)) {
          return;
       }
 
       all.add(component);
 
-      for (Field field : getInjectableFields(clazz)) {
-         Class<?> type = field.getType();
+      List<Field> fields = getInjectableFields(clazz);
+      Map<Class<?>, Integer> counts = getRoleCounts(fields);
+
+      for (Field field : fields) {
          Inject inject = field.getAnnotation(Inject.class);
+         Class<?> type = field.getType();
+         Class<?> role;
 
-         if (inject != null) {
-            Class<?> role = inject.type();
-            String[] roleHints = inject.value();
-            String fieldName = null;
+         if (inject.type() == Inject.Default.class) {
+            role = type;
+         } else {
+            role = inject.type();
+         }
 
-            if (role == Inject.Default.class) {
-               role = type;
+         String[] roleHints = inject.value();
+         boolean needField = (counts.get(role).intValue() > 1);
+         String fieldName = needField ? field.getName() : null;
+
+         if (roleHints.length == 0) {
+            component.req(role, "default", fieldName);
+         } else if (roleHints.length == 1) {
+            if (fieldName == null) {
+               component.req(role, roleHints[0], fieldName);
             } else {
-               fieldName = field.getName();
+               component.req(role, roleHints[0], fieldName);
             }
-
-            if (roleHints.length == 0) {
-               component.req(role);
-            } else if (roleHints.length == 1) {
-               if (fieldName == null) {
-                  component.req(role, roleHints[0]);
-               } else {
-                  component.req(role, roleHints[0], fieldName);
-               }
-            } else {
-               component.req(role, roleHints, fieldName);
-            }
+         } else {
+            component.req(role, roleHints, fieldName);
          }
 
          if (!type.isArray() && !type.getName().startsWith("java")) {
@@ -111,7 +115,34 @@ public abstract class AbstractWebComponentsConfigurator extends AbstractResource
       return fields;
    }
 
-   protected boolean isAutoConfigurable(Class<?> clazz) {
+   private Map<Class<?>, Integer> getRoleCounts(List<Field> fields) {
+      Map<Class<?>, Integer> map = new HashMap<Class<?>, Integer>();
+
+      for (Field field : fields) {
+         Inject inject = field.getAnnotation(Inject.class);
+         Class<?> role;
+
+         if (inject.type() == Inject.Default.class) {
+            role = field.getType();
+         } else {
+            role = inject.type();
+         }
+
+         Integer count = map.get(role);
+
+         if (count == null) {
+            count = 1;
+         } else {
+            count = count + 1;
+         }
+
+         map.put(role, count);
+      }
+
+      return map;
+   }
+
+   protected boolean shouldAutoConfigure(Class<?> clazz) {
       if (clazz.isPrimitive() || clazz.isArray() || clazz.isInterface() || clazz.isMemberClass()) {
          return false;
       } else {
