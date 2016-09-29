@@ -310,7 +310,7 @@ public class DefaultPayloadProvider extends ContainerHolder implements PayloadPr
          }
       }
 
-      if (map.size() > 0) {
+      if (!map.isEmpty()) {
          Field field = objectModel.getField();
          Class<?> type = field.getType();
          Method method = objectModel.getMethod();

@@ -94,7 +94,7 @@ public class Scanners {
 
                relativePath.setLength(len); // reset
 
-               if (foundFirst && files.size() > 0) {
+               if (foundFirst && !files.isEmpty()) {
                   break;
                }
             }
@@ -283,7 +283,7 @@ public class Scanners {
                   }
                }
 
-               if (foundFirst && names.size() > 0) {
+               if (foundFirst && !names.isEmpty()) {
                   break;
                }
             }

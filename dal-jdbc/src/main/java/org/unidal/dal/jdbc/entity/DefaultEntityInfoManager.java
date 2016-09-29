@@ -134,7 +134,7 @@ public class DefaultEntityInfoManager implements EntityInfoManager, LogEnabled, 
          }
       }
 
-      if (attributes.size() == 0 && entityClass != RawEntity.class) {
+      if (attributes.isEmpty() && entityClass != RawEntity.class) {
          m_logger.warn("No fields defined with type DataField in " + entityClass);
       }
 

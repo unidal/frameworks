@@ -27,7 +27,7 @@ public class CalculatorFunction {
 	public static int max(List<?> list, String fieldName) {
 		int max = Integer.MIN_VALUE;
 
-		if (list != null && list.size() > 0) {
+		if (list != null && !list.isEmpty()) {
 			Method method = getGetter(fieldName, list.get(0).getClass());
 
 			if (method.getReturnType().isPrimitive() || Number.class.isAssignableFrom(method.getReturnType())) {
@@ -63,7 +63,7 @@ public class CalculatorFunction {
 	public static int min(List<?> list, String fieldName) {
 		int min = Integer.MAX_VALUE;
 
-		if (list != null && list.size() > 0) {
+		if (list != null && !list.isEmpty()) {
 			Method method = getGetter(fieldName, list.get(0).getClass());
 
 			if (method.getReturnType().isPrimitive() || Number.class.isAssignableFrom(method.getReturnType())) {
@@ -99,7 +99,7 @@ public class CalculatorFunction {
 	public static double sum(List<?> list, String fieldName) {
 		double sum = 0;
 
-		if (list != null && list.size() > 0) {
+		if (list != null && !list.isEmpty()) {
 			Method method = getGetter(fieldName, list.get(0).getClass());
 
 			if (method.getReturnType().isPrimitive() || Number.class.isAssignableFrom(method.getReturnType())) {
