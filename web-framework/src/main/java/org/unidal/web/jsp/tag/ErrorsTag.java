@@ -70,22 +70,20 @@ public class ErrorsTag extends AbstractBodyTag {
 
    @Override
    public int doStartTag() throws JspException {
-      if (m_bundle != null) {
-         if (!s_cache.containsKey(m_bundle)) {
-            Properties properties = new Properties();
-            InputStream in = getClass().getResourceAsStream(m_bundle);
+      if (m_bundle != null && !s_cache.containsKey(m_bundle)) {
+         Properties properties = new Properties();
+         InputStream in = getClass().getResourceAsStream(m_bundle);
 
-            s_cache.put(m_bundle, properties);
+         s_cache.put(m_bundle, properties);
 
-            if (in != null) {
-               try {
-                  properties.load(in);
-               } catch (IOException e) {
-                  throw new RuntimeException(String.format("Error when loading resource bundle(%s)!", m_bundle), e);
-               }
-            } else if (!DEFAULT_ERROR_PROPERTIES.equals(m_bundle)) {
-               throw new RuntimeException(String.format("No resource bundle(%s) is found!", m_bundle));
+         if (in != null) {
+            try {
+               properties.load(in);
+            } catch (IOException e) {
+               throw new RuntimeException(String.format("Error when loading resource bundle(%s)!", m_bundle), e);
             }
+         } else if (!DEFAULT_ERROR_PROPERTIES.equals(m_bundle)) {
+            throw new RuntimeException(String.format("No resource bundle(%s) is found!", m_bundle));
          }
       }
 

@@ -58,11 +58,10 @@ public class AnnotationMatrix {
             throw new RuntimeException("Annotations(" + target.getName() + ") can't be used together with annotation("
                   + source.getName() + ") to " + method);
          }
-      } else if (cardinality == 1) { // must
-         if (targetAnnotation == null) {
-            throw new RuntimeException("Annotation(" + target.getName() + ") must be used together with annotation("
-                  + source.getName() + ") to " + method);
-         }
+      } else if (cardinality == 1 && targetAnnotation == null) { // must
+         throw new RuntimeException("Annotation(" + target.getName() + ") must be used together with annotation("
+               + source.getName() + ") to " + method);
+      
       }
    }
 }

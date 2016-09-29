@@ -35,25 +35,21 @@ public class Files {
       INPUT_OUTPUT;
 
       public void close(InputStream is) {
-         if (this == INPUT || this == INPUT_OUTPUT) {
-            if (is != null) {
-               try {
-                  is.close();
-               } catch (IOException e) {
-                  // ignore it
-               }
+         if ((this == INPUT || this == INPUT_OUTPUT) && is != null) {
+            try {
+               is.close();
+            } catch (IOException e) {
+               // ignore it
             }
          }
       }
 
       public void close(OutputStream os) {
-         if (this == OUTPUT || this == INPUT_OUTPUT) {
-            if (os != null) {
-               try {
-                  os.close();
-               } catch (IOException e) {
-                  // ignore it
-               }
+         if ((this == OUTPUT || this == INPUT_OUTPUT) && os != null) {
+            try {
+               os.close();
+            } catch (IOException e) {
+               // ignore it
             }
          }
       }
@@ -94,10 +90,8 @@ public class Files {
       }
 
       public void createDir(File dir) {
-         if (!dir.exists()) {
-            if (!dir.mkdirs()) {
-               throw new RuntimeException(String.format("Cant' create directory(%s)!", dir));
-            }
+         if (!dir.exists() && !dir.mkdirs()) {
+            throw new RuntimeException(String.format("Cant' create directory(%s)!", dir));
          }
       }
 
