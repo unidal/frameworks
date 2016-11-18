@@ -28,6 +28,8 @@ import javax.tools.ToolProvider;
 public class JavaFragmentCompiler implements Compilable {
    private JavaFragmentEngine m_engine;
 
+   private File m_outputDir;
+
    public JavaFragmentCompiler(JavaFragmentEngine engine) {
       m_engine = engine;
    }
@@ -65,7 +67,7 @@ public class JavaFragmentCompiler implements Compilable {
             }
          }
       } else {
-         System.err.println("[WARN] Unrecognized classloader: "+loader.getClass().getName());
+         System.err.println("[WARN] Unrecognized classloader: " + loader.getClass().getName());
       }
    }
 
@@ -164,12 +166,30 @@ public class JavaFragmentCompiler implements Compilable {
    }
 
    private File getOutputDirectory() {
-      Object outputDirectory = m_engine.get(JavaFragmentEngine.OUTPUT_DIRECTORY);
+      if (m_outputDir == null) {
+         Object outputDirectory = m_engine.get(JavaFragmentEngine.OUTPUT_DIRECTORY);
 
-      if (outputDirectory == null) {
-         return new File("target/tmp-classes");
-      } else {
-         return new File(String.valueOf(outputDirectory));
+         if (outputDirectory != null) {
+            m_outputDir = new File(String.valueOf(outputDirectory));
+         } else {
+            String tmpDir = System.getProperty("java.io.tmpdir");
+
+            m_outputDir = new File(tmpDir, "JavaFragment");
+
+            if (!m_outputDir.canRead()) {
+               m_outputDir = new File("/opt/data/tmp"); // hack
+            }
+
+            if (!m_outputDir.exists()) {
+               if (!m_outputDir.mkdirs()) {
+                  throw new IllegalStateException("Unable to create directory: " + m_outputDir);
+               }
+            }
+         }
+
+         System.out.println("[INFO] Java Fragment output directory is " + m_outputDir);
       }
+
+      return m_outputDir;
    }
 }
