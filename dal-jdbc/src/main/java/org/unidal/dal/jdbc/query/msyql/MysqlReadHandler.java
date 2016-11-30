@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.unidal.dal.jdbc.DalException;
-import org.unidal.dal.jdbc.DalRuntimeException;
 import org.unidal.dal.jdbc.DataObject;
 import org.unidal.dal.jdbc.datasource.DataSourceException;
 import org.unidal.dal.jdbc.engine.QueryContext;
@@ -73,16 +72,16 @@ public class MysqlReadHandler extends MysqlBaseHandler implements ReadHandler {
          throw new DalException(String.format("Error when executing query(%s) failed, proto: %s, message: %s.",
                ctx.getSqlStatement(), proto, e), e);
       } finally {
-         if (ps != null) {
-            try {
+         try {
+            if (ps != null) {
                ps.close();
-            } catch (SQLException e) {
-               throw new DalRuntimeException("Error when closing PreparedStatement, message: " + e, e);
             }
+         } catch (SQLException e) {
+            Cat.logError(e);
+         } finally {
+            t.complete();
+            m_transactionManager.closeConnection();
          }
-
-         t.complete();
-         m_transactionManager.closeConnection();
       }
    }
 }

@@ -4,7 +4,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import org.unidal.dal.jdbc.DalException;
-import org.unidal.dal.jdbc.DalRuntimeException;
 import org.unidal.dal.jdbc.DataObject;
 import org.unidal.dal.jdbc.QueryType;
 import org.unidal.dal.jdbc.datasource.DataSourceException;
@@ -67,16 +66,16 @@ public class MysqlWriteHandler extends MysqlBaseHandler implements WriteHandler 
          throw new DalException(String.format("Error when executing update(%s) failed, proto: %s, message: %s.",
                ctx.getSqlStatement(), proto, e), e);
       } finally {
-         if (ps != null) {
-            try {
+         try {
+            if (ps != null) {
                ps.close();
-            } catch (SQLException e) {
-               throw new DalRuntimeException("Error when closing PreparedStatement, message: " + e, e);
             }
+         } catch (SQLException e) {
+            Cat.logError(e);
+         } finally {
+            t.complete();
+            m_transactionManager.closeConnection();
          }
-
-         t.complete();
-         m_transactionManager.closeConnection();
       }
    }
 
@@ -177,16 +176,16 @@ public class MysqlWriteHandler extends MysqlBaseHandler implements WriteHandler 
          throw new DalException(String.format("Error when executing batch update(%s) failed, proto: %s, message: %s.",
                ctx.getSqlStatement(), ctx.getProto(), e), e);
       } finally {
-         if (ps != null) {
-            try {
+         try {
+            if (ps != null) {
                ps.close();
-            } catch (SQLException e) {
-               throw new DalRuntimeException("Error when closing PreparedStatement, message: " + e, e);
             }
+         } catch (SQLException e) {
+            Cat.logError(e);
+         } finally {
+            t.complete();
+            m_transactionManager.closeConnection();
          }
-
-         t.complete();
-         m_transactionManager.closeConnection();
       }
    }
 }
