@@ -92,6 +92,12 @@ public enum Inets {
 
    protected abstract List<Address> getAllInetAddresses();
 
+   public InetAddress getLocalHost() {
+      initialize();
+
+      return m_localHost;
+   }
+
    public String getLocalHostAddress() {
       initialize();
 

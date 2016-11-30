@@ -50,7 +50,7 @@ public class DefaultModuleInitializer implements ModuleInitializer {
    private synchronized void executeModule(ModuleContext ctx, Module module, int index) throws Exception {
       long start = System.currentTimeMillis();
 
-      // set flat to avoid re-entrance
+      // set flag to avoid re-entrance
       module.setInitialized(true);
 
       info(ctx, index + " ------ " + module.getClass().getName());
@@ -65,13 +65,15 @@ public class DefaultModuleInitializer implements ModuleInitializer {
    private void expandAll(ModuleContext ctx, Module[] modules, Set<Module> all) throws Exception {
       if (modules != null) {
          for (Module module : modules) {
-            expandAll(ctx, module.getDependencies(ctx), all);
-
             if (!all.contains(module)) {
                if (module instanceof AbstractModule) {
                   ((AbstractModule) module).setup(ctx);
                }
+            }
 
+            expandAll(ctx, module.getDependencies(ctx), all);
+
+            if (!all.contains(module)) {
                all.add(module);
             }
          }

@@ -130,9 +130,9 @@ public abstract class AbstractResourceConfigurator {
          Class<?> type = field.getType();
 
          if (role != Inject.Default.class) {
-            if (!type.isAssignableFrom(role)) {
+            if (!role.isAssignableFrom(type)) {
                throw new IllegalStateException(String.format("Field(%s) of %s can only be injected " + //
-                     "by subclass of %s instead of %s.", field.getName(), clazz, type.getName(), role.getName()));
+                     "by subclass of %s instead of %s.", field.getName(), clazz, role.getName(), type.getName()));
             }
          } else {
             if (roleHints.length <= 1) {

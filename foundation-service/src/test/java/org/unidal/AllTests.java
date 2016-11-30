@@ -12,6 +12,7 @@ import org.unidal.helper.PropertiesTest;
 import org.unidal.helper.SplittersTest;
 import org.unidal.helper.StringizersTest;
 import org.unidal.helper.ThreadsTest;
+import org.unidal.initialization.ModuleInitializerTest;
 import org.unidal.lookup.ComponentTestCaseTest;
 import org.unidal.lookup.ContainerHolderTest;
 import org.unidal.lookup.ContainerLoaderTest;
@@ -53,7 +54,9 @@ PlexusContainerTest.class,
 
 TimedConsoleLoggerTest.class,
 
-TupleTest.class
+TupleTest.class,
+
+ModuleInitializerTest.class,
 
 })
 public class AllTests {
