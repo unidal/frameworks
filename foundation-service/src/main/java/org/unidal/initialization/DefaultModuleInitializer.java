@@ -65,15 +65,13 @@ public class DefaultModuleInitializer implements ModuleInitializer {
    private void expandAll(ModuleContext ctx, Module[] modules, Set<Module> all) throws Exception {
       if (modules != null) {
          for (Module module : modules) {
-            if (!all.contains(module)) {
+            if (module != null && !all.contains(module)) {
                if (module instanceof AbstractModule) {
                   ((AbstractModule) module).setup(ctx);
                }
-            }
 
-            expandAll(ctx, module.getDependencies(ctx), all);
+               expandAll(ctx, module.getDependencies(ctx), all);
 
-            if (!all.contains(module)) {
                all.add(module);
             }
          }
