@@ -71,6 +71,7 @@ public class MVC extends AbstractContainerServlet {
                ctx.setAttribute(name, value);
             }
 
+            ctx.setAttribute("servlet-config", config);
             initializer.execute(ctx);
          } catch (Exception e) {
             throw new ServletException(e);
@@ -79,7 +80,8 @@ public class MVC extends AbstractContainerServlet {
    }
 
    @Override
-   protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+   protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException,
+         IOException {
       if (request.getCharacterEncoding() == null) {
          request.setCharacterEncoding("UTF-8");
       }

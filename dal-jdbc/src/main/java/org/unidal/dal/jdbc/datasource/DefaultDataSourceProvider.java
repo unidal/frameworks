@@ -10,7 +10,9 @@ import org.codehaus.plexus.logging.Logger;
 import org.unidal.dal.jdbc.datasource.model.entity.DataSourcesDef;
 import org.unidal.dal.jdbc.datasource.model.transform.DefaultSaxParser;
 import org.unidal.helper.Properties;
+import org.unidal.lookup.annotation.Named;
 
+@Named(type = DataSourceProvider.class)
 public class DefaultDataSourceProvider implements DataSourceProvider, LogEnabled {
    private String m_datasourceFile;
 

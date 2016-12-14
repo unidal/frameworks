@@ -13,6 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.codehaus.plexus.logging.AbstractLogger;
 import org.codehaus.plexus.logging.Logger;
 import org.unidal.helper.Properties;
+import org.unidal.helper.Threads;
 
 public class TimedConsoleLogger extends AbstractLogger implements Logger {
    private MessageFormat m_format;
@@ -60,17 +61,6 @@ public class TimedConsoleLogger extends AbstractLogger implements Logger {
       }
    }
 
-   private boolean isDevMode() {
-      // override by command line
-      String mode = System.getProperty("devMode", "false");
-
-      if ("true".equals(mode)) {
-         return true;
-      } else {
-         return m_devMode;
-      }
-   }
-
    @Override
    public void debug(String message, Throwable throwable) {
       if (isDebugEnabled()) {
@@ -93,16 +83,33 @@ public class TimedConsoleLogger extends AbstractLogger implements Logger {
    }
 
    private String getCallerClassName() {
+      String caller = Threads.getCallerClass();
+
+      if (caller != null) {
+         return caller;
+      }
+
       StackTraceElement[] elements = new Exception().getStackTrace();
 
       if (elements.length > 5) {
-         String className = elements[5].getClassName();
-         int pos = className.lastIndexOf('.');
+         for (int i = 5; i < elements.length; i++) {
+            String className = elements[i].getClassName();
 
-         if (pos > 0) {
-            return className.substring(pos + 1);
-         } else {
-            return className;
+            if (TimedConsoleLoggerManager.shouldSkipClass(className)) {
+               continue;
+            }
+
+            int pos = className.lastIndexOf('$');
+
+            if (pos < 0) {
+               pos = className.lastIndexOf('.');
+            }
+
+            if (pos > 0) {
+               return className.substring(pos + 1);
+            } else {
+               return className;
+            }
          }
       }
 
@@ -176,6 +183,17 @@ public class TimedConsoleLogger extends AbstractLogger implements Logger {
    public void info(String message, Throwable throwable) {
       if (isInfoEnabled()) {
          out("INFO", message, throwable);
+      }
+   }
+
+   private boolean isDevMode() {
+      // override by command line
+      String mode = System.getProperty("devMode", "false");
+
+      if ("true".equals(mode)) {
+         return true;
+      } else {
+         return m_devMode;
       }
    }
 

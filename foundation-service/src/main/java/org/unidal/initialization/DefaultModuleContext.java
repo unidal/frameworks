@@ -12,6 +12,7 @@ import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.LoggerManager;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.unidal.lookup.annotation.Named;
+import org.unidal.lookup.logger.TimedConsoleLoggerManager;
 
 @Named(type = ModuleContext.class)
 public class DefaultModuleContext implements ModuleContext, Contextualizable {
@@ -122,6 +123,12 @@ public class DefaultModuleContext implements ModuleContext, Contextualizable {
          throw new RuntimeException("Unable to get instance of Logger, "
                + "please make sure the environment was setup correctly!", e);
       }
+
+      skipClassForLogger(getClass());
+   }
+
+   public void skipClassForLogger(Class<?> clazz) {
+      TimedConsoleLoggerManager.skipClass(clazz);
    }
 
    @Override

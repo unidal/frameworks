@@ -15,6 +15,7 @@ import java.util.concurrent.locks.LockSupport;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.unidal.lookup.annotation.Named;
+import org.unidal.lookup.logger.TimedConsoleLoggerManager;
 
 public class Threads {
    private static volatile Manager s_manager = new Manager();
@@ -37,6 +38,10 @@ public class Threads {
 
    public static void removeListener(ThreadListener listener) {
       s_manager.removeListener(listener);
+   }
+
+   public static String getCallerClass() {
+      return RunnableThread.m_callerThreadLocal.get();
    }
 
    public static abstract class AbstractThreadListener implements ThreadListener {
@@ -160,6 +165,8 @@ public class Threads {
       private ThreadPoolManager m_threadPoolManager;
 
       public Manager() {
+         TimedConsoleLoggerManager.skipClass(getClass());
+
          Thread shutdownThread = new Thread() {
             @Override
             public void run() {
@@ -271,10 +278,15 @@ public class Threads {
    static class RunnableThread extends Thread {
       private Runnable m_target;
 
+      private String m_caller;
+
+      private static ThreadLocal<String> m_callerThreadLocal = new ThreadLocal<String>();
+
       public RunnableThread(ThreadGroup threadGroup, Runnable target, String name, UncaughtExceptionHandler handler) {
          super(threadGroup, target, name);
 
          m_target = target;
+         m_caller = getCaller();
 
          setDaemon(true);
          setUncaughtExceptionHandler(handler);
@@ -284,22 +296,51 @@ public class Threads {
          }
       }
 
+      private String getCaller() {
+         StackTraceElement[] elements = new Exception().getStackTrace();
+         String prefix = Threads.class.getName() + "$";
+
+         for (int i = 0; i < elements.length; i++) {
+            String className = elements[i].getClassName();
+
+            if (className.startsWith(prefix)) {
+               continue;
+            }
+
+            int pos = className.lastIndexOf('$');
+
+            if (pos < 0) {
+               pos = className.lastIndexOf('.');
+            }
+
+            if (pos < 0) {
+               return className;
+            } else {
+               return className.substring(pos + 1);
+            }
+         }
+
+         return null;
+      }
+
       public Runnable getTarget() {
          return m_target;
       }
 
       @Override
       public void run() {
+         m_callerThreadLocal.set(m_caller);
          s_manager.onThreadStarting(this, getName());
          super.run();
          s_manager.onThreadStopped(this, getName());
+         m_callerThreadLocal.remove();
       }
 
       public void shutdown() {
          if (m_target instanceof Task) {
             ((Task) m_target).shutdown();
-            System.out.println(String.format("Task(%s) is shutdown! ", getName()));
          } else {
+            System.out.println(String.format("Thread(%s) is shutdown! ", getName()));
             interrupt();
          }
       }

@@ -13,4 +13,6 @@ public @interface Relation {
    String alias();
 
    String join();
+   
+   boolean multiple() default false;
 }

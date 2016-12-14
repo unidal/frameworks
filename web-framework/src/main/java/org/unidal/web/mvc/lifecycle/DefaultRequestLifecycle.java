@@ -60,9 +60,15 @@ public class DefaultRequestLifecycle implements RequestLifecycle, LogEnabled {
       RequestContext context = m_builder.build(request);
 
       try {
-         handleRequest(request, response, context);
+         if (context == null) {
+            showPageNotFound(request, response);
+         } else {
+            handleRequest(request, response, context);
+         }
       } finally {
-         m_builder.reset(context);
+         if (context != null) {
+            m_builder.reset(context);
+         }
       }
    }
 
@@ -146,11 +152,6 @@ public class DefaultRequestLifecycle implements RequestLifecycle, LogEnabled {
 
    private void handleRequest(final HttpServletRequest request, final HttpServletResponse response,
          RequestContext requestContext) throws IOException {
-      if (requestContext == null) {
-         showPageNotFound(request, response);
-         return;
-      }
-
       ModuleModel module = requestContext.getModule();
       InboundActionModel inboundAction = requestContext.getInboundAction();
       ActionContext<?> actionContext = createActionContext(request, response, requestContext, inboundAction);
@@ -167,7 +168,7 @@ public class DefaultRequestLifecycle implements RequestLifecycle, LogEnabled {
          InboundActionHandler handler = m_actionHandlerManager.getInboundActionHandler(module, inboundAction);
 
          handler.preparePayload(actionContext);
-         
+
          if (!handlePreActions(request, response, module, requestContext, inboundAction, actionContext)) {
             return;
          }

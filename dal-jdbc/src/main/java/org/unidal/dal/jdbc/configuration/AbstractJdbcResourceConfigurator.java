@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.unidal.dal.jdbc.QueryEngine;
 import org.unidal.dal.jdbc.annotation.Entity;
-import org.unidal.dal.jdbc.datasource.DataSourceProvider;
 import org.unidal.dal.jdbc.datasource.DefaultDataSourceProvider;
 import org.unidal.dal.jdbc.mapping.SimpleTableProvider;
 import org.unidal.dal.jdbc.mapping.TableProvider;
@@ -19,7 +18,7 @@ public abstract class AbstractJdbcResourceConfigurator extends AbstractResourceC
    }
 
    protected Component defineJdbcDataSourceConfigurationManagerComponent(String datasourceFile) {
-      return C(DataSourceProvider.class, DefaultDataSourceProvider.class) //
+      return A(DefaultDataSourceProvider.class) //
             .config(E("datasourceFile").value(datasourceFile));
    }
 

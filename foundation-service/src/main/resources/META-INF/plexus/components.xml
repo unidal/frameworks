@@ -23,11 +23,6 @@
 			<implementation>org.unidal.formatter.DateFormatter</implementation>
 		</component>
 		<component>
-			<role>org.unidal.helper.Threads$ThreadListener</role>
-			<role-hint>logger</role-hint>
-			<implementation>org.unidal.helper.Threads$LoggerThreadListener</implementation>
-		</component>
-		<component>
 			<role>org.unidal.net.ClientTransport</role>
 			<implementation>org.unidal.net.transport.DefaultClientTransport</implementation>
 			<instantiation-strategy>per-lookup</instantiation-strategy>

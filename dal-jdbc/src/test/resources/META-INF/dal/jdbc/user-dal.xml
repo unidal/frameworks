@@ -6,7 +6,7 @@
       <member name="encrypted-password"  insert-expr="password(${password})" update-expr="password(${password})"/>
       <var name="password" value-type="String" />
       <relation name="home-address" entity-name="user-address" entity-alias="hua" join="u.user_id=hua.user_id and hua.type='H'" />
-      <relation name="office-address" entity-name="user-address" entity-alias="oua" join="u.user_id=oua.user_id and oua.type='O'" />
+      <relation name="office-address" entity-name="user-address" entity-alias="oua" join="u.user_id=oua.user_id and oua.type='O'" multiple="true"/>
       <relation name="billing-address" entity-name="user-address" entity-alias="bua" join="u.user_id=bua.user_id and bua.type='B'" />
       <readsets>
          <readset name="FULL_HOME">
