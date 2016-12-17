@@ -27,8 +27,6 @@ import org.unidal.helper.Reflects;
 import org.unidal.helper.Reflects.MethodFilter;
 import org.unidal.lookup.ContainerHolder;
 
-import com.google.common.collect.Multimap;
-
 /**
  * <xmp>
  * 
@@ -168,13 +166,13 @@ public class DataSourceTestHelper extends ContainerHolder implements LogEnabled 
       descriptor.setRoleClass(DataSourceManager.class);
       descriptor.setRoleHint(PlexusConstants.PLEXUS_DEFAULT_HINT);
 
-      Map<ClassRealm, SortedMap<String, Multimap<String, ComponentDescriptor<?>>>> index = Reflects.forField()
-            .getDeclaredFieldValue(container, "componentRegistry", "repository", "index");
-      for (SortedMap<String, Multimap<String, ComponentDescriptor<?>>> roleIndex : index.values()) {
-         Multimap<String, ComponentDescriptor<?>> roleHintIndex = roleIndex.get(DataSourceManager.class.getName());
+      Map<ClassRealm, SortedMap<String, Object>> index = Reflects.forField().getDeclaredFieldValue(container,
+            "componentRegistry", "repository", "index");
+      for (SortedMap<String, Object> roleIndex : index.values()) {
+         Object roleHintIndex = roleIndex.get(DataSourceManager.class.getName());
 
          if (roleHintIndex != null) {
-            roleHintIndex.removeAll(PlexusConstants.PLEXUS_DEFAULT_HINT);
+            Reflects.forMethod().invokeMethod(roleHintIndex, "removeAll", Object.class, PlexusConstants.PLEXUS_DEFAULT_HINT);
          }
       }
 

@@ -21,8 +21,6 @@ import org.unidal.lookup.configuration.Configuration;
 import org.unidal.lookup.extension.EnumComponentManagerFactory;
 import org.unidal.lookup.extension.PostConstructionPhase;
 
-import com.google.common.collect.Multimap;
-
 public abstract class ComponentTestCase extends ContainerHolder {
    protected static final String PER_LOOKUP = "per-lookup";
 
@@ -58,13 +56,13 @@ public abstract class ComponentTestCase extends ContainerHolder {
       descriptor.setRoleClass(role);
       descriptor.setRoleHint(roleHint);
 
-      Map<ClassRealm, SortedMap<String, Multimap<String, ComponentDescriptor<?>>>> index = Reflects.forField()
-            .getDeclaredFieldValue(m_container, "componentRegistry", "repository", "index");
-      for (SortedMap<String, Multimap<String, ComponentDescriptor<?>>> roleIndex : index.values()) {
-         Multimap<String, ComponentDescriptor<?>> roleHintIndex = roleIndex.get(role.getName());
+      Map<ClassRealm, SortedMap<String, Object>> index = Reflects.forField().getDeclaredFieldValue(m_container,
+            "componentRegistry", "repository", "index");
+      for (SortedMap<String, Object> roleIndex : index.values()) {
+         Object roleHintIndex = roleIndex.get(role.getName());
 
          if (roleHintIndex != null) {
-            roleHintIndex.removeAll(roleHint);
+            Reflects.forMethod().invokeMethod(roleHintIndex, "removeAll", Object.class, roleHint);
          }
       }
 
