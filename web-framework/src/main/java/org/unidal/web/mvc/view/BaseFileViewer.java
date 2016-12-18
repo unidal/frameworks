@@ -19,7 +19,7 @@ public abstract class BaseFileViewer<P extends Page, A extends Action, S extends
 	 * return file name to be shown in browser download dialog.
 	 * <p>
 	 * 
-	 * Note: This method will be ignore if the {@link BasePdfViewer.process()}
+	 * Note: This method will be ignore if the {@link #process(S, T, byte[])}
 	 * return null.
 	 * 
 	 * @return file name to be shown in browser download dialog.
@@ -31,7 +31,7 @@ public abstract class BaseFileViewer<P extends Page, A extends Action, S extends
 	 * for further process.
 	 * <p>
 	 * 
-	 * Note: This method will be ignore if the {@link BasePdfViewer.process()}
+	 * Note: This method will be ignore if the {@link #process(S, T, byte[])}
 	 * return null.
 	 * 
 	 * @return JSP file path (relative to warRoot) to forward.
@@ -42,7 +42,7 @@ public abstract class BaseFileViewer<P extends Page, A extends Action, S extends
 	 * return mime-type for file to be downloaded.
 	 * <p>
 	 * 
-	 * Note: This method will be ignore if the {@link BasePdfViewer.process()}
+	 * Note: This method will be ignore if the {@link #process(S, T, byte[])}
 	 * return null.
 	 * 
 	 * @return mime-type. for example, text/html, text/xml, application/pdf etc.

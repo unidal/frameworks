@@ -23,10 +23,10 @@ import org.unidal.web.mvc.view.annotation.PojoMeta;
 
 @Named(type = ModelHandler.class)
 public class DefaultModelHandler implements ModelHandler {
-   @Inject("xml")
+   @Inject(XmlModelBuilder.ID)
    private ModelBuilder m_xmlBuilder;
 
-   @Inject("json")
+   @Inject(JsonModelBuilder.ID)
    private ModelBuilder m_jsonBuilder;
 
    private Map<Class<?>, ModelDescriptor> m_map = new HashMap<Class<?>, ModelDescriptor>();

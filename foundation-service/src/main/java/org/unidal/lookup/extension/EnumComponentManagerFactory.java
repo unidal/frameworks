@@ -17,8 +17,8 @@ import org.unidal.helper.Splitters;
 
 public class EnumComponentManagerFactory implements ComponentManagerFactory {
    @SuppressWarnings({ "unchecked", "rawtypes" })
-   public ComponentManager<?> createComponentManager(MutablePlexusContainer container, LifecycleHandler lifecycleHandler,
-         ComponentDescriptor componentDescriptor, String role, String roleHint) {
+   public ComponentManager<?> createComponentManager(MutablePlexusContainer container,
+         LifecycleHandler lifecycleHandler, ComponentDescriptor componentDescriptor, String role, String roleHint) {
       return new EnumComponentManager(container, lifecycleHandler, componentDescriptor, role, roleHint);
    }
 
@@ -71,14 +71,15 @@ public class EnumComponentManagerFactory implements ComponentManagerFactory {
             }
          }
 
-         throw new ComponentInstantiationException(String.format("Field(%s) is not defined in the %s!", field, enumClass));
+         throw new ComponentInstantiationException(String.format("Field(%s) is not defined in the %s!", field,
+               enumClass));
       }
 
       public synchronized void release(Object component) throws ComponentLifecycleException {
       }
    }
 
-   public static class EnumValueHolder {
+   static class EnumValueHolder {
       private static ThreadLocal<Object> m_threadLocal = new ThreadLocal<Object>();
 
       public static Object get() {

@@ -19,7 +19,7 @@ public interface IMetaAnnotationHandler<T extends Annotation, S extends Annotate
     * 
     * @param ctx
     *           Class context
-    * @param annonation
+    * @param annotation
     *           annotation instance to be handled
     * @param meta
     *           meta annotation instance to be handled

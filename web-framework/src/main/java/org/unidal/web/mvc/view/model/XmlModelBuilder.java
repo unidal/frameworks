@@ -15,8 +15,10 @@ import org.unidal.web.mvc.view.annotation.ElementMeta;
 import org.unidal.web.mvc.view.annotation.EntityMeta;
 import org.unidal.web.mvc.view.annotation.PojoMeta;
 
-@Named(type = ModelBuilder.class, value = "xml")
+@Named(type = ModelBuilder.class, value = XmlModelBuilder.ID)
 public class XmlModelBuilder implements ModelBuilder {
+   public static final String ID = "xml";
+   
    @Override
    public String build(ModelDescriptor descriptor, Object model) {
       StringBuilder sb = new StringBuilder(8192);

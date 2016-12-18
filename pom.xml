@@ -5,8 +5,9 @@
    <groupId>org.unidal.framework</groupId>
    <artifactId>parent</artifactId>
    <version>2.6.0</version>
-   <name>Framework</name>
    <packaging>pom</packaging>
+   <name>Framework</name>
+   <description>Unidal Framework</description>
    <modules>
       <module>framework-bom</module>
       <module>eunit-testfwk</module>
@@ -23,16 +24,23 @@
        <url>http://www.unidal.org</url>
    </organization>
    <scm>
-      <url>https://github.com/unidal/frameworks</url>
       <connection>scm:git:git://github.com/unidal/frameworks.git</connection>
       <developerConnection>scm:git:ssh://git@github.com/unidal/frameworks.git</developerConnection>
-      <tag>HEAD</tag>
+      <url>https://github.com/unidal/frameworks/tree/master</url>
    </scm>
+   <licenses>
+      <license>
+         <name>The Apache License, Version 2.0</name>
+         <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      </license>
+   </licenses>
    <developers>
       <developer>
-         <email>qmwu2000@gmail.com</email>
          <name>Frankie Wu</name>
+         <email>qmwu2000@gmail.com</email>
          <timezone>Asia/Shanghai</timezone>
+         <organization>Unidal.org</organization>
+         <organizationUrl>http://unidal.org</organizationUrl>
       </developer>
    </developers>
    <properties>
@@ -61,8 +69,8 @@
       <testng.version>6.9.10</testng.version>
 
       <!-- plugin version -->
-      <codegen.plugin.version>2.4.0</codegen.plugin.version>
-      <plexus.plugin.version>2.4.0</plexus.plugin.version>
+      <codegen.plugin.version>2.5.0</codegen.plugin.version>
+      <plexus.plugin.version>2.5.0</plexus.plugin.version>
    </properties>
    <dependencyManagement>
       <dependencies>
@@ -263,11 +271,11 @@
                      <file>
                         <name>.settings/org.eclipse.jdt.core.prefs</name>
                         <content><![CDATA[
-                                 org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.6
-                                 eclipse.preferences.version=1
-                                 org.eclipse.jdt.core.compiler.source=1.6
-                                 org.eclipse.jdt.core.compiler.compliance=1.6
-                                 ]]></content>
+                        org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.6
+                        eclipse.preferences.version=1
+                        org.eclipse.jdt.core.compiler.source=1.6
+                        org.eclipse.jdt.core.compiler.compliance=1.6
+                        ]]></content>
                      </file>
                   </additionalConfig>
                </configuration>
@@ -288,6 +296,7 @@
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
+            <version>2.2.1</version>
             <executions>
                <execution>
                   <id>attach-sources</id>
@@ -298,43 +307,71 @@
                </execution>
             </executions>
          </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.9.1</version>
+            <executions>
+               <execution>
+                  <id>attach-javadocs</id>
+                  <goals>
+                     <goal>jar</goal>
+                  </goals>
+                  <configuration>
+                     <charset>UTF-8</charset>
+                     <encoding>UTF-8</encoding>
+                     <locale>en_US</locale>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.5</version>
+            <executions>
+               <execution>
+                  <id>sign-artifacts</id>
+                  <phase>verify</phase>
+                  <goals>
+                     <goal>sign</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>1.6.7</version>
+            <extensions>true</extensions>
+            <configuration>
+               <serverId>ossrh</serverId>
+               <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+               <autoReleaseAfterClose>true</autoReleaseAfterClose>
+            </configuration>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-release-plugin</artifactId>
+            <version>2.5.3</version>
+            <configuration>
+               <autoVersionSubmodules>true</autoVersionSubmodules>
+               <useReleaseProfile>false</useReleaseProfile>
+               <releaseProfiles>release</releaseProfiles>
+               <goals>deploy</goals>
+            </configuration>
+         </plugin>
       </plugins>
    </build>
-   <repositories>
-      <repository>
-         <id>central</id>
-         <url>http://repo1.maven.org/maven2</url>
-      </repository>
-      <repository>
-         <id>frameworks</id>
-         <url>https://raw.githubusercontent.com/unidal/frameworks/mvn-repo</url>
-         <releases>
-            <checksumPolicy>ignore</checksumPolicy>
-         </releases>
-      </repository>
-   </repositories>
-   <pluginRepositories>
-      <pluginRepository>
-         <id>central</id>
-         <url>http://repo1.maven.org/maven2</url>
-      </pluginRepository>
-      <pluginRepository>
-         <id>maven-plugins</id>
-         <url>https://raw.githubusercontent.com/unidal/maven-plugins/mvn-repo</url>
-         <releases>
-            <checksumPolicy>ignore</checksumPolicy>
-         </releases>
-      </pluginRepository>
-   </pluginRepositories>
    <distributionManagement>
-      <repository>
-         <id>releases</id>
-         <url>${releases.repo}</url>
-      </repository>
       <snapshotRepository>
          <id>snapshots</id>
          <url>${snapshots.repo}</url>
       </snapshotRepository>
+      <repository>
+         <id>releases</id>
+         <url>${releases.repo}</url>
+      </repository>
    </distributionManagement>
 </project>
 

@@ -18,9 +18,9 @@ import org.unidal.web.jsp.annotation.TaglibMeta;
  * Abstract tag library class to generate .tld file automatically.
  * <p>
  * 
- * Sub class should be annotated with @TaglibMeta. For example:
+ * Sub class should be annotated with {@code @TaglibMeta}. For example:<p>
  * 
- * @TaglibMeta(uri = "http://www.unidal.org/my", shortName = "m", name =
+ * {@code @TaglibMeta}(uri = "http://www.unidal.org/my", shortName = "m", name =
  *                 "my", description = "my JSP tag library",
  *                 funcitons = { MyFunction.class }, tagFiles = { "layout.tag" })
  */

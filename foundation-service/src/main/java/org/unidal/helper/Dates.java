@@ -62,7 +62,7 @@ public class Dates {
        * 
        * @param field
        *           one of 's', 'm', 'h', 'H', 'd', 'w', 'M', 'Y'
-       * @return
+       * @return Date helper instance
        */
       public DateHelper beginOf(char field) {
          switch (field) {
@@ -128,7 +128,7 @@ public class Dates {
        * 
        * @param field
        *           one of 's', 'm', 'h', 'H', 'd', 'w', 'M', 'Y'
-       * @return
+       * @return Date helper instance
        */
       public DateHelper endOf(char field) {
          switch (field) {
