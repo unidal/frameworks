@@ -79,7 +79,7 @@ public class EnumComponentManagerFactory implements ComponentManagerFactory {
       }
    }
 
-   static class EnumValueHolder {
+   public static class EnumValueHolder {
       private static ThreadLocal<Object> m_threadLocal = new ThreadLocal<Object>();
 
       public static Object get() {
