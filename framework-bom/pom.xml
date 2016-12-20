@@ -29,28 +29,28 @@
          <dependency>
             <groupId>org.unidal.framework</groupId>
             <artifactId>foundation-service</artifactId>
-            <version>${project.version}</version>
+            <version>2.7-SNAPSHOT</version>
          </dependency>
          <dependency>
             <groupId>org.unidal.framework</groupId>
             <artifactId>dal-jdbc</artifactId>
-            <version>${project.version}</version>
+            <version>2.7-SNAPSHOT</version>
          </dependency>
          <dependency>
             <groupId>org.unidal.framework</groupId>
             <artifactId>test-framework</artifactId>
-            <version>${project.version}</version>
+            <version>2.7-SNAPSHOT</version>
             <scope>test</scope>
          </dependency>
          <dependency>
             <groupId>org.unidal.framework</groupId>
             <artifactId>web-framework</artifactId>
-            <version>${project.version}</version>
+            <version>2.7-SNAPSHOT</version>
          </dependency>
          <dependency>
             <groupId>org.unidal.framework</groupId>
             <artifactId>java-fragment</artifactId>
-            <version>${project.version}</version>
+            <version>2.7-SNAPSHOT</version>
          </dependency>
          
          <!-- 3rd party artifacts -->
@@ -114,7 +114,7 @@
       <url>https://github.com/unidal/frameworks</url>
       <connection>scm:git:git://github.com/unidal/frameworks.git</connection>
       <developerConnection>scm:git:ssh://git@github.com/unidal/frameworks.git</developerConnection>
-      <tag>v2.6.0</tag>
+      <tag>HEAD</tag>
    </scm>
    <developers>
       <developer>
