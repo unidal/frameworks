@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.unidal.dal.jdbc.QueryEngine;
 import org.unidal.dal.jdbc.datasource.DataSourceException;
@@ -15,6 +16,7 @@ import org.unidal.test.user.address.dal.UserAddressEntity;
 import org.unidal.test.user.dal.User;
 import org.unidal.test.user.dal.UserEntity;
 
+@Ignore
 public class SingleTableTest extends JdbcTestCase {
    @Before
    public void before() throws Exception {

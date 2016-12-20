@@ -1,13 +1,14 @@
 package org.unidal.dal.jdbc.test;
 
 import org.junit.Assert;
-
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.unidal.dal.jdbc.user.User;
 import org.unidal.dal.jdbc.user.UserDao;
 import org.unidal.dal.jdbc.user.UserEntity;
 
+@Ignore
 public class UserTest extends JdbcTestCase {
    @Before
    public void before() throws Exception {
