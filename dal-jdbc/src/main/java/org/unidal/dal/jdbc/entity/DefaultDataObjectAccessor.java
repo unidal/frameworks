@@ -68,7 +68,9 @@ public class DefaultDataObjectAccessor implements DataObjectAccessor, LogEnabled
             return Boolean.FALSE;
          }
       } else if (clazz == Date.class) {
-         if (value instanceof Timestamp) {
+         if (value instanceof Date) { // for java.sql.Date
+            return value;
+         } else if (value instanceof Timestamp) {
             return value;
          }
       } else if (clazz == byte[].class) {
