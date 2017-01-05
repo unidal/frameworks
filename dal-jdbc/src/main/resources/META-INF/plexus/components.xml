@@ -2,11 +2,11 @@
 	<components>
 		<component>
 			<role>org.unidal.dal.jdbc.query.QueryNaming</role>
-			<implementation>org.unidal.dal.jdbc.query.msyql.MysqlQueryNaming</implementation>
+			<implementation>org.unidal.dal.jdbc.query.mysql.MysqlQueryNaming</implementation>
 		</component>
 		<component>
 			<role>org.unidal.dal.jdbc.query.QueryResolver</role>
-			<implementation>org.unidal.dal.jdbc.query.msyql.MysqlQueryResolver</implementation>
+			<implementation>org.unidal.dal.jdbc.query.mysql.MysqlQueryResolver</implementation>
 			<requirements>
 				<requirement>
 					<role>org.unidal.dal.jdbc.query.token.TokenParser</role>
@@ -16,7 +16,7 @@
 		<component>
 			<role>org.unidal.dal.jdbc.query.ReadHandler</role>
 			<role-hint>mysql</role-hint>
-			<implementation>org.unidal.dal.jdbc.query.msyql.MysqlReadHandler</implementation>
+			<implementation>org.unidal.dal.jdbc.query.mysql.MysqlReadHandler</implementation>
 			<requirements>
 				<requirement>
 					<role>org.unidal.dal.jdbc.transaction.TransactionManager</role>
@@ -35,7 +35,7 @@
 		<component>
 			<role>org.unidal.dal.jdbc.query.WriteHandler</role>
 			<role-hint>mysql</role-hint>
-			<implementation>org.unidal.dal.jdbc.query.msyql.MysqlWriteHandler</implementation>
+			<implementation>org.unidal.dal.jdbc.query.mysql.MysqlWriteHandler</implementation>
 			<requirements>
 				<requirement>
 					<role>org.unidal.dal.jdbc.transaction.TransactionManager</role>

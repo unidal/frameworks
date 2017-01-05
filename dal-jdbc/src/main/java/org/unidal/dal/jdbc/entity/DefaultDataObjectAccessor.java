@@ -1,5 +1,7 @@
 package org.unidal.dal.jdbc.entity;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.sql.Blob;
 import java.sql.Timestamp;
@@ -80,8 +82,12 @@ public class DefaultDataObjectAccessor implements DataObjectAccessor, LogEnabled
             try {
                return blob.getBytes(0L, (int) blob.length());
             } catch (Exception e) {
-               throw new DalRuntimeException("Error when converting Blob to byte[]!", e);
+               // ignore it and pass through
             }
+         }
+      } else if (clazz.isAssignableFrom(InputStream.class)) {
+         if (value.getClass() == byte[].class) {
+            return new ByteArrayInputStream((byte[]) value);
          }
       }
 

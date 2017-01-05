@@ -42,6 +42,10 @@ public class DefaultModuleInitializer implements ModuleInitializer {
                executeModule(ctx, module, m_index++);
             }
          }
+      } catch (RuntimeException e) {
+         throw e;
+      } catch (Error e) {
+         throw e;
       } catch (Exception e) {
          throw new RuntimeException("Error when initializing modules! Exception: " + e, e);
       }

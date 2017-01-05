@@ -1,4 +1,4 @@
-package org.unidal.dal.jdbc.query.msyql;
+package org.unidal.dal.jdbc.query.mysql;
 
 import java.util.HashSet;
 import java.util.Set;

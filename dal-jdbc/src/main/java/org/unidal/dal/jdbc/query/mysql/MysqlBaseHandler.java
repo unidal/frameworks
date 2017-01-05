@@ -1,5 +1,7 @@
-package org.unidal.dal.jdbc.query.msyql;
+package org.unidal.dal.jdbc.query.mysql;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -20,6 +22,7 @@ import org.unidal.dal.jdbc.engine.QueryContext;
 import org.unidal.dal.jdbc.entity.DataObjectAccessor;
 import org.unidal.dal.jdbc.entity.EntityInfo;
 import org.unidal.dal.jdbc.query.Parameter;
+import org.unidal.helper.Files;
 import org.unidal.helper.Stringizers;
 import org.unidal.lookup.annotation.Inject;
 
@@ -153,7 +156,25 @@ public abstract class MysqlBaseHandler {
 
                   index--;
                } else {
-                  ps.setObject(index, value);
+                  if (value instanceof InputStream) {
+                     InputStream in = (InputStream) value;
+
+                     try {
+                        int length = in.available();
+
+                        ps.setBinaryStream(index, in, length);
+                     } catch (IOException e) {
+                        try {
+                           byte[] ba = Files.forIO().readFrom(in);
+
+                           ps.setObject(index, ba);
+                        } catch (IOException ex) {
+                           throw new RuntimeException("Erro when reading " + parameter.getField().getName() + "!", ex);
+                        }
+                     }
+                  } else {
+                     ps.setObject(index, value);
+                  }
 
                   if (prepareParameterValues) {
                      m_parameterValues.add(value);

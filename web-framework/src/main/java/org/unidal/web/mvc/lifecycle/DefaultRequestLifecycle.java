@@ -92,7 +92,12 @@ public class DefaultRequestLifecycle implements RequestLifecycle, LogEnabled {
       if (!actionContext.isProcessStopped()) {
          request.setAttribute(CatConstants.CAT_STATE, e.getClass().getSimpleName());
          Cat.logError(e);
-         throw new RuntimeException(e.getMessage(), e);
+
+         if (e instanceof RuntimeException) {
+            throw (RuntimeException) e;
+         } else {
+            throw new RuntimeException(e.getMessage(), e);
+         }
       }
    }
 

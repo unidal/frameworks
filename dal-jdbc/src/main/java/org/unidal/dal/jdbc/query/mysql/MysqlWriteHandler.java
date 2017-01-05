@@ -1,4 +1,4 @@
-package org.unidal.dal.jdbc.query.msyql;
+package org.unidal.dal.jdbc.query.mysql;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

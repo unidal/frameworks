@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -36,12 +37,12 @@ public class Threads {
       return s_manager.getThreadPoolManager();
    }
 
-   public static void removeListener(ThreadListener listener) {
-      s_manager.removeListener(listener);
-   }
-
    public static String getCallerClass() {
       return RunnableThread.m_callerThreadLocal.get();
+   }
+
+   public static void removeListener(ThreadListener listener) {
+      s_manager.removeListener(listener);
    }
 
    public static abstract class AbstractThreadListener implements ThreadListener {
@@ -537,6 +538,31 @@ public class Threads {
          }
 
          return service;
+      }
+
+      public ScheduledExecutorService getScheduledThreadPool(String name, int nThreads) {
+         ExecutorService service = m_services.get(name);
+
+         if (service != null && service.isShutdown()) {
+            m_services.remove(name);
+            service = null;
+         }
+
+         if (service == null) {
+            synchronized (this) {
+               service = m_services.get(name);
+
+               if (service == null) {
+                  DefaultThreadFactory factory = newThreadFactory(name);
+                  service = Executors.newScheduledThreadPool(nThreads, factory);
+
+                  m_services.put(name, service);
+                  s_manager.onThreadPoolCreated(service, factory.getName());
+               }
+            }
+         }
+
+         return (ScheduledExecutorService) service;
       }
 
       DefaultThreadFactory newThreadFactory(String name) {

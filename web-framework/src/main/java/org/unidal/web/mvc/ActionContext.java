@@ -7,6 +7,7 @@ import java.io.Writer;
 import java.net.URLEncoder;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -402,6 +403,49 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
             m_inKey = false;
          }
 
+         return this;
+      }
+
+      /**
+       * Keeps parameters given by <code>keys</code>, and deletes all others.
+       * 
+       * @param keys
+       *           to be kept
+       * @return Query
+       */
+      public Query keep(Collection<String> keys) {
+         Map<String, String> map = new LinkedHashMap<String, String>();
+         
+         for (String key : keys) {
+            String value = m_map.get(key);
+            
+            if (value != null) {
+               map.put(key, value);
+            }
+         }
+         
+         m_map = map;
+         return this;
+      }
+      /**
+       * Keeps parameters given by <code>keys</code>, and deletes all others.
+       * 
+       * @param keys
+       *           to be kept
+       * @return Query
+       */
+      public Query keep(String... keys) {
+         Map<String, String> map = new LinkedHashMap<String, String>();
+
+         for (String key : keys) {
+            String value = m_map.get(key);
+
+            if (value != null) {
+               map.put(key, value);
+            }
+         }
+
+         m_map = map;
          return this;
       }
 
