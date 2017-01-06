@@ -40,7 +40,7 @@ public class JdbcDataSourceDescriptorManager extends ContainerHolder implements 
       d.setProperty("max-idle-time", toTime(ds.getIdleTimeout()));
       d.setProperty("min-pool-size", ds.getMinimumPoolSize());
       d.setProperty("max-pool-size", ds.getMaximumPoolSize());
-      d.setProperty("checkout-timeout", toTime(ds.getCheckoutTimeout()));
+      d.setProperty("checkout-timeout", ds.getCheckoutTimeoutInMillis());
 
       return d;
    }

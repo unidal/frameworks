@@ -11,7 +11,7 @@
       <element name="maximum-pool-size" value-type="int" default-value="3"/>
       <element name="connection-timeout" value-type="String" default-value="1s" />
       <element name="idle-timeout" value-type="String" default-value="30m" />
-      <element name="checkout-timeout" value-type="String" default-value="30m" />
+      <element name="checkout-timeout-in-millis" value-type="int" default-value="1000" />
       <element name="statement-cache-size" value-type="int" default-value="1000" />
       <entity-ref name="properties" />
    </entity>
