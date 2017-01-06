@@ -85,6 +85,7 @@ public class JdbcDataSource implements DataSource, Disposable, LogEnabled {
          cpds.setMaxAdministrativeTaskTime(5);
          cpds.setPreferredTestQuery("SELECT 1");
          cpds.setLoginTimeout(d.getIntProperty("login-timeout", 30));
+         cpds.setCheckoutTimeout(d.getIntProperty("checkout-timeout", 0));
 
          setConnectionProperties(cpds, d.getProperty("connectionProperties", null));
 
