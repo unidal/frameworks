@@ -8,6 +8,7 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 import org.unidal.helper.Files.AutoClose;
 
@@ -28,17 +29,13 @@ public class Urls {
          return this;
       }
 
-      public UrlIO header(String name, String value) {
-         if (m_headers == null) {
-            m_headers = new HashMap<String, String>();
-         }
-
-         m_headers.put(name, value);
-         return this;
-      }
-
       public void copy(String url, OutputStream out) throws IOException {
          Files.forIO().copy(openStream(url), out, AutoClose.INPUT);
+      }
+
+      public UrlIO header(String name, String value) {
+         m_headers.put(name, value);
+         return this;
       }
 
       public InputStream openStream(String url) throws IOException {
@@ -56,7 +53,7 @@ public class Urls {
             conn.setReadTimeout(m_readTimeout);
          }
 
-         if (m_headers != null) {
+         if (!m_headers.isEmpty()) {
             for (Map.Entry<String, String> e : m_headers.entrySet()) {
                conn.setRequestProperty(e.getKey(), e.getValue());
             }
@@ -66,11 +63,20 @@ public class Urls {
             responseHeaders.putAll(conn.getHeaderFields());
          }
 
-         return conn.getInputStream();
+         if (responseHeaders != null && "[gzip]".equals(String.valueOf(responseHeaders.get("Content-Encoding")))) {
+            return new GZIPInputStream(conn.getInputStream());
+         } else {
+            return conn.getInputStream();
+         }
       }
 
       public UrlIO readTimeout(int readTimeout) {
          m_readTimeout = readTimeout;
+         return this;
+      }
+
+      public UrlIO withGzip() {
+         m_headers.put("Accept-Encoding", "gzip");
          return this;
       }
    }

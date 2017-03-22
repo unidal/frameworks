@@ -161,7 +161,13 @@ public class Files {
       public String readFrom(File file, String charsetName) throws IOException {
          byte[] content = readFrom(new FileInputStream(file), (int) file.length());
 
-         return new String(content, charsetName);
+         // for Byte Order Mark(BOM) in windows
+         if (content.length >= 3 && "utf-8".equalsIgnoreCase(charsetName) //
+               && content[0] == (byte) 0xEF && content[1] == (byte) 0xBB && content[2] == (byte) 0xBF) {
+            return new String(content, 3, content.length - 3, charsetName);
+         } else {
+            return new String(content, charsetName);
+         }
       }
 
       public byte[] readFrom(InputStream is) throws IOException {

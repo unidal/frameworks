@@ -177,7 +177,12 @@ public class Threads {
 
          m_threadPoolManager = new ThreadPoolManager(this);
          shutdownThread.setDaemon(true);
-         Runtime.getRuntime().addShutdownHook(shutdownThread);
+
+         try {
+            Runtime.getRuntime().addShutdownHook(shutdownThread);
+         } catch (Throwable e) {
+            // in case of system shutting down, runtime could be null
+         }
       }
 
       public void addListener(ThreadListener listener) {
@@ -257,11 +262,15 @@ public class Threads {
       }
 
       public void shutdownAll() {
-         for (ThreadGroupManager manager : m_groupManagers.values()) {
-            manager.shutdown();
-         }
+         try {
+            for (ThreadGroupManager manager : m_groupManagers.values()) {
+               manager.shutdown();
+            }
 
-         m_threadPoolManager.shutdownAll();
+            m_threadPoolManager.shutdownAll();
+         } catch (Throwable e) {
+            // all exceptions during shutdown are ignored
+         }
       }
 
       @Override
@@ -277,11 +286,11 @@ public class Threads {
    }
 
    static class RunnableThread extends Thread {
+      private static ThreadLocal<String> m_callerThreadLocal = new ThreadLocal<String>();
+
       private Runnable m_target;
 
       private String m_caller;
-
-      private static ThreadLocal<String> m_callerThreadLocal = new ThreadLocal<String>();
 
       public RunnableThread(ThreadGroup threadGroup, Runnable target, String name, UncaughtExceptionHandler handler) {
          super(threadGroup, target, name);
