@@ -59,11 +59,13 @@ public class Urls {
             }
          }
 
+         Map<String, List<String>> headers = conn.getHeaderFields();
+
          if (responseHeaders != null) {
-            responseHeaders.putAll(conn.getHeaderFields());
+            responseHeaders.putAll(headers);
          }
 
-         if (responseHeaders != null && "[gzip]".equals(String.valueOf(responseHeaders.get("Content-Encoding")))) {
+         if (headers != null && "[gzip]".equals(String.valueOf(headers.get("Content-Encoding")))) {
             return new GZIPInputStream(conn.getInputStream());
          } else {
             return conn.getInputStream();
