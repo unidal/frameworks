@@ -22,31 +22,16 @@
 			<role>org.unidal.web.mvc.lifecycle.InboundActionHandler</role>
 			<implementation>org.unidal.web.mvc.lifecycle.DefaultInboundActionHandler</implementation>
 			<instantiation-strategy>per-lookup</instantiation-strategy>
-			<requirements>
-				<requirement>
-					<role>com.dianping.cat.message.MessageProducer</role>
-				</requirement>
-			</requirements>
 		</component>
 		<component>
 			<role>org.unidal.web.mvc.lifecycle.OutboundActionHandler</role>
 			<implementation>org.unidal.web.mvc.lifecycle.DefaultOutboundActionHandler</implementation>
 			<instantiation-strategy>per-lookup</instantiation-strategy>
-			<requirements>
-				<requirement>
-					<role>com.dianping.cat.message.MessageProducer</role>
-				</requirement>
-			</requirements>
 		</component>
 		<component>
 			<role>org.unidal.web.mvc.lifecycle.TransitionHandler</role>
 			<implementation>org.unidal.web.mvc.lifecycle.DefaultTransitionHandler</implementation>
 			<instantiation-strategy>per-lookup</instantiation-strategy>
-			<requirements>
-				<requirement>
-					<role>com.dianping.cat.message.MessageProducer</role>
-				</requirement>
-			</requirements>
 		</component>
 		<component>
 			<role>org.unidal.web.mvc.lifecycle.ErrorHandler</role>

@@ -4,26 +4,22 @@ import static org.unidal.lookup.util.ReflectUtils.invokeMethod;
 
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
-import org.unidal.lookup.annotation.Inject;
+import org.unidal.cat.Cat;
 import org.unidal.lookup.annotation.Named;
 import org.unidal.web.mvc.ActionContext;
 import org.unidal.web.mvc.ActionException;
 import org.unidal.web.mvc.model.entity.OutboundActionModel;
 
-import com.dianping.cat.message.MessageProducer;
 import com.dianping.cat.message.Transaction;
 
 @Named(type = OutboundActionHandler.class, instantiationStrategy = Named.PER_LOOKUP)
 public class DefaultOutboundActionHandler implements OutboundActionHandler, LogEnabled {
-   @Inject
-   private MessageProducer m_cat;
-
    private OutboundActionModel m_outboundAction;
 
    private Logger m_logger;
 
    public void handle(ActionContext<?> context) throws ActionException {
-      Transaction t = m_cat.newTransaction("MVC", "OutboundPhase");
+      Transaction t = Cat.newTransaction("MVC", "OutboundPhase");
 
       try {
          invokeMethod(m_outboundAction.getMethod(), m_outboundAction.getModuleInstance(), context);
@@ -31,7 +27,7 @@ public class DefaultOutboundActionHandler implements OutboundActionHandler, LogE
       } catch (RuntimeException e) {
          String actionName = m_outboundAction.getActionName();
 
-         m_cat.logError(e);
+         Cat.logError(e);
          t.setStatus(e);
          throw new ActionException("Error occured during handling outbound action(" + actionName + ")", e);
       } finally {

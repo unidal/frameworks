@@ -2,24 +2,20 @@ package org.unidal.web.mvc.lifecycle;
 
 import static org.unidal.lookup.util.ReflectUtils.invokeMethod;
 
-import org.unidal.lookup.annotation.Inject;
+import org.unidal.cat.Cat;
 import org.unidal.lookup.annotation.Named;
 import org.unidal.web.mvc.ActionContext;
 import org.unidal.web.mvc.ActionException;
 import org.unidal.web.mvc.model.entity.TransitionModel;
 
-import com.dianping.cat.message.MessageProducer;
 import com.dianping.cat.message.Transaction;
 
 @Named(type = TransitionHandler.class, instantiationStrategy = Named.PER_LOOKUP)
 public class DefaultTransitionHandler implements TransitionHandler {
-   @Inject
-   private MessageProducer m_cat;
-
    private TransitionModel m_transition;
 
    public void handle(ActionContext<?> context) throws ActionException {
-      Transaction t = m_cat.newTransaction("MVC", "TransitionPhase");
+      Transaction t = Cat.newTransaction("MVC", "TransitionPhase");
 
       try {
          invokeMethod(m_transition.getMethod(), m_transition.getModuleInstance(), context);
@@ -27,7 +23,7 @@ public class DefaultTransitionHandler implements TransitionHandler {
       } catch (RuntimeException e) {
          String transitionName = m_transition.getTransitionName();
 
-         m_cat.logError(e);
+         Cat.logError(e);
          t.setStatus(e);
          throw new ActionException("Error occured during handling transition(" + transitionName + ")", e);
       } finally {

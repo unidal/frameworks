@@ -9,8 +9,8 @@ import java.util.Map;
 
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
+import org.unidal.cat.Cat;
 import org.unidal.lookup.ContainerHolder;
-import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.annotation.Named;
 import org.unidal.lookup.util.ReflectUtils;
 import org.unidal.web.mvc.ActionContext;
@@ -21,15 +21,11 @@ import org.unidal.web.mvc.Validator;
 import org.unidal.web.mvc.model.entity.InboundActionModel;
 import org.unidal.web.mvc.payload.annotation.PayloadProviderMeta;
 
-import com.dianping.cat.message.MessageProducer;
 import com.dianping.cat.message.Transaction;
 
 @Named(type = InboundActionHandler.class, instantiationStrategy = Named.PER_LOOKUP)
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class DefaultInboundActionHandler extends ContainerHolder implements InboundActionHandler, LogEnabled {
-   @Inject
-   private MessageProducer m_cat;
-
    private InboundActionModel m_inboundAction;
 
    private Class<?> m_payloadClass;
@@ -58,7 +54,7 @@ public class DefaultInboundActionHandler extends ContainerHolder implements Inbo
    }
 
    public void handle(ActionContext ctx) throws ActionException {
-      Transaction t = m_cat.newTransaction("MVC", "InboundPhase");
+      Transaction t = Cat.newTransaction("MVC", "InboundPhase");
 
       try {
          for (Validator<ActionContext<?>> validator : m_preValidators) {
@@ -83,7 +79,7 @@ public class DefaultInboundActionHandler extends ContainerHolder implements Inbo
       } catch (Exception e) {
          String actionName = m_inboundAction.getActionName();
 
-         m_cat.logError(e);
+         Cat.logError(e);
          t.setStatus(e);
          throw new ActionException("Error occured during handling inbound action(" + actionName + ")!", e);
       } finally {
