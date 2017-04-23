@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wizard package="org.unidal">
+   <model package="org.unidal.lookup.container.model" name="plexus">
+      <sample-model>src/test/resources/org/unidal/lookup/container/components.xml</sample-model>
+   </model>
+</wizard>

@@ -225,6 +225,22 @@ public class Reflects {
          return null;
       }
 
+      public Field getDeclaredField(Object instance, String fieldName) {
+         Class<?> clazz = instance.getClass();
+
+         while (clazz != null) {
+            try {
+               return clazz.getDeclaredField(fieldName);
+            } catch (Exception e) {
+               // ignore
+            }
+
+            clazz = clazz.getSuperclass();
+         }
+
+         return null;
+      }
+
       public List<Field> getDeclaredFields(Class<?> clazz, IMemberFilter<Field> filter) {
          List<Field> list = new ArrayList<Field>();
          Field[] fields = clazz.getDeclaredFields();
@@ -233,6 +249,25 @@ public class Reflects {
             if (filter == null || filter.filter(field)) {
                list.add(field);
             }
+         }
+
+         return list;
+      }
+
+      public List<Field> getDeclaredFields(Object instance, IMemberFilter<Field> filter) {
+         List<Field> list = new ArrayList<Field>();
+         Class<?> clazz = instance.getClass();
+
+         while (clazz != null) {
+            Field[] fields = clazz.getDeclaredFields();
+
+            for (Field field : fields) {
+               if (filter == null || filter.filter(field)) {
+                  list.add(field);
+               }
+            }
+
+            clazz = clazz.getSuperclass();
          }
 
          return list;
@@ -257,23 +292,19 @@ public class Reflects {
          return null;
       }
 
-      public boolean setDeclaredFieldValue(Class<?> clazz, String fieldName, Object instance, Object value) {
-         Field field = getDeclaredField(clazz, fieldName);
+      @SuppressWarnings("unchecked")
+      public <T> T getDeclaredFieldValue(Object instance, String... fields) {
+         Object value = instance;
 
-         if (field != null) {
-            try {
-               if (!field.isAccessible()) {
-                  field.setAccessible(true);
-               }
+         for (String field : fields) {
+            value = getDeclaredFieldValue(value.getClass(), field, value);
 
-               field.set(instance, value);
-               return true;
-            } catch (Exception e) {
-               // ignore
+            if (value == null) {
+               break;
             }
          }
 
-         return false;
+         return (T) value;
       }
 
       public List<Field> getFields(Class<?> clazz, IMemberFilter<Field> filter) {
@@ -334,19 +365,23 @@ public class Reflects {
          return null;
       }
 
-      @SuppressWarnings("unchecked")
-      public <T> T getDeclaredFieldValue(Object instance, String... fields) {
-         Object value = instance;
+      public boolean setDeclaredFieldValue(Class<?> clazz, String fieldName, Object instance, Object value) {
+         Field field = getDeclaredField(clazz, fieldName);
 
-         for (String field : fields) {
-            value = getDeclaredFieldValue(value.getClass(), field, value);
+         if (field != null) {
+            try {
+               if (!field.isAccessible()) {
+                  field.setAccessible(true);
+               }
 
-            if (value == null) {
-               break;
+               field.set(instance, value);
+               return true;
+            } catch (Exception e) {
+               // ignore
             }
          }
 
-         return (T) value;
+         return false;
       }
    }
 
@@ -404,18 +439,32 @@ public class Reflects {
          return list;
       }
 
-      public String getGetMethodName(String propertyName) {
-         int len = propertyName == null ? 0 : propertyName.length();
+      public String getGetMethodName(String property) {
+         int len = property == null ? 0 : property.length();
 
          if (len == 0) {
-            throw new IllegalArgumentException(String.format("Invalid property name: %s!", propertyName));
+            throw new IllegalArgumentException(String.format("Invalid property name: %s!", property));
          }
 
          StringBuilder sb = new StringBuilder(len + 3);
+         boolean upper = true;
 
          sb.append("get");
-         sb.append(Character.toUpperCase(propertyName.charAt(0)));
-         sb.append(propertyName.substring(1));
+
+         for (int i = 0; i < len; i++) {
+            char ch = property.charAt(i);
+
+            if (upper) {
+               sb.append(Character.toUpperCase(ch));
+               upper = false;
+            } else {
+               if (ch == '_' || !Character.isLetterOrDigit(ch)) {
+                  upper = true;
+               } else {
+                  sb.append(ch);
+               }
+            }
+         }
 
          return sb.toString();
       }
@@ -466,6 +515,53 @@ public class Reflects {
          Object value = invokeMethod(instance, methodName);
 
          return (T) value;
+      }
+
+      public String getSetMethodName(String property) {
+         int len = property == null ? 0 : property.length();
+
+         if (len == 0) {
+            throw new IllegalArgumentException(String.format("Invalid property name: %s!", property));
+         }
+
+         StringBuilder sb = new StringBuilder(len + 3);
+         boolean upper = true;
+
+         sb.append("set");
+
+         for (int i = 0; i < len; i++) {
+            char ch = property.charAt(i);
+
+            if (upper) {
+               sb.append(Character.toUpperCase(ch));
+               upper = false;
+            } else {
+               if (ch == '_' || !Character.isLetterOrDigit(ch)) {
+                  upper = true;
+               } else {
+                  sb.append(ch);
+               }
+            }
+         }
+
+         return sb.toString();
+      }
+
+      public Method getSetterMethod(Object instance, String propertyName) {
+         String methodName = getSetMethodName(propertyName);
+         Method[] methods = instance.getClass().getMethods();
+
+         try {
+            for (Method method : methods) {
+               if (method.getParameterTypes().length == 1 && method.getName().equals(methodName)) {
+                  return method;
+               }
+            }
+         } catch (Exception e) {
+            // ignore it
+         }
+
+         return null;
       }
 
       @SuppressWarnings("unchecked")

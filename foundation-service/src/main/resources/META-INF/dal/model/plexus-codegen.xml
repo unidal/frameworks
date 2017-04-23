@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model>
+  <entity name="plexus" root="true">
+    <entity-ref name="component" type="list" names="components" xml-indent="true" />
+  </entity>
+  <entity name="component">
+    <element name="role" value-type="String" />
+    <element name="role-hint" value-type="String" />
+    <element name="implementation" value-type="String" />
+    <element name="instantiation-strategy" value-type="String" />
+    <entity-ref name="configuration" />
+    <entity-ref name="requirement" type="list" names="requirements" xml-indent="true" />
+  </entity>
+  <entity name="configuration">
+    <element name="debug" value-type="boolean" />
+  </entity>
+  <entity name="requirement">
+    <element name="role" value-type="String" />
+    <element name="role-hint" value-type="String" />
+    <element name="field-name" value-type="String" />
+  </entity>
+</model>
+

@@ -29,6 +29,7 @@ import org.codehaus.plexus.lifecycle.AbstractLifecycleHandler;
 import org.codehaus.plexus.lifecycle.LifecycleHandler;
 import org.codehaus.plexus.lifecycle.phase.Phase;
 import org.unidal.helper.Reflects;
+import org.unidal.lookup.container.MyPlexusContainer;
 import org.unidal.lookup.extension.EnumComponentManagerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -36,7 +37,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class ContainerLoader {
-   private static volatile DefaultPlexusContainer s_container;
+   private static volatile PlexusContainer s_container;
 
    private static ConcurrentMap<Key, Object> m_components = new ConcurrentHashMap<Key, Object>();
 
@@ -91,29 +92,37 @@ public class ContainerLoader {
 
    public static PlexusContainer getDefaultContainer(ContainerConfiguration configuration) {
       if (s_container == null) {
-         // Two ContainerLoaders should share the same PlexusContainer
-         Class<?> loaderClass = findLoaderClass();
+         String useNewContainer = System.getProperty("useNewContainer");
 
-         synchronized (ContainerLoader.class) {
-            if (loaderClass != null) {
-               s_container = getContainerFromLookupLibrary(loaderClass);
-            }
+         try {
+            if ("true".equals(useNewContainer)) {
+               s_container = new MyPlexusContainer();
+            } else {
+               // Two ContainerLoaders should share the same PlexusContainer
+               Class<?> loaderClass = findLoaderClass();
 
-            if (s_container == null) {
-               try {
-                  preConstruction(configuration);
-
-                  s_container = new DefaultPlexusContainer(configuration);
-
-                  postConstruction(s_container);
-
+               synchronized (ContainerLoader.class) {
                   if (loaderClass != null) {
-                     setContainerToLookupLibrary(loaderClass, s_container);
+                     s_container = getContainerFromLookupLibrary(loaderClass);
                   }
-               } catch (Exception e) {
-                  throw new RuntimeException("Unable to create Plexus container.", e);
+
+                  if (s_container == null) {
+                     preConstruction(configuration);
+
+                     DefaultPlexusContainer container = new DefaultPlexusContainer(configuration);
+
+                     postConstruction(container);
+
+                     if (loaderClass != null) {
+                        setContainerToLookupLibrary(loaderClass, container);
+                     }
+
+                     s_container = container;
+                  }
                }
             }
+         } catch (Exception e) {
+            throw new RuntimeException("Unable to create Plexus container.", e);
          }
       }
 

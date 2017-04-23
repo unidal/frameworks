@@ -1,0 +1,23 @@
+<plexus>
+   <components>
+      <component>
+         <role>role</role>
+         <role-hint>role-hint</role-hint>
+         <implementation>implementation</implementation>
+         <instantiation-strategy>instantiation-strategy</instantiation-strategy>
+         <configuration>
+            <debug>true</debug>
+         </configuration>
+         <requirements>
+            <requirement>
+               <role>role</role>
+               <role-hint>role-hint</role-hint>
+               <field-name>field-name</field-name>
+            </requirement>
+            <requirement />
+         </requirements>
+      </component>
+      <component>
+      </component>
+   </components>
+</plexus>
