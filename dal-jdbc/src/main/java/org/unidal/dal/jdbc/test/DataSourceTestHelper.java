@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
-import org.codehaus.plexus.MutablePlexusContainer;
 import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.repository.ComponentDescriptor;
 import org.codehaus.plexus.component.repository.ComponentRequirement;
@@ -158,7 +158,7 @@ public class DataSourceTestHelper extends ContainerHolder implements LogEnabled 
    }
 
    @SuppressWarnings("unchecked")
-   public void setUp(MutablePlexusContainer container) throws Exception {
+   public void setUp(PlexusContainer container) throws Exception {
       Class<DataSourceManager> implementation = (Class<DataSourceManager>) (Class<? extends DataSourceManager>) TestDataSourceManager.class;
       ComponentDescriptor<DataSourceManager> descriptor = new ComponentDescriptor<DataSourceManager>(implementation,
             container.getContainerRealm());

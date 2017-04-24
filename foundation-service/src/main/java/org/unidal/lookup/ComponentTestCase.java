@@ -1,12 +1,12 @@
 package org.unidal.lookup;
 
-import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.component.repository.ComponentDescriptor;
-import org.codehaus.plexus.component.repository.ComponentRequirement;
 import org.junit.After;
 import org.junit.Before;
-import org.unidal.lookup.configuration.Configuration;
+import org.unidal.lookup.container.model.entity.Any;
+import org.unidal.lookup.container.model.entity.ComponentModel;
+import org.unidal.lookup.container.model.entity.ConfigurationModel;
+import org.unidal.lookup.container.model.entity.RequirementModel;
 
 public abstract class ComponentTestCase extends ContainerHolder {
    protected static final String PER_LOOKUP = "per-lookup";
@@ -22,12 +22,12 @@ public abstract class ComponentTestCase extends ContainerHolder {
       return defineComponent(role, null, implementation);
    }
 
-   @SuppressWarnings("unchecked")
    protected <T> ComponentDefinition<T> defineComponent(Class<T> role, String roleHint,
          Class<? extends T> implementation) throws Exception {
-      ComponentDescriptor<T> descriptor = new ComponentDescriptor<T>((Class<T>) implementation, null);
+      ComponentModel descriptor = new ComponentModel();
 
-      descriptor.setRoleClass(role);
+      descriptor.setImplementation(implementation.getName());
+      descriptor.setRole(role.getName());
       descriptor.setRoleHint(roleHint);
 
       m_container.addComponentDescriptor(descriptor);
@@ -41,10 +41,8 @@ public abstract class ComponentTestCase extends ContainerHolder {
 
    @Before
    public void setUp() throws Exception {
-      DefaultContainerConfiguration configuration = new DefaultContainerConfiguration();
-      String defaultConfigurationName = getClass().getName().replace('.', '/') + ".xml";
+      String configuration = getClass().getName().replace('.', '/') + ".xml";
 
-      configuration.setContainerConfiguration(defaultConfigurationName);
       ContainerLoader.destroy();
       m_container = ContainerLoader.getDefaultContainer(configuration);
       System.setProperty("devMode", "true");
@@ -57,26 +55,27 @@ public abstract class ComponentTestCase extends ContainerHolder {
    }
 
    protected static final class ComponentDefinition<T> {
-      private ComponentDescriptor<T> m_descriptor;
+      private ComponentModel m_model;
 
-      private Configuration m_config;
-
-      public ComponentDefinition(ComponentDescriptor<T> descriptor) {
-         m_descriptor = descriptor;
+      public ComponentDefinition(ComponentModel descriptor) {
+         m_model = descriptor;
       }
 
       public ComponentDefinition<T> config(String name, String value) {
-         if (m_config == null) {
-            m_config = new Configuration();
-            m_descriptor.setConfiguration(m_config);
+         Any element = new Any().setName(name).setValue(value);
+         ConfigurationModel config = m_model.getConfiguration();
+
+         if (config == null) {
+            config = new ConfigurationModel();
+            m_model.setConfiguration(config);
          }
 
-         m_config.addChild(name, value);
+         config.getDynamicElements().add(element);
          return this;
       }
 
       public ComponentDefinition<T> is(String instantiationStrategy) {
-         m_descriptor.setInstantiationStrategy(instantiationStrategy);
+         m_model.setInstantiationStrategy(instantiationStrategy);
          return this;
       }
 
@@ -85,12 +84,15 @@ public abstract class ComponentTestCase extends ContainerHolder {
       }
 
       public ComponentDefinition<T> req(Class<?> role, String roleHint) {
-         ComponentRequirement requirement = new ComponentRequirement();
+         RequirementModel requirement = new RequirementModel();
 
          requirement.setRole(role.getName());
-         requirement.setRoleHint(roleHint);
 
-         m_descriptor.addRequirement(requirement);
+         if (roleHint != null) {
+            requirement.setRoleHint(roleHint);
+         }
+
+         m_model.addRequirement(requirement);
          return this;
       }
    }

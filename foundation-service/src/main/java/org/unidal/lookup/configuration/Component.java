@@ -1,18 +1,14 @@
 package org.unidal.lookup.configuration;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.plexus.component.repository.ComponentDescriptor;
-import org.codehaus.plexus.component.repository.ComponentRequirement;
-import org.codehaus.plexus.component.repository.ComponentRequirementList;
+import org.unidal.lookup.container.model.entity.Any;
+import org.unidal.lookup.container.model.entity.ComponentModel;
+import org.unidal.lookup.container.model.entity.ConfigurationModel;
+import org.unidal.lookup.container.model.entity.RequirementModel;
 
 public class Component {
-   private ComponentDescriptor<Object> m_descriptor;
-
-   private List<ComponentRequirement> m_requirements;
-
-   private Configuration m_configuration;
+   private ComponentModel m_model = new ComponentModel();
 
    public <T> Component(Class<T> roleClass) {
       this(roleClass, null, roleClass);
@@ -23,20 +19,26 @@ public class Component {
    }
 
    public <T> Component(Class<T> roleClass, Object roleHint, Class<? extends T> implementationClass) {
-      m_descriptor = new ComponentDescriptor<Object>();
-      m_descriptor.setRole(roleClass.getName());
-      m_descriptor.setRoleHint(roleHint == null ? null : roleHint.toString());
-      m_descriptor.setImplementation(implementationClass.getName());
-      m_requirements = new ArrayList<ComponentRequirement>();
+      m_model.setRole(roleClass.getName());
+      m_model.setImplementation(implementationClass.getName());
+
+      if (roleHint != null) {
+         m_model.setRoleHint(roleHint.toString());
+      }
    }
 
    public Component config(Configuration... children) {
-      if (m_configuration == null) {
-         m_configuration = new Configuration();
+      ConfigurationModel config = m_model.getConfiguration();
+
+      if (config == null) {
+         config = new ConfigurationModel();
+         m_model.setConfiguration(config);
       }
 
+      List<Any> configuration = config.getDynamicElements();
+
       for (Configuration child : children) {
-         m_configuration.add(child);
+         configuration.add(new Any().setName(child.getName()).setValue(child.getValue()));
       }
 
       return this;
@@ -47,15 +49,15 @@ public class Component {
       if (obj instanceof Component) {
          Component other = (Component) obj;
 
-         String role1 = m_descriptor.getRole();
-         String role2 = other.m_descriptor.getRole();
+         String role1 = m_model.getRole();
+         String role2 = other.m_model.getRole();
 
          if (!role1.equals(role2)) {
             return false;
          }
 
-         String roleHint1 = m_descriptor.getRoleHint();
-         String roleHint2 = other.m_descriptor.getRoleHint();
+         String roleHint1 = m_model.getRoleHint();
+         String roleHint2 = other.m_model.getRoleHint();
 
          if (roleHint1 == null && roleHint2 == null) {
             return true;
@@ -67,33 +69,20 @@ public class Component {
       return false;
    }
 
-   public Configuration getConfiguration() {
-      return m_configuration;
-   }
-
-   public ComponentDescriptor<Object> getDescriptor() {
-      return m_descriptor;
-   }
-
-   public List<ComponentRequirement> getRequirements() {
-      return m_requirements;
+   public ComponentModel getModel() {
+      return m_model;
    }
 
    @Override
    public int hashCode() {
-      String role = m_descriptor.getRole();
-      String roleHint = m_descriptor.getRoleHint();
+      String role = m_model.getRole();
+      String roleHint = m_model.getRoleHint();
 
       return role.hashCode() * 31 + (roleHint == null ? 0 : roleHint.hashCode());
    }
 
    public Component is(String instantiationStrategy) {
-      m_descriptor.setInstantiationStrategy(instantiationStrategy);
-      return this;
-   }
-
-   public Component lifecycle(String lifecycleHandler) {
-      m_descriptor.setLifecycleHandler(lifecycleHandler);
+      m_model.setInstantiationStrategy(instantiationStrategy);
       return this;
    }
 
@@ -110,13 +99,16 @@ public class Component {
    }
 
    public Component req(Class<?> roleClass, String roleHint, String fieldName) {
-      ComponentRequirement requirement = new ComponentRequirement();
+      RequirementModel requirement = new RequirementModel();
 
       requirement.setRole(roleClass.getName());
-      requirement.setRoleHint(roleHint);
       requirement.setFieldName(fieldName);
 
-      m_requirements.add(requirement);
+      if (roleHint != null) {
+         requirement.setRoleHint(roleHint);
+      }
+
+      m_model.addRequirement(requirement);
       return this;
    }
 
@@ -132,20 +124,19 @@ public class Component {
     * @return component definition
     */
    public Component req(Class<?> roleClass, String[] roleHints, String fieldName) {
-      ComponentRequirementList requirement = new ComponentRequirementList();
-      List<String> hints = new ArrayList<String>();
-
-      for (String hint : roleHints) {
-         if (hint != null) {
-            hints.add(hint);
-         }
-      }
+      RequirementModel requirement = new RequirementModel();
 
       requirement.setRole(roleClass.getName());
-      requirement.setRoleHints(hints);
       requirement.setFieldName(fieldName);
 
-      m_requirements.add(requirement);
+      Any hints = new Any().setName("role-hints");
+      requirement.getDynamicElements().add(hints);
+
+      for (String roleHint : roleHints) {
+         hints.addChild(new Any().setName("role-hint").setValue(roleHint));
+      }
+
+      m_model.addRequirement(requirement);
       return this;
    }
 }

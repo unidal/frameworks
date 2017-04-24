@@ -206,8 +206,8 @@ public abstract class AbstractResourceConfigurator {
       }
    }
 
-   protected static Configuration E(String name, String... attributePairs) {
-      return new Configuration(name, attributePairs);
+   protected static Configuration E(String name) {
+      return new Configuration(name);
    }
 
    protected static void generatePlexusComponentsXmlFile(AbstractResourceConfigurator rc) {

@@ -18,6 +18,7 @@ import org.unidal.lookup.container.lifecycle.ComponentLifecycle;
 import org.unidal.lookup.container.model.entity.Any;
 import org.unidal.lookup.container.model.entity.ComponentModel;
 import org.unidal.lookup.container.model.entity.ConfigurationModel;
+import org.unidal.lookup.container.model.entity.PlexusModel;
 import org.unidal.lookup.container.model.entity.RequirementModel;
 import org.unidal.lookup.logger.TimedConsoleLoggerManager;
 
@@ -34,6 +35,8 @@ public class ComponentManager {
    private TimedConsoleLoggerManager m_loggerManager;
 
    // for test purpose
+   private PlexusModel m_plexus = new PlexusModel();
+
    private List<ComponentDescriptor<?>> m_descriptors = new ArrayList<ComponentDescriptor<?>>();
 
    public ComponentManager(PlexusContainer container, InputStream in) throws Exception {
@@ -59,7 +62,12 @@ public class ComponentManager {
       m_descriptors.add(descriptor);
    }
 
+   public void addComponentDescriptor(ComponentModel component) {
+      m_plexus.addComponent(component);
+   }
+
    public void destroy() {
+      m_plexus = new PlexusModel();
       m_descriptors.clear();
       m_map.clear();
    }
@@ -109,6 +117,12 @@ public class ComponentManager {
    }
 
    public boolean hasComponent(ComponentKey key) {
+      for (ComponentModel component : m_plexus.getComponents()) {
+         if (key.matches(component.getRole(), component.getRoleHint())) {
+            return true;
+         }
+      }
+
       for (ComponentDescriptor<?> descriptor : m_descriptors) {
          if (key.getRole().equals(descriptor.getRole()) && key.getRoleHint().equals(descriptor.getRoleHint())) {
             return true;
@@ -130,9 +144,19 @@ public class ComponentManager {
 
       ComponentModel model = null;
 
-      for (ComponentDescriptor<?> descriptor : m_descriptors) {
-         if (key.getRole().equals(descriptor.getRole()) && key.getRoleHint().equals(descriptor.getRoleHint())) {
-            model = getComponentModel(descriptor);
+      for (ComponentModel component : m_plexus.getComponents()) {
+         if (key.matches(component.getRole(), component.getRoleHint())) {
+            model = component;
+            break;
+         }
+      }
+
+      if (model == null) {
+         for (ComponentDescriptor<?> descriptor : m_descriptors) {
+            if (key.getRole().equals(descriptor.getRole()) && key.getRoleHint().equals(descriptor.getRoleHint())) {
+               model = getComponentModel(descriptor);
+               break;
+            }
          }
       }
 

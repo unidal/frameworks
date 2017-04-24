@@ -3,7 +3,7 @@ package org.unidal.test.browser;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.codehaus.plexus.util.IOUtil;
+import org.unidal.helper.Files;
 
 public class ConsoleBrowser implements Browser {
    private boolean m_silent;
@@ -35,7 +35,7 @@ public class ConsoleBrowser implements Browser {
       try {
          URLConnection urlc = url.openConnection();
          String contentType = urlc.getHeaderField("Content-Type");
-         byte[] ba = IOUtil.toByteArray(urlc.getInputStream());
+         byte[] ba = Files.forIO().readFrom(urlc.getInputStream());
 
          display(new String(ba, determinCharset(contentType, "utf-8")));
       } catch (Exception e) {

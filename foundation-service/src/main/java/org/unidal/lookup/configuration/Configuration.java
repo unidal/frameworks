@@ -1,35 +1,24 @@
 package org.unidal.lookup.configuration;
 
-import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
+public class Configuration {
+   private String m_name;
 
-public class Configuration extends XmlPlexusConfiguration {
-   public Configuration() {
-      super("configuration");
+   private String m_value;
+
+   public Configuration(String name) {
+      m_name = name;
    }
 
-   public Configuration(String name, String... attributePairs) {
-      super(name);
-
-      if (attributePairs.length % 2 != 0) {
-         throw new RuntimeException("Attribute name and value must be paired.");
-      }
-
-      for (int i = 0; i < attributePairs.length; i += 2) {
-         setAttribute(attributePairs[i], attributePairs[i + 1]);
-      }
+   public String getName() {
+      return m_name;
    }
 
-   public Configuration add(Configuration... children) {
-      for (Configuration child : children) {
-         if (child != null) {
-            addChild(child);
-         }
-      }
-      return this;
+   public String getValue() {
+      return m_value;
    }
 
    public Configuration value(String value) {
-      setValue(value);
+      m_value = value;
       return this;
    }
 }

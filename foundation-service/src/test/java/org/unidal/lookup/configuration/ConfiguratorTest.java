@@ -1,14 +1,10 @@
 package org.unidal.lookup.configuration;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
@@ -43,29 +39,18 @@ public class ConfiguratorTest {
    private void checkLookup(AbstractResourceConfigurator configurator) throws Exception {
       String path = getClass().getPackage().getName().replace('.', '/');
       String resource = path + "/" + configurator.getClass().getSimpleName() + ".xml";
-      PlexusContainer container = ContainerLoader.getDefaultContainer(getConfiguration(resource));
+      PlexusContainer container = ContainerLoader.getDefaultContainer(resource);
       List<Component> components = configurator.defineComponents();
 
       for (Component component : components) {
-         String role = component.getDescriptor().getRole();
-         String roleHint = component.getDescriptor().getRoleHint();
+         String role = component.getModel().getRole();
+         String roleHint = component.getModel().getRoleHint();
 
          // try lookup all components
          container.lookup(Class.forName(role), roleHint);
       }
 
       ContainerLoader.destroy();
-   }
-
-   private DefaultContainerConfiguration getConfiguration(String path) throws Exception {
-      DefaultContainerConfiguration configuration = new DefaultContainerConfiguration();
-      Map<Object, Object> context = new HashMap<Object, Object>();
-
-      context.put("basedir", new File(".").getAbsolutePath());
-      context.put("plexus.home", new File("target/plexus-home").getAbsolutePath());
-      configuration.setName("test").setContext(context);
-      configuration.setContainerConfiguration(path);
-      return configuration;
    }
 
    @Test

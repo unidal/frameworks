@@ -14,6 +14,7 @@ import org.codehaus.plexus.component.repository.exception.ComponentLifecycleExce
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.context.Context;
+import org.unidal.lookup.container.model.entity.ComponentModel;
 
 public class MyPlexusContainer implements PlexusContainer {
    private ComponentManager m_manager;
@@ -30,13 +31,138 @@ public class MyPlexusContainer implements PlexusContainer {
    }
 
    @Override
-   public Object lookup(String role) throws ComponentLookupException {
+   public void addComponent(Object component, String role) throws CycleDetectedInComponentGraphException {
+      throw new UnsupportedOperationException();
+
+   }
+
+   @Override
+   public <T> void addComponent(T component, Class<?> role, String roleHint) {
+      m_manager.register(new ComponentKey(role, roleHint), component);
+   }
+
+   @Override
+   public void addComponentDescriptor(ComponentDescriptor<?> componentDescriptor)
+         throws CycleDetectedInComponentGraphException {
+      m_manager.addComponentDescriptor(componentDescriptor);
+   }
+
+   @Override
+   public void addComponentDescriptor(ComponentModel componentDescriptor)
+         throws CycleDetectedInComponentGraphException {
+      m_manager.addComponentDescriptor(componentDescriptor);
+   }
+
+   @Override
+   public void addContextValue(Object key, Object value) {
+      m_context.put(key, value);
+   }
+
+   @Override
+   public ClassRealm createChildRealm(String id) {
       throw new UnsupportedOperationException();
    }
 
    @Override
-   public Object lookup(String role, String roleHint) throws ComponentLookupException {
+   public List<ComponentDescriptor<?>> discoverComponents(ClassRealm childRealm) throws PlexusConfigurationException,
+         CycleDetectedInComponentGraphException {
       throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public List<ComponentDescriptor<?>> discoverComponents(ClassRealm realm, Object data)
+         throws PlexusConfigurationException, CycleDetectedInComponentGraphException {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public void dispose() {
+      m_manager.destroy();
+   }
+
+   @Override
+   public <T> ComponentDescriptor<T> getComponentDescriptor(Class<T> type, String role, String roleHint) {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public ComponentDescriptor<?> getComponentDescriptor(String role) {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public ComponentDescriptor<?> getComponentDescriptor(String role, String roleHint) {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public <T> List<ComponentDescriptor<T>> getComponentDescriptorList(Class<T> type, String role) {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public List<ComponentDescriptor<?>> getComponentDescriptorList(String role) {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public <T> Map<String, ComponentDescriptor<T>> getComponentDescriptorMap(Class<T> type, String role) {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public Map<String, ComponentDescriptor<?>> getComponentDescriptorMap(String role) {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public ClassRealm getComponentRealm(String realmId) {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public ClassRealm getContainerRealm() {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public Context getContext() {
+      return m_context;
+   }
+
+   @Override
+   public ClassRealm getLookupRealm() {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public ClassRealm getLookupRealm(Object component) {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public boolean hasComponent(Class<?> type) {
+      return hasComponent(type.getName(), null);
+   }
+
+   @Override
+   public boolean hasComponent(Class<?> type, String roleHint) {
+      return hasComponent(type.getName(), roleHint);
+   }
+
+   @Override
+   public boolean hasComponent(Class<?> type, String role, String roleHint) {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public boolean hasComponent(String role) {
+      return hasComponent(role, null);
+   }
+
+   @Override
+   public boolean hasComponent(String role, String roleHint) {
+      return m_manager.hasComponent(new ComponentKey(role, roleHint));
    }
 
    @Override
@@ -60,12 +186,12 @@ public class MyPlexusContainer implements PlexusContainer {
    }
 
    @Override
-   public List<Object> lookupList(String role) throws ComponentLookupException {
+   public Object lookup(String role) throws ComponentLookupException {
       throw new UnsupportedOperationException();
    }
 
    @Override
-   public List<Object> lookupList(String role, List<String> roleHints) throws ComponentLookupException {
+   public Object lookup(String role, String roleHint) throws ComponentLookupException {
       throw new UnsupportedOperationException();
    }
 
@@ -80,12 +206,12 @@ public class MyPlexusContainer implements PlexusContainer {
    }
 
    @Override
-   public Map<String, Object> lookupMap(String role) throws ComponentLookupException {
+   public List<Object> lookupList(String role) throws ComponentLookupException {
       throw new UnsupportedOperationException();
    }
 
    @Override
-   public Map<String, Object> lookupMap(String role, List<String> roleHints) throws ComponentLookupException {
+   public List<Object> lookupList(String role, List<String> roleHints) throws ComponentLookupException {
       throw new UnsupportedOperationException();
    }
 
@@ -100,103 +226,12 @@ public class MyPlexusContainer implements PlexusContainer {
    }
 
    @Override
-   public ComponentDescriptor<?> getComponentDescriptor(String role) {
+   public Map<String, Object> lookupMap(String role) throws ComponentLookupException {
       throw new UnsupportedOperationException();
    }
 
    @Override
-   public ComponentDescriptor<?> getComponentDescriptor(String role, String roleHint) {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public <T> ComponentDescriptor<T> getComponentDescriptor(Class<T> type, String role, String roleHint) {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public Map<String, ComponentDescriptor<?>> getComponentDescriptorMap(String role) {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public <T> Map<String, ComponentDescriptor<T>> getComponentDescriptorMap(Class<T> type, String role) {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public List<ComponentDescriptor<?>> getComponentDescriptorList(String role) {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public <T> List<ComponentDescriptor<T>> getComponentDescriptorList(Class<T> type, String role) {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public void addComponentDescriptor(ComponentDescriptor<?> componentDescriptor)
-         throws CycleDetectedInComponentGraphException {
-      m_manager.addComponentDescriptor(componentDescriptor);
-   }
-
-   @Override
-   public void release(Object component) throws ComponentLifecycleException {
-      m_manager.release(component);
-   }
-
-   @Override
-   public void releaseAll(Map<String, ?> components) throws ComponentLifecycleException {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public void releaseAll(List<?> components) throws ComponentLifecycleException {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public boolean hasComponent(String role) {
-      return hasComponent(role, null);
-   }
-
-   @Override
-   public boolean hasComponent(String role, String roleHint) {
-      return m_manager.hasComponent(new ComponentKey(role, roleHint));
-   }
-
-   @Override
-   public boolean hasComponent(Class<?> type) {
-      return hasComponent(type.getName(), null);
-   }
-
-   @Override
-   public boolean hasComponent(Class<?> type, String roleHint) {
-      return hasComponent(type.getName(), roleHint);
-   }
-
-   @Override
-   public boolean hasComponent(Class<?> type, String role, String roleHint) {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public void dispose() {
-      m_manager.destroy();
-   }
-
-   @Override
-   public void addContextValue(Object key, Object value) {
-      m_context.put(key, value);
-   }
-
-   @Override
-   public Context getContext() {
-      return m_context;
-   }
-
-   @Override
-   public ClassRealm getContainerRealm() {
+   public Map<String, Object> lookupMap(String role, List<String> roleHints) throws ComponentLookupException {
       throw new UnsupportedOperationException();
    }
 
@@ -206,29 +241,22 @@ public class MyPlexusContainer implements PlexusContainer {
    }
 
    @Override
+   public void release(Object component) throws ComponentLifecycleException {
+      m_manager.release(component);
+   }
+
+   @Override
+   public void releaseAll(List<?> components) throws ComponentLifecycleException {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public void releaseAll(Map<String, ?> components) throws ComponentLifecycleException {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
    public void removeComponentDiscoveryListener(ComponentDiscoveryListener listener) {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public List<ComponentDescriptor<?>> discoverComponents(ClassRealm childRealm) throws PlexusConfigurationException,
-         CycleDetectedInComponentGraphException {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public List<ComponentDescriptor<?>> discoverComponents(ClassRealm realm, Object data)
-         throws PlexusConfigurationException, CycleDetectedInComponentGraphException {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public ClassRealm createChildRealm(String id) {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public ClassRealm getComponentRealm(String realmId) {
       throw new UnsupportedOperationException();
    }
 
@@ -238,28 +266,7 @@ public class MyPlexusContainer implements PlexusContainer {
    }
 
    @Override
-   public ClassRealm getLookupRealm() {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
    public ClassRealm setLookupRealm(ClassRealm realm) {
       throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public ClassRealm getLookupRealm(Object component) {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public void addComponent(Object component, String role) throws CycleDetectedInComponentGraphException {
-      throw new UnsupportedOperationException();
-
-   }
-
-   @Override
-   public <T> void addComponent(T component, Class<?> role, String roleHint) {
-      m_manager.register(new ComponentKey(role, roleHint), component);
    }
 }

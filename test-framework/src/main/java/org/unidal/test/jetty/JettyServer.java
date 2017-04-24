@@ -7,7 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.context.DefaultContext;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.jetty.webapp.WebAppContext;
@@ -44,6 +43,11 @@ public abstract class JettyServer extends ContainerHolder {
       } finally {
          container.release(manager);
       }
+   }
+
+   @Override
+   protected PlexusContainer getContainer() {
+      return ContainerLoader.getDefaultContainer();
    }
 
    protected abstract String getContextPath();
@@ -85,17 +89,7 @@ public abstract class JettyServer extends ContainerHolder {
       // to be overridden
    }
 
-   protected void setupContainer() throws Exception {
-      PlexusContainer container = ContainerLoader.getDefaultContainer();
-      DefaultContext context = new DefaultContext();
-
-      context.put("plexus", container);
-      contextualize(context);
-   }
-
    protected void startServer() throws Exception {
-      setupContainer();
-
       Server server = new Server(getServerPort());
       WebAppContext context = new ResourceFallbackWebAppContext();
 

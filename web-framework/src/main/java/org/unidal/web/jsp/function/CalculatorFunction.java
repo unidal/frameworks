@@ -3,122 +3,130 @@ package org.unidal.web.jsp.function;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.codehaus.plexus.util.StringUtils;
 import org.unidal.web.jsp.annotation.FunctionMeta;
 
 public class CalculatorFunction {
-	private static Method getGetter(String fieldName, Class<?> clazz) {
-		try {
-			return clazz.getMethod("get" + StringUtils.capitalizeFirstLetter(fieldName));
-		} catch (Exception e) {
-			// ignore it
-		}
+   private static Method getGetter(String fieldName, Class<?> clazz) {
+      try {
+         return clazz.getMethod("get" + capitalizeFirstLetter(fieldName));
+      } catch (Exception e) {
+         // ignore it
+      }
 
-		try {
-			return clazz.getMethod("is" + StringUtils.capitalizeFirstLetter(fieldName));
-		} catch (Exception e) {
-			// ignore it
-		}
+      try {
+         return clazz.getMethod("is" + capitalizeFirstLetter(fieldName));
+      } catch (Exception e) {
+         // ignore it
+      }
 
-		throw new IllegalArgumentException("No getter method for " + fieldName + " in " + clazz);
-	}
+      throw new IllegalArgumentException("No getter method for " + fieldName + " in " + clazz);
+   }
 
-	@FunctionMeta(description = "Max value of field value of list elements", example = "${w:max(list, 'count')}")
-	public static int max(List<?> list, String fieldName) {
-		int max = Integer.MIN_VALUE;
+   private static String capitalizeFirstLetter(String str) {
+      int len = str.length();
+      StringBuilder sb = new StringBuilder(len);
 
-		if (list != null && list.size() > 0) {
-			Method method = getGetter(fieldName, list.get(0).getClass());
+      sb.append(str.charAt(0));
+      sb.append(str.substring(1));
+      return sb.toString();
+   }
 
-			if (method.getReturnType().isPrimitive() || Number.class.isAssignableFrom(method.getReturnType())) {
-				for (Object item : list) {
-					try {
-						Object value = method.invoke(item, new Object[0]);
-						int val = 0;
+   @FunctionMeta(description = "Max value of field value of list elements", example = "${w:max(list, 'count')}")
+   public static int max(List<?> list, String fieldName) {
+      int max = Integer.MIN_VALUE;
 
-						if (value instanceof Boolean) {
-							val = ((Boolean) value).booleanValue() ? 1 : 0;
-						} else if (value instanceof Number) {
-							val = ((Number) value).intValue();
-						}
+      if (list != null && list.size() > 0) {
+         Method method = getGetter(fieldName, list.get(0).getClass());
 
-						if (val > max) {
-							max = val;
-						}
-					} catch (Exception e) {
-						// ignore it
-					}
-				}
-			}
-		}
+         if (method.getReturnType().isPrimitive() || Number.class.isAssignableFrom(method.getReturnType())) {
+            for (Object item : list) {
+               try {
+                  Object value = method.invoke(item, new Object[0]);
+                  int val = 0;
 
-		if (max == Integer.MIN_VALUE) {
-			return 0;
-		} else {
-			return max;
-		}
-	}
+                  if (value instanceof Boolean) {
+                     val = ((Boolean) value).booleanValue() ? 1 : 0;
+                  } else if (value instanceof Number) {
+                     val = ((Number) value).intValue();
+                  }
 
-	@FunctionMeta(description = "Min value of field value of list elements", example = "${w:min(list, 'count')}")
-	public static int min(List<?> list, String fieldName) {
-		int min = Integer.MAX_VALUE;
+                  if (val > max) {
+                     max = val;
+                  }
+               } catch (Exception e) {
+                  // ignore it
+               }
+            }
+         }
+      }
 
-		if (list != null && list.size() > 0) {
-			Method method = getGetter(fieldName, list.get(0).getClass());
+      if (max == Integer.MIN_VALUE) {
+         return 0;
+      } else {
+         return max;
+      }
+   }
 
-			if (method.getReturnType().isPrimitive() || Number.class.isAssignableFrom(method.getReturnType())) {
-				for (Object item : list) {
-					try {
-						Object value = method.invoke(item, new Object[0]);
-						int val = 0;
+   @FunctionMeta(description = "Min value of field value of list elements", example = "${w:min(list, 'count')}")
+   public static int min(List<?> list, String fieldName) {
+      int min = Integer.MAX_VALUE;
 
-						if (value instanceof Boolean) {
-							val = ((Boolean) value).booleanValue() ? 1 : 0;
-						} else if (value instanceof Number) {
-							val = ((Number) value).intValue();
-						}
+      if (list != null && list.size() > 0) {
+         Method method = getGetter(fieldName, list.get(0).getClass());
 
-						if (val < min) {
-							min = val;
-						}
-					} catch (Exception e) {
-						// ignore it
-					}
-				}
-			}
-		}
+         if (method.getReturnType().isPrimitive() || Number.class.isAssignableFrom(method.getReturnType())) {
+            for (Object item : list) {
+               try {
+                  Object value = method.invoke(item, new Object[0]);
+                  int val = 0;
 
-		if (min == Integer.MAX_VALUE) {
-			return 0;
-		} else {
-			return min;
-		}
-	}
+                  if (value instanceof Boolean) {
+                     val = ((Boolean) value).booleanValue() ? 1 : 0;
+                  } else if (value instanceof Number) {
+                     val = ((Number) value).intValue();
+                  }
 
-	@FunctionMeta(description = "Sum of field value of list elements", example = "${w:sum(list, 'amount')}")
-	public static double sum(List<?> list, String fieldName) {
-		double sum = 0;
+                  if (val < min) {
+                     min = val;
+                  }
+               } catch (Exception e) {
+                  // ignore it
+               }
+            }
+         }
+      }
 
-		if (list != null && list.size() > 0) {
-			Method method = getGetter(fieldName, list.get(0).getClass());
+      if (min == Integer.MAX_VALUE) {
+         return 0;
+      } else {
+         return min;
+      }
+   }
 
-			if (method.getReturnType().isPrimitive() || Number.class.isAssignableFrom(method.getReturnType())) {
-				for (Object item : list) {
-					try {
-						Object value = method.invoke(item, new Object[0]);
+   @FunctionMeta(description = "Sum of field value of list elements", example = "${w:sum(list, 'amount')}")
+   public static double sum(List<?> list, String fieldName) {
+      double sum = 0;
 
-						if (value instanceof Boolean) {
-							sum += ((Boolean) value).booleanValue() ? 1 : 0;
-						} else if (value instanceof Number) {
-							sum += ((Number) value).doubleValue();
-						}
-					} catch (Exception e) {
-						// ignore it
-					}
-				}
-			}
-		}
+      if (list != null && list.size() > 0) {
+         Method method = getGetter(fieldName, list.get(0).getClass());
 
-		return sum;
-	}
+         if (method.getReturnType().isPrimitive() || Number.class.isAssignableFrom(method.getReturnType())) {
+            for (Object item : list) {
+               try {
+                  Object value = method.invoke(item, new Object[0]);
+
+                  if (value instanceof Boolean) {
+                     sum += ((Boolean) value).booleanValue() ? 1 : 0;
+                  } else if (value instanceof Number) {
+                     sum += ((Number) value).doubleValue();
+                  }
+               } catch (Exception e) {
+                  // ignore it
+               }
+            }
+         }
+      }
+
+      return sum;
+   }
 }

@@ -6,7 +6,6 @@ import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 import org.unidal.helper.Files;
 import org.unidal.lookup.configuration.XmlPlexusConfigurationWriter;
 import org.unidal.web.jsp.annotation.AttributeMeta;
