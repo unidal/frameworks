@@ -1,6 +1,6 @@
 package org.unidal.lookup;
 
-import org.apache.xbean.recipe.MissingAccessorException;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -22,30 +22,31 @@ public class PlexusContainerTest extends ComponentTestCase {
          }
 
          // cause.printStackTrace();
-         Assert.assertEquals(MissingAccessorException.class, cause.getClass());
-         Assert.assertEquals(true, cause.getMessage().contains("can be mapped to more then one field:"));
+         Assert.assertEquals(ComponentLookupException.class, cause.getClass());
+         Assert.assertEquals(true, cause.getMessage().contains("Multiple fields(m_c1,m_c2) of class"));
       }
    }
 
    @Test
    public void testBadRequirement() throws Exception {
+      defineComponent(C.class);
       defineComponent(A.class).req(C.class);
-      
+
       try {
          lookup(A.class);
       } catch (Exception e) {
          Throwable cause = e.getCause();
-         
+
          while (cause.getCause() != null) {
             cause = cause.getCause();
          }
-         
+
          // cause.printStackTrace();
-         Assert.assertEquals(MissingAccessorException.class, cause.getClass());
-         Assert.assertEquals(true, cause.getMessage().contains("Unable to find a valid field for"));
+         Assert.assertEquals(ComponentLookupException.class, cause.getClass());
+         Assert.assertEquals(true, cause.getMessage().contains("No field of class"));
       }
    }
-   
+
    @Test
    public void testMissingRequirement() throws Exception {
       defineComponent(A.class).req(B.class);
@@ -60,8 +61,8 @@ public class PlexusContainerTest extends ComponentTestCase {
          }
 
          // cause.printStackTrace();
-         Assert.assertEquals(MissingAccessorException.class, cause.getClass());
-         Assert.assertEquals(true, cause.getMessage().contains("Unable to find a valid field for"));
+         Assert.assertEquals(ComponentLookupException.class, cause.getClass());
+         Assert.assertEquals(true, cause.getMessage().contains("No component defined!"));
       }
    }
 

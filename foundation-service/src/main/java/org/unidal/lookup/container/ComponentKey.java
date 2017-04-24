@@ -6,13 +6,12 @@ public class ComponentKey {
    private String m_roleHint;
 
    public ComponentKey(Class<?> type, String roleHint) {
-      m_role = type.getName();
-      m_roleHint = normalize(roleHint);
+      this(type.getName(), roleHint);
    }
 
    public ComponentKey(String role, String roleHint) {
       m_role = role;
-      m_roleHint = roleHint;
+      m_roleHint = normalize(roleHint);
    }
 
    @Override

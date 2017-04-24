@@ -88,15 +88,5 @@
 			<role-hint>hash</role-hint>
 			<implementation>java.util.HashMap</implementation>
 		</component>
-		<component>
-			<role>org.unidal.lookup.ContainerHolderTest$BadCollectionHolder</role>
-			<implementation>org.unidal.lookup.ContainerHolderTest$BadCollectionHolder</implementation>
-			<requirements>
-				<requirement>
-					<role>java.util.List</role>
-					<role-hint>array</role-hint>
-				</requirement>
-			</requirements>
-		</component>
 	</components>
 </plexus>

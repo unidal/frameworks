@@ -9,9 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.codehaus.plexus.DefaultContainerConfiguration;
-import org.codehaus.plexus.MutablePlexusContainer;
-import org.codehaus.plexus.PlexusConstants;
-import org.codehaus.plexus.lifecycle.LifecycleHandler;
+import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.junit.Assert;
@@ -23,7 +21,6 @@ import org.unidal.lookup.annotation.InjectAttribute;
 import org.unidal.lookup.annotation.Named;
 import org.unidal.lookup.configuration.ConfiguratorTest.AnnotatedCases.Annotated;
 import org.unidal.lookup.configuration.ConfiguratorTest.LegacyCases.Legacy;
-import org.unidal.lookup.extension.PostConstructionPhase;
 import org.unidal.lookup.extension.RoleHintEnabled;
 
 public class ConfiguratorTest {
@@ -46,8 +43,7 @@ public class ConfiguratorTest {
    private void checkLookup(AbstractResourceConfigurator configurator) throws Exception {
       String path = getClass().getPackage().getName().replace('.', '/');
       String resource = path + "/" + configurator.getClass().getSimpleName() + ".xml";
-      MutablePlexusContainer container = (MutablePlexusContainer) ContainerLoader
-            .getDefaultContainer(getConfiguration(resource));
+      PlexusContainer container = ContainerLoader.getDefaultContainer(getConfiguration(resource));
       List<Component> components = configurator.defineComponents();
 
       for (Component component : components) {
@@ -55,10 +51,10 @@ public class ConfiguratorTest {
          String roleHint = component.getDescriptor().getRoleHint();
 
          // try lookup all components
-         container.lookup(role, roleHint);
+         container.lookup(Class.forName(role), roleHint);
       }
 
-      ContainerLoader.destroyDefaultContainer();
+      ContainerLoader.destroy();
    }
 
    private DefaultContainerConfiguration getConfiguration(String path) throws Exception {
@@ -69,12 +65,6 @@ public class ConfiguratorTest {
       context.put("plexus.home", new File("target/plexus-home").getAbsolutePath());
       configuration.setName("test").setContext(context);
       configuration.setContainerConfiguration(path);
-
-      LifecycleHandler plexus = configuration.getLifecycleHandlerManager().getLifecycleHandler(
-            PlexusConstants.PLEXUS_KEY);
-
-      plexus.addBeginSegment(new PostConstructionPhase());
-
       return configuration;
    }
 

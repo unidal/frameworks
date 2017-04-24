@@ -2,7 +2,6 @@ package org.unidal.lookup;
 
 import java.util.Date;
 
-import org.codehaus.plexus.MutablePlexusContainer;
 import org.junit.Assert;
 import org.junit.Test;
 import org.unidal.formatter.Formatter;
@@ -43,9 +42,7 @@ public class ComponentTestCaseTest extends ComponentTestCase {
 
    @Test
    public void testUnmanagedComponent() throws Exception {
-      MutablePlexusContainer container = getContainer();
-
-      container.addComponent(this, getClass(), null);
+      getContainer().addComponent(this, getClass(), null);
 
       Assert.assertSame(this, lookup(getClass()));
    }

@@ -17,7 +17,7 @@ public abstract class ContainerHolder implements Contextualizable {
       m_container = (PlexusContainer) context.get("plexus");
    }
 
-   public PlexusContainer getContainer() {
+   protected PlexusContainer getContainer() {
       return m_container;
    }
 
@@ -25,8 +25,8 @@ public abstract class ContainerHolder implements Contextualizable {
       return hasComponent(role, null);
    }
 
-   protected <T> boolean hasComponent(Class<T> role, Object roleHint) {
-      return m_container.hasComponent(role.getName(), roleHint == null ? "default" : roleHint.toString());
+   protected <T> boolean hasComponent(Class<T> role, String roleHint) {
+      return getContainer().hasComponent(role.getName(), roleHint == null ? "default" : roleHint);
    }
 
    protected <T> T lookup(Class<T> role) throws LookupException {
@@ -35,7 +35,7 @@ public abstract class ContainerHolder implements Contextualizable {
 
    protected <T> T lookup(Class<T> role, String roleHint) throws LookupException {
       try {
-         return (T) m_container.lookup(role, roleHint == null ? "default" : roleHint);
+         return (T) getContainer().lookup(role, roleHint == null ? "default" : roleHint);
       } catch (ComponentLookupException e) {
          String key = role.getName() + ":" + (roleHint == null ? "default" : roleHint);
 
@@ -43,35 +43,11 @@ public abstract class ContainerHolder implements Contextualizable {
       }
    }
 
-   protected <T> T lookupById(Class<T> role, String id) throws LookupException {
-      return lookupById(role, null, id);
-   }
-
-   protected <T> T lookupById(Class<T> role, String roleHint, String id) throws LookupException {
-      try {
-         return ContainerLoader.lookupById(role, roleHint, id);
-      } catch (ComponentLookupException e) {
-         String key = role.getName() + ":" + (roleHint == null ? "default" : roleHint) + "@" + id;
-
-         throw new LookupException("Unable to lookup component(" + key + ").", e);
-      }
-   }
-
    protected <T> List<T> lookupList(Class<T> role) throws LookupException {
       try {
-         return (List<T>) m_container.lookupList(role);
+         return (List<T>) getContainer().lookupList(role);
       } catch (ComponentLookupException e) {
          String key = role.getName();
-
-         throw new LookupException("Unable to lookup component list(" + key + ").", e);
-      }
-   }
-
-   protected <T> List<T> lookupList(Class<T> role, List<String> roleHints) throws LookupException {
-      try {
-         return (List<T>) m_container.lookupList(role, roleHints);
-      } catch (ComponentLookupException e) {
-         String key = role.getName() + ":" + roleHints;
 
          throw new LookupException("Unable to lookup component list(" + key + ").", e);
       }
@@ -79,19 +55,9 @@ public abstract class ContainerHolder implements Contextualizable {
 
    protected <T> Map<String, T> lookupMap(Class<T> role) throws LookupException {
       try {
-         return (Map<String, T>) m_container.lookupMap(role);
+         return (Map<String, T>) getContainer().lookupMap(role);
       } catch (ComponentLookupException e) {
          String key = role.getName();
-
-         throw new LookupException("Unable to lookup component map(" + key + ").", e);
-      }
-   }
-
-   protected <T> Map<String, T> lookupMap(Class<T> role, List<String> roleHints) throws LookupException {
-      try {
-         return (Map<String, T>) m_container.lookupMap(role, roleHints);
-      } catch (ComponentLookupException e) {
-         String key = role.getName() + ":" + roleHints;
 
          throw new LookupException("Unable to lookup component map(" + key + ").", e);
       }
@@ -100,34 +66,10 @@ public abstract class ContainerHolder implements Contextualizable {
    protected void release(Object component) throws LookupException {
       if (component != null) {
          try {
-            m_container.release(component);
+            getContainer().release(component);
          } catch (ComponentLifecycleException e) {
             throw new LookupException("Can't release component: " + component, e);
          }
       }
-   }
-
-   protected void releaseAll(List<Object> components) throws LookupException {
-      if (components != null) {
-         try {
-            m_container.releaseAll(components);
-         } catch (ComponentLifecycleException e) {
-            throw new LookupException("Can't release components: " + components, e);
-         }
-      }
-   }
-
-   protected void releaseAll(Map<String, Object> components) throws LookupException {
-      if (components != null) {
-         try {
-            m_container.releaseAll(components);
-         } catch (ComponentLifecycleException e) {
-            throw new LookupException("Can't release components: " + components, e);
-         }
-      }
-   }
-
-   protected void setContainer(PlexusContainer container) {
-      m_container = container;
    }
 }

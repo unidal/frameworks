@@ -8,11 +8,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.component.repository.ComponentDescriptor;
+import org.codehaus.plexus.component.repository.ComponentRequirement;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.logging.LoggerManager;
 import org.unidal.lookup.container.lifecycle.ComponentHandlers;
 import org.unidal.lookup.container.lifecycle.ComponentLifecycle;
+import org.unidal.lookup.container.model.entity.Any;
 import org.unidal.lookup.container.model.entity.ComponentModel;
+import org.unidal.lookup.container.model.entity.ConfigurationModel;
+import org.unidal.lookup.container.model.entity.RequirementModel;
 import org.unidal.lookup.logger.TimedConsoleLoggerManager;
 
 public class ComponentManager {
@@ -26,6 +32,9 @@ public class ComponentManager {
    private ComponentModelManager m_modelManager;
 
    private TimedConsoleLoggerManager m_loggerManager;
+
+   // for test purpose
+   private List<ComponentDescriptor<?>> m_descriptors = new ArrayList<ComponentDescriptor<?>>();
 
    public ComponentManager(PlexusContainer container, InputStream in) throws Exception {
       m_container = container;
@@ -46,11 +55,66 @@ public class ComponentManager {
       register(new ComponentKey(LoggerManager.class, null), m_loggerManager);
    }
 
+   public void addComponentDescriptor(ComponentDescriptor<?> descriptor) {
+      m_descriptors.add(descriptor);
+   }
+
+   public void destroy() {
+      m_descriptors.clear();
+      m_map.clear();
+   }
+
+   private ComponentModel getComponentModel(ComponentDescriptor<?> descriptor) {
+      ComponentModel model = new ComponentModel();
+
+      model.setRole(descriptor.getRole());
+      model.setRoleHint(descriptor.getRoleHint());
+      model.setImplementation(descriptor.getImplementation());
+
+      if (descriptor.getInstantiationStrategy() != null) {
+         model.setInstantiationStrategy(descriptor.getInstantiationStrategy());
+      }
+
+      PlexusConfiguration c = descriptor.getConfiguration();
+
+      if (c != null) {
+         ConfigurationModel config = new ConfigurationModel();
+         List<Any> properties = config.getDynamicElements();
+
+         for (PlexusConfiguration p : c.getChildren()) {
+            properties.add(new Any().setName(p.getName()).setValue(p.getValue("")));
+         }
+
+         model.setConfiguration(config);
+      }
+
+      for (ComponentRequirement r : descriptor.getRequirements()) {
+         RequirementModel req = new RequirementModel();
+
+         req.setRole(r.getRole());
+         req.setRoleHint(r.getRoleHint());
+         req.setFieldName(r.getFieldName());
+         model.addRequirement(req);
+      }
+
+      return model;
+   }
+
+   public PlexusContainer getContainer() {
+      return m_container;
+   }
+
    public LoggerManager getLoggerManager() {
       return m_loggerManager;
    }
 
    public boolean hasComponent(ComponentKey key) {
+      for (ComponentDescriptor<?> descriptor : m_descriptors) {
+         if (key.getRole().equals(descriptor.getRole()) && key.getRoleHint().equals(descriptor.getRoleHint())) {
+            return true;
+         }
+      }
+
       return m_modelManager.hasComponentModel(key);
    }
 
@@ -64,26 +128,23 @@ public class ComponentManager {
          m_map.put(role, box);
       }
 
-      ComponentModel model = m_modelManager.getComponentModel(key);
+      ComponentModel model = null;
+
+      for (ComponentDescriptor<?> descriptor : m_descriptors) {
+         if (key.getRole().equals(descriptor.getRole()) && key.getRoleHint().equals(descriptor.getRoleHint())) {
+            model = getComponentModel(descriptor);
+         }
+      }
+
+      if (model == null) {
+         model = m_modelManager.getComponentModel(key);
+      }
 
       if (model != null) {
          return (T) box.lookup(model);
       } else {
          throw new ComponentLookupException("No component defined!", role, key.getRoleHint());
       }
-   }
-
-   public void register(ComponentKey key, Object component) {
-      m_map.put(key.getRole(), new ComponentBox<Object>(key, component));
-      m_modelManager.setComponentModel(key, component.getClass());
-   }
-
-   public void release(Object component) {
-      // do nothing here
-   }
-
-   public PlexusContainer getContainer() {
-      return m_container;
    }
 
    public <T> List<T> lookupList(String role) throws ComponentLookupException {
@@ -110,5 +171,14 @@ public class ComponentManager {
       }
 
       return components;
+   }
+
+   public void register(ComponentKey key, Object component) {
+      m_map.put(key.getRole(), new ComponentBox<Object>(key, component));
+      m_modelManager.setComponentModel(key, component.getClass());
+   }
+
+   public void release(Object component) {
+      // do nothing here
    }
 }

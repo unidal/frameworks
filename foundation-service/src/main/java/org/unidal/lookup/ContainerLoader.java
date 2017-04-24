@@ -3,13 +3,9 @@ package org.unidal.lookup;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,18 +15,10 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.codehaus.plexus.ContainerConfiguration;
-import org.codehaus.plexus.DefaultContainerConfiguration;
-import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.lifecycle.AbstractLifecycleHandler;
-import org.codehaus.plexus.lifecycle.LifecycleHandler;
-import org.codehaus.plexus.lifecycle.phase.Phase;
-import org.unidal.helper.Reflects;
 import org.unidal.lookup.container.MyPlexusContainer;
-import org.unidal.lookup.extension.EnumComponentManagerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -39,144 +27,34 @@ import org.w3c.dom.NodeList;
 public class ContainerLoader {
    private static volatile PlexusContainer s_container;
 
-   private static ConcurrentMap<Key, Object> m_components = new ConcurrentHashMap<Key, Object>();
-
-   public static void destroyDefaultContainer() {
+   public static void destroy() {
       if (s_container != null) {
-         m_components.clear();
          s_container.dispose();
          s_container = null;
       }
    }
 
-   private static Class<?> findLoaderClass() {
-      String loaderClassName = "com.site.lookup.ContainerLoader";
-      Class<?> loaderClass = null;
-
-      try {
-         loaderClass = ContainerLoader.class.getClassLoader().loadClass(loaderClassName);
-      } catch (ClassNotFoundException e) {
-         // ignore it
-      }
-
-      try {
-         loaderClass = Thread.currentThread().getContextClassLoader().loadClass(loaderClassName);
-      } catch (ClassNotFoundException e) {
-         // ignore it
-      }
-
-      return loaderClass;
-   }
-
-   // for back compatible
-   private static DefaultPlexusContainer getContainerFromLookupLibrary(Class<?> loaderClass) {
-      try {
-         Field field = loaderClass.getDeclaredField("s_container");
-
-         field.setAccessible(true);
-         return (DefaultPlexusContainer) field.get(null);
-      } catch (Exception e) {
-         // ignore it
-         e.printStackTrace();
-      }
-
-      return null;
-   }
-
    public static PlexusContainer getDefaultContainer() {
-      DefaultContainerConfiguration configuration = new DefaultContainerConfiguration();
-
-      configuration.setContainerConfiguration("/META-INF/plexus/plexus.xml");
-      return getDefaultContainer(configuration);
+      return getDefaultContainer(null);
    }
 
    public static PlexusContainer getDefaultContainer(ContainerConfiguration configuration) {
       if (s_container == null) {
-         String useNewContainer = System.getProperty("useNewContainer");
-
          try {
-            if ("true".equals(useNewContainer)) {
-               s_container = new MyPlexusContainer();
+            if (configuration != null) {
+               String configure = configuration.getContainerConfiguration();
+               InputStream in = ContainerLoader.class.getClassLoader().getResourceAsStream(configure);
+
+               s_container = new MyPlexusContainer(in);
             } else {
-               // Two ContainerLoaders should share the same PlexusContainer
-               Class<?> loaderClass = findLoaderClass();
-
-               synchronized (ContainerLoader.class) {
-                  if (loaderClass != null) {
-                     s_container = getContainerFromLookupLibrary(loaderClass);
-                  }
-
-                  if (s_container == null) {
-                     preConstruction(configuration);
-
-                     DefaultPlexusContainer container = new DefaultPlexusContainer(configuration);
-
-                     postConstruction(container);
-
-                     if (loaderClass != null) {
-                        setContainerToLookupLibrary(loaderClass, container);
-                     }
-
-                     s_container = container;
-                  }
-               }
+               s_container = new MyPlexusContainer();
             }
          } catch (Exception e) {
-            throw new RuntimeException("Unable to create Plexus container.", e);
+            throw new RuntimeException("Unable to create Plexus container!", e);
          }
       }
 
       return s_container;
-   }
-
-   @SuppressWarnings("unchecked")
-   static <T> T lookupById(Class<T> role, String roleHint, String id) throws ComponentLookupException {
-      Key key = new Key(role, roleHint, id);
-      Object component = m_components.get(key);
-
-      if (component == null) {
-         component = s_container.lookup(role, roleHint);
-
-         if (m_components.putIfAbsent(key, component) != null) {
-            component = m_components.get(key);
-         }
-      }
-
-      return (T) component;
-   }
-
-   private static void postConstruction(DefaultPlexusContainer container) {
-      container.getComponentRegistry().registerComponentManagerFactory(new EnumComponentManagerFactory());
-   }
-
-   @SuppressWarnings("unchecked")
-   private static void preConstruction(ContainerConfiguration configuration) throws Exception {
-      LifecycleHandler plexus = configuration.getLifecycleHandlerManager().getLifecycleHandler("plexus");
-      Field field = Reflects.forField().getDeclaredField(AbstractLifecycleHandler.class, "beginSegment");
-
-      field.setAccessible(true);
-
-      List<Phase> segment = (List<Phase>) field.get(plexus);
-
-      segment.add(0, new org.unidal.lookup.extension.PostConstructionPhase());
-
-      try {
-         new ContainerConfigurationDecorator().process(configuration);
-      } catch (Exception e) {
-         e.printStackTrace();
-      }
-   }
-
-   private static void setContainerToLookupLibrary(Class<?> loaderClass, PlexusContainer container) {
-      try {
-         Field field = loaderClass.getDeclaredField("s_container");
-
-         field.setAccessible(true);
-         field.set(null, container);
-      } catch (Exception e) {
-         // ignore it
-         e.printStackTrace();
-      }
    }
 
    static class ContainerConfigurationDecorator {

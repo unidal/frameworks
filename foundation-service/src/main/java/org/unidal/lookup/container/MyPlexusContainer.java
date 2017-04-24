@@ -137,7 +137,7 @@ public class MyPlexusContainer implements PlexusContainer {
    @Override
    public void addComponentDescriptor(ComponentDescriptor<?> componentDescriptor)
          throws CycleDetectedInComponentGraphException {
-      throw new UnsupportedOperationException();
+      m_manager.addComponentDescriptor(componentDescriptor);
    }
 
    @Override
@@ -182,7 +182,7 @@ public class MyPlexusContainer implements PlexusContainer {
 
    @Override
    public void dispose() {
-      throw new UnsupportedOperationException();
+      m_manager.destroy();
    }
 
    @Override
@@ -260,6 +260,6 @@ public class MyPlexusContainer implements PlexusContainer {
 
    @Override
    public <T> void addComponent(T component, Class<?> role, String roleHint) {
-      throw new UnsupportedOperationException();
+      m_manager.register(new ComponentKey(role, roleHint), component);
    }
 }
