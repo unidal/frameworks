@@ -62,7 +62,7 @@ public class ComponentManager {
       m_descriptors.add(descriptor);
    }
 
-   public void addComponentDescriptor(ComponentModel component) {
+   public void addComponentModel(ComponentModel component) {
       m_plexus.addComponent(component);
    }
 

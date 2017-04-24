@@ -24,14 +24,17 @@ public abstract class ComponentTestCase extends ContainerHolder {
 
    protected <T> ComponentDefinition<T> defineComponent(Class<T> role, String roleHint,
          Class<? extends T> implementation) throws Exception {
-      ComponentModel descriptor = new ComponentModel();
+      ComponentModel model = new ComponentModel();
 
-      descriptor.setImplementation(implementation.getName());
-      descriptor.setRole(role.getName());
-      descriptor.setRoleHint(roleHint);
+      model.setImplementation(implementation.getName());
+      model.setRole(role.getName());
 
-      m_container.addComponentDescriptor(descriptor);
-      return new ComponentDefinition<T>(descriptor);
+      if (roleHint != null) {
+         model.setRoleHint(roleHint);
+      }
+
+      m_container.addComponentModel(model);
+      return new ComponentDefinition<T>(model);
    }
 
    @Override

@@ -33,7 +33,6 @@ public class MyPlexusContainer implements PlexusContainer {
    @Override
    public void addComponent(Object component, String role) throws CycleDetectedInComponentGraphException {
       throw new UnsupportedOperationException();
-
    }
 
    @Override
@@ -48,9 +47,9 @@ public class MyPlexusContainer implements PlexusContainer {
    }
 
    @Override
-   public void addComponentDescriptor(ComponentModel componentDescriptor)
+   public void addComponentModel(ComponentModel component)
          throws CycleDetectedInComponentGraphException {
-      m_manager.addComponentDescriptor(componentDescriptor);
+      m_manager.addComponentModel(component);
    }
 
    @Override

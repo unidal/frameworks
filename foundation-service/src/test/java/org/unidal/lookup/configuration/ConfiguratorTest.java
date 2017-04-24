@@ -33,7 +33,7 @@ public class ConfiguratorTest {
       String expected = Files.forIO().readFrom(in, "utf-8");
       String actual = Configurators.forPlexus().generateXmlConfiguration(components);
 
-      Assert.assertEquals(resource, expected, actual);
+      Assert.assertEquals(resource, expected.replace("\r\n", "\n"), actual.replace("\r\n", "\n"));
    }
 
    private void checkLookup(AbstractResourceConfigurator configurator) throws Exception {

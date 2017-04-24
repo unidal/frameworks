@@ -236,7 +236,7 @@ public interface PlexusContainer
      * @param componentDescriptor
      * @throws ComponentRepositoryException
      */
-    void addComponentDescriptor( ComponentModel componentDescriptor )
+    void addComponentModel( ComponentModel component )
           throws CycleDetectedInComponentGraphException;
 
     /**
