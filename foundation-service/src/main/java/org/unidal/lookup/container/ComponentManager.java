@@ -8,19 +8,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.component.repository.ComponentDescriptor;
-import org.codehaus.plexus.component.repository.ComponentRequirement;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.logging.LoggerManager;
 import org.unidal.lookup.container.lifecycle.ComponentHandlers;
 import org.unidal.lookup.container.lifecycle.ComponentLifecycle;
-import org.unidal.lookup.container.model.entity.Any;
 import org.unidal.lookup.container.model.entity.ComponentModel;
-import org.unidal.lookup.container.model.entity.ConfigurationModel;
 import org.unidal.lookup.container.model.entity.PlexusModel;
-import org.unidal.lookup.container.model.entity.RequirementModel;
-import org.unidal.lookup.logger.TimedConsoleLoggerManager;
 
 public class ComponentManager {
    // role => map (role hint => component)
@@ -32,12 +25,10 @@ public class ComponentManager {
 
    private ComponentModelManager m_modelManager;
 
-   private TimedConsoleLoggerManager m_loggerManager;
+   private LoggerManager m_loggerManager;
 
    // for test purpose
    private PlexusModel m_plexus = new PlexusModel();
-
-   private List<ComponentDescriptor<?>> m_descriptors = new ArrayList<ComponentDescriptor<?>>();
 
    public ComponentManager(PlexusContainer container, InputStream in) throws Exception {
       m_container = container;
@@ -51,15 +42,7 @@ public class ComponentManager {
       m_lifecycle.addHandle(ComponentHandlers.CONFIGURATION);
       m_lifecycle.addHandle(ComponentHandlers.INITIALIZABLE);
 
-      m_loggerManager = new TimedConsoleLoggerManager();
-      m_loggerManager.setShowClass(true);
-      m_loggerManager.initialize();
-
-      register(new ComponentKey(LoggerManager.class, null), m_loggerManager);
-   }
-
-   public void addComponentDescriptor(ComponentDescriptor<?> descriptor) {
-      m_descriptors.add(descriptor);
+      m_loggerManager = lookup(new ComponentKey(LoggerManager.class, null));
    }
 
    public void addComponentModel(ComponentModel component) {
@@ -67,45 +50,8 @@ public class ComponentManager {
    }
 
    public void destroy() {
-      m_plexus = new PlexusModel();
-      m_descriptors.clear();
+      m_plexus.getComponents().clear();
       m_map.clear();
-   }
-
-   private ComponentModel getComponentModel(ComponentDescriptor<?> descriptor) {
-      ComponentModel model = new ComponentModel();
-
-      model.setRole(descriptor.getRole());
-      model.setRoleHint(descriptor.getRoleHint());
-      model.setImplementation(descriptor.getImplementation());
-
-      if (descriptor.getInstantiationStrategy() != null) {
-         model.setInstantiationStrategy(descriptor.getInstantiationStrategy());
-      }
-
-      PlexusConfiguration c = descriptor.getConfiguration();
-
-      if (c != null) {
-         ConfigurationModel config = new ConfigurationModel();
-         List<Any> properties = config.getDynamicElements();
-
-         for (PlexusConfiguration p : c.getChildren()) {
-            properties.add(new Any().setName(p.getName()).setValue(p.getValue("")));
-         }
-
-         model.setConfiguration(config);
-      }
-
-      for (ComponentRequirement r : descriptor.getRequirements()) {
-         RequirementModel req = new RequirementModel();
-
-         req.setRole(r.getRole());
-         req.setRoleHint(r.getRoleHint());
-         req.setFieldName(r.getFieldName());
-         model.addRequirement(req);
-      }
-
-      return model;
    }
 
    public PlexusContainer getContainer() {
@@ -119,12 +65,6 @@ public class ComponentManager {
    public boolean hasComponent(ComponentKey key) {
       for (ComponentModel component : m_plexus.getComponents()) {
          if (key.matches(component.getRole(), component.getRoleHint())) {
-            return true;
-         }
-      }
-
-      for (ComponentDescriptor<?> descriptor : m_descriptors) {
-         if (key.getRole().equals(descriptor.getRole()) && key.getRoleHint().equals(descriptor.getRoleHint())) {
             return true;
          }
       }
@@ -148,15 +88,6 @@ public class ComponentManager {
          if (key.matches(component.getRole(), component.getRoleHint())) {
             model = component;
             break;
-         }
-      }
-
-      if (model == null) {
-         for (ComponentDescriptor<?> descriptor : m_descriptors) {
-            if (key.getRole().equals(descriptor.getRole()) && key.getRoleHint().equals(descriptor.getRoleHint())) {
-               model = getComponentModel(descriptor);
-               break;
-            }
          }
       }
 

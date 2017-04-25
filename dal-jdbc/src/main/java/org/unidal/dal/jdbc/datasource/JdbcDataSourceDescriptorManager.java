@@ -19,8 +19,6 @@ public class JdbcDataSourceDescriptorManager extends ContainerHolder implements 
 
    private List<DataSourceProvider> m_providers;
 
-   private String m_datasourceFile;
-
    protected JdbcDataSourceDescriptor buildDescriptor(DataSourceDef ds) {
       JdbcDataSourceDescriptor d = new JdbcDataSourceDescriptor();
       PropertiesDef properties = ds.getProperties();
@@ -102,13 +100,6 @@ public class JdbcDataSourceDescriptorManager extends ContainerHolder implements 
       if (m_providers.isEmpty()) {
          throw new InitializationException("No DataSourceProvider found!");
       }
-
-      // for back compatible
-      for (DataSourceProvider provider : m_providers) {
-         if (provider instanceof DefaultDataSourceProvider) {
-            ((DefaultDataSourceProvider) provider).setDatasourceFile(m_datasourceFile);
-         }
-      }
    }
 
    protected int toTime(String source) {
@@ -146,15 +137,5 @@ public class JdbcDataSourceDescriptorManager extends ContainerHolder implements 
       }
 
       return time;
-   }
-
-   /**
-    * Use DefaultDataSourceProvider.class instead.
-    * 
-    * @param datasourceFile
-    */
-   @Deprecated
-   public void setDatasourceFile(String datasourceFile) {
-      m_datasourceFile = datasourceFile;
    }
 }

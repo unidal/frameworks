@@ -38,7 +38,9 @@ public class Component {
       List<Any> configuration = config.getDynamicElements();
 
       for (Configuration child : children) {
-         configuration.add(new Any().setName(child.getName()).setValue(child.getValue()));
+         if (child != null) {
+            configuration.add(new Any().setName(child.getName()).setValue(child.getValue()));
+         }
       }
 
       return this;

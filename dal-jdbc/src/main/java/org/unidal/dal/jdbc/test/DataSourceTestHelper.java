@@ -4,14 +4,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
 
-import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.classworlds.realm.ClassRealm;
-import org.codehaus.plexus.component.repository.ComponentDescriptor;
-import org.codehaus.plexus.component.repository.ComponentRequirement;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.unidal.dal.jdbc.DalException;
@@ -26,15 +20,13 @@ import org.unidal.helper.Files;
 import org.unidal.helper.Reflects;
 import org.unidal.helper.Reflects.MethodFilter;
 import org.unidal.lookup.ContainerHolder;
+import org.unidal.lookup.container.model.entity.ComponentModel;
+import org.unidal.lookup.container.model.entity.RequirementModel;
 
 /**
  * <xmp>
  * 
- * <dependency>
- * <groupId>com.h2database</groupId>
- * <artifactId>h2</artifactId>
- * <version>1.4.186</version>
- * <scope>test</scope>
+ * <dependency> <groupId>com.h2database</groupId> <artifactId>h2</artifactId> <version>1.4.186</version> <scope>test</scope>
  * </dependency>
  * 
  * </xmp>
@@ -160,27 +152,13 @@ public class DataSourceTestHelper extends ContainerHolder implements LogEnabled 
    @SuppressWarnings("unchecked")
    public void setUp(PlexusContainer container) throws Exception {
       Class<DataSourceManager> implementation = (Class<DataSourceManager>) (Class<? extends DataSourceManager>) TestDataSourceManager.class;
-      ComponentDescriptor<DataSourceManager> descriptor = new ComponentDescriptor<DataSourceManager>(implementation,
-            container.getContainerRealm());
+      ComponentModel model = new ComponentModel();
 
-      descriptor.setRoleClass(DataSourceManager.class);
-      descriptor.setRoleHint(PlexusConstants.PLEXUS_DEFAULT_HINT);
+      model.setRole(DataSourceManager.class.getName());
+      model.setImplementation(implementation.getName());
 
-      Map<ClassRealm, SortedMap<String, Object>> index = Reflects.forField().getDeclaredFieldValue(container,
-            "componentRegistry", "repository", "index");
-      for (SortedMap<String, Object> roleIndex : index.values()) {
-         Object roleHintIndex = roleIndex.get(DataSourceManager.class.getName());
-
-         if (roleHintIndex != null) {
-            Reflects.forMethod().invokeMethod(roleHintIndex, "removeAll", Object.class, PlexusConstants.PLEXUS_DEFAULT_HINT);
-         }
-      }
-
-      ComponentRequirement req = new ComponentRequirement();
-
-      req.setRole(JdbcDataSourceDescriptorManager.class.getName());
-      descriptor.addRequirement(req);
-      container.addComponentDescriptor(descriptor);
+      model.addRequirement(new RequirementModel().setRole(JdbcDataSourceDescriptorManager.class.getName()));
+      container.addComponentModel(model);
 
       // keep it after component hacking
       defineFunctions(StringFunction.class);

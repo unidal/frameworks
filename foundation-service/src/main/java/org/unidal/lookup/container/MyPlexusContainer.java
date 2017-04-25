@@ -43,7 +43,7 @@ public class MyPlexusContainer implements PlexusContainer {
    @Override
    public void addComponentDescriptor(ComponentDescriptor<?> componentDescriptor)
          throws CycleDetectedInComponentGraphException {
-      m_manager.addComponentDescriptor(componentDescriptor);
+      throw new UnsupportedOperationException();
    }
 
    @Override

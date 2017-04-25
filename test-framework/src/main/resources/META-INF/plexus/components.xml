@@ -3,15 +3,11 @@
    <components>
       <component>
          <role>org.unidal.test.browser.BrowserManager</role>
-         <role-hint>default</role-hint>
          <implementation>org.unidal.test.browser.BrowserManager</implementation>
-         <instantiation-strategy>singleton</instantiation-strategy>
       </component>
       <component>
          <role>org.unidal.test.browser.Browser</role>
-         <role-hint>default</role-hint>
          <implementation>org.unidal.test.browser.DefaultBrowser</implementation>
-         <instantiation-strategy>singleton</instantiation-strategy>
       </component>
       <component>
          <role>org.unidal.test.browser.Browser</role>
@@ -23,25 +19,21 @@
          <role>org.unidal.test.browser.Browser</role>
          <role-hint>console</role-hint>
          <implementation>org.unidal.test.browser.ConsoleBrowser</implementation>
-         <instantiation-strategy>singleton</instantiation-strategy>
       </component>
       <component>
          <role>org.unidal.test.browser.Browser</role>
          <role-hint>firefox</role-hint>
          <implementation>org.unidal.test.browser.FirefoxBrowser</implementation>
-         <instantiation-strategy>singleton</instantiation-strategy>
       </component>
       <component>
          <role>org.unidal.test.browser.Browser</role>
          <role-hint>ie</role-hint>
          <implementation>org.unidal.test.browser.InternetExplorerBrowser</implementation>
-         <instantiation-strategy>singleton</instantiation-strategy>
       </component>
       <component>
          <role>org.unidal.test.browser.Browser</role>
          <role-hint>opera</role-hint>
          <implementation>org.unidal.test.browser.OperaBrowser</implementation>
-         <instantiation-strategy>singleton</instantiation-strategy>
       </component>
    </components>
 </plexus>

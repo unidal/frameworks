@@ -25,7 +25,8 @@ public class ComponentModelManager {
          m_models.add(model);
       }
 
-      loadPlexusModels();
+      loadPlexusModels("META-INF/plexus/plexus.xml");
+      loadPlexusModels("META-INF/plexus/components.xml");
    }
 
    public ComponentModel getComponentModel(ComponentKey key) {
@@ -44,12 +45,13 @@ public class ComponentModelManager {
       return getComponentModel(key) != null;
    }
 
-   private void loadPlexusModels() throws IOException, SAXException {
-      Enumeration<URL> urls = getClass().getClassLoader().getResources("META-INF/plexus/components.xml");
+   private void loadPlexusModels(String resource) throws IOException, SAXException {
+      Enumeration<URL> urls = getClass().getClassLoader().getResources(resource);
 
       while (urls.hasMoreElements()) {
          URL url = urls.nextElement();
 
+         // ignore plexus internal components.xml
          if (url.getPath().contains("/plexus-container-default/")) {
             continue;
          }
@@ -62,7 +64,7 @@ public class ComponentModelManager {
 
             m_models.add(model);
          } catch (SAXException e) {
-            System.err.println("Bad components.xml: " + xml);
+            System.err.println(String.format("Bad plexus resource(%s): ", url) + xml);
             throw e;
          }
       }

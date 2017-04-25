@@ -1,0 +1,11 @@
+<plexus>
+	<components>
+		<component>
+			<role>org.codehaus.plexus.logging.LoggerManager</role>
+			<implementation>org.unidal.lookup.logger.TimedConsoleLoggerManager</implementation>
+			<configuration>
+				<showClass>true</showClass>
+			</configuration>
+		</component>
+	</components>
+</plexus>
