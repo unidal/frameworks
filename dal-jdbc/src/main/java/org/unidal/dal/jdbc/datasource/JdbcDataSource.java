@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Disposable;
 import org.unidal.helper.Codes;
 import org.unidal.helper.Splitters;
 import org.unidal.lookup.annotation.Named;
@@ -14,7 +15,7 @@ import com.dianping.cat.Cat;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 @Named(type = DataSource.class, value = "jdbc", instantiationStrategy = Named.PER_LOOKUP)
-public class JdbcDataSource implements DataSource, LogEnabled {
+public class JdbcDataSource implements DataSource, LogEnabled, Disposable {
    private ComboPooledDataSource m_cpds;
 
    private Logger m_logger;
@@ -35,6 +36,11 @@ public class JdbcDataSource implements DataSource, LogEnabled {
       }
 
       return src;
+   }
+
+   @Override
+   public void dispose() {
+      m_cpds.close();
    }
 
    public void enableLogging(Logger logger) {

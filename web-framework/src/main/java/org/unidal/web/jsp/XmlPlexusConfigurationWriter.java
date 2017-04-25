@@ -1,4 +1,4 @@
-package org.unidal.lookup.configuration;
+package org.unidal.web.jsp;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -6,7 +6,6 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import org.codehaus.plexus.configuration.PlexusConfiguration;
-import org.codehaus.plexus.configuration.io.PlexusConfigurationWriter;
 
 public class XmlPlexusConfigurationWriter implements PlexusConfigurationWriter {
    public void write(OutputStream outputStream, PlexusConfiguration configuration) throws IOException {

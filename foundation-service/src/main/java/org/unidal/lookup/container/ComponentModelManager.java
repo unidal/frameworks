@@ -18,6 +18,9 @@ import org.xml.sax.SAXException;
 public class ComponentModelManager {
    private List<PlexusModel> m_models = new ArrayList<PlexusModel>();
 
+   // for test purpose
+   private PlexusModel m_model = new PlexusModel();
+
    public ComponentModelManager(InputStream in) throws Exception {
       if (in != null) {
          PlexusModel model = DefaultSaxParser.parse(in);
@@ -30,6 +33,12 @@ public class ComponentModelManager {
    }
 
    public ComponentModel getComponentModel(ComponentKey key) {
+      for (ComponentModel component : m_model.getComponents()) {
+         if (key.matches(component.getRole(), component.getRoleHint())) {
+            return component;
+         }
+      }
+
       for (PlexusModel plexus : m_models) {
          for (ComponentModel component : plexus.getComponents()) {
             if (key.matches(component.getRole(), component.getRoleHint())) {
@@ -39,6 +48,29 @@ public class ComponentModelManager {
       }
 
       return null;
+   }
+
+   public List<String> getRoleHints(String role) {
+      List<String> roleHints = new ArrayList<String>();
+      Set<String> done = new HashSet<String>();
+
+      for (PlexusModel model : m_models) {
+         for (ComponentModel component : model.getComponents()) {
+            if (role.equals(component.getRole())) {
+               String roleHint = component.getRoleHint();
+
+               if (done.contains(roleHint)) {
+                  continue;
+               } else {
+                  done.add(roleHint);
+               }
+
+               roleHints.add(roleHint);
+            }
+         }
+      }
+
+      return roleHints;
    }
 
    public boolean hasComponentModel(ComponentKey key) {
@@ -79,26 +111,11 @@ public class ComponentModelManager {
       }
    }
 
-   public List<String> getRoleHints(String role) {
-      List<String> roleHints = new ArrayList<String>();
-      Set<String> done = new HashSet<String>();
+   public void addComponent(ComponentModel component) {
+      m_model.addComponent(component);
+   }
 
-      for (PlexusModel model : m_models) {
-         for (ComponentModel component : model.getComponents()) {
-            if (role.equals(component.getRole())) {
-               String roleHint = component.getRoleHint();
-
-               if (done.contains(roleHint)) {
-                  continue;
-               } else {
-                  done.add(roleHint);
-               }
-
-               roleHints.add(roleHint);
-            }
-         }
-      }
-
-      return roleHints;
+   public void reset() {
+      m_model.getComponents().clear();
    }
 }

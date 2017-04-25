@@ -7,7 +7,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import org.unidal.helper.Files;
-import org.unidal.lookup.configuration.XmlPlexusConfigurationWriter;
 import org.unidal.web.jsp.annotation.AttributeMeta;
 import org.unidal.web.jsp.annotation.FunctionMeta;
 import org.unidal.web.jsp.annotation.TagMeta;

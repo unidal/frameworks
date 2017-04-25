@@ -17,6 +17,13 @@ public class ComponentLifecycle {
 
    public ComponentLifecycle(ComponentManager manager) {
       m_manager = manager;
+
+      m_handlers.add(ComponentHandlers.REQUIREMENTS);
+      m_handlers.add(ComponentHandlers.ENABLE_LOG);
+      m_handlers.add(ComponentHandlers.ENABLE_ROLE_HINT);
+      m_handlers.add(ComponentHandlers.CONTEXTUALIZABLE);
+      m_handlers.add(ComponentHandlers.CONFIGURATION);
+      m_handlers.add(ComponentHandlers.INITIALIZABLE);
    }
 
    public void addHandle(LifecycleHandler handler) {
@@ -59,6 +66,11 @@ public class ComponentLifecycle {
       }
 
       @Override
+      public PlexusContainer getContainer() {
+         return m_manager.getContainer();
+      }
+
+      @Override
       public Logger getLogger(String role) {
          return m_manager.getLoggerManager().getLoggerForComponent(role);
       }
@@ -71,11 +83,6 @@ public class ComponentLifecycle {
       public ComponentContext setComponentModel(ComponentModel model) {
          m_model = model;
          return this;
-      }
-
-      @Override
-      public PlexusContainer getContainer() {
-         return m_manager.getContainer();
       }
    }
 }

@@ -10,14 +10,13 @@ import java.util.Map;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.logging.LoggerManager;
-import org.unidal.lookup.container.lifecycle.ComponentHandlers;
 import org.unidal.lookup.container.lifecycle.ComponentLifecycle;
 import org.unidal.lookup.container.model.entity.ComponentModel;
-import org.unidal.lookup.container.model.entity.PlexusModel;
 
 public class ComponentManager {
+   // component cache
    // role => map (role hint => component)
-   private Map<String, ComponentBox<?>> m_map = new HashMap<String, ComponentBox<?>>();
+   private Map<String, ComponentBox<?>> m_components = new HashMap<String, ComponentBox<?>>();
 
    private PlexusContainer m_container;
 
@@ -27,31 +26,26 @@ public class ComponentManager {
 
    private LoggerManager m_loggerManager;
 
-   // for test purpose
-   private PlexusModel m_plexus = new PlexusModel();
-
    public ComponentManager(PlexusContainer container, InputStream in) throws Exception {
       m_container = container;
       m_modelManager = new ComponentModelManager(in);
       m_lifecycle = new ComponentLifecycle(this);
 
-      m_lifecycle.addHandle(ComponentHandlers.REQUIREMENTS);
-      m_lifecycle.addHandle(ComponentHandlers.ENABLE_LOG);
-      m_lifecycle.addHandle(ComponentHandlers.ENABLE_ROLE_HINT);
-      m_lifecycle.addHandle(ComponentHandlers.CONTEXTUALIZABLE);
-      m_lifecycle.addHandle(ComponentHandlers.CONFIGURATION);
-      m_lifecycle.addHandle(ComponentHandlers.INITIALIZABLE);
-
+      // keep it at last
       m_loggerManager = lookup(new ComponentKey(LoggerManager.class, null));
    }
 
    public void addComponentModel(ComponentModel component) {
-      m_plexus.addComponent(component);
+      m_modelManager.addComponent(component);
    }
 
    public void destroy() {
-      m_plexus.getComponents().clear();
-      m_map.clear();
+      for (ComponentBox<?> box : m_components.values()) {
+         box.destroy();
+      }
+
+      m_components.clear();
+      m_modelManager.reset();
    }
 
    public PlexusContainer getContainer() {
@@ -63,37 +57,20 @@ public class ComponentManager {
    }
 
    public boolean hasComponent(ComponentKey key) {
-      for (ComponentModel component : m_plexus.getComponents()) {
-         if (key.matches(component.getRole(), component.getRoleHint())) {
-            return true;
-         }
-      }
-
       return m_modelManager.hasComponentModel(key);
    }
 
    @SuppressWarnings("unchecked")
    public <T> T lookup(ComponentKey key) throws ComponentLookupException {
       String role = key.getRole();
-      ComponentBox<?> box = m_map.get(role);
+      ComponentBox<?> box = m_components.get(role);
 
       if (box == null) {
          box = new ComponentBox<T>(m_lifecycle);
-         m_map.put(role, box);
+         m_components.put(role, box);
       }
 
-      ComponentModel model = null;
-
-      for (ComponentModel component : m_plexus.getComponents()) {
-         if (key.matches(component.getRole(), component.getRoleHint())) {
-            model = component;
-            break;
-         }
-      }
-
-      if (model == null) {
-         model = m_modelManager.getComponentModel(key);
-      }
+      ComponentModel model = m_modelManager.getComponentModel(key);
 
       if (model != null) {
          return (T) box.lookup(model);
@@ -129,11 +106,13 @@ public class ComponentManager {
    }
 
    public void register(ComponentKey key, Object component) {
-      m_map.put(key.getRole(), new ComponentBox<Object>(key, component));
+      ComponentBox<Object> box = new ComponentBox<Object>(m_lifecycle).register(key, component);
+      
+      m_components.put(key.getRole(), box);
       m_modelManager.setComponentModel(key, component.getClass());
    }
 
    public void release(Object component) {
-      // do nothing here
+      m_lifecycle.stop(component);
    }
 }

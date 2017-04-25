@@ -19,8 +19,6 @@ package org.unidal.web.jsp;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import org.unidal.lookup.configuration.XmlPlexusConfigurationWriter;
-
 /**
  * @version $Id$
  */

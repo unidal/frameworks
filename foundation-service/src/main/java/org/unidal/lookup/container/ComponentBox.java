@@ -11,14 +11,11 @@ import org.unidal.lookup.container.lifecycle.ComponentLifecycle;
 import org.unidal.lookup.container.model.entity.ComponentModel;
 
 public class ComponentBox<T> {
+   // component cache
    // role hint => component
-   private Map<String, T> m_map = new HashMap<String, T>();
+   private Map<String, T> m_components = new HashMap<String, T>();
 
    private ComponentLifecycle m_lifecycle;
-
-   public ComponentBox(ComponentKey key, T component) {
-      m_map.put(key.getRoleHint(), component);
-   }
 
    public ComponentBox(ComponentLifecycle lifecycle) {
       m_lifecycle = lifecycle;
@@ -42,6 +39,14 @@ public class ComponentBox<T> {
       }
 
       throw new ComponentLookupException(message, model.getRole(), model.getRoleHint());
+   }
+
+   public void destroy() {
+      for (T component : m_components.values()) {
+         m_lifecycle.stop(component);
+      }
+
+      m_components.clear();
    }
 
    @SuppressWarnings("unchecked")
@@ -70,7 +75,7 @@ public class ComponentBox<T> {
 
    public T lookup(ComponentModel model) throws ComponentLookupException {
       String roleHint = model.getRoleHint();
-      T component = m_map.get(roleHint);
+      T component = m_components.get(roleHint);
 
       if (component == null) {
          if (model.isSingleton()) {
@@ -86,15 +91,20 @@ public class ComponentBox<T> {
          m_lifecycle.start(component, model);
 
          if (!model.isPerLookup()) {
-            m_map.put(roleHint, component);
+            m_components.put(roleHint, component);
          }
       }
 
       return component;
    }
 
+   public ComponentBox<T> register(ComponentKey key, T component) {
+      m_components.put(key.getRoleHint(), component);
+      return this;
+   }
+
    @Override
    public String toString() {
-      return String.format("%s[components=%s]", getClass().getSimpleName(), m_map);
+      return String.format("%s[components=%s]", getClass().getSimpleName(), m_components.size());
    }
 }

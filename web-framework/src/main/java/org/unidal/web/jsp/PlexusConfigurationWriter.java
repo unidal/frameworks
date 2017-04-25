@@ -1,4 +1,4 @@
-package org.codehaus.plexus.configuration.io;
+package org.unidal.web.jsp;
 
 import java.io.IOException;
 import java.io.OutputStream;

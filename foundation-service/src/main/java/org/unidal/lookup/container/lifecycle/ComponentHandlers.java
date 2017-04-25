@@ -8,6 +8,7 @@ import java.util.List;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Disposable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.unidal.converter.ConverterManager;
 import org.unidal.helper.Reflects;
@@ -64,7 +65,7 @@ public enum ComponentHandlers implements LifecycleHandler {
             try {
                field.setAccessible(true);
                field.set(component, dependency);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                ComponentModel model = ctx.getComponentModel();
                String message = String.format("Unable to set field(%s) in class(%s)!", fieldName,
                      model.getImplementation());
@@ -103,7 +104,7 @@ public enum ComponentHandlers implements LifecycleHandler {
             try {
                field.setAccessible(true);
                field.set(component, dependency);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                String message = String.format("Unable to set field(%s) of class(%s) with the type(%s)!",
                      field.getName(), model.getImplementation(), requirement.getRole());
 
@@ -137,7 +138,7 @@ public enum ComponentHandlers implements LifecycleHandler {
             try {
                field.setAccessible(true);
                field.set(component, dependencies);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                ComponentModel model = ctx.getComponentModel();
                String message = String.format("Unable to set field(%s) in class(%s)!", fieldName,
                      model.getImplementation());
@@ -191,7 +192,7 @@ public enum ComponentHandlers implements LifecycleHandler {
                Object val = ConverterManager.getInstance().convert(value, type);
 
                method.invoke(component, val);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                String setter = Reflects.forMethod().getSetMethodName(property);
                String message = String.format("No setter method(%s) of class(%s) is found!", setter,
                      model.getImplementation());
@@ -210,7 +211,7 @@ public enum ComponentHandlers implements LifecycleHandler {
          if (component instanceof Contextualizable) {
             try {
                ((Contextualizable) component).contextualize(ctx.getContainer().getContext());
-            } catch (Exception e) {
+            } catch (Throwable e) {
                ComponentModel model = ctx.getComponentModel();
 
                throw new ComponentLookupException("Error when setting context of component!", model.getRole(),
@@ -228,11 +229,27 @@ public enum ComponentHandlers implements LifecycleHandler {
          if (component instanceof Initializable) {
             try {
                ((Initializable) component).initialize();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                ComponentModel model = ctx.getComponentModel();
 
                throw new ComponentLookupException("Error when initializing component!", model.getRole(),
                      model.getRoleHint(), e);
+            }
+         }
+      }
+   },
+
+   DISPOSABLE {
+      @Override
+      public void handleStop(final LifecycleContext ctx) {
+         Object component = ctx.getComponent();
+
+         if (component instanceof Disposable) {
+            try {
+               ((Disposable) component).dispose();
+            } catch (Throwable e) {
+               // ignore it
+               e.printStackTrace();
             }
          }
       }
