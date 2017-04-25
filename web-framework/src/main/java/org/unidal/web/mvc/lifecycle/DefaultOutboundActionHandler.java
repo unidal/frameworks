@@ -4,12 +4,12 @@ import static org.unidal.lookup.util.ReflectUtils.invokeMethod;
 
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
-import org.unidal.cat.Cat;
 import org.unidal.lookup.annotation.Named;
 import org.unidal.web.mvc.ActionContext;
 import org.unidal.web.mvc.ActionException;
 import org.unidal.web.mvc.model.entity.OutboundActionModel;
 
+import com.dianping.cat.Cat;
 import com.dianping.cat.message.Transaction;
 
 @Named(type = OutboundActionHandler.class, instantiationStrategy = Named.PER_LOOKUP)

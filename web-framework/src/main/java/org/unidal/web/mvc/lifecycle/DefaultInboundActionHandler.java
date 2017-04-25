@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
-import org.unidal.cat.Cat;
 import org.unidal.lookup.ContainerHolder;
 import org.unidal.lookup.annotation.Named;
 import org.unidal.lookup.util.ReflectUtils;
@@ -21,6 +20,7 @@ import org.unidal.web.mvc.Validator;
 import org.unidal.web.mvc.model.entity.InboundActionModel;
 import org.unidal.web.mvc.payload.annotation.PayloadProviderMeta;
 
+import com.dianping.cat.Cat;
 import com.dianping.cat.message.Transaction;
 
 @Named(type = InboundActionHandler.class, instantiationStrategy = Named.PER_LOOKUP)

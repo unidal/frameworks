@@ -11,11 +11,11 @@ public class StringUtils {
       return str != null && str.length() > 0;
    }
 
-   public static final String join(String[] array, String separator) {
+   public static final String join(Collection<?> list, String separator) {
       StringBuilder sb = new StringBuilder(1024);
       boolean first = true;
 
-      for (String item : array) {
+      for (Object item : list) {
          if (first) {
             first = false;
          } else {
@@ -28,11 +28,28 @@ public class StringUtils {
       return sb.toString();
    }
 
-   public static final String join(Collection<String> list, String separator) {
+   public static final String join(Object[] array, String separator) {
       StringBuilder sb = new StringBuilder(1024);
       boolean first = true;
 
-      for (String item : list) {
+      for (Object item : array) {
+         if (first) {
+            first = false;
+         } else {
+            sb.append(separator);
+         }
+
+         sb.append(item);
+      }
+
+      return sb.toString();
+   }
+
+   public static final String join(String[] array, String separator) {
+      StringBuilder sb = new StringBuilder(1024);
+      boolean first = true;
+
+      for (String item : array) {
          if (first) {
             first = false;
          } else {

@@ -3,89 +3,68 @@
    <components>
       <component>
          <role>org.unidal.web.mvc.model.AnnotationMatrix</role>
-         <role-hint>default</role-hint>
          <implementation>org.unidal.web.mvc.model.AnnotationMatrix</implementation>
          <instantiation-strategy>per-lookup</instantiation-strategy>
       </component>
       <component>
          <role>org.unidal.web.mvc.model.ModelManager</role>
-         <role-hint>default</role-hint>
          <implementation>org.unidal.web.mvc.model.ModelManager</implementation>
-         <instantiation-strategy>singleton</instantiation-strategy>
          <requirements>
             <requirement>
                <role>org.unidal.web.mvc.model.ModuleRegistry</role>
-               <role-hint>default</role-hint>
             </requirement>
          </requirements>
       </component>
       <component>
          <role>org.unidal.web.lifecycle.ActionResolver</role>
-         <role-hint>default</role-hint>
          <implementation>org.unidal.web.lifecycle.DefaultActionResolver</implementation>
-         <instantiation-strategy>singleton</instantiation-strategy>
       </component>
       <component>
          <role>org.unidal.web.mvc.lifecycle.InboundActionHandler</role>
-         <role-hint>default</role-hint>
          <implementation>org.unidal.web.mvc.lifecycle.DefaultInboundActionHandler</implementation>
          <instantiation-strategy>per-lookup</instantiation-strategy>
       </component>
       <component>
          <role>org.unidal.web.mvc.lifecycle.OutboundActionHandler</role>
-         <role-hint>default</role-hint>
          <implementation>org.unidal.web.mvc.lifecycle.DefaultOutboundActionHandler</implementation>
          <instantiation-strategy>per-lookup</instantiation-strategy>
       </component>
       <component>
          <role>org.unidal.web.mvc.lifecycle.TransitionHandler</role>
-         <role-hint>default</role-hint>
          <implementation>org.unidal.web.mvc.lifecycle.DefaultTransitionHandler</implementation>
          <instantiation-strategy>per-lookup</instantiation-strategy>
       </component>
       <component>
          <role>org.unidal.web.mvc.lifecycle.ErrorHandler</role>
-         <role-hint>default</role-hint>
          <implementation>org.unidal.web.mvc.lifecycle.DefaultErrorHandler</implementation>
-         <instantiation-strategy>singleton</instantiation-strategy>
       </component>
       <component>
          <role>org.unidal.web.mvc.PayloadProvider</role>
-         <role-hint>default</role-hint>
          <implementation>org.unidal.web.mvc.payload.DefaultPayloadProvider</implementation>
-         <instantiation-strategy>singleton</instantiation-strategy>
       </component>
       <component>
          <role>org.unidal.web.mvc.lifecycle.ActionHandlerManager</role>
-         <role-hint>default</role-hint>
          <implementation>org.unidal.web.mvc.lifecycle.DefaultActionHandlerManager</implementation>
-         <instantiation-strategy>singleton</instantiation-strategy>
       </component>
       <component>
          <role>org.unidal.web.lifecycle.RequestLifecycle</role>
          <role-hint>mvc</role-hint>
          <implementation>org.unidal.web.mvc.lifecycle.DefaultRequestLifecycle</implementation>
-         <instantiation-strategy>singleton</instantiation-strategy>
          <requirements>
             <requirement>
                <role>org.unidal.web.mvc.lifecycle.RequestContextBuilder</role>
-               <role-hint>default</role-hint>
             </requirement>
             <requirement>
                <role>org.unidal.web.mvc.lifecycle.ActionHandlerManager</role>
-               <role-hint>default</role-hint>
             </requirement>
          </requirements>
       </component>
       <component>
          <role>org.unidal.web.mvc.lifecycle.RequestContextBuilder</role>
-         <role-hint>default</role-hint>
          <implementation>org.unidal.web.mvc.lifecycle.DefaultRequestContextBuilder</implementation>
-         <instantiation-strategy>singleton</instantiation-strategy>
          <requirements>
             <requirement>
                <role>org.unidal.web.mvc.model.ModelManager</role>
-               <role-hint>default</role-hint>
             </requirement>
          </requirements>
       </component>
@@ -103,15 +82,12 @@
       </component>
       <component>
          <role>org.unidal.web.mvc.payload.ParameterProvider</role>
-         <role-hint>default</role-hint>
          <implementation>org.unidal.web.mvc.payload.DefaultParameterProvider</implementation>
          <instantiation-strategy>per-lookup</instantiation-strategy>
       </component>
       <component>
          <role>org.unidal.web.mvc.view.model.ModelHandler</role>
-         <role-hint>default</role-hint>
          <implementation>org.unidal.web.mvc.view.model.DefaultModelHandler</implementation>
-         <instantiation-strategy>singleton</instantiation-strategy>
          <requirements>
             <requirement>
                <role>org.unidal.web.mvc.view.model.ModelBuilder</role>
@@ -129,13 +105,11 @@
          <role>org.unidal.web.mvc.view.model.ModelBuilder</role>
          <role-hint>xml</role-hint>
          <implementation>org.unidal.web.mvc.view.model.XmlModelBuilder</implementation>
-         <instantiation-strategy>singleton</instantiation-strategy>
       </component>
       <component>
          <role>org.unidal.web.mvc.view.model.ModelBuilder</role>
          <role-hint>json</role-hint>
          <implementation>org.unidal.web.mvc.view.model.JsonModelBuilder</implementation>
-         <instantiation-strategy>singleton</instantiation-strategy>
       </component>
    </components>
 </plexus>
