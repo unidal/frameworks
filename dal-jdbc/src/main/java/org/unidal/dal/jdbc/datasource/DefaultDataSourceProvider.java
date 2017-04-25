@@ -90,6 +90,10 @@ public class DefaultDataSourceProvider implements DataSourceProvider, LogEnabled
       m_logger = logger;
    }
 
+   public String getDatasourceFile() {
+      return m_datasourceFile;
+   }
+
    public void setBaseDirRef(String baseDirRef) {
       m_baseDirRef = baseDirRef;
    }
