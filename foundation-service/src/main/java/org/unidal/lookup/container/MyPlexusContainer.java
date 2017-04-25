@@ -47,9 +47,9 @@ public class MyPlexusContainer implements PlexusContainer {
    }
 
    @Override
-   public void addComponentModel(ComponentModel component)
+   public void addComponentModel(Object component)
          throws CycleDetectedInComponentGraphException {
-      m_manager.addComponentModel(component);
+      m_manager.addComponentModel((ComponentModel) component);
    }
 
    @Override
