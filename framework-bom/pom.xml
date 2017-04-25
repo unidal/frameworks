@@ -3,21 +3,17 @@
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.unidal.framework</groupId>
    <artifactId>framework-bom</artifactId>
-   <version>2.6.4-SNAPSHOT</version>
+   <version>3.0.0</version>
    <packaging>pom</packaging>
    <name>Framework BOM</name>
    <properties>
-      <!-- foundation-service -->
-      <plexus-container-default.version>1.7.1</plexus-container-default.version>
-      <plexus-classworlds.version>2.5.2</plexus-classworlds.version>
-      <plexus-utils.version>3.0.24</plexus-utils.version>
-      <xbean-reflect.version>4.5</xbean-reflect.version>
-      <aspectjrt.version>1.5.4</aspectjrt.version>
-      
       <!-- dal-jdbc -->
       <cat-client.version>1.3.6</cat-client.version>
       <c3p0.version>0.9.5.2</c3p0.version>
       <mchange-commons-java.version>0.2.12</mchange-commons-java.version>
+
+      <!-- test-framework -->
+      <plexus-utils.version>3.0.24</plexus-utils.version>
       
       <!-- web-framework -->
       <commons-fileupload.version>1.3.2</commons-fileupload.version>
@@ -26,6 +22,11 @@
    <dependencyManagement>
       <dependencies>
          <!-- framework artifacts -->
+         <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-container-default</artifactId>
+            <version>${project.version}</version>
+         </dependency>
          <dependency>
             <groupId>org.unidal.framework</groupId>
             <artifactId>foundation-service</artifactId>
@@ -62,28 +63,8 @@
          <!-- 3rd party artifacts -->
          <dependency>
             <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-container-default</artifactId>
-            <version>${plexus-container-default.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-classworlds</artifactId>
-            <version>${plexus-classworlds.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>
             <version>${plexus-utils.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>xbean-reflect</artifactId>
-            <version>${xbean-reflect.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.aspectjrt</groupId>
-            <artifactId>aspectjrt</artifactId>
-            <version>${aspectjrt.version}</version>
          </dependency>
          <dependency>
             <groupId>com.dianping.cat</groupId>
