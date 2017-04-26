@@ -19,6 +19,6 @@ public class Configurators {
          model.addComponent(component.getModel());
       }
 
-      return model.toString();
+      return model.toString().replaceAll("   ", "\t").replaceAll("\r\n", "\n");
    }
 }

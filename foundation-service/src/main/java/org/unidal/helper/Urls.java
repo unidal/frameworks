@@ -24,6 +24,8 @@ public class Urls {
 
       private Map<String, String> m_headers = new HashMap<String, String>();
 
+      private boolean m_gzip;
+
       public UrlIO connectTimeout(int connectTimeout) {
          m_connectTimeout = connectTimeout;
          return this;
@@ -65,7 +67,7 @@ public class Urls {
             responseHeaders.putAll(headers);
          }
 
-         if (headers != null && "[gzip]".equals(String.valueOf(headers.get("Content-Encoding")))) {
+         if (m_gzip && headers != null && "[gzip]".equals(String.valueOf(headers.get("Content-Encoding")))) {
             return new GZIPInputStream(conn.getInputStream());
          } else {
             return conn.getInputStream();
@@ -78,6 +80,7 @@ public class Urls {
       }
 
       public UrlIO withGzip() {
+         m_gzip = true;
          m_headers.put("Accept-Encoding", "gzip");
          return this;
       }
