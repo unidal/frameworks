@@ -30,6 +30,16 @@ public class ComponentLifecycle {
       m_handlers.add(handler);
    }
 
+   public void onStarted(ComponentModel model) {
+      m_manager.log("Loaded component(%s:%s) with class(%s) ...", model.getRole(), model.getRoleHint(),
+            model.getImplementation());
+   }
+
+   public void onStarting(ComponentModel model) {
+      m_manager.log("Loading component(%s:%s) with class(%s) ...", model.getRole(), model.getRoleHint(),
+            model.getImplementation());
+   }
+
    public void start(Object component, ComponentModel model) throws ComponentLookupException {
       LifecycleContext ctx = new ComponentContext(component).setComponentModel(model);
 

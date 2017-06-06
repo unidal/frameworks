@@ -57,7 +57,12 @@ public class Urls {
 
          if (!m_headers.isEmpty()) {
             for (Map.Entry<String, String> e : m_headers.entrySet()) {
-               conn.setRequestProperty(e.getKey(), e.getValue());
+               String name = e.getKey();
+               String value = e.getValue();
+
+               if (name != null && value != null) {
+                  conn.setRequestProperty(name, value);
+               }
             }
          }
 

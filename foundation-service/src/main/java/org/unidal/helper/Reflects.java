@@ -65,14 +65,14 @@ public class Reflects {
          if (classloader != null) {
             try {
                clazz = classloader.loadClass(className);
-            } catch (ClassNotFoundException e) {
+            } catch (Throwable e) {
                // ignore it
             }
          } else {
             // step1: try to load from caller class loader
             try {
                clazz = Class.forName(className);
-            } catch (ClassNotFoundException e) {
+            } catch (Throwable e) {
                // step2: try to load from thread context class loader
                if (clazz == null) {
                   clazz = getClass(className, Thread.currentThread().getContextClassLoader());

@@ -72,6 +72,9 @@ public class MVC extends AbstractContainerServlet {
             }
 
             ctx.setAttribute("servlet-config", config);
+            ctx.setAttribute("servlet-context", config.getServletContext());
+            ctx.setAttribute("context-path", config.getServletContext().getContextPath());
+            
             initializer.execute(ctx);
          } catch (Exception e) {
             throw new ServletException(e);

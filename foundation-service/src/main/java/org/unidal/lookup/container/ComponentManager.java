@@ -9,6 +9,8 @@ import java.util.Map;
 
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.LoggerManager;
 import org.unidal.lookup.container.lifecycle.ComponentLifecycle;
 import org.unidal.lookup.container.model.entity.ComponentModel;
@@ -60,6 +62,16 @@ public class ComponentManager {
       return m_modelManager.hasComponentModel(key);
    }
 
+   public void log(String pattern, Object... args) {
+      Context ctx = m_container.getContext();
+
+      if (ctx != null && "true".equals(ctx.getContextData().get("verbose"))) {
+         Logger logger = m_loggerManager.getLoggerForComponent(null);
+
+         logger.info(String.format(pattern, args));
+      }
+   }
+
    @SuppressWarnings("unchecked")
    public <T> T lookup(ComponentKey key) throws ComponentLookupException {
       String role = key.getRole();
@@ -107,7 +119,7 @@ public class ComponentManager {
 
    public void register(ComponentKey key, Object component) {
       ComponentBox<Object> box = new ComponentBox<Object>(m_lifecycle).register(key, component);
-      
+
       m_components.put(key.getRole(), box);
       m_modelManager.setComponentModel(key, component.getClass());
    }

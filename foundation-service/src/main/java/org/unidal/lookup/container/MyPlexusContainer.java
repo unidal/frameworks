@@ -166,7 +166,7 @@ public class MyPlexusContainer implements PlexusContainer {
 
    @Override
    public <T> T lookup(Class<T> type) throws ComponentLookupException {
-      return lookup(type, null);
+      return m_manager.lookup(new ComponentKey(type, null));
    }
 
    @Override

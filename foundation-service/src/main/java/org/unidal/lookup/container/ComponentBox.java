@@ -24,6 +24,7 @@ public class ComponentBox<T> {
    @SuppressWarnings("unchecked")
    private T createInstance(ComponentModel model) throws ComponentLookupException {
       Class<?> clazz = Reflects.forClass().getClass(model.getImplementation());
+      Throwable cause = null;
       String message;
 
       try {
@@ -34,11 +35,16 @@ public class ComponentBox<T> {
          }
       } catch (InstantiationException e) {
          message = String.format("Class(%s) is not accessible!", clazz.getName());
+         cause = e;
       } catch (IllegalAccessException e) {
          message = String.format("Constructor of class(%s) is not accessible!", clazz.getName());
+         cause = e;
+      } catch (NoClassDefFoundError e) {
+         message = String.format("Class(%s) is not found!", clazz.getName());
+         cause = e;
       }
 
-      throw new ComponentLookupException(message, model.getRole(), model.getRoleHint());
+      throw new ComponentLookupException(message, model.getRole(), model.getRoleHint(), cause);
    }
 
    public void destroy() {
@@ -78,6 +84,8 @@ public class ComponentBox<T> {
       T component = m_components.get(roleHint);
 
       if (component == null) {
+         m_lifecycle.onStarting(model);
+
          if (model.isSingleton()) {
             component = createInstance(model);
          } else if (model.isPerLookup()) {
@@ -88,11 +96,12 @@ public class ComponentBox<T> {
             throw new UnsupportedOperationException("Unknown instantiation strategy of component: " + model);
          }
 
-         m_lifecycle.start(component, model);
-
          if (!model.isPerLookup()) {
             m_components.put(roleHint, component);
          }
+
+         m_lifecycle.start(component, model);
+         m_lifecycle.onStarted(model);
       }
 
       return component;

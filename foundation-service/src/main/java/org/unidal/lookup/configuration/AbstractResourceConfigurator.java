@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -227,12 +228,29 @@ public abstract class AbstractResourceConfigurator {
    public abstract List<Component> defineComponents();
 
    protected File getConfigurationFile() {
+      File baseDir = getBaseDir();
       Class<?> testClass = getTestClass();
 
       if (testClass != null) {
-         return new File(String.format("src/test/resources/%s.xml", testClass.getName().replace('.', '/')));
+         return new File(baseDir, String.format("src/test/resources/%s.xml", testClass.getName().replace('.', '/')));
       } else {
-         return new File("src/main/resources/META-INF/plexus/components.xml");
+         return new File(baseDir, "src/main/resources/META-INF/plexus/components.xml");
+      }
+   }
+
+   protected File getBaseDir() {
+      URL url = getClass().getResource(getClass().getSimpleName() + ".class");
+      String path = url.getPath();
+      int pos = path.indexOf("/target/classes");
+
+      if (pos < 0) {
+         pos = path.indexOf("/target/test-classes");
+      }
+
+      if (pos > 0) {
+         return new File(path.substring(0, pos));
+      } else {
+         return new File(".");
       }
    }
 

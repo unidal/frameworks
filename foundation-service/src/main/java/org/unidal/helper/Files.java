@@ -210,6 +210,13 @@ public class Files {
          return baos.toString(charsetName);
       }
 
+      public String readUtf8String(InputStream is) throws IOException {
+         ByteArrayOutputStream baos = new ByteArrayOutputStream(16 * 1024);
+
+         copy(is, baos, AutoClose.INPUT);
+         return baos.toString("utf-8");
+      }
+
       public void writeTo(File file, byte[] data) throws IOException {
          if (file.isDirectory()) {
             throw new IOException(String.format("Can't write to an existing directory(%s)", file));
