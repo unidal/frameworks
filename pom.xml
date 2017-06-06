@@ -3,7 +3,7 @@
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.unidal.framework</groupId>
    <artifactId>parent</artifactId>
-   <version>3.0.1</version>
+   <version>3.0.3</version>
    <packaging>pom</packaging>
    <name>Framework</name>
    <description>Unidal Framework</description>
@@ -70,7 +70,7 @@
       <plexus.plugin.version>2.5.0</plexus.plugin.version>
       
       <!-- plugin params -->
-      <javadoc.opts>-Xdoclint:none</javadoc.opts>
+      <!-- javadoc.opts>-Xdoclint:none</javadoc.optsi -->
    </properties>
    <dependencyManagement>
       <dependencies>
@@ -286,6 +286,7 @@
                </execution>
             </executions>
          </plugin>
+<!--
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
@@ -305,6 +306,7 @@
                </execution>
             </executions>
          </plugin>
+-->
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
