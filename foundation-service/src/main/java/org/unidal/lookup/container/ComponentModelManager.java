@@ -91,6 +91,12 @@ public class ComponentModelManager {
          InputStream in = url.openStream();
          String xml = Files.forIO().readFrom(in, "utf-8");
 
+         // to be compatible with plexus.xml
+         if (xml != null && xml.contains("<component-set>")) {
+            xml = xml.replace("<component-set>", "<plexus>");
+            xml = xml.replace("</component-set>", "</plexus>");
+         }
+
          try {
             PlexusModel model = DefaultSaxParser.parse(xml);
 
