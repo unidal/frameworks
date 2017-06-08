@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.unidal.framework</groupId>
       <artifactId>parent</artifactId>
-      <version>3.0.3</version>
+      <version>3.0.4-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
    <modelVersion>4.0.0</modelVersion>
@@ -37,21 +37,13 @@
          <plugin>
             <groupId>org.unidal.maven.plugins</groupId>
             <artifactId>codegen-maven-plugin</artifactId>
-            <version>2.5.4</version>
-            <executions>
-               <execution>
-                  <id>generate dal model files</id>
-                  <phase>generate-sources</phase>
-                  <goals>
-                     <goal>dal-model</goal>
-                  </goals>
-                  <configuration>
-                     <manifest><![CDATA[
-                        ${basedir}/src/main/resources/META-INF/dal/model/plexus-manifest.xml,
-                     ]]></manifest>
-                  </configuration>
-               </execution>
-            </executions>
+            <configuration>
+               <sourceDir>${basedir}/src/main/java</sourceDir>
+               <manifest><![CDATA[
+                  ${basedir}/src/main/resources/META-INF/dal/model/plexus-manifest.xml,
+               ]]></manifest>
+            </configuration>
+            <!-- regenerate the mode in the command line using command "mvn codegen:dal-model" -->
          </plugin>
       </plugins>
    </build>
