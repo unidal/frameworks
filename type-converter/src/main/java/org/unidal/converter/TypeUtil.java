@@ -21,6 +21,9 @@ public class TypeUtil {
       m_primitiveTypeMap.put(Double.TYPE, Double.class);
    }
 
+   private TypeUtil() {
+   }
+
    public static Type getComponentType(Type type) {
       Class<?> clazz;
 

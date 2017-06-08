@@ -5,6 +5,9 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 public class ReflectUtils {
+   private ReflectUtils() {
+   }
+
    @SuppressWarnings("unchecked")
    public static <T> T createInstance(Class<?> clazz) {
       try {

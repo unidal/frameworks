@@ -7,6 +7,9 @@ import java.util.Map;
 public class ConverterUtil {
    private static Map<Class<?>, Map<String, Method>> s_cachedSetMethodMap = new HashMap<Class<?>, Map<String, Method>>();
 
+   private ConverterUtil() {
+   }
+
    public static String getSetMethodName(String name) {
       StringBuilder sb = new StringBuilder(32);
       int len = name.length();

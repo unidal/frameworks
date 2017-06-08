@@ -1,7 +1,10 @@
 package org.unidal.lookup.util;
 
 public class ByteArrayUtils {
-   public static byte[] trim(byte[] src) {
+    private ByteArrayUtils() {
+    }
+
+    public static byte[] trim(byte[] src) {
       int start = 0;
       int end = src.length;
       boolean trimed = false;
