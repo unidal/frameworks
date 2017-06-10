@@ -339,7 +339,14 @@ public class Scanners {
                   @Override
                   public Direction matches(File base, String path) {
                      try {
-                        return matcher.matches(new URL(url, path), path);
+                        URL u = new URL(url, path);
+                        Direction d = matcher.matches(u, path);
+
+                        if (d.isMatched()) {
+                           urls.add(u);
+                        }
+
+                        return d;
                      } catch (MalformedURLException e) {
                         // ignore it
                      }
@@ -361,7 +368,15 @@ public class Scanners {
                      public Direction matches(ZipEntry entry, String path) {
                         if (path.startsWith(base)) {
                            try {
-                              urls.add(new URL(url, path.substring(base.length())));
+                              String p = path.substring(base.length());
+                              URL u = new URL(url, p);
+                              Direction d = matcher.matches(u, p);
+
+                              if (d.isMatched()) {
+                                 urls.add(u);
+                              }
+
+                              return d;
                            } catch (MalformedURLException e) {
                               // ignore it
                            }
