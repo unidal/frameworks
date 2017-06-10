@@ -190,7 +190,7 @@ public class PayloadProviderTest extends ComponentTestCase {
       Assert.assertEquals("Path Value", "[a, b, c]", Arrays.asList(payload.getPath()).toString());
    }
 
-   public static final class ComplexPayload extends DummyActionPayload {
+   private static final class ComplexPayload extends DummyActionPayload {
       @FieldMeta("int")
       private int[] m_intValue;
 
@@ -227,7 +227,7 @@ public class PayloadProviderTest extends ComponentTestCase {
       }
    }
 
-   public static final class DatePayload extends DummyActionPayload {
+   private static final class DatePayload extends DummyActionPayload {
       @FieldMeta(value = "date", format = "yyyy-MM-dd")
       private Date m_dateValue;
 
@@ -236,16 +236,13 @@ public class PayloadProviderTest extends ComponentTestCase {
       }
    }
 
-   static class DummyActionPayload implements ActionPayload<DummyPage, NormalAction> {
+   private static class DummyActionPayload implements ActionPayload<DummyPage, NormalAction> {
       public NormalAction getAction() {
          return null;
       }
 
       public DummyPage getPage() {
          return null;
-      }
-
-      public void setAction(String action) {
       }
 
       public void setPage(String action) {
@@ -256,7 +253,7 @@ public class PayloadProviderTest extends ComponentTestCase {
       }
    }
 
-   static class DummyPage implements Page {
+   private static class DummyPage implements Page {
       public String getName() {
          return null;
       }
@@ -266,7 +263,7 @@ public class PayloadProviderTest extends ComponentTestCase {
       }
    }
 
-   static final class HttpRequestMock extends HttpServletRequestWrapper {
+   private static final class HttpRequestMock extends HttpServletRequestWrapper {
       private byte[] m_body;
 
       public HttpRequestMock(String[] nameValues) {
@@ -323,10 +320,10 @@ public class PayloadProviderTest extends ComponentTestCase {
       }
    }
 
-   public static final class RawPayload extends DummyActionPayload {
+   private static final class RawPayload extends DummyActionPayload {
       @FieldMeta(value = "body", raw = true)
       private InputStream m_body;
-      
+
       @FieldMeta("int")
       private int m_intValue;
 
@@ -346,7 +343,7 @@ public class PayloadProviderTest extends ComponentTestCase {
       }
    }
 
-   public static final class SimplePayload extends DummyActionPayload {
+   private static final class SimplePayload extends DummyActionPayload {
       @FieldMeta("int")
       private int m_intValue;
 

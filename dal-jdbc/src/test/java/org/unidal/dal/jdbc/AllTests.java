@@ -71,7 +71,7 @@ ValueTokenResolverTest.class,
 
 TransactionManagerTest.class,
 
-UserTest.class
+UserTest.class,
 
 })
 public class AllTests {

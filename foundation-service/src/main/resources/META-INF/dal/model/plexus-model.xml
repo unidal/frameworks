@@ -5,12 +5,20 @@
   </entity>
   <entity name="component">
     <element name="role" value-type="String" />
-    <element name="role-hint" value-type="String" default-value="default" />
+    <element name="role-hint" value-type="String" method-get="false" />
     <element name="implementation" value-type="String" />
-    <element name="instantiation-strategy" value-type="String" default-value="singleton" />
+    <element name="instantiation-strategy" value-type="String" />
     <entity-ref name="configuration" />
     <entity-ref name="requirement" type="list" names="requirements" xml-indent="true" />
     <snippet>
+         public String getRoleHint() {
+            if (m_roleHint != null) {
+               return m_roleHint;
+            } else {
+               return "default";
+            }
+         }
+
          public boolean isEnum() {
             return "enum".equals(m_instantiationStrategy);
          }
@@ -20,7 +28,7 @@
          }
       
          public boolean isSingleton() {
-            return "singleton".equals(m_instantiationStrategy);
+            return m_instantiationStrategy == null || "singleton".equals(m_instantiationStrategy);
          }
     </snippet>
   </entity>

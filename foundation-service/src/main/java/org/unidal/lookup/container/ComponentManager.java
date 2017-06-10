@@ -30,8 +30,14 @@ public class ComponentManager {
 
    public ComponentManager(PlexusContainer container, InputStream in) throws Exception {
       m_container = container;
-      m_modelManager = new ComponentModelManager(in);
+      m_modelManager = new ComponentModelManager();
       m_lifecycle = new ComponentLifecycle(this);
+
+      if (in != null) {
+         m_modelManager.loadComponents(in);
+      }
+
+      m_modelManager.loadComponentsFromClasspath();
 
       // keep it at last
       m_loggerManager = lookup(new ComponentKey(LoggerManager.class, null));

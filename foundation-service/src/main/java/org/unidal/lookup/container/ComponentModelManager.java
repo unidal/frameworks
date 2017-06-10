@@ -4,12 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.unidal.helper.Files;
+import org.unidal.helper.Scanners;
+import org.unidal.helper.Scanners.ResourceMatcher;
 import org.unidal.lookup.container.model.entity.ComponentModel;
 import org.unidal.lookup.container.model.entity.PlexusModel;
 import org.unidal.lookup.container.model.transform.DefaultSaxParser;
@@ -21,15 +22,8 @@ public class ComponentModelManager {
    // for test purpose
    private PlexusModel m_model = new PlexusModel();
 
-   public ComponentModelManager(InputStream in) throws Exception {
-      if (in != null) {
-         PlexusModel model = DefaultSaxParser.parse(in);
-
-         m_models.add(model);
-      }
-
-      loadPlexusModels("META-INF/plexus/plexus.xml");
-      loadPlexusModels("META-INF/plexus/components.xml");
+   public void addComponent(ComponentModel component) {
+      m_model.addComponent(component);
    }
 
    public ComponentModel getComponentModel(ComponentKey key) {
@@ -77,35 +71,81 @@ public class ComponentModelManager {
       return getComponentModel(key) != null;
    }
 
-   private void loadPlexusModels(String resource) throws IOException, SAXException {
-      Enumeration<URL> urls = getClass().getClassLoader().getResources(resource);
+   private void loadCompoents(URL url) throws IOException, SAXException {
+      // ignore internals components.xml files within official plexus-container-default.jar
+      if (url.getPath().contains("/plexus-container-default/")) {
+         return;
+      }
 
-      while (urls.hasMoreElements()) {
-         URL url = urls.nextElement();
+      InputStream in = url.openStream();
+      String xml = Files.forIO().readFrom(in, "utf-8");
 
-         // ignore plexus internal components.xml
-         if (url.getPath().contains("/plexus-container-default/")) {
-            continue;
-         }
+      // to be compatible with plexus.xml
+      if (xml != null && xml.contains("<component-set>")) {
+         xml = xml.replace("<component-set>", "<plexus>");
+         xml = xml.replace("</component-set>", "</plexus>");
+      }
 
-         InputStream in = url.openStream();
-         String xml = Files.forIO().readFrom(in, "utf-8");
+      try {
+         PlexusModel model = DefaultSaxParser.parse(xml);
 
-         // to be compatible with plexus.xml
-         if (xml != null && xml.contains("<component-set>")) {
-            xml = xml.replace("<component-set>", "<plexus>");
-            xml = xml.replace("</component-set>", "</plexus>");
-         }
+         m_models.add(model);
+      } catch (SAXException e) {
+         System.err.println(String.format("Bad plexus resource(%s): ", url) + xml);
+         throw e;
+      }
+   }
 
+   public void loadComponents(InputStream in) throws Exception {
+      if (in != null) {
          try {
-            PlexusModel model = DefaultSaxParser.parse(xml);
+            PlexusModel model = DefaultSaxParser.parse(in);
 
             m_models.add(model);
-         } catch (SAXException e) {
-            System.err.println(String.format("Bad plexus resource(%s): ", url) + xml);
-            throw e;
+         } finally {
+            in.close();
          }
       }
+   }
+
+   public void loadComponentsFromClasspath() throws Exception {
+      List<URL> urls = scanComponents();
+
+      for (URL url : urls) {
+         loadCompoents(url);
+      }
+   }
+
+   public void reset() {
+      m_model.getComponents().clear();
+   }
+
+   List<URL> scanComponents() throws IOException {
+      final List<URL> components = new ArrayList<URL>();
+
+      Scanners.forResource().scanAll("META-INF/plexus/", new ResourceMatcher() {
+         @Override
+         public Direction matches(URL url, String path) {
+            if (!path.endsWith(".xml")) {
+               return Direction.DOWN;
+            }
+
+            // ignore configuration from official plexus-container-default.jar
+            if (path.contains("/plexus-container-default/")) {
+               return Direction.NEXT;
+            }
+
+            if (path.equals("plexus.xml")) {
+               components.add(url);
+            } else if (path.equals("components.xml") || path.startsWith("components-")) {
+               components.add(url);
+            }
+
+            return Direction.DOWN;
+         }
+      });
+
+      return components;
    }
 
    public void setComponentModel(ComponentKey key, Class<?> clazz) {
@@ -115,13 +155,5 @@ public class ComponentModelManager {
 
          model.addComponent(component);
       }
-   }
-
-   public void addComponent(ComponentModel component) {
-      m_model.addComponent(component);
-   }
-
-   public void reset() {
-      m_model.getComponents().clear();
    }
 }

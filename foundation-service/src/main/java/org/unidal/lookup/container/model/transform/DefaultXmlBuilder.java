@@ -1,6 +1,5 @@
 package org.unidal.lookup.container.model.transform;
 
-import static org.unidal.lookup.container.model.Constants.ELEMENT_DEBUG;
 import static org.unidal.lookup.container.model.Constants.ELEMENT_FIELD_NAME;
 import static org.unidal.lookup.container.model.Constants.ELEMENT_IMPLEMENTATION;
 import static org.unidal.lookup.container.model.Constants.ELEMENT_INSTANTIATION_STRATEGY;
@@ -178,29 +177,29 @@ public class DefaultXmlBuilder implements IVisitor {
             }
          }
 
-		return sb.toString();
-	} else if (value.getClass().isArray()) {
-		int len = Array.getLength(value);
-		StringBuilder sb = new StringBuilder(32);
-		boolean first = true;
+         return sb.toString();
+      } else if (value.getClass().isArray()) {
+         int len = Array.getLength(value);
+         StringBuilder sb = new StringBuilder(32);
+         boolean first = true;
 
-		for (int i = 0; i < len; i++) {
-			Object item = Array.get(value, i);
+         for (int i = 0; i < len; i++) {
+            Object item = Array.get(value, i);
 
-			if (first) {
-				first = false;
-			} else {
-				sb.append(',');
-			}
+            if (first) {
+               first = false;
+            } else {
+               sb.append(',');
+            }
 
-			if (item != null) {
-				sb.append(item);
-			}
-		}
+            if (item != null) {
+               sb.append(item);
+            }
+         }
 		
-		return sb.toString();
+         return sb.toString();
       }
-         
+ 
       return String.valueOf(value);
    }
 
@@ -229,8 +228,8 @@ public class DefaultXmlBuilder implements IVisitor {
       m_sb.append("</").append(name).append(">\r\n");
    }
 
-   protected void element(String name, String text, boolean escape) {
-      if (text == null) {
+   protected void element(String name, String text, String defaultValue, boolean escape) {
+      if (text == null || text.equals(defaultValue)) {
          return;
       }
       
@@ -269,14 +268,20 @@ public class DefaultXmlBuilder implements IVisitor {
          }
       } else {
          startTag(any.getName(), false, any.getAttributes());
-         m_sb.setLength(m_sb.length() - 2);
+
+         if (m_compact) {
+            m_sb.setLength(m_sb.length() - 2);
+         }
 
          for (Any child : any.getChildren()) {
             child.accept(m_visitor);
          }
 
          endTag(any.getName());
-         m_sb.setLength(m_sb.length() - 2);
+
+         if (m_compact) {
+            m_sb.setLength(m_sb.length() - 2);
+         }
       }
    }
 
@@ -284,13 +289,13 @@ public class DefaultXmlBuilder implements IVisitor {
    public void visitComponent(ComponentModel component) {
       startTag(ENTITY_COMPONENT, null);
 
-      element(ELEMENT_ROLE, component.getRole(), true);
+      element(ELEMENT_ROLE, component.getRole(), null,  true);
 
-      element(ELEMENT_ROLE_HINT, component.getRoleHint(), true);
+      element(ELEMENT_ROLE_HINT, component.getRoleHint(), null,  true);
 
-      element(ELEMENT_IMPLEMENTATION, component.getImplementation(), true);
+      element(ELEMENT_IMPLEMENTATION, component.getImplementation(), null,  true);
 
-      element(ELEMENT_INSTANTIATION_STRATEGY, component.getInstantiationStrategy(), true);
+      element(ELEMENT_INSTANTIATION_STRATEGY, component.getInstantiationStrategy(), null,  true);
 
       if (component.getConfiguration() != null) {
          component.getConfiguration().accept(m_visitor);
@@ -313,14 +318,8 @@ public class DefaultXmlBuilder implements IVisitor {
    public void visitConfiguration(ConfigurationModel configuration) {
       startTag(ENTITY_CONFIGURATION, null);
 
-      tagWithText(ELEMENT_DEBUG, configuration.getDebug() == null ? null : String.valueOf(configuration.getDebug()));
-
       for (Any any : configuration.getDynamicElements()) {
-         boolean compact = m_compact;
-
-         m_compact = true;
          any.accept(m_visitor);
-         m_compact = compact;
       }
 
       endTag(ENTITY_CONFIGURATION);
@@ -347,18 +346,14 @@ public class DefaultXmlBuilder implements IVisitor {
    public void visitRequirement(RequirementModel requirement) {
       startTag(ENTITY_REQUIREMENT, null);
 
-      element(ELEMENT_ROLE, requirement.getRole(), true);
+      element(ELEMENT_ROLE, requirement.getRole(), null,  true);
 
-      element(ELEMENT_ROLE_HINT, requirement.getRoleHint(), true);
+      element(ELEMENT_ROLE_HINT, requirement.getRoleHint(), "default",  true);
 
-      element(ELEMENT_FIELD_NAME, requirement.getFieldName(), true);
+      element(ELEMENT_FIELD_NAME, requirement.getFieldName(), null,  true);
 
       for (Any any : requirement.getDynamicElements()) {
-         boolean compact = m_compact;
-
-         m_compact = true;
          any.accept(m_visitor);
-         m_compact = compact;
       }
 
       endTag(ENTITY_REQUIREMENT);

@@ -28,18 +28,21 @@ public class RequirementModel extends BaseEntity<RequirementModel> {
       if (obj instanceof RequirementModel) {
          RequirementModel _o = (RequirementModel) obj;
 
-         if (!equals(m_role, _o.getRole())) {
+         if (!equals(getRole(), _o.getRole())) {
             return false;
          }
 
-         if (!equals(m_roleHint, _o.getRoleHint())) {
+         if (!equals(getRoleHint(), _o.getRoleHint())) {
             return false;
          }
 
-         if (!equals(m_fieldName, _o.getFieldName())) {
+         if (!equals(getFieldName(), _o.getFieldName())) {
             return false;
          }
 
+         if (!getDynamicElements().equals(_o.getDynamicElements())) {
+            return false;
+         }
 
          return true;
       }

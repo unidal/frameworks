@@ -3,12 +3,12 @@
    <parent>
       <groupId>org.unidal.framework</groupId>
       <artifactId>parent</artifactId>
-      <version>3.0.4-SNAPSHOT</version>
+      <version>3.0.4</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.codehaus.plexus</groupId>
    <artifactId>plexus-container-default</artifactId>
-   <name>Another Plexus Container to replace plexus-container-default</name>
+   <name>Another Plexus Container</name>
 </project>
 

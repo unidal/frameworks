@@ -1,6 +1,5 @@
 package org.unidal.lookup.container.model.transform;
 
-import static org.unidal.lookup.container.model.Constants.ELEMENT_DEBUG;
 import static org.unidal.lookup.container.model.Constants.ELEMENT_FIELD_NAME;
 import static org.unidal.lookup.container.model.Constants.ELEMENT_IMPLEMENTATION;
 import static org.unidal.lookup.container.model.Constants.ELEMENT_INSTANTIATION_STRATEGY;
@@ -14,8 +13,10 @@ import static org.unidal.lookup.container.model.Constants.ENTITY_REQUIREMENT;
 import static org.unidal.lookup.container.model.Constants.ENTITY_COMPONENTS;
 import static org.unidal.lookup.container.model.Constants.ENTITY_REQUIREMENTS;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.BufferedReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Map;
@@ -50,28 +51,20 @@ public class DefaultSaxParser extends DefaultHandler {
 
    private StringBuilder m_text = new StringBuilder();
 
-   public static PlexusModel parse(InputSource is) throws SAXException, IOException {
-      return parseEntity(PlexusModel.class, is);
-   }
-
    public static PlexusModel parse(InputStream in) throws SAXException, IOException {
-      return parse(new InputSource(in));
+      return parseEntity(PlexusModel.class, new InputSource(removeBOM(in)));
    }
 
    public static PlexusModel parse(Reader reader) throws SAXException, IOException {
-      return parse(new InputSource(reader));
+      return parseEntity(PlexusModel.class, new InputSource(removeBOM(reader)));
    }
 
    public static PlexusModel parse(String xml) throws SAXException, IOException {
-      return parse(new InputSource(new StringReader(xml)));
-   }
-
-   public static <T extends IEntity<?>> T parseEntity(Class<T> type, String xml) throws SAXException, IOException {
-      return parseEntity(type, new InputSource(new StringReader(xml)));
+      return parseEntity(PlexusModel.class, new InputSource(new StringReader(removeBOM(xml))));
    }
 
    @SuppressWarnings("unchecked")
-   public static <T extends IEntity<?>> T parseEntity(Class<T> type, InputSource is) throws SAXException, IOException {
+   private static <T extends IEntity<?>> T parseEntity(Class<T> type, InputSource is) throws SAXException, IOException {
       try {
          DefaultSaxParser handler = new DefaultSaxParser();
          SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -87,6 +80,49 @@ public class DefaultSaxParser extends DefaultHandler {
       }
    }
 
+   public static <T extends IEntity<?>> T parseEntity(Class<T> type, InputStream in) throws SAXException, IOException {
+      return parseEntity(type, new InputSource(removeBOM(in)));
+   }
+
+   public static <T extends IEntity<?>> T parseEntity(Class<T> type, String xml) throws SAXException, IOException {
+      return parseEntity(type, new InputSource(new StringReader(removeBOM(xml))));
+   }
+
+   // to remove Byte Order Mark(BOM) at the head of windows utf-8 file
+   @SuppressWarnings("unchecked")
+   private static <T> T removeBOM(T obj) throws IOException {
+      if (obj instanceof String) {
+         String str = (String) obj;
+
+         if (str.charAt(0) == 0xFEFF) {
+            return (T) str.substring(1);
+         } else {
+            return obj;
+         }
+      } else if (obj instanceof InputStream) {
+         BufferedInputStream in = new BufferedInputStream((InputStream) obj);
+
+         in.mark(3);
+
+         if (in.read() != 0xEF || in.read() != 0xBB || in.read() != 0xBF) {
+            in.reset();
+         }
+
+         return (T) in;
+      } else if (obj instanceof Reader) {
+         BufferedReader in = new BufferedReader((Reader) obj);
+
+         in.mark(1);
+
+         if (in.read() != 0xFEFF) {
+            in.reset();
+         }
+
+         return (T) in;
+      } else {
+         return obj;
+      }
+   }
    protected Any buildAny(String qName, Attributes attributes) {
       Any any = new Any();
       int length = attributes == null ? 0 : attributes.getLength();
@@ -162,12 +198,6 @@ public class DefaultSaxParser extends DefaultHandler {
             } else if (ELEMENT_INSTANTIATION_STRATEGY.equals(currentTag)) {
                component.setInstantiationStrategy(getText());
             }
-         } else if (currentObj instanceof ConfigurationModel) {
-            ConfigurationModel configuration = (ConfigurationModel) currentObj;
-
-            if (ELEMENT_DEBUG.equals(currentTag)) {
-               configuration.setDebug(convert(Boolean.class, getText(), null));
-            }
          } else if (currentObj instanceof RequirementModel) {
             RequirementModel requirement = (RequirementModel) currentObj;
 
@@ -225,21 +255,16 @@ public class DefaultSaxParser extends DefaultHandler {
    }
 
    private void parseForConfiguration(ConfigurationModel parentObj, String parentTag, String qName, Attributes attributes) throws SAXException {
-      if (ELEMENT_DEBUG.equals(qName)) {
-         m_objs.push(parentObj);
-      } else {
-         if (m_text.toString().length() != 0) {
-            Any any = new Any().setValue(m_text.toString());
-
-            parentObj.getDynamicElements().add(any);
-         }
-
-         Any any = buildAny(qName, attributes);
+      if (m_text.toString().length() != 0) {
+         Any any = new Any().setValue(m_text.toString());
 
          parentObj.getDynamicElements().add(any);
-         m_objs.push(any);
       }
 
+      Any any = buildAny(qName, attributes);
+
+      parentObj.getDynamicElements().add(any);
+      m_objs.push(any);
       m_tags.push(qName);
    }
 

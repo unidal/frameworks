@@ -27,7 +27,7 @@ public class PlexusModel extends BaseEntity<PlexusModel> {
       if (obj instanceof PlexusModel) {
          PlexusModel _o = (PlexusModel) obj;
 
-         if (!equals(m_components, _o.getComponents())) {
+         if (!equals(getComponents(), _o.getComponents())) {
             return false;
          }
 

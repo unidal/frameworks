@@ -2,17 +2,14 @@ package org.unidal.tuple;
 
 /**
  * Tuple to hold one element.
- * 
- * @param <T>
- *           value
  */
-public class Ref<T> implements Tuple {
-   private volatile T m_value;
+public class Ref<S> implements Tuple {
+   private volatile S m_value;
 
    public Ref() {
    }
 
-   public Ref(T value) {
+   public Ref(S value) {
       m_value = value;
    }
 
@@ -41,17 +38,17 @@ public class Ref<T> implements Tuple {
    }
 
    @Override
-   @SuppressWarnings("unchecked")
-   public T get(int index) {
+   @SuppressWarnings({ "unchecked" })
+   public <T> T get(int index) {
       switch (index) {
       case 0:
-         return m_value;
+         return (T) m_value;
       default:
          throw new IndexOutOfBoundsException(String.format("Index from 0 to %s, but was %s!", size(), index));
       }
    }
 
-   public T getValue() {
+   public S getValue() {
       return m_value;
    }
 
@@ -60,7 +57,7 @@ public class Ref<T> implements Tuple {
       return m_value == null ? 0 : m_value.hashCode();
    }
 
-   public void setValue(T value) {
+   public void setValue(S value) {
       m_value = value;
    }
 

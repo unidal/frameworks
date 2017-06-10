@@ -183,15 +183,6 @@ public abstract class AbstractResourceConfigurator {
       }
    }
 
-   private static Class<?> getElementType(Type type, Field field) {
-      if (type instanceof ParameterizedType) {
-         return (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[0];
-      }
-
-      throw new IllegalStateException(String.format("Unsupported type(%s) of field(%s) of %s, use List instead!", type,
-            field.getName(), field.getDeclaringClass()));
-   }
-
    private static void collectFields(Class<?> clazz, Map<Class<?>, List<Pair<Object, String>>> requires,
          Map<String, String> attributes) {
       Field[] fields = clazz.getDeclaredFields();
@@ -215,28 +206,25 @@ public abstract class AbstractResourceConfigurator {
       File file = rc.getConfigurationFile();
 
       try {
-         rc.saveToFile();
+         rc.saveToFile(file);
 
-         System.out.println(String.format("File %s generated. File length is %s.", file.getCanonicalPath(),
-               file.length()));
+         System.out.println(String.format("File %s generated. File length is %s.", file, file.length()));
       } catch (IOException e) {
          System.err.println(String.format("Error when generating %s file.", file));
          e.printStackTrace();
       }
    }
 
-   public abstract List<Component> defineComponents();
-
-   protected File getConfigurationFile() {
-      File baseDir = getBaseDir();
-      Class<?> testClass = getTestClass();
-
-      if (testClass != null) {
-         return new File(baseDir, String.format("src/test/resources/%s.xml", testClass.getName().replace('.', '/')));
-      } else {
-         return new File(baseDir, "src/main/resources/META-INF/plexus/components.xml");
+   private static Class<?> getElementType(Type type, Field field) {
+      if (type instanceof ParameterizedType) {
+         return (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[0];
       }
+
+      throw new IllegalStateException(String.format("Unsupported type(%s) of field(%s) of %s, use List instead!", type,
+            field.getName(), field.getDeclaringClass()));
    }
+
+   public abstract List<Component> defineComponents();
 
    protected File getBaseDir() {
       URL url = getClass().getResource(getClass().getSimpleName() + ".class");
@@ -251,6 +239,26 @@ public abstract class AbstractResourceConfigurator {
          return new File(path.substring(0, pos));
       } else {
          return new File(".");
+      }
+   }
+
+   protected File getConfigurationFile() {
+      File baseDir = getBaseDir();
+      Class<?> testClass = getTestClass();
+      File file;
+
+      if (testClass != null) {
+         file = new File(baseDir, String.format("src/test/resources/%s.xml", testClass.getName().replace('.', '/')));
+      } else {
+         String projectName = baseDir.getName();
+
+         file = new File(baseDir, String.format("src/main/resources/META-INF/plexus/components-%s.xml", projectName));
+      }
+
+      try {
+         return file.getCanonicalFile();
+      } catch (IOException e) {
+         return file;
       }
    }
 
@@ -275,17 +283,21 @@ public abstract class AbstractResourceConfigurator {
       return System.getProperty(name, defaultValue);
    }
 
-   protected void saveToFile() throws IOException {
-      File file = getConfigurationFile();
-
+   protected void saveToFile(File file) throws IOException {
       // create parent directory if not there
-      if (!file.getParentFile().exists()) {
-         file.getParentFile().mkdirs();
+      File parent = file.getParentFile();
+
+      if (!parent.exists()) {
+         parent.mkdirs();
       }
 
       String content = Configurators.forPlexus().generateXmlConfiguration(defineComponents());
+      File oldFile = new File(parent, "components.xml");
+
+      if (oldFile.exists()) {
+         oldFile.delete();
+      }
 
       Files.forIO().writeTo(file, content);
    }
-
 }

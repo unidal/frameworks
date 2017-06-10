@@ -9,11 +9,11 @@ import org.unidal.lookup.container.model.IVisitor;
 public class ComponentModel extends BaseEntity<ComponentModel> {
    private String m_role;
 
-   private String m_roleHint = "default";
+   private String m_roleHint;
 
    private String m_implementation;
 
-   private String m_instantiationStrategy = "singleton";
+   private String m_instantiationStrategy;
 
    private ConfigurationModel m_configuration;
 
@@ -37,27 +37,27 @@ public class ComponentModel extends BaseEntity<ComponentModel> {
       if (obj instanceof ComponentModel) {
          ComponentModel _o = (ComponentModel) obj;
 
-         if (!equals(m_role, _o.getRole())) {
+         if (!equals(getRole(), _o.getRole())) {
             return false;
          }
 
-         if (!equals(m_roleHint, _o.getRoleHint())) {
+         if (!equals(getRoleHint(), _o.getRoleHint())) {
             return false;
          }
 
-         if (!equals(m_implementation, _o.getImplementation())) {
+         if (!equals(getImplementation(), _o.getImplementation())) {
             return false;
          }
 
-         if (!equals(m_instantiationStrategy, _o.getInstantiationStrategy())) {
+         if (!equals(getInstantiationStrategy(), _o.getInstantiationStrategy())) {
             return false;
          }
 
-         if (!equals(m_configuration, _o.getConfiguration())) {
+         if (!equals(getConfiguration(), _o.getConfiguration())) {
             return false;
          }
 
-         if (!equals(m_requirements, _o.getRequirements())) {
+         if (!equals(getRequirements(), _o.getRequirements())) {
             return false;
          }
 
@@ -86,10 +86,6 @@ public class ComponentModel extends BaseEntity<ComponentModel> {
 
    public String getRole() {
       return m_role;
-   }
-
-   public String getRoleHint() {
-      return m_roleHint;
    }
 
    @Override
@@ -139,6 +135,14 @@ public class ComponentModel extends BaseEntity<ComponentModel> {
    }
 
    /********* Code Snippet Start *********/
+   public String getRoleHint() {
+      if (m_roleHint != null) {
+         return m_roleHint;
+      } else {
+         return "default";
+      }
+   }
+
    public boolean isEnum() {
       return "enum".equals(m_instantiationStrategy);
    }
@@ -148,8 +152,8 @@ public class ComponentModel extends BaseEntity<ComponentModel> {
    }
 
    public boolean isSingleton() {
-      return "singleton".equals(m_instantiationStrategy);
-   }
+      return m_instantiationStrategy == null || "singleton".equals(m_instantiationStrategy);
+   }      
 
    /********* Code Snippet End *********/
 }

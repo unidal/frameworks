@@ -2,8 +2,6 @@ package org.unidal.lookup.container.model;
 
 public class Constants {
 
-   public static final String ELEMENT_DEBUG = "debug";
-
    public static final String ELEMENT_FIELD_NAME = "field-name";
 
    public static final String ELEMENT_IMPLEMENTATION = "implementation";

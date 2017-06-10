@@ -3,6 +3,8 @@ package org.unidal.helper;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -16,6 +18,10 @@ public class Scanners {
 
    public static JarScanner forJar() {
       return JarScanner.INSTANCE;
+   }
+
+   public static ResourceScanner forResource() {
+      return ResourceScanner.INSTANCE;
    }
 
    public static abstract class DirMatcher implements IMatcher<File> {
@@ -300,6 +306,75 @@ public class Scanners {
          } else {
             return files.get(0);
          }
+      }
+   }
+
+   public static abstract class ResourceMatcher implements IMatcher<URL> {
+      @Override
+      public boolean isDirEligible() {
+         return false;
+      }
+
+      @Override
+      public boolean isFileElegible() {
+         return true;
+      }
+
+      public abstract Direction matches(URL url, String path);
+   }
+
+   public enum ResourceScanner {
+      INSTANCE;
+
+      public List<URL> scanAll(String resourceBase, final ResourceMatcher matcher) throws IOException {
+         Enumeration<URL> resources = getClass().getClassLoader().getResources(resourceBase);
+         final List<URL> urls = new ArrayList<URL>();
+
+         while (resources.hasMoreElements()) {
+            final URL url = resources.nextElement();
+            String protocol = url.getProtocol();
+
+            if ("file".equals(protocol)) {
+               DirScanner.INSTANCE.scan(new File(url.getPath()), new FileMatcher() {
+                  @Override
+                  public Direction matches(File base, String path) {
+                     try {
+                        return matcher.matches(new URL(url, path), path);
+                     } catch (MalformedURLException e) {
+                        // ignore it
+                     }
+
+                     return Direction.DOWN;
+                  }
+               });
+            } else if ("jar".equals(protocol)) {
+               URL u = new URL(url.getPath());
+
+               if ("file".equals(u.getProtocol())) {
+                  String path = u.getPath();
+                  int pos = path.indexOf('!');
+                  File file = new File(path.substring(0, pos));
+                  final String base = path.substring(pos + 2);
+
+                  JarScanner.INSTANCE.scan(new ZipFile(file), new ZipEntryMatcher() {
+                     @Override
+                     public Direction matches(ZipEntry entry, String path) {
+                        if (path.startsWith(base)) {
+                           try {
+                              urls.add(new URL(url, path.substring(base.length())));
+                           } catch (MalformedURLException e) {
+                              // ignore it
+                           }
+                        }
+
+                        return Direction.DOWN;
+                     }
+                  });
+               }
+            }
+         }
+
+         return urls;
       }
    }
 

@@ -3,10 +3,12 @@
 	<components>
 		<component>
 			<role>org.unidal.test.browser.BrowserManager</role>
+			<role-hint>default</role-hint>
 			<implementation>org.unidal.test.browser.BrowserManager</implementation>
 		</component>
 		<component>
 			<role>org.unidal.test.browser.Browser</role>
+			<role-hint>default</role-hint>
 			<implementation>org.unidal.test.browser.DefaultBrowser</implementation>
 		</component>
 		<component>

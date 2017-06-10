@@ -7,8 +7,6 @@ import org.unidal.lookup.container.model.BaseEntity;
 import org.unidal.lookup.container.model.IVisitor;
 
 public class ConfigurationModel extends BaseEntity<ConfigurationModel> {
-   private Boolean m_debug;
-
    private List<Any> m_dynamicElements = new ArrayList<Any>();
 
    public ConfigurationModel() {
@@ -24,10 +22,9 @@ public class ConfigurationModel extends BaseEntity<ConfigurationModel> {
       if (obj instanceof ConfigurationModel) {
          ConfigurationModel _o = (ConfigurationModel) obj;
 
-         if (!equals(m_debug, _o.getDebug())) {
+         if (!getDynamicElements().equals(_o.getDynamicElements())) {
             return false;
          }
-
 
          return true;
       }
@@ -39,21 +36,12 @@ public class ConfigurationModel extends BaseEntity<ConfigurationModel> {
       return m_dynamicElements;
    }
 
-   public Boolean getDebug() {
-      return m_debug;
-   }
-
    @Override
    public int hashCode() {
       int hash = 0;
 
-      hash = hash * 31 + (m_debug == null ? 0 : m_debug.hashCode());
 
       return hash;
-   }
-
-   public boolean isDebug() {
-      return m_debug != null && m_debug.booleanValue();
    }
 
    @Override
@@ -62,11 +50,6 @@ public class ConfigurationModel extends BaseEntity<ConfigurationModel> {
 
    public void setDynamicElements(List<Any> dynamicElements) {
       m_dynamicElements = dynamicElements;
-   }
-
-   public ConfigurationModel setDebug(Boolean debug) {
-      m_debug = debug;
-      return this;
    }
 
 }
