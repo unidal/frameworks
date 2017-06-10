@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.unidal.framework</groupId>
       <artifactId>parent</artifactId>
-      <version>3.0.4-SNAPSHOT</version>
+      <version>3.0.4</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
    <modelVersion>4.0.0</modelVersion>
@@ -37,16 +37,10 @@
                      <goal>dal-model</goal>
                   </goals>
                   <configuration>
-                     <manifest>${basedir}/src/main/resources/META-INF/dal/model/eunit_testfwk_manifest.xml</manifest>
-                  </configuration>
-               </execution>
-               <execution>
-                  <id>generate performance model</id>
-                  <goals>
-                     <goal>dal-model</goal>
-                  </goals>
-                  <configuration>
-                     <manifest>${basedir}/src/main/resources/META-INF/dal/model/eunit_benchmark_testfwk_manifest.xml</manifest>
+                     <manifest><![CDATA[
+                        ${basedir}/src/main/resources/META-INF/dal/model/eunit_testfwk_manifest.xml,
+                        ${basedir}/src/main/resources/META-INF/dal/model/eunit_benchmark_testfwk_manifest.xml,
+                     ]]></manifest>
                   </configuration>
                </execution>
             </executions>
