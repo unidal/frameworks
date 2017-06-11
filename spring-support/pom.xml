@@ -17,7 +17,7 @@
       </dependency>
       <dependency>
          <groupId>com.dianping.cat</groupId>
-         <artifactId>cat-client</artifactId>
+         <artifactId>cat</artifactId>
       </dependency>
       <dependency>
          <groupId>org.springframework</groupId>

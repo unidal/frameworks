@@ -17,13 +17,7 @@
       </dependency>
       <dependency>
          <groupId>com.dianping.cat</groupId>
-         <artifactId>cat-client</artifactId>
-         <exclusions>
-            <exclusion>
-               <groupId>aspectj</groupId>
-               <artifactId>aspectjrt</artifactId>
-            </exclusion>
-         </exclusions>
+         <artifactId>cat</artifactId>
       </dependency>
       <dependency>
          <groupId>commons-fileupload</groupId>
