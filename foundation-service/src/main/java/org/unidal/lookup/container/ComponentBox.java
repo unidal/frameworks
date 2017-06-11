@@ -44,7 +44,7 @@ public class ComponentBox<T> {
          cause = e;
       }
 
-      throw new ComponentLookupException(message, model.getRole(), model.getRoleHint(), cause);
+      throw new ComponentLookupException(message, model.getRole(), model.getHint(), cause);
    }
 
    public void destroy() {
@@ -62,7 +62,7 @@ public class ComponentBox<T> {
 
       if (clazz.isEnum()) {
          Object[] values = Reflects.forMethod().invokeStaticMethod(clazz, "values");
-         List<String> parts = Splitters.by(':').split(model.getRoleHint());
+         List<String> parts = Splitters.by(':').split(model.getHint());
          String field = parts.get(0);
 
          for (Object value : values) {
@@ -76,11 +76,11 @@ public class ComponentBox<T> {
          message = String.format("Class(%s) is not enum!", clazz.getName());
       }
 
-      throw new ComponentLookupException(message, model.getRole(), model.getRoleHint());
+      throw new ComponentLookupException(message, model.getRole(), model.getHint());
    }
 
    public T lookup(ComponentModel model) throws ComponentLookupException {
-      String roleHint = model.getRoleHint();
+      String roleHint = model.getHint();
       T component = m_components.get(roleHint);
 
       if (component == null) {

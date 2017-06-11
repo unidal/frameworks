@@ -28,14 +28,14 @@ public class ComponentModelManager {
 
    public ComponentModel getComponentModel(ComponentKey key) {
       for (ComponentModel component : m_model.getComponents()) {
-         if (key.matches(component.getRole(), component.getRoleHint())) {
+         if (key.matches(component.getRole(), component.getHint())) {
             return component;
          }
       }
 
       for (PlexusModel plexus : m_models) {
          for (ComponentModel component : plexus.getComponents()) {
-            if (key.matches(component.getRole(), component.getRoleHint())) {
+            if (key.matches(component.getRole(), component.getHint())) {
                return component;
             }
          }
@@ -51,7 +51,7 @@ public class ComponentModelManager {
       for (PlexusModel model : m_models) {
          for (ComponentModel component : model.getComponents()) {
             if (role.equals(component.getRole())) {
-               String roleHint = component.getRoleHint();
+               String roleHint = component.getHint();
 
                if (done.contains(roleHint)) {
                   continue;

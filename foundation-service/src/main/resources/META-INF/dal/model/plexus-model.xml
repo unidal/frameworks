@@ -5,13 +5,13 @@
   </entity>
   <entity name="component">
     <element name="role" value-type="String" />
-    <element name="role-hint" value-type="String" method-get="false" />
+    <element name="role-hint" value-type="String" />
     <element name="implementation" value-type="String" />
     <element name="instantiation-strategy" value-type="String" />
     <entity-ref name="configuration" />
     <entity-ref name="requirement" type="list" names="requirements" xml-indent="true" />
     <snippet>
-         public String getRoleHint() {
+         public String getHint() {
             if (m_roleHint != null) {
                return m_roleHint;
             } else {

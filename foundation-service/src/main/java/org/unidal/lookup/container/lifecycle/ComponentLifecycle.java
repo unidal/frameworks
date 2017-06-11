@@ -31,12 +31,12 @@ public class ComponentLifecycle {
    }
 
    public void onStarted(ComponentModel model) {
-      m_manager.log("Loaded component(%s:%s) with class(%s) ...", model.getRole(), model.getRoleHint(),
+      m_manager.log("Loaded component(%s:%s) with class(%s) ...", model.getRole(), model.getHint(),
             model.getImplementation());
    }
 
    public void onStarting(ComponentModel model) {
-      m_manager.log("Loading component(%s:%s) with class(%s) ...", model.getRole(), model.getRoleHint(),
+      m_manager.log("Loading component(%s:%s) with class(%s) ...", model.getRole(), model.getHint(),
             model.getImplementation());
    }
 

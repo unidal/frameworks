@@ -88,6 +88,10 @@ public class ComponentModel extends BaseEntity<ComponentModel> {
       return m_role;
    }
 
+   public String getRoleHint() {
+      return m_roleHint;
+   }
+
    @Override
    public int hashCode() {
       int hash = 0;
@@ -135,7 +139,7 @@ public class ComponentModel extends BaseEntity<ComponentModel> {
    }
 
    /********* Code Snippet Start *********/
-   public String getRoleHint() {
+   public String getHint() {
       if (m_roleHint != null) {
          return m_roleHint;
       } else {

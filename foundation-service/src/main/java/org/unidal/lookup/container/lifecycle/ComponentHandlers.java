@@ -70,13 +70,13 @@ public enum ComponentHandlers implements LifecycleHandler {
                String message = String.format("Unable to set field(%s) in class(%s)!", fieldName,
                      model.getImplementation());
 
-               throw new ComponentLookupException(message, model.getRole(), model.getRoleHint(), e);
+               throw new ComponentLookupException(message, model.getRole(), model.getHint(), e);
             }
          } else {
             ComponentModel model = ctx.getComponentModel();
             String message = String.format("No field(%s) is found in class(%s)!", fieldName, model.getImplementation());
 
-            throw new ComponentLookupException(message, model.getRole(), model.getRoleHint());
+            throw new ComponentLookupException(message, model.getRole(), model.getHint());
          }
       }
 
@@ -97,7 +97,7 @@ public enum ComponentHandlers implements LifecycleHandler {
             String message = String.format("No field of class(%s) matches the type(%s)!", model.getImplementation(),
                   requirement.getRole());
 
-            throw new ComponentLookupException(message, model.getRole(), model.getRoleHint());
+            throw new ComponentLookupException(message, model.getRole(), model.getHint());
          } else if (len == 1) {
             Field field = fields.get(0);
 
@@ -108,7 +108,7 @@ public enum ComponentHandlers implements LifecycleHandler {
                String message = String.format("Unable to set field(%s) of class(%s) with the type(%s)!",
                      field.getName(), model.getImplementation(), requirement.getRole());
 
-               throw new ComponentLookupException(message, model.getRole(), model.getRoleHint(), e);
+               throw new ComponentLookupException(message, model.getRole(), model.getHint(), e);
             }
          } else {
             StringBuilder sb = new StringBuilder();
@@ -124,7 +124,7 @@ public enum ComponentHandlers implements LifecycleHandler {
             String message = String.format("Multiple fields(%s) of class(%s) matches the type(%s)!", sb.toString(),
                   model.getImplementation(), requirement.getRole());
 
-            throw new ComponentLookupException(message, model.getRole(), model.getRoleHint());
+            throw new ComponentLookupException(message, model.getRole(), model.getHint());
          }
       }
 
@@ -143,13 +143,13 @@ public enum ComponentHandlers implements LifecycleHandler {
                String message = String.format("Unable to set field(%s) in class(%s)!", fieldName,
                      model.getImplementation());
 
-               throw new ComponentLookupException(message, model.getRole(), model.getRoleHint(), e);
+               throw new ComponentLookupException(message, model.getRole(), model.getHint(), e);
             }
          } else {
             ComponentModel model = ctx.getComponentModel();
             String message = String.format("No field(%s) is found in class(%s)!", fieldName, model.getImplementation());
 
-            throw new ComponentLookupException(message, model.getRole(), model.getRoleHint());
+            throw new ComponentLookupException(message, model.getRole(), model.getHint());
          }
       }
    },
@@ -184,7 +184,7 @@ public enum ComponentHandlers implements LifecycleHandler {
             String message = String.format("No setter method(%s) of class(%s) is found!", setter,
                   model.getImplementation());
 
-            throw new ComponentLookupException(message, model.getRole(), model.getRoleHint());
+            throw new ComponentLookupException(message, model.getRole(), model.getHint());
          } else {
             Class<?> type = method.getParameterTypes()[0];
 
@@ -197,7 +197,7 @@ public enum ComponentHandlers implements LifecycleHandler {
                String message = String.format("No setter method(%s) of class(%s) is found!", setter,
                      model.getImplementation());
 
-               throw new ComponentLookupException(message, model.getRole(), model.getRoleHint(), e);
+               throw new ComponentLookupException(message, model.getRole(), model.getHint(), e);
             }
          }
       }
@@ -215,7 +215,7 @@ public enum ComponentHandlers implements LifecycleHandler {
                ComponentModel model = ctx.getComponentModel();
 
                throw new ComponentLookupException("Error when setting context of component!", model.getRole(),
-                     model.getRoleHint(), e);
+                     model.getHint(), e);
             }
          }
       }
@@ -233,7 +233,7 @@ public enum ComponentHandlers implements LifecycleHandler {
                ComponentModel model = ctx.getComponentModel();
 
                throw new ComponentLookupException("Error when initializing component!", model.getRole(),
-                     model.getRoleHint(), e);
+                     model.getHint(), e);
             }
          }
       }
@@ -276,7 +276,7 @@ public enum ComponentHandlers implements LifecycleHandler {
          if (component instanceof RoleHintEnabled) {
             ComponentModel model = ctx.getComponentModel();
 
-            ((RoleHintEnabled) component).enableRoleHint(model.getRoleHint());
+            ((RoleHintEnabled) component).enableRoleHint(model.getHint());
          }
       }
    };

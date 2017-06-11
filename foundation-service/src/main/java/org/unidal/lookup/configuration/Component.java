@@ -58,8 +58,8 @@ public class Component {
             return false;
          }
 
-         String roleHint1 = m_model.getRoleHint();
-         String roleHint2 = other.m_model.getRoleHint();
+         String roleHint1 = m_model.getHint();
+         String roleHint2 = other.m_model.getHint();
 
          if (roleHint1 == null && roleHint2 == null) {
             return true;
@@ -78,7 +78,7 @@ public class Component {
    @Override
    public int hashCode() {
       String role = m_model.getRole();
-      String roleHint = m_model.getRoleHint();
+      String roleHint = m_model.getHint();
 
       return role.hashCode() * 31 + (roleHint == null ? 0 : roleHint.hashCode());
    }

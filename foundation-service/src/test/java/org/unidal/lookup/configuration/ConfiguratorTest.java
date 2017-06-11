@@ -44,7 +44,7 @@ public class ConfiguratorTest {
 
       for (Component component : components) {
          String role = component.getModel().getRole();
-         String roleHint = component.getModel().getRoleHint();
+         String roleHint = component.getModel().getHint();
 
          // try lookup all components
          container.lookup(Class.forName(role), roleHint);
