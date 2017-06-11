@@ -3,13 +3,11 @@
 	<components>
 		<component>
 			<role>org.unidal.web.mvc.model.AnnotationMatrix</role>
-			<role-hint>default</role-hint>
 			<implementation>org.unidal.web.mvc.model.AnnotationMatrix</implementation>
 			<instantiation-strategy>per-lookup</instantiation-strategy>
 		</component>
 		<component>
 			<role>org.unidal.web.mvc.model.ModelManager</role>
-			<role-hint>default</role-hint>
 			<implementation>org.unidal.web.mvc.model.ModelManager</implementation>
 			<requirements>
 				<requirement>
@@ -19,40 +17,33 @@
 		</component>
 		<component>
 			<role>org.unidal.web.lifecycle.ActionResolver</role>
-			<role-hint>default</role-hint>
 			<implementation>org.unidal.web.lifecycle.DefaultActionResolver</implementation>
 		</component>
 		<component>
 			<role>org.unidal.web.mvc.lifecycle.InboundActionHandler</role>
-			<role-hint>default</role-hint>
 			<implementation>org.unidal.web.mvc.lifecycle.DefaultInboundActionHandler</implementation>
 			<instantiation-strategy>per-lookup</instantiation-strategy>
 		</component>
 		<component>
 			<role>org.unidal.web.mvc.lifecycle.OutboundActionHandler</role>
-			<role-hint>default</role-hint>
 			<implementation>org.unidal.web.mvc.lifecycle.DefaultOutboundActionHandler</implementation>
 			<instantiation-strategy>per-lookup</instantiation-strategy>
 		</component>
 		<component>
 			<role>org.unidal.web.mvc.lifecycle.TransitionHandler</role>
-			<role-hint>default</role-hint>
 			<implementation>org.unidal.web.mvc.lifecycle.DefaultTransitionHandler</implementation>
 			<instantiation-strategy>per-lookup</instantiation-strategy>
 		</component>
 		<component>
 			<role>org.unidal.web.mvc.lifecycle.ErrorHandler</role>
-			<role-hint>default</role-hint>
 			<implementation>org.unidal.web.mvc.lifecycle.DefaultErrorHandler</implementation>
 		</component>
 		<component>
 			<role>org.unidal.web.mvc.PayloadProvider</role>
-			<role-hint>default</role-hint>
 			<implementation>org.unidal.web.mvc.payload.DefaultPayloadProvider</implementation>
 		</component>
 		<component>
 			<role>org.unidal.web.mvc.lifecycle.ActionHandlerManager</role>
-			<role-hint>default</role-hint>
 			<implementation>org.unidal.web.mvc.lifecycle.DefaultActionHandlerManager</implementation>
 		</component>
 		<component>
@@ -70,7 +61,6 @@
 		</component>
 		<component>
 			<role>org.unidal.web.mvc.lifecycle.RequestContextBuilder</role>
-			<role-hint>default</role-hint>
 			<implementation>org.unidal.web.mvc.lifecycle.DefaultRequestContextBuilder</implementation>
 			<requirements>
 				<requirement>
@@ -92,13 +82,11 @@
 		</component>
 		<component>
 			<role>org.unidal.web.mvc.payload.ParameterProvider</role>
-			<role-hint>default</role-hint>
 			<implementation>org.unidal.web.mvc.payload.DefaultParameterProvider</implementation>
 			<instantiation-strategy>per-lookup</instantiation-strategy>
 		</component>
 		<component>
 			<role>org.unidal.web.mvc.view.model.ModelHandler</role>
-			<role-hint>default</role-hint>
 			<implementation>org.unidal.web.mvc.view.model.DefaultModelHandler</implementation>
 			<requirements>
 				<requirement>

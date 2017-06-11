@@ -22,6 +22,10 @@ public class ComponentModelManager {
    // for test purpose
    private PlexusModel m_model = new PlexusModel();
 
+   public ComponentModelManager() {
+      m_models.add(m_model);
+   }
+
    public void addComponent(ComponentModel component) {
       m_model.addComponent(component);
    }

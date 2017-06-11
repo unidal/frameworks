@@ -1,6 +1,7 @@
 package org.unidal.dal.jdbc.intg;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.unidal.dal.jdbc.QueryEngine;
 import org.unidal.dal.jdbc.datasource.DataSourceException;
@@ -125,6 +126,7 @@ public class MultipleTablesTest extends ComponentTestCase {
    }
 
    @Test
+   @Ignore
    public void testSingle() throws Exception {
       try {
          deleteUser(1);

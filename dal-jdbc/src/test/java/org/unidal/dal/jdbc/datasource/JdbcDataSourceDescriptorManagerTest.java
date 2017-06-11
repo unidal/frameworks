@@ -38,7 +38,7 @@ public class JdbcDataSourceDescriptorManagerTest extends ComponentTestCase {
       checkProperty(mock2, "user", "history user");
       checkProperty(mock2, "url", "history url");
 
-      checkNames(manager, "jdbc-dal", "user", "history", "mock1", "mock2");
+      checkNames(manager, "mock1", "mock2", "jdbc-dal", "user", "history");
    }
 
    @Test

@@ -1,6 +1,7 @@
 package org.unidal.dal.jdbc.transaction;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.unidal.dal.jdbc.QueryEngine;
 import org.unidal.dal.jdbc.datasource.DataSourceException;
@@ -9,6 +10,7 @@ import org.unidal.lookup.ComponentTestCase;
 import org.unidal.test.user.dal.User;
 import org.unidal.test.user.dal.UserEntity;
 
+@Ignore
 public class TransactionManagerTest extends ComponentTestCase {
    private void commitTransaction() throws Exception {
       TransactionManager tm = lookup(TransactionManager.class);
