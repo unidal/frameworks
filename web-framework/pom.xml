@@ -17,7 +17,7 @@
       </dependency>
       <dependency>
          <groupId>com.dianping.cat</groupId>
-         <artifactId>cat</artifactId>
+         <artifactId>cat-client</artifactId>
       </dependency>
       <dependency>
          <groupId>commons-fileupload</groupId>

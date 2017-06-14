@@ -108,7 +108,7 @@
    
          <dependency>
             <groupId>com.dianping.cat</groupId>
-            <artifactId>cat</artifactId>
+            <artifactId>cat-client</artifactId>
             <version>${cat.version}</version>
          </dependency>
          <dependency>
