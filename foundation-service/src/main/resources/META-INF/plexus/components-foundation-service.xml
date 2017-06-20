@@ -3,69 +3,86 @@
 	<components>
 		<component>
 			<role>org.unidal.initialization.ModuleManager</role>
-			<role-hint>default</role-hint>
 			<implementation>org.unidal.initialization.DefaultModuleManager</implementation>
-			<instantiation-strategy>singleton</instantiation-strategy>
 		</component>
 		<component>
 			<role>org.unidal.initialization.ModuleInitializer</role>
-			<role-hint>default</role-hint>
 			<implementation>org.unidal.initialization.DefaultModuleInitializer</implementation>
-			<instantiation-strategy>singleton</instantiation-strategy>
 			<requirements>
 				<requirement>
 					<role>org.unidal.initialization.ModuleManager</role>
-					<role-hint>default</role-hint>
 				</requirement>
 			</requirements>
 		</component>
 		<component>
 			<role>org.unidal.initialization.ModuleContext</role>
-			<role-hint>default</role-hint>
 			<implementation>org.unidal.initialization.DefaultModuleContext</implementation>
-			<instantiation-strategy>singleton</instantiation-strategy>
 		</component>
 		<component>
 			<role>org.unidal.formatter.Formatter</role>
 			<role-hint>java.util.Date</role-hint>
 			<implementation>org.unidal.formatter.DateFormatter</implementation>
-			<instantiation-strategy>singleton</instantiation-strategy>
 		</component>
 		<component>
 			<role>org.unidal.net.ClientTransport</role>
-			<role-hint>default</role-hint>
 			<implementation>org.unidal.net.transport.DefaultClientTransport</implementation>
 			<instantiation-strategy>per-lookup</instantiation-strategy>
 			<requirements>
 				<requirement>
 					<role>org.unidal.net.transport.ClientTransportHandler</role>
-					<role-hint>default</role-hint>
 				</requirement>
 			</requirements>
 		</component>
 		<component>
 			<role>org.unidal.net.ServerTransport</role>
-			<role-hint>default</role-hint>
 			<implementation>org.unidal.net.transport.DefaultServerTransport</implementation>
 			<instantiation-strategy>per-lookup</instantiation-strategy>
 			<requirements>
 				<requirement>
 					<role>org.unidal.net.transport.ServerTransportHandler</role>
-					<role-hint>default</role-hint>
 				</requirement>
 			</requirements>
 		</component>
 		<component>
 			<role>org.unidal.net.transport.ClientTransportHandler</role>
-			<role-hint>default</role-hint>
 			<implementation>org.unidal.net.transport.ClientTransportHandler</implementation>
 			<instantiation-strategy>per-lookup</instantiation-strategy>
 		</component>
 		<component>
 			<role>org.unidal.net.transport.ServerTransportHandler</role>
-			<role-hint>default</role-hint>
 			<implementation>org.unidal.net.transport.ServerTransportHandler</implementation>
 			<instantiation-strategy>per-lookup</instantiation-strategy>
+		</component>
+		<component>
+			<role>org.unidal.concurrent.StageManager</role>
+			<implementation>org.unidal.concurrent.internals.DefaultStageManager</implementation>
+		</component>
+		<component>
+			<role>org.unidal.concurrent.Stage</role>
+			<implementation>org.unidal.concurrent.internals.DefaultStage</implementation>
+			<instantiation-strategy>per-lookup</instantiation-strategy>
+			<requirements>
+				<requirement>
+					<role>org.unidal.concurrent.internals.ThreadPoolManager</role>
+				</requirement>
+				<requirement>
+					<role>org.unidal.concurrent.internals.ActorManager</role>
+				</requirement>
+			</requirements>
+		</component>
+		<component>
+			<role>org.unidal.concurrent.internals.ActorManager</role>
+			<implementation>org.unidal.concurrent.internals.DefaultActorManager</implementation>
+			<instantiation-strategy>per-lookup</instantiation-strategy>
+		</component>
+		<component>
+			<role>org.unidal.concurrent.internals.ThreadPool</role>
+			<implementation>org.unidal.concurrent.internals.DefaultThreadPool</implementation>
+			<instantiation-strategy>per-lookup</instantiation-strategy>
+		</component>
+		<component>
+			<role>org.unidal.concurrent.internals.ThreadPoolManager</role>
+			<implementation>org.unidal.concurrent.internals.DefaultThreadPoolManager</implementation>
 		</component>
 	</components>
 </plexus>

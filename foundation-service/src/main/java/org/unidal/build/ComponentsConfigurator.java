@@ -29,6 +29,8 @@ class ComponentsConfigurator extends AbstractResourceConfigurator {
       all.add(A(ClientTransportHandler.class));
       all.add(A(ServerTransportHandler.class));
 
+      all.addAll(new ConcurrentComponentsConfigurator().defineComponents());
+
       return all;
    }
 
