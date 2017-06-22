@@ -1,5 +1,7 @@
 package org.unidal.lookup.container.model.transform;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import org.xml.sax.Attributes;
 
 import org.unidal.lookup.container.model.entity.Any;

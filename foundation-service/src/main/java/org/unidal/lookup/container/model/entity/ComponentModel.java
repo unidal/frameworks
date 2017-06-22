@@ -19,6 +19,8 @@ public class ComponentModel extends BaseEntity<ComponentModel> {
 
    private List<RequirementModel> m_requirements = new ArrayList<RequirementModel>();
 
+   private List<Any> m_dynamicElements = new ArrayList<Any>();
+
    public ComponentModel() {
    }
 
@@ -61,11 +63,18 @@ public class ComponentModel extends BaseEntity<ComponentModel> {
             return false;
          }
 
+         if (!getDynamicElements().equals(_o.getDynamicElements())) {
+            return false;
+         }
 
          return true;
       }
 
       return false;
+   }
+
+   public List<Any> getDynamicElements() {
+      return m_dynamicElements;
    }
 
    public ConfigurationModel getConfiguration() {
@@ -111,6 +120,10 @@ public class ComponentModel extends BaseEntity<ComponentModel> {
 
    @Override
    public void mergeAttributes(ComponentModel other) {
+   }
+
+   public void setDynamicElements(List<Any> dynamicElements) {
+      m_dynamicElements = dynamicElements;
    }
 
    public ComponentModel setConfiguration(ConfigurationModel configuration) {

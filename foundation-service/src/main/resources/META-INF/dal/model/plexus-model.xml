@@ -10,6 +10,7 @@
     <element name="instantiation-strategy" value-type="String" />
     <entity-ref name="configuration" />
     <entity-ref name="requirement" type="list" names="requirements" xml-indent="true" />
+    <any name="dynamic-elements" />
     <snippet>
          public String getHint() {
             if (m_roleHint != null) {

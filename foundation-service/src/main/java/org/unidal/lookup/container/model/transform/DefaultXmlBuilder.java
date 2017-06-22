@@ -311,6 +311,10 @@ public class DefaultXmlBuilder implements IVisitor {
          endTag(ENTITY_REQUIREMENTS);
       }
 
+      for (Any any : component.getDynamicElements()) {
+         any.accept(m_visitor);
+      }
+
       endTag(ENTITY_COMPONENT);
    }
 
