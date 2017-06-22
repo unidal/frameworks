@@ -212,6 +212,10 @@ public class DefaultSaxParser extends DefaultHandler {
             if (m_text.toString().length() != 0) {
                ((Any) currentObj).setValue(m_text.toString());
             }
+         } else if (currentObj instanceof ComponentModel) {
+            if (m_text.toString().length() != 0) {
+               ((ComponentModel) currentObj).getDynamicElements().add(new Any().setValue(m_text.toString()));
+            }
          } else if (currentObj instanceof ConfigurationModel) {
             if (m_text.toString().length() != 0) {
                ((ConfigurationModel) currentObj).getDynamicElements().add(new Any().setValue(m_text.toString()));
@@ -248,7 +252,16 @@ public class DefaultSaxParser extends DefaultHandler {
          m_linker.onRequirement(parentObj, requirement);
          m_objs.push(requirement);
       } else {
-         throw new SAXException(String.format("Element(%s) is not expected under component!", qName));
+         if (m_text.toString().length() != 0) {
+            Any any = new Any().setValue(m_text.toString());
+
+            parentObj.getDynamicElements().add(any);
+         }
+
+         Any any = buildAny(qName, attributes);
+
+         parentObj.getDynamicElements().add(any);
+         m_objs.push(any);
       }
 
       m_tags.push(qName);
