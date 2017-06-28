@@ -3,8 +3,10 @@ package org.unidal.helper;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -326,6 +328,15 @@ public class Scanners {
    public enum ResourceScanner {
       INSTANCE;
 
+      @SuppressWarnings("deprecation")
+      private String decode(String url) {
+         try {
+            return URLDecoder.decode(url, "utf-8");
+         } catch (UnsupportedEncodingException e) {
+            return URLDecoder.decode(url);
+         }
+      }
+
       public List<URL> scanAll(String resourceBase, final ResourceMatcher matcher) throws IOException {
          Enumeration<URL> resources = getClass().getClassLoader().getResources(resourceBase);
          final List<URL> urls = new ArrayList<URL>();
@@ -335,7 +346,7 @@ public class Scanners {
             String protocol = url.getProtocol();
 
             if ("file".equals(protocol)) {
-               DirScanner.INSTANCE.scan(new File(url.getPath()), new FileMatcher() {
+               DirScanner.INSTANCE.scan(new File(decode(url.getPath())), new FileMatcher() {
                   @Override
                   public Direction matches(File base, String path) {
                      try {
@@ -360,7 +371,7 @@ public class Scanners {
                if ("file".equals(u.getProtocol())) {
                   String path = u.getPath();
                   int pos = path.indexOf('!');
-                  File file = new File(path.substring(0, pos));
+                  File file = new File(decode(path.substring(0, pos)));
                   final String base = path.substring(pos + 2);
 
                   JarScanner.INSTANCE.scan(new ZipFile(file), new ZipEntryMatcher() {
