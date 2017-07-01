@@ -6,9 +6,10 @@ import java.net.URL;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.mortbay.jetty.MimeTypes;
-import org.mortbay.jetty.Response;
-import org.mortbay.jetty.servlet.ErrorPageErrorHandler;
+import org.eclipse.jetty.http.MimeTypes;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Response;
+import org.eclipse.jetty.servlet.ErrorPageErrorHandler;
 import org.unidal.helper.Files;
 import org.unidal.helper.Files.AutoClose;
 
@@ -21,21 +22,21 @@ public class ResourceFallbackErrorHandler extends ErrorPageErrorHandler {
       m_manager = manager;
    }
 
-   @SuppressWarnings("deprecation")
    @Override
-   public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch) throws IOException {
+   public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
+         throws IOException {
       String uri = request.getRequestURI();
       URL url = m_manager.getResourceUrl(uri);
 
       if (url != null) {
          if (response instanceof Response && ((Response) response).getStatus() == HttpServletResponse.SC_NOT_FOUND) {
-            response.setStatus(200, null);
+            response.setStatus(200);
             response.setContentType(m_mimeTypes.getMimeByExtension(uri).toString());
             Files.forIO().copy(url.openStream(), response.getOutputStream(), AutoClose.INPUT);
             return;
          }
       }
 
-      super.handle(target, request, response, dispatch);
+      super.handle(target, baseRequest, request, response);
    }
 }

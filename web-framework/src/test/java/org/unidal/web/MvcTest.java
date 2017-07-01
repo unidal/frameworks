@@ -1,22 +1,35 @@
 package org.unidal.web;
 
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.webapp.WebAppContext;
 import org.junit.Test;
-import org.unidal.test.junit.HttpTestCase;
-import org.unidal.test.server.EmbeddedServer;
+import org.unidal.test.jetty.JettyServer;
 import org.unidal.web.mvc.Validator;
 import org.unidal.web.mvc.annotation.OutboundActionMeta;
 import org.unidal.web.test.book.BookModule;
 import org.unidal.web.test.book.ParametersInterceptor;
 
-public class MvcTest extends HttpTestCase {
+public class MvcTest extends JettyServer {
    @Override
-   protected void configure(EmbeddedServer server) {
-      server.addServlet(new MVC().setContainer(getContainer()), "mvc-servlet", "/book/*");
+   protected void configure(WebAppContext context) throws Exception {
+      context.addServlet(new ServletHolder("mvc-servlet", new MVC().setContainer(getContainer())), "/book/*");
+      
+      super.configure(context);
    }
 
    @Override
-   protected int getPort() {
-      return super.getPort() + 1;
+   protected String getContextPath() {
+      return "/";
+   }
+
+   @Override
+   protected int getServerPort() {
+      return 1234;
+   }
+
+   @Override
+   protected boolean isWebXmlDefined() {
+      return false;
    }
 
    @Test

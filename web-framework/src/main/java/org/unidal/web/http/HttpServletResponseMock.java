@@ -2,6 +2,7 @@ package org.unidal.web.http;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Locale;
 
 import javax.servlet.ServletOutputStream;
@@ -30,15 +31,11 @@ public class HttpServletResponseMock implements HttpServletResponse {
       return false;
    }
 
-   public String encodeRedirectURL(String url) {
-      return url;
-   }
-
    public String encodeRedirectUrl(String url) {
       return url;
    }
 
-   public String encodeURL(String url) {
+   public String encodeRedirectURL(String url) {
       return url;
    }
 
@@ -46,28 +43,8 @@ public class HttpServletResponseMock implements HttpServletResponse {
       return url;
    }
 
-   public void sendError(int sc) throws IOException {
-   }
-
-   public void sendError(int sc, String msg) throws IOException {
-   }
-
-   public void sendRedirect(String location) throws IOException {
-   }
-
-   public void setDateHeader(String name, long date) {
-   }
-
-   public void setHeader(String name, String value) {
-   }
-
-   public void setIntHeader(String name, int value) {
-   }
-
-   public void setStatus(int sc) {
-   }
-
-   public void setStatus(int sc, String sm) {
+   public String encodeURL(String url) {
+      return url;
    }
 
    public void flushBuffer() throws IOException {
@@ -85,12 +62,32 @@ public class HttpServletResponseMock implements HttpServletResponse {
       return m_contentType;
    }
 
+   @Override
+   public String getHeader(String paramString) {
+      return null;
+   }
+
+   @Override
+   public Collection<String> getHeaderNames() {
+      return null;
+   }
+
+   @Override
+   public Collection<String> getHeaders(String paramString) {
+      return null;
+   }
+
    public Locale getLocale() {
       return m_locale;
    }
 
    public ServletOutputStream getOutputStream() throws IOException {
       return null;
+   }
+
+   @Override
+   public int getStatus() {
+      return 0;
    }
 
    public PrintWriter getWriter() throws IOException {
@@ -107,6 +104,15 @@ public class HttpServletResponseMock implements HttpServletResponse {
    public void resetBuffer() {
    }
 
+   public void sendError(int sc) throws IOException {
+   }
+
+   public void sendError(int sc, String msg) throws IOException {
+   }
+
+   public void sendRedirect(String location) throws IOException {
+   }
+
    public void setBufferSize(int size) {
       m_bufferSize = size;
    }
@@ -118,11 +124,30 @@ public class HttpServletResponseMock implements HttpServletResponse {
    public void setContentLength(int len) {
    }
 
+   @Override
+   public void setContentLengthLong(long paramLong) {
+   }
+
    public void setContentType(String type) {
       m_contentType = type;
    }
 
+   public void setDateHeader(String name, long date) {
+   }
+
+   public void setHeader(String name, String value) {
+   }
+
+   public void setIntHeader(String name, int value) {
+   }
+
    public void setLocale(Locale locale) {
       m_locale = locale;
+   }
+
+   public void setStatus(int sc) {
+   }
+
+   public void setStatus(int sc, String sm) {
    }
 }

@@ -11,9 +11,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.mortbay.resource.FileResource;
-import org.mortbay.resource.Resource;
-import org.mortbay.resource.URLResource;
+import org.eclipse.jetty.util.resource.FileResource;
+import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.util.resource.URLResource;
 import org.unidal.helper.Scanners;
 import org.unidal.helper.Scanners.FileMatcher;
 import org.unidal.helper.Scanners.JarScanner;
@@ -31,7 +31,6 @@ public class WebModuleManager {
       }
    }
 
-   @SuppressWarnings("serial")
    public Resource getFallbackResource(String uri) {
       Resource resource = m_resources.get(uri);
 

@@ -3,7 +3,7 @@ package org.unidal.web.lifecycle;
 import org.junit.Assert;
 import org.junit.Test;
 import org.unidal.lookup.ComponentTestCase;
-import org.unidal.test.mock.HttpServletRequestMock;
+import org.unidal.web.http.HttpServletRequestMock;
 import org.unidal.web.mvc.payload.UrlEncodedParameterProvider;
 
 public class ActionResolverTest extends ComponentTestCase {

@@ -189,8 +189,7 @@ public class MVCFilter implements Filter {
       }
 
       @Override
-      @SuppressWarnings("rawtypes")
-      public Enumeration getInitParameterNames() {
+      public Enumeration<String> getInitParameterNames() {
          return m_config.getInitParameterNames();
       }
 

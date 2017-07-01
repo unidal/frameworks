@@ -353,7 +353,6 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
 
       private String m_uri;
 
-      @SuppressWarnings("unchecked")
       public Query(HttpServletRequest req, boolean compact) {
          m_compact = compact;
          m_webapp = req.getContextPath();

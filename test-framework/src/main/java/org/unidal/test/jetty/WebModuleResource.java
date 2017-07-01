@@ -8,14 +8,12 @@ import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.mortbay.resource.FileResource;
-import org.mortbay.resource.Resource;
-import org.mortbay.resource.ResourceCollection;
-import org.mortbay.resource.URLResource;
+import org.eclipse.jetty.util.resource.FileResource;
+import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.util.resource.ResourceCollection;
+import org.eclipse.jetty.util.resource.URLResource;
 
 public class WebModuleResource extends ResourceCollection {
-   private static final long serialVersionUID = 1L;
-
    private ConcurrentMap<String, Resource> m_resources = new ConcurrentHashMap<String, Resource>();
 
    private WebModuleManager m_manager;
@@ -35,7 +33,6 @@ public class WebModuleResource extends ResourceCollection {
       return r.getInputStream();
    }
 
-   @SuppressWarnings("serial")
    @Override
    public Resource addPath(String uri) throws IOException {
       Resource resource = m_resources.get(uri);

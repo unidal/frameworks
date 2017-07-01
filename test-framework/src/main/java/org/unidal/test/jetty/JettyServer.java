@@ -7,25 +7,45 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.codehaus.plexus.PlexusContainer;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.servlet.ServletHolder;
-import org.mortbay.jetty.webapp.WebAppContext;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.webapp.WebAppContext;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 import org.unidal.helper.Files;
-import org.unidal.lookup.ContainerHolder;
+import org.unidal.lookup.ComponentTestCase;
 import org.unidal.lookup.ContainerLoader;
+import org.unidal.test.browser.Browser;
 import org.unidal.test.browser.BrowserManager;
 
-public abstract class JettyServer extends ContainerHolder {
+public abstract class JettyServer extends ComponentTestCase {
    private Server m_server;
 
    private WebModuleResource m_resource;
 
-   @SuppressWarnings("unchecked")
+   protected void checkRequest(String uri, String expected) throws Exception {
+      Browser browser = lookup(Browser.class, "memory");
+      String contextPath = getContextPath();
+      URL url;
+
+      if (contextPath == null || contextPath.equals("/")) {
+         url = new URL(String.format("http://localhost:%s%s", getServerPort(), uri));
+      } else {
+         url = new URL(String.format("http://localhost:%s%s%s", getServerPort(), contextPath, uri));
+      }
+
+      browser.display(url);
+
+      Assert.assertEquals(expected, browser.toString());
+   }
+
    protected void configure(WebAppContext context) throws Exception {
       File warRoot = getWarRoot();
 
       m_resource = new WebModuleResource(warRoot);
-      context.getInitParams().put("org.mortbay.jetty.servlet.Default.dirAllowed", "false");
+
+      context.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false");
       context.setContextPath(getContextPath());
       context.setDescriptor(new File(warRoot, "WEB-INF/web.xml").getPath());
       context.setBaseResource(m_resource);
@@ -89,13 +109,22 @@ public abstract class JettyServer extends ContainerHolder {
       // to be overridden
    }
 
+   @Before
+   public void setUp() throws Exception {
+      super.setUp();
+
+      startServer();
+   }
+
    protected void startServer() throws Exception {
       Server server = new Server(getServerPort());
       WebAppContext context = new ResourceFallbackWebAppContext();
 
       configure(context);
-      server.addHandler(context);
+
+      server.setHandler(context);
       server.start();
+
       context.addServlet(new ServletHolder(new WebModuleServlet(m_resource)), "/");
 
       postConfigure(context);
@@ -105,6 +134,13 @@ public abstract class JettyServer extends ContainerHolder {
 
    protected void stopServer() throws Exception {
       m_server.stop();
+   }
+
+   @After
+   public void tearDown() throws Exception {
+      stopServer();
+
+      super.tearDown();
    }
 
    protected void waitForAnyKey() throws IOException {

@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 
 import org.junit.Assert;
@@ -284,6 +285,20 @@ public class PayloadProviderTest extends ComponentTestCase {
                } else {
                   return m_body[m_index++];
                }
+            }
+
+            @Override
+            public boolean isFinished() {
+               return false;
+            }
+
+            @Override
+            public boolean isReady() {
+               return false;
+            }
+
+            @Override
+            public void setReadListener(ReadListener arg0) {
             }
          };
       }

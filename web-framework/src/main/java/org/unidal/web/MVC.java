@@ -54,7 +54,6 @@ public class MVC extends AbstractContainerServlet {
       Cat.initialize(getContainer(), clientXmlFile);
    }
 
-   @SuppressWarnings("unchecked")
    private void initializeModules(ServletConfig config) throws ServletException {
       String initModules = config.getInitParameter("init-modules");
 

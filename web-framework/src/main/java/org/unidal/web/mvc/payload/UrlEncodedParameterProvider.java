@@ -40,7 +40,6 @@ public class UrlEncodedParameterProvider implements ParameterProvider {
    }
 
    @Override
-   @SuppressWarnings("unchecked")
    public String[] getParameterNames() {
       Map<String, String[]> map = m_request.getParameterMap();
       int size = map.size();

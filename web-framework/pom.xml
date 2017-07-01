@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <parent>
       <groupId>org.unidal.framework</groupId>
       <artifactId>parent</artifactId>
@@ -24,14 +25,19 @@
          <artifactId>commons-fileupload</artifactId>
       </dependency>
       <dependency>
-         <groupId>org.mortbay.jetty</groupId>
-         <artifactId>jsp-2.1</artifactId>
-         <scope>provided</scope>
-      </dependency>
-      <dependency>
          <groupId>org.unidal.framework</groupId>
          <artifactId>test-framework</artifactId>
          <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>javax.servlet</groupId>
+         <artifactId>javax.servlet-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>javax.servlet.jsp</groupId>
+         <artifactId>javax.servlet.jsp-api</artifactId>
+         <scope>provided</scope>
       </dependency>
    </dependencies>
    <build>

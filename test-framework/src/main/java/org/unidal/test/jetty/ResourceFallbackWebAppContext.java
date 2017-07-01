@@ -3,7 +3,7 @@ package org.unidal.test.jetty;
 import java.io.File;
 import java.net.URL;
 
-import org.mortbay.jetty.webapp.WebAppContext;
+import org.eclipse.jetty.webapp.WebAppContext;
 
 public class ResourceFallbackWebAppContext extends WebAppContext {
    private WebModuleManager m_manager;

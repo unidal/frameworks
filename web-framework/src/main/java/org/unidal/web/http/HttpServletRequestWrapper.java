@@ -80,7 +80,6 @@ public class HttpServletRequestWrapper extends javax.servlet.http.HttpServletReq
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, String[]> getParameterMap() {
 		Map<String, String[]> parameterMap = super.getParameterMap();

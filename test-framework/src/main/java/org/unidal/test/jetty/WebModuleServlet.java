@@ -2,8 +2,8 @@ package org.unidal.test.jetty;
 
 import java.io.IOException;
 
-import org.mortbay.jetty.servlet.DefaultServlet;
-import org.mortbay.resource.Resource;
+import org.eclipse.jetty.servlet.DefaultServlet;
+import org.eclipse.jetty.util.resource.Resource;
 
 public class WebModuleServlet extends DefaultServlet {
    private static final long serialVersionUID = 1L;

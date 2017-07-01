@@ -8,13 +8,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.webapp.WebAppContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.mortbay.jetty.Handler;
-import org.mortbay.jetty.servlet.ServletHolder;
-import org.mortbay.jetty.webapp.WebAppContext;
-import org.mortbay.servlet.GzipFilter;
 
 @RunWith(JUnit4.class)
 public class TestServer extends JettyServer {
@@ -43,7 +41,6 @@ public class TestServer extends JettyServer {
    @Override
    protected void postConfigure(WebAppContext context) {
       context.addServlet(new ServletHolder(new MockServlet()), "/mock/*");
-      context.addFilter(GzipFilter.class, "/*", Handler.ALL);
    }
 
    @Test

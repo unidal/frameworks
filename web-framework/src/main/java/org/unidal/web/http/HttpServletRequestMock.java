@@ -4,18 +4,43 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.AsyncContext;
+import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpUpgradeHandler;
+import javax.servlet.http.Part;
 
 public class HttpServletRequestMock implements HttpServletRequest {
    private String m_characterEncoding;
+
+   @Override
+   public boolean authenticate(HttpServletResponse arg0) throws IOException, ServletException {
+      return false;
+   }
+
+   @Override
+   public String changeSessionId() {
+      return null;
+   }
+
+   @Override
+   public AsyncContext getAsyncContext() {
+      return null;
+   }
 
    public Object getAttribute(String name) {
       return null;
@@ -37,6 +62,11 @@ public class HttpServletRequestMock implements HttpServletRequest {
       return 0;
    }
 
+   @Override
+   public long getContentLengthLong() {
+      return 0;
+   }
+
    public String getContentType() {
       return null;
    }
@@ -51,6 +81,11 @@ public class HttpServletRequestMock implements HttpServletRequest {
 
    public long getDateHeader(String name) {
       return 0;
+   }
+
+   @Override
+   public DispatcherType getDispatcherType() {
+      return null;
    }
 
    public String getHeader(String name) {
@@ -81,7 +116,8 @@ public class HttpServletRequestMock implements HttpServletRequest {
       return null;
    }
 
-   public Enumeration<String> getLocales() {
+   @Override
+   public Enumeration<Locale> getLocales() {
       return null;
    }
 
@@ -110,6 +146,16 @@ public class HttpServletRequestMock implements HttpServletRequest {
    }
 
    public String[] getParameterValues(String name) {
+      return null;
+   }
+
+   @Override
+   public Part getPart(String arg0) throws IOException, ServletException {
+      return null;
+   }
+
+   @Override
+   public Collection<Part> getParts() throws IOException, ServletException {
       return null;
    }
 
@@ -181,6 +227,11 @@ public class HttpServletRequestMock implements HttpServletRequest {
       return 0;
    }
 
+   @Override
+   public ServletContext getServletContext() {
+      return null;
+   }
+
    public String getServletPath() {
       return null;
    }
@@ -195,6 +246,16 @@ public class HttpServletRequestMock implements HttpServletRequest {
 
    public Principal getUserPrincipal() {
       return null;
+   }
+
+   @Override
+   public boolean isAsyncStarted() {
+      return false;
+   }
+
+   @Override
+   public boolean isAsyncSupported() {
+      return false;
    }
 
    public boolean isRequestedSessionIdFromCookie() {
@@ -221,6 +282,14 @@ public class HttpServletRequestMock implements HttpServletRequest {
       return false;
    }
 
+   @Override
+   public void login(String arg0, String arg1) throws ServletException {
+   }
+
+   @Override
+   public void logout() throws ServletException {
+   }
+
    public void removeAttribute(String name) {
    }
 
@@ -229,5 +298,20 @@ public class HttpServletRequestMock implements HttpServletRequest {
 
    public void setCharacterEncoding(String env) throws UnsupportedEncodingException {
       m_characterEncoding = env;
+   }
+
+   @Override
+   public AsyncContext startAsync() throws IllegalStateException {
+      return null;
+   }
+
+   @Override
+   public AsyncContext startAsync(ServletRequest arg0, ServletResponse arg1) throws IllegalStateException {
+      return null;
+   }
+
+   @Override
+   public <T extends HttpUpgradeHandler> T upgrade(Class<T> arg0) throws IOException, ServletException {
+      return null;
    }
 }
