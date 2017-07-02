@@ -249,6 +249,8 @@ public abstract class AbstractResourceConfigurator {
 
       if (testClass != null) {
          file = new File(baseDir, String.format("src/test/resources/%s.xml", testClass.getName().replace('.', '/')));
+      } else if (isMavenPlugin()) {
+         file = new File(baseDir, "src/main/resources/META-INF/plexus/components.xml");
       } else {
          String projectName = baseDir.getName();
 
@@ -279,6 +281,10 @@ public abstract class AbstractResourceConfigurator {
       }
    }
 
+   protected boolean isMavenPlugin() {
+      return false;
+   }
+
    protected String property(String name, String defaultValue) {
       return System.getProperty(name, defaultValue);
    }
@@ -292,10 +298,13 @@ public abstract class AbstractResourceConfigurator {
       }
 
       String content = Configurators.forPlexus().generateXmlConfiguration(defineComponents());
-      File oldFile = new File(parent, "components.xml");
 
-      if (oldFile.exists()) {
-         oldFile.delete();
+      if (!isMavenPlugin()) {
+         File oldFile = new File(parent, "components.xml");
+
+         if (oldFile.exists()) {
+            oldFile.delete();
+         }
       }
 
       Files.forIO().writeTo(file, content);
