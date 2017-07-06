@@ -1,6 +1,5 @@
 package org.codehaus.plexus.component.repository.exception;
 
-import org.codehaus.plexus.classworlds.realm.ClassRealm;
 
 /*
  * Copyright 2001-2006 Codehaus Foundation.
@@ -36,8 +35,6 @@ public class ComponentLookupException
 
     private String roleHint;
 
-    private ClassRealm realm;
-
     public ComponentLookupException( String message, String role, String roleHint )
     {
         super( message );
@@ -56,42 +53,12 @@ public class ComponentLookupException
         this.roleHint = roleHint;
     }
 
-    public ComponentLookupException( String message, String role, String roleHint, ClassRealm realm )
-    {
-        super( message );
-
-        this.role = role;
-
-        this.roleHint = roleHint;
-
-        this.realm = realm;
-    }
-
-    public ComponentLookupException( String message, String role, String roleHint, ClassRealm realm, Throwable cause )
-    {
-        super( message, cause );
-
-        this.role = role;
-
-        this.roleHint = roleHint;
-
-        this.realm = realm;
-    }
-
     public String getMessage()
     {
         StringBuilder sb = new StringBuilder()
             .append( super.getMessage() ).append( LS )
             .append( "      role: ").append( role ).append( LS )
-            .append( "  roleHint: ").append( roleHint ).append( LS )
-            .append("classRealm: ");
-
-        if ( realm == null )
-        {
-            sb.append( "none specified" );
-        } else {
-           sb.append(realm);
-        }
+            .append( "  roleHint: ").append( roleHint );
 
         return sb.toString();
     }
