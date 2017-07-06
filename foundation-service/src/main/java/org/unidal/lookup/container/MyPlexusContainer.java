@@ -5,14 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.PlexusContainerException;
-import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.composition.CycleDetectedInComponentGraphException;
-import org.codehaus.plexus.component.discovery.ComponentDiscoveryListener;
 import org.codehaus.plexus.component.repository.ComponentDescriptor;
 import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.context.Context;
 import org.unidal.lookup.container.model.entity.ComponentModel;
 
@@ -58,23 +54,6 @@ public class MyPlexusContainer implements PlexusContainer {
    }
 
    @Override
-   public ClassRealm createChildRealm(String id) {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public List<ComponentDescriptor<?>> discoverComponents(ClassRealm childRealm) throws PlexusConfigurationException,
-         CycleDetectedInComponentGraphException {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public List<ComponentDescriptor<?>> discoverComponents(ClassRealm realm, Object data)
-         throws PlexusConfigurationException, CycleDetectedInComponentGraphException {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
    public void dispose() {
       m_manager.destroy();
    }
@@ -115,28 +94,8 @@ public class MyPlexusContainer implements PlexusContainer {
    }
 
    @Override
-   public ClassRealm getComponentRealm(String realmId) {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public ClassRealm getContainerRealm() {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
    public Context getContext() {
       return m_context;
-   }
-
-   @Override
-   public ClassRealm getLookupRealm() {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public ClassRealm getLookupRealm(Object component) {
-      throw new UnsupportedOperationException();
    }
 
    @Override
@@ -235,11 +194,6 @@ public class MyPlexusContainer implements PlexusContainer {
    }
 
    @Override
-   public void registerComponentDiscoveryListener(ComponentDiscoveryListener listener) {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
    public void release(Object component) throws ComponentLifecycleException {
       m_manager.release(component);
    }
@@ -251,21 +205,6 @@ public class MyPlexusContainer implements PlexusContainer {
 
    @Override
    public void releaseAll(Map<String, ?> components) throws ComponentLifecycleException {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public void removeComponentDiscoveryListener(ComponentDiscoveryListener listener) {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public void removeComponentRealm(ClassRealm componentRealm) throws PlexusContainerException {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public ClassRealm setLookupRealm(ClassRealm realm) {
       throw new UnsupportedOperationException();
    }
 }

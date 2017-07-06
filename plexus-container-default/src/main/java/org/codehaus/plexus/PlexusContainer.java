@@ -19,14 +19,11 @@ package org.codehaus.plexus;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.composition.CycleDetectedInComponentGraphException;
-import org.codehaus.plexus.component.discovery.ComponentDiscoveryListener;
 import org.codehaus.plexus.component.repository.ComponentDescriptor;
 import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.component.repository.exception.ComponentRepositoryException;
-import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.context.Context;
 
 /**
@@ -328,85 +325,6 @@ public interface PlexusContainer
      * @return this container's context.
      */
     Context getContext();
-
-    /**
-     * Returns the Classworld's ClassRealm of this Container, which acts as the default parent for all contained
-     * components.
-     * @return the ClassRealm of this Container
-     */
-    ClassRealm getContainerRealm();
-
-    // ----------------------------------------------------------------------
-    // Discovery
-    // ----------------------------------------------------------------------
-
-    /**
-     * Adds the listener to this container. ComponentDiscoveryListeners have the ability to respond to various
-     * ComponentDiscoverer events.
-     * @param listener A listener which responds to different ComponentDiscoveryEvents
-     */
-    void registerComponentDiscoveryListener( ComponentDiscoveryListener listener );
-
-    /**
-     * Removes the listener from this container.
-     * @param listener A listener to remove
-     */
-    void removeComponentDiscoveryListener( ComponentDiscoveryListener listener );
-
-    /**
-     * Discovers components in the given realm.
-     * @param childRealm
-     * @param override whether to override/merge any conflicting components, where the new component takes precedence.
-     * @return
-     * @throws PlexusConfigurationException
-     * @throws ComponentRepositoryException
-     */
-    List<ComponentDescriptor<?>> discoverComponents( ClassRealm childRealm )
-        throws PlexusConfigurationException, CycleDetectedInComponentGraphException;
-
-    List<ComponentDescriptor<?>> discoverComponents( ClassRealm realm, Object data )
-        throws PlexusConfigurationException, CycleDetectedInComponentGraphException;
-
-    // ----------------------------------------------------------------------------
-    // Component/Plugin ClassRealm creation
-    // ----------------------------------------------------------------------------
-
-    ClassRealm createChildRealm( String id );
-
-    ClassRealm getComponentRealm( String realmId );
-
-    /**
-     * Dissociate the realm with the specified id from the container. This will
-     * remove all components contained in the realm from the component repository.
-     *
-     * @param componentRealm Realm to remove from the container.
-     */
-    void removeComponentRealm( ClassRealm componentRealm )
-        throws PlexusContainerException;
-
-    /**
-     * Returns the lookup realm for this container, which is either
-     * the container realm or the realm set by {@see MutablePlexusContainer#setLookupRealm(ClassRealm)}.
-     */
-    ClassRealm getLookupRealm();
-
-    /**
-     * Sets the lookup realm to use for lookup calls that don't have a ClassRealm parameter.
-     * @param realm the new realm to use.
-     * @return The previous lookup realm. It is advised to set it back once the old-style lookups have completed.
-     */
-    ClassRealm setLookupRealm(ClassRealm realm);
-
-    /**
-     * XXX ideally i'd like to place this in a plexus container specific utility class.
-     *
-     * Utility method to retrieve the lookup realm for a component instance.
-     * If the component's classloader is a ClassRealm, that realm is returned,
-     * otherwise the result of getLookupRealm is returned.
-     * @param component
-     * @return
-     */
-    ClassRealm getLookupRealm( Object component );
 
     void addComponent( Object component, String role )
         throws CycleDetectedInComponentGraphException;

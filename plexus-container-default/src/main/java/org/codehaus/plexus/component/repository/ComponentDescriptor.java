@@ -16,14 +16,13 @@ package org.codehaus.plexus.component.repository;
  * limitations under the License.
  */
 
-import org.codehaus.plexus.PlexusConstants;
-import org.codehaus.plexus.classworlds.realm.ClassRealm;
-import org.codehaus.plexus.configuration.PlexusConfiguration;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.configuration.PlexusConfiguration;
 
 /**
  * Component instantiation description.
@@ -69,8 +68,6 @@ public class ComponentDescriptor<T>
 
     private String description;
 
-    private ClassRealm realm;
-
     // ----------------------------------------------------------------------
     // These two fields allow for the specification of an isolated class realm
     // and dependencies that might be specified in a component configuration
@@ -94,11 +91,10 @@ public class ComponentDescriptor<T>
     {
     }
 
-    public ComponentDescriptor( Class<T> implementationClass, ClassRealm realm )
+    public ComponentDescriptor( Class<T> implementationClass )
     {
         this.implementationClass = implementationClass;
         this.implementation = implementationClass.getName();
-        this.realm = realm;
     }
 
     /**
@@ -176,31 +172,11 @@ public class ComponentDescriptor<T>
     @SuppressWarnings("unchecked")
    public Class<T> getRoleClass()
     {
-        attemptRoleLoad();
-
         if (roleClass == null) {
             return (Class<T>) Object.class;
         }
         return (Class<T>) roleClass;
     }
-
-    @SuppressWarnings("unchecked")
-   private void attemptRoleLoad()
-    {
-        if ( roleClass == null && getRole() != null && getRealm() != null )
-        {
-            try
-            {
-                roleClass = (Class<T>) getRealm().loadClass( getRole() );
-                Thread.currentThread();
-            }
-            catch ( Throwable ignored )
-            {
-                Thread.currentThread();
-            }
-        }
-    }
-
 
     /**
      * Sets the role of this component.
@@ -213,7 +189,6 @@ public class ComponentDescriptor<T>
 
         // reload role class
         roleClass = null;
-        attemptRoleLoad();
     }
 
     public void setRoleClass( Class<T> roleClass )
@@ -277,7 +252,6 @@ public class ComponentDescriptor<T>
 
         // reload implementation class
         implementationClass = null;
-        attemptImplementationLoad();
     }
 
     /**
@@ -288,29 +262,10 @@ public class ComponentDescriptor<T>
     @SuppressWarnings("unchecked")
    public Class<? extends T> getImplementationClass()
     {
-        attemptImplementationLoad();
-
         if (implementationClass == null) {
             return (Class<T>) Object.class;
         }
         return (Class<T>)implementationClass;
-    }
-
-    @SuppressWarnings("unchecked")
-   private void attemptImplementationLoad()
-    {
-        if ( implementationClass == null && getImplementation() != null && getRealm() != null )
-        {
-            try
-            {
-                implementationClass = (Class<? extends T>) getRealm().loadClass( getImplementation() );
-                Thread.currentThread();
-            }
-            catch ( Throwable ignored )
-            {
-                Thread.currentThread();
-            }
-        }
     }
 
     public void setImplementationClass( Class<? extends T> implementationClass )
@@ -629,38 +584,9 @@ public class ComponentDescriptor<T>
         this.componentConfigurator = componentConfigurator;
     }
 
-    /**
-     * The ClassRealm that this component lives under.
-     *
-     * @return ClassRealm that this component lives under
-     */
-    public ClassRealm getRealm()
-    {
-        return realm;
-    }
-
-    /**
-     * Set the ClassRealm that this component lives under.
-     *
-     * @param realm the ClassRealm that this component lives under
-     */
-    public void setRealm( ClassRealm realm )
-    {
-        this.realm = realm;
-
-        // reload implementation class
-        implementationClass = null;
-        attemptImplementationLoad();
-
-        // reload role class
-        roleClass = null;
-        attemptRoleLoad();
-    }
-
     public String toString()
     {
-        return getClass().getName() + " [role: '" + getRole() + "', hint: '" + getRoleHint() + "', realm: "
-            + ( realm == null ? "NULL" : "'" + realm + "'" ) + "]";
+        return getClass().getName() + " [role: '" + getRole() + "', hint: '" + getRoleHint() + "]";
     }
 
     // Component identity established here!
@@ -678,8 +604,7 @@ public class ComponentDescriptor<T>
 
         ComponentDescriptor<?> that = (ComponentDescriptor<?>) other;
 
-        return eq( getRole(), that.getRole() ) && eq( getRoleHint(), that.getRoleHint() )
-            && eq( getRealm(), that.getRealm() );
+        return eq( getRole(), that.getRole() ) && eq( getRoleHint(), that.getRoleHint() );
     }
 
     private static <T> boolean eq( T o1, T o2 )
@@ -693,7 +618,6 @@ public class ComponentDescriptor<T>
 
         hash = hash * 31 + hash( getRole() );
         hash = hash * 31 + hash( getRoleHint() );
-        hash = hash * 31 + hash( getRealm() );
 
         return hash;
     }
