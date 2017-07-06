@@ -3,7 +3,7 @@
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.unidal.framework</groupId>
    <artifactId>framework-bom</artifactId>
-   <version>3.0.6</version>
+   <version>3.0.7</version>
    <packaging>pom</packaging>
    <name>Framework BOM</name>
    <properties>
