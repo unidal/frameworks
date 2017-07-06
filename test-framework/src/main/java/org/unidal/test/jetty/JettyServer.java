@@ -52,17 +52,11 @@ public abstract class JettyServer extends ComponentTestCase {
    }
 
    protected void display(String requestUri) throws Exception {
+      BrowserManager manager = lookup(BrowserManager.class);
       StringBuilder sb = new StringBuilder(256);
-      PlexusContainer container = ContainerLoader.getDefaultContainer();
-      BrowserManager manager = container.lookup(BrowserManager.class);
 
       sb.append("http://localhost:").append(getServerPort()).append(requestUri);
-
-      try {
-         manager.display(new URL(sb.toString()));
-      } finally {
-         container.release(manager);
-      }
+      manager.display(new URL(sb.toString()));
    }
 
    @Override
