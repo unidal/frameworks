@@ -40,6 +40,9 @@ public class ComponentManager {
 
 		// keep it at last
 		m_loggerManager = lookup(new ComponentKey(LoggerManager.class, null));
+
+		register(new ComponentKey(PlexusContainer.class, null), container);
+		register(new ComponentKey(Logger.class, null), m_loggerManager.getLoggerForComponent(""));
 	}
 
 	public void addComponentModel(ComponentModel component) {

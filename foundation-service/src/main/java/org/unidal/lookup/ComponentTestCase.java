@@ -9,8 +9,6 @@ import org.unidal.lookup.container.model.entity.ConfigurationModel;
 import org.unidal.lookup.container.model.entity.RequirementModel;
 
 public abstract class ComponentTestCase extends ContainerHolder {
-   protected static final String PER_LOOKUP = "per-lookup";
-
    private PlexusContainer m_container;
 
    protected <T> ComponentDefinition<T> defineComponent(Class<T> role) throws Exception {

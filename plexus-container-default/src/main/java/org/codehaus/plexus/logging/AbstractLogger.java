@@ -26,6 +26,7 @@ package org.codehaus.plexus.logging;
  */
 public abstract class AbstractLogger implements Logger {
 	private int m_threshold;
+
 	private String m_name;
 
 	public AbstractLogger(int threshold, String name) {
@@ -96,6 +97,11 @@ public abstract class AbstractLogger implements Logger {
 
 	public void setThreshold(int threshold) {
 		m_threshold = threshold;
+	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName();
 	}
 
 	public void warn(String message) {

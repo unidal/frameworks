@@ -107,4 +107,9 @@ public class MyPlexusContainer implements PlexusContainer {
 	public void release(Object component) {
 		m_manager.release(component);
 	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName();
+	}
 }

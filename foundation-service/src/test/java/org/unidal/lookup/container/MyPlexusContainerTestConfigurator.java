@@ -13,6 +13,7 @@ import org.unidal.lookup.container.MyPlexusContainerTest.C22;
 import org.unidal.lookup.container.MyPlexusContainerTest.C23;
 import org.unidal.lookup.container.MyPlexusContainerTest.C24;
 import org.unidal.lookup.container.MyPlexusContainerTest.C25;
+import org.unidal.lookup.container.MyPlexusContainerTest.C26;
 import org.unidal.lookup.container.MyPlexusContainerTest.E1;
 
 public class MyPlexusContainerTestConfigurator extends AbstractResourceConfigurator {
@@ -43,6 +44,7 @@ public class MyPlexusContainerTestConfigurator extends AbstractResourceConfigura
             E("string-value").value("string-value"), //
             null));
       all.add(A(C25.class));
+      all.add(A(C26.class));
 
       return all;
    }

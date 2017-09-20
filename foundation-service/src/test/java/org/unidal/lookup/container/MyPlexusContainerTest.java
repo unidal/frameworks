@@ -41,6 +41,14 @@ public class MyPlexusContainerTest {
 		Assert.assertNotNull(loggerManager);
 		Assert.assertNotNull(loggerManager.getLoggerForComponent(""));
 	}
+	
+	// lookup PlexusContainer.class
+	@Test
+	public void testContainer04() throws Exception {
+		PlexusContainer container = m_container.lookup(PlexusContainer.class);
+		
+		Assert.assertNotNull(container);
+	}
 
 	// release component
 	@Test
@@ -154,14 +162,25 @@ public class MyPlexusContainerTest {
 		Assert.assertEquals(C25.class, a.getClass());
 		Assert.assertEquals("[F1, F2]", ((C25) a).m_a.toString());
 	}
+	
+	// inject dependency with multiple roles
+	@Test
+	public void testLookup26() throws Exception {
+		I2 a = m_container.lookup(I2.class, "six");
+		
+		Assert.assertEquals(C26.class, a.getClass());
+		Assert.assertEquals("MyPlexusContainer", ((C26) a).m_container.toString());
+		Assert.assertEquals("TimedConsoleLoggerManager", ((C26) a).m_loggerManager.toString());
+		Assert.assertEquals("TimedConsoleLogger", ((C26) a).m_logger.toString());
+	}
 
 	// lookup list
 	@Test
 	public void testLookup31() throws Exception {
 		List<I2> a = m_container.lookupList(I2.class);
 
-		Assert.assertEquals(5, a.size());
-		Assert.assertEquals("[C21, C22, C23, C24, C25]", a.toString());
+		Assert.assertEquals(6, a.size());
+		Assert.assertEquals("[C21, C22, C23, C24, C25, C26]", a.toString());
 	}
 
 	// lookup list
@@ -169,8 +188,8 @@ public class MyPlexusContainerTest {
 	public void testLookup32() throws Exception {
 		Map<String, I2> a = m_container.lookupMap(I2.class);
 
-		Assert.assertEquals(5, a.size());
-		Assert.assertEquals("{one=C21, two=C22, three=C23, four=C24, five=C25}", a.toString());
+		Assert.assertEquals(6, a.size());
+		Assert.assertEquals("{one=C21, two=C22, three=C23, four=C24, five=C25, six=C26}", a.toString());
 	}
 
 	@Named(type = I1.class, value = "singleton")
@@ -309,6 +328,23 @@ public class MyPlexusContainerTest {
 		@Inject(type = I1.class, value = { "F1", "F2" })
 		private List<I1> m_a;
 
+		@Override
+		public String toString() {
+			return getClass().getSimpleName();
+		}
+	}
+	
+	@Named(type = I2.class, value = "six")
+	public static class C26 implements I2 {
+		@Inject
+		private PlexusContainer m_container;
+		
+		@Inject
+		private LoggerManager m_loggerManager;
+		
+		@Inject
+		private Logger m_logger;
+		
 		@Override
 		public String toString() {
 			return getClass().getSimpleName();

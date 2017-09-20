@@ -23,8 +23,6 @@ package org.codehaus.plexus.personality.plexus.lifecycle.phase;
  *
  * @version $Id$
  */
-public interface Initializable
-{
-    public void initialize()
-        throws InitializationException;
+public interface Initializable {
+	public void initialize() throws InitializationException;
 }
