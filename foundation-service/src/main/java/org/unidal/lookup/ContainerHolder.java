@@ -5,14 +5,12 @@ import java.util.Map;
 
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 public abstract class ContainerHolder implements Contextualizable {
 	private PlexusContainer m_container;
 
-	public void contextualize(Context context) throws ContextException {
+	public void contextualize(Map<String, Object> context) {
 		m_container = (PlexusContainer) context.get("plexus");
 	}
 

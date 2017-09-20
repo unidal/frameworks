@@ -1,18 +1,18 @@
 package org.unidal.lookup.container;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.context.Context;
 import org.unidal.lookup.container.model.entity.ComponentModel;
 
 public class MyPlexusContainer implements PlexusContainer {
 	private ComponentManager m_manager;
 
-	private Context m_context;
+	private Map<String, Object> m_context = new HashMap<String, Object>();
 
 	public MyPlexusContainer() throws Exception {
 		this(null);
@@ -20,7 +20,6 @@ public class MyPlexusContainer implements PlexusContainer {
 
 	public MyPlexusContainer(InputStream in) throws Exception {
 		m_manager = new ComponentManager(this, in);
-		m_context = new MyPlexusContainerContext(this);
 	}
 
 	@Override
@@ -34,7 +33,7 @@ public class MyPlexusContainer implements PlexusContainer {
 	}
 
 	@Override
-	public void addContextValue(Object key, Object value) {
+	public void addContextValue(String key, Object value) {
 		m_context.put(key, value);
 	}
 
@@ -44,7 +43,7 @@ public class MyPlexusContainer implements PlexusContainer {
 	}
 
 	@Override
-	public Context getContext() {
+	public Map<String, Object> getContext() {
 		return m_context;
 	}
 

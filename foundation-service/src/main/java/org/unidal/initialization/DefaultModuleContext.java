@@ -5,8 +5,6 @@ import java.util.Map;
 
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.LoggerManager;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
@@ -31,7 +29,7 @@ public class DefaultModuleContext implements ModuleContext, Contextualizable {
 	}
 
 	@Override
-	public void contextualize(Context context) throws ContextException {
+	public void contextualize(Map<String, Object> context) {
 		m_container = (PlexusContainer) context.get("plexus");
 
 		setup();

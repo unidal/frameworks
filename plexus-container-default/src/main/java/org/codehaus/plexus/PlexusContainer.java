@@ -20,14 +20,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.context.Context;
 
 /**
  * PlexusContainer is the entry-point for loading and accessing other components.
  */
 public interface PlexusContainer {
-	String ROLE = PlexusContainer.class.getName();
-
 	// ------------------------------------------------------------------------
 	// Lookup
 	// ------------------------------------------------------------------------
@@ -45,7 +42,7 @@ public interface PlexusContainer {
 	 * 
 	 * @param componentModel
 	 */
-	void addComponentModel(Object componentModel) ;
+	void addComponentModel(Object componentModel);
 
 	/**
 	 * Add a key/value pair to this container's Context.
@@ -55,7 +52,7 @@ public interface PlexusContainer {
 	 * @param value
 	 *           any object valid to the Context's implementation
 	 */
-	void addContextValue(Object key, Object value);
+	void addContextValue(String key, Object value);
 
 	/**
 	 * Disposes of this container, which in turn disposes all of it's components. This container should also remove itself from the
@@ -69,7 +66,7 @@ public interface PlexusContainer {
 	 * 
 	 * @return this container's context.
 	 */
-	Context getContext();
+	Map<String, Object> getContext();
 
 	/**
 	 * Returns true if this container has a component with the given role/role-hint.
