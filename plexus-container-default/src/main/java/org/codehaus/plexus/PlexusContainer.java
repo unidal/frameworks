@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.logging.Logger;
 
 /**
  * PlexusContainer is the entry-point for loading and accessing other components.
@@ -67,6 +68,14 @@ public interface PlexusContainer {
 	 * @return this container's context.
 	 */
 	Map<String, Object> getContext();
+
+	/**
+	 * Returns this container's logger.
+	 * 
+	 * @return this container's logger.
+	 * @throws ComponentLookupException
+	 */
+	Logger getLogger();
 
 	/**
 	 * Returns true if this container has a component with the given role/role-hint.

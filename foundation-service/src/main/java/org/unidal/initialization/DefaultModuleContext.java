@@ -6,7 +6,6 @@ import java.util.Map;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.LoggerManager;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.unidal.lookup.annotation.Named;
 import org.unidal.lookup.logger.TimedConsoleLoggerManager;
@@ -109,12 +108,10 @@ public class DefaultModuleContext implements ModuleContext, Contextualizable {
 
 	private void setup() {
 		try {
-			LoggerManager loggerManager = m_container.lookup(LoggerManager.class);
-
-			m_logger = loggerManager.getLoggerForComponent(PlexusContainer.class.getName());
+			m_logger = m_container.getLogger();
 		} catch (Exception e) {
-			throw new RuntimeException(
-			      "Unable to get instance of Logger, " + "please make sure the environment was setup correctly!", e);
+			throw new RuntimeException("Unable to get instance of Logger, please make sure " //
+			      + "the environment was setup correctly!", e);
 		}
 
 		skipClassForLogger(getClass());

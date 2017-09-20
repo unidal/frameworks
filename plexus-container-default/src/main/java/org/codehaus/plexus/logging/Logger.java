@@ -21,61 +21,49 @@ package org.codehaus.plexus.logging;
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  * @version $Id$
  */
-public interface Logger
-{
-    /** Typecode for debugging messages. */
-    int LEVEL_DEBUG = 0;
+public interface Logger {
+	/** Typecode for debugging messages. */
+	int LEVEL_DEBUG = 0;
 
-    /** Typecode for informational messages. */
-    int LEVEL_INFO = 1;
+	/** Typecode for informational messages. */
+	int LEVEL_INFO = 1;
 
-    /** Typecode for warning messages. */
-    int LEVEL_WARN = 2;
+	/** Typecode for warning messages. */
+	int LEVEL_WARN = 2;
 
-    /** Typecode for error messages. */
-    int LEVEL_ERROR = 3;
+	/** Typecode for error messages. */
+	int LEVEL_ERROR = 3;
 
-    /** Typecode for fatal error messages. */
-    int LEVEL_FATAL = 4;
+	/** Typecode for disabled log levels. */
+	int LEVEL_DISABLED = 4;
 
-    /** Typecode for disabled log levels. */
-    int LEVEL_DISABLED = 5;
+	void debug(String message);
 
-    void debug( String message );
+	void debug(String message, Throwable throwable);
 
-    void debug( String message, Throwable throwable );
+	void error(String message);
 
-    boolean isDebugEnabled();
+	void error(String message, Throwable throwable);
 
-    void info( String message );
+	String getName();
 
-    void info( String message, Throwable throwable );
+	int getThreshold();
 
-    boolean isInfoEnabled();
+	void info(String message);
 
-    void warn( String message );
+	void info(String message, Throwable throwable);
 
-    void warn( String message, Throwable throwable );
+	boolean isDebugEnabled();
 
-    boolean isWarnEnabled();
+	boolean isErrorEnabled();
 
-    void error( String message );
+	boolean isInfoEnabled();
 
-    void error( String message, Throwable throwable );
+	boolean isWarnEnabled();
 
-    boolean isErrorEnabled();
+	void setThreshold(int threshold);
 
-    void fatalError( String message );
+	void warn(String message);
 
-    void fatalError( String message, Throwable throwable );
-
-    boolean isFatalErrorEnabled();
-
-    Logger getChildLogger( String name );
-
-    int getThreshold();
-
-    void setThreshold( int threshold );
-
-    String getName();
+	void warn(String message, Throwable throwable);
 }

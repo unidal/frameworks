@@ -75,13 +75,6 @@ public class TimedConsoleLogger extends AbstractLogger implements Logger {
       }
    }
 
-   @Override
-   public void fatalError(String message, Throwable throwable) {
-      if (isFatalErrorEnabled()) {
-         out("FATAL", message, throwable);
-      }
-   }
-
    private String getCallerClassName() {
       String caller = Threads.getCallerClass();
 
@@ -114,11 +107,6 @@ public class TimedConsoleLogger extends AbstractLogger implements Logger {
       }
 
       return "N/A";
-   }
-
-   @Override
-   public Logger getChildLogger(String name) {
-      return this;
    }
 
    private File getFilePath(String path) throws IOException {

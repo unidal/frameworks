@@ -12,7 +12,7 @@ public class ComponentModelManagerTest {
       ComponentModelManager manager = new ComponentModelManager();
       List<URL> urls = manager.scanComponents();
 
-      Assert.assertEquals(2, urls.size());
+      Assert.assertEquals(1, urls.size());
 
       // System.out.println(urls);
    }

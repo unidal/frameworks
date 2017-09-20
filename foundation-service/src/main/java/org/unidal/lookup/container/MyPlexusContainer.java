@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.logging.Logger;
 import org.unidal.lookup.container.model.entity.ComponentModel;
 
 public class MyPlexusContainer implements PlexusContainer {
@@ -20,6 +21,7 @@ public class MyPlexusContainer implements PlexusContainer {
 
 	public MyPlexusContainer(InputStream in) throws Exception {
 		m_manager = new ComponentManager(this, in);
+		m_context.put("plexus", this);
 	}
 
 	@Override
@@ -40,11 +42,17 @@ public class MyPlexusContainer implements PlexusContainer {
 	@Override
 	public void dispose() {
 		m_manager.destroy();
+		m_context.clear();
 	}
 
 	@Override
 	public Map<String, Object> getContext() {
 		return m_context;
+	}
+
+	@Override
+	public Logger getLogger() {
+		return m_manager.getLoggerManager().getLoggerForComponent("");
 	}
 
 	@Override

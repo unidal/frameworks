@@ -1,5 +1,10 @@
 package org.codehaus.plexus.logging;
 
+import static org.codehaus.plexus.logging.Logger.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /*
  * Copyright 2001-2006 Codehaus Foundation.
  *
@@ -21,50 +26,56 @@ package org.codehaus.plexus.logging;
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  * @version $Id$
  */
-public abstract class AbstractLoggerManager
-    implements LoggerManager
-{
-    /** */
-    public AbstractLoggerManager()
-    {        
-    }
+public abstract class AbstractLoggerManager implements LoggerManager {
+	private Map<String, Logger> m_loggers = new HashMap<String, Logger>();
 
-    public void setThreshold( String role, int threshold )
-    {
-        setThreshold( role, null, threshold );
-    }
+	private int m_threshold = Logger.LEVEL_INFO;
 
-    public int getThreshold( String role )
-    {
-        return getThreshold( role, null );
-    }
+	protected abstract AbstractLogger createLogger(String name);
 
-    public Logger getLoggerForComponent( String role )
-    {
-        return getLoggerForComponent( role, null );
-    }
+	@Override
+	public Logger getLoggerForComponent(String role) {
+		Logger logger = m_loggers.get(role);
 
-    public void returnComponentLogger( String role )
-    {
-        returnComponentLogger( role, null );
-    }
+		if (logger == null) {
+			logger = createLogger(role);
+			m_loggers.put(role, logger);
+		}
 
-    /**
-     * Creates a string key useful as keys in <code>Map</code>'s.
-     * 
-     * @param role The component role.
-     * @param roleHint The component role hint.
-     * @return Returns a string thats useful as a key for components.
-     */
-    protected String toMapKey( String role, String roleHint )
-    {
-         if ( roleHint == null )
-         {
-             return role;
-         }
-         else
-         {
-             return role + ":" + roleHint;
-         }
-    }
+		return logger;
+	}
+
+	protected int getThreshold() {
+		return m_threshold;
+	}
+
+	protected boolean isValidThreshold(int threshold) {
+		if (threshold == LEVEL_DEBUG) {
+			return true;
+		}
+		if (threshold == LEVEL_INFO) {
+			return true;
+		}
+		if (threshold == LEVEL_WARN) {
+			return true;
+		}
+		if (threshold == LEVEL_ERROR) {
+			return true;
+		}
+		if (threshold == LEVEL_DISABLED) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public void setThreshold(int threshold) {
+		if (isValidThreshold(threshold)) {
+			m_threshold = threshold;
+
+			for (Logger logger : m_loggers.values()) {
+				logger.setThreshold(threshold);
+			}
+		}
+	}
 }

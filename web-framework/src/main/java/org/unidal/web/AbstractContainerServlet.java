@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServlet;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.LoggerManager;
 import org.unidal.lookup.ContainerLoader;
 import org.unidal.lookup.LookupException;
 
@@ -43,9 +42,7 @@ public abstract class AbstractContainerServlet extends HttpServlet {
 				m_container = ContainerLoader.getDefaultContainer();
 			}
 
-			LoggerManager loggerManager = m_container.lookup(LoggerManager.class);
-
-			m_logger = loggerManager.getLoggerForComponent(getClass().getName());
+			m_logger = m_container.getLogger();
 
 			initComponents(config);
 		} catch (Exception e) {

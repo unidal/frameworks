@@ -9,12 +9,14 @@ import org.unidal.initialization.DefaultModuleInitializer;
 import org.unidal.initialization.DefaultModuleManager;
 import org.unidal.lookup.configuration.AbstractResourceConfigurator;
 import org.unidal.lookup.configuration.Component;
+import org.unidal.lookup.logger.TimedConsoleLoggerManager;
 
 class ComponentsConfigurator extends AbstractResourceConfigurator {
 	@Override
 	public List<Component> defineComponents() {
 		List<Component> all = new ArrayList<Component>();
 
+		all.add(A(TimedConsoleLoggerManager.class));
 		all.add(A(DefaultModuleManager.class));
 		all.add(A(DefaultModuleInitializer.class));
 		all.add(A(DefaultModuleContext.class));

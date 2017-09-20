@@ -2,6 +2,10 @@
 <plexus>
 	<components>
 		<component>
+			<role>org.codehaus.plexus.logging.LoggerManager</role>
+			<implementation>org.unidal.lookup.logger.TimedConsoleLoggerManager</implementation>
+		</component>
+		<component>
 			<role>org.unidal.initialization.ModuleManager</role>
 			<implementation>org.unidal.initialization.DefaultModuleManager</implementation>
 		</component>
@@ -22,36 +26,6 @@
 			<role>org.unidal.formatter.Formatter</role>
 			<role-hint>java.util.Date</role-hint>
 			<implementation>org.unidal.formatter.DateFormatter</implementation>
-		</component>
-		<component>
-			<role>org.unidal.net.ClientTransport</role>
-			<implementation>org.unidal.net.transport.DefaultClientTransport</implementation>
-			<instantiation-strategy>per-lookup</instantiation-strategy>
-			<requirements>
-				<requirement>
-					<role>org.unidal.net.transport.ClientTransportHandler</role>
-				</requirement>
-			</requirements>
-		</component>
-		<component>
-			<role>org.unidal.net.ServerTransport</role>
-			<implementation>org.unidal.net.transport.DefaultServerTransport</implementation>
-			<instantiation-strategy>per-lookup</instantiation-strategy>
-			<requirements>
-				<requirement>
-					<role>org.unidal.net.transport.ServerTransportHandler</role>
-				</requirement>
-			</requirements>
-		</component>
-		<component>
-			<role>org.unidal.net.transport.ClientTransportHandler</role>
-			<implementation>org.unidal.net.transport.ClientTransportHandler</implementation>
-			<instantiation-strategy>per-lookup</instantiation-strategy>
-		</component>
-		<component>
-			<role>org.unidal.net.transport.ServerTransportHandler</role>
-			<implementation>org.unidal.net.transport.ServerTransportHandler</implementation>
-			<instantiation-strategy>per-lookup</instantiation-strategy>
 		</component>
 		<component>
 			<role>org.unidal.concurrent.StageManager</role>
