@@ -1,4 +1,4 @@
-package org.codehaus.plexus.configuration;
+package org.unidal.web.jsp;
 
 /*
  * Copyright 2001-2006 Codehaus Foundation.

@@ -20,6 +20,7 @@ import org.unidal.lookup.PlexusContainerTest;
 import org.unidal.lookup.configuration.ConfiguratorTest;
 import org.unidal.lookup.container.ComponentModelManagerTest;
 import org.unidal.lookup.container.MyPlexusContainerTest;
+import org.unidal.lookup.logger.Log4jLoggerTest;
 import org.unidal.lookup.logger.TimedConsoleLoggerTest;
 import org.unidal.tuple.TupleTest;
 
@@ -63,6 +64,10 @@ ModuleInitializerTest.class,
 ComponentModelManagerTest.class,
 
 MyPlexusContainerTest.class,
+
+Log4jLoggerTest.class,
+
+TimedConsoleLoggerTest.class,
 
 })
 public class AllTests {

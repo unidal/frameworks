@@ -36,15 +36,6 @@ class MyPlexusContainerContext implements Context {
    }
 
    @Override
-   public void hide(Object key) throws IllegalStateException {
-      m_map.remove(key);
-   }
-
-   @Override
-   public void makeReadOnly() {
-   }
-
-   @Override
    public void put(Object key, Object value) throws IllegalStateException {
       m_map.put(key, value);
    }

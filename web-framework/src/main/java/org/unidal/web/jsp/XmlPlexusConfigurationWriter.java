@@ -5,8 +5,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
-import org.codehaus.plexus.configuration.PlexusConfiguration;
-
 public class XmlPlexusConfigurationWriter implements PlexusConfigurationWriter {
    public void write(OutputStream outputStream, PlexusConfiguration configuration) throws IOException {
       write(new OutputStreamWriter(outputStream), configuration);
