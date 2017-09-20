@@ -19,23 +19,27 @@ public class ContainerLoader {
       return getDefaultContainer(null);
    }
 
-   public static PlexusContainer getDefaultContainer(String configuration) {
-      if (s_container == null) {
-         try {
-            if (configuration != null) {
-               InputStream in = ContainerLoader.class.getClassLoader().getResourceAsStream(configuration);
+	public static PlexusContainer getDefaultContainer(String configuration) {
+		if (s_container == null) {
+			synchronized (ContainerLoader.class) {
+				if (s_container == null) {
+					try {
+						if (configuration != null) {
+							InputStream in = ContainerLoader.class.getClassLoader().getResourceAsStream(configuration);
 
-               s_container = new MyPlexusContainer(in);
-            } else {
-               s_container = new MyPlexusContainer();
-            }
-         } catch (Exception e) {
-            throw new RuntimeException("Unable to create Plexus container!", e);
-         }
-      }
+							s_container = new MyPlexusContainer(in);
+						} else {
+							s_container = new MyPlexusContainer();
+						}
+					} catch (Exception e) {
+						throw new RuntimeException("Unable to create Plexus container!", e);
+					}
+				}
+			}
+		}
 
-      return s_container;
-   }
+		return s_container;
+	}
 
    static class Key {
       private Class<?> m_role;
