@@ -9,32 +9,23 @@ import org.unidal.initialization.DefaultModuleInitializer;
 import org.unidal.initialization.DefaultModuleManager;
 import org.unidal.lookup.configuration.AbstractResourceConfigurator;
 import org.unidal.lookup.configuration.Component;
-import org.unidal.net.transport.ClientTransportHandler;
-import org.unidal.net.transport.DefaultClientTransport;
-import org.unidal.net.transport.DefaultServerTransport;
-import org.unidal.net.transport.ServerTransportHandler;
 
 class ComponentsConfigurator extends AbstractResourceConfigurator {
-   @Override
-   public List<Component> defineComponents() {
-      List<Component> all = new ArrayList<Component>();
+	@Override
+	public List<Component> defineComponents() {
+		List<Component> all = new ArrayList<Component>();
 
-      all.add(A(DefaultModuleManager.class));
-      all.add(A(DefaultModuleInitializer.class));
-      all.add(A(DefaultModuleContext.class));
-      all.add(A(DateFormatter.class));
+		all.add(A(DefaultModuleManager.class));
+		all.add(A(DefaultModuleInitializer.class));
+		all.add(A(DefaultModuleContext.class));
+		all.add(A(DateFormatter.class));
 
-      all.add(A(DefaultClientTransport.class));
-      all.add(A(DefaultServerTransport.class));
-      all.add(A(ClientTransportHandler.class));
-      all.add(A(ServerTransportHandler.class));
+		all.addAll(new ConcurrentComponentsConfigurator().defineComponents());
 
-      all.addAll(new ConcurrentComponentsConfigurator().defineComponents());
+		return all;
+	}
 
-      return all;
-   }
-
-   public static void main(String[] args) {
-      generatePlexusComponentsXmlFile(new ComponentsConfigurator());
-   }
+	public static void main(String[] args) {
+		generatePlexusComponentsXmlFile(new ComponentsConfigurator());
+	}
 }
