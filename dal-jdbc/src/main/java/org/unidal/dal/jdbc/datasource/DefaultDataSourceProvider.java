@@ -5,12 +5,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-import org.codehaus.plexus.logging.LogEnabled;
-import org.codehaus.plexus.logging.Logger;
 import org.unidal.dal.jdbc.datasource.model.entity.DataSourcesDef;
 import org.unidal.dal.jdbc.datasource.model.transform.DefaultSaxParser;
 import org.unidal.helper.Properties;
 import org.unidal.lookup.annotation.Named;
+import org.unidal.lookup.logging.LogEnabled;
+import org.unidal.lookup.logging.Logger;
 
 @Named(type = DataSourceProvider.class)
 public class DefaultDataSourceProvider implements DataSourceProvider, LogEnabled {

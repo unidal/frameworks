@@ -5,18 +5,18 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.unidal.helper.Files;
 import org.unidal.lookup.ContainerLoader;
+import org.unidal.lookup.PlexusContainer;
 import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.annotation.InjectAttribute;
 import org.unidal.lookup.annotation.Named;
 import org.unidal.lookup.configuration.ConfiguratorTest.AnnotatedCases.Annotated;
 import org.unidal.lookup.configuration.ConfiguratorTest.LegacyCases.Legacy;
+import org.unidal.lookup.extension.Initializable;
+import org.unidal.lookup.extension.InitializationException;
 import org.unidal.lookup.extension.RoleHintEnabled;
 
 public class ConfiguratorTest {

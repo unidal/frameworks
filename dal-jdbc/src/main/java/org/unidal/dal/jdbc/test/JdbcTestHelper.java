@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.codehaus.plexus.logging.Logger;
 import org.unidal.dal.jdbc.DalException;
 import org.unidal.dal.jdbc.raw.RawDao;
 import org.unidal.dal.jdbc.raw.RawDataObject;
@@ -15,6 +14,7 @@ import org.unidal.helper.Files;
 import org.unidal.helper.Reflects;
 import org.unidal.helper.Reflects.MethodFilter;
 import org.unidal.lookup.ContainerHolder;
+import org.unidal.lookup.logging.Logger;
 
 /**
  * <xmp>

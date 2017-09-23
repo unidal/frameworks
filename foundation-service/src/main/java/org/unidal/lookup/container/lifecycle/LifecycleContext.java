@@ -1,9 +1,9 @@
 package org.unidal.lookup.container.lifecycle;
 
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.logging.Logger;
+import org.unidal.lookup.ComponentLookupException;
+import org.unidal.lookup.PlexusContainer;
 import org.unidal.lookup.container.model.entity.ComponentModel;
+import org.unidal.lookup.logging.Logger;
 
 public interface LifecycleContext {
    public Object getComponent();

@@ -5,9 +5,6 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.logging.LogEnabled;
-import org.codehaus.plexus.logging.Logger;
 import org.unidal.dal.jdbc.DalException;
 import org.unidal.dal.jdbc.datasource.DataSourceManager;
 import org.unidal.dal.jdbc.datasource.JdbcDataSourceDescriptorManager;
@@ -20,8 +17,11 @@ import org.unidal.helper.Files;
 import org.unidal.helper.Reflects;
 import org.unidal.helper.Reflects.MethodFilter;
 import org.unidal.lookup.ContainerHolder;
+import org.unidal.lookup.PlexusContainer;
 import org.unidal.lookup.container.model.entity.ComponentModel;
 import org.unidal.lookup.container.model.entity.RequirementModel;
+import org.unidal.lookup.logging.LogEnabled;
+import org.unidal.lookup.logging.Logger;
 
 /**
  * <xmp>

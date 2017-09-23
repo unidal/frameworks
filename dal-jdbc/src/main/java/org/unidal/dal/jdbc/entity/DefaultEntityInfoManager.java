@@ -6,10 +6,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.codehaus.plexus.logging.LogEnabled;
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.unidal.dal.jdbc.DalRuntimeException;
 import org.unidal.dal.jdbc.DataField;
 import org.unidal.dal.jdbc.Readset;
@@ -22,6 +18,10 @@ import org.unidal.dal.jdbc.query.QueryNaming;
 import org.unidal.dal.jdbc.raw.RawEntity;
 import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.annotation.Named;
+import org.unidal.lookup.extension.Initializable;
+import org.unidal.lookup.extension.InitializationException;
+import org.unidal.lookup.logging.LogEnabled;
+import org.unidal.lookup.logging.Logger;
 
 @Named(type = EntityInfoManager.class)
 public class DefaultEntityInfoManager implements EntityInfoManager, LogEnabled, Initializable {

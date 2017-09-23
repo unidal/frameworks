@@ -9,7 +9,7 @@ import org.unidal.initialization.DefaultModuleInitializer;
 import org.unidal.initialization.DefaultModuleManager;
 import org.unidal.lookup.configuration.AbstractResourceConfigurator;
 import org.unidal.lookup.configuration.Component;
-import org.unidal.lookup.logger.TimedConsoleLoggerManager;
+import org.unidal.lookup.logging.TimedConsoleLoggerManager;
 
 class ComponentsConfigurator extends AbstractResourceConfigurator {
 	@Override

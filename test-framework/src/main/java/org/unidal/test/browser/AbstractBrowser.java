@@ -5,10 +5,10 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 
-import org.codehaus.plexus.logging.LogEnabled;
-import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.CommandLineUtils.StringStreamConsumer;
+import org.unidal.lookup.logging.LogEnabled;
+import org.unidal.lookup.logging.Logger;
 import org.codehaus.plexus.util.cli.Commandline;
 
 public abstract class AbstractBrowser implements Browser, LogEnabled {

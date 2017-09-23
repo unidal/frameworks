@@ -5,19 +5,19 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.logging.LogEnabled;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Disposable;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.unidal.converter.ConverterManager;
 import org.unidal.helper.Reflects;
 import org.unidal.helper.Reflects.IMemberFilter;
+import org.unidal.lookup.ComponentLookupException;
 import org.unidal.lookup.container.model.entity.Any;
 import org.unidal.lookup.container.model.entity.ComponentModel;
 import org.unidal.lookup.container.model.entity.ConfigurationModel;
 import org.unidal.lookup.container.model.entity.RequirementModel;
+import org.unidal.lookup.extension.Contextualizable;
+import org.unidal.lookup.extension.Disposable;
+import org.unidal.lookup.extension.Initializable;
 import org.unidal.lookup.extension.RoleHintEnabled;
+import org.unidal.lookup.logging.LogEnabled;
 
 public enum ComponentHandlers implements LifecycleHandler {
    REQUIREMENTS {

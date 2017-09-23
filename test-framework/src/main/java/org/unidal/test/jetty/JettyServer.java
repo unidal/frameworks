@@ -6,7 +6,6 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.codehaus.plexus.PlexusContainer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
@@ -16,6 +15,7 @@ import org.junit.Before;
 import org.unidal.helper.Files;
 import org.unidal.lookup.ComponentTestCase;
 import org.unidal.lookup.ContainerLoader;
+import org.unidal.lookup.PlexusContainer;
 import org.unidal.test.browser.Browser;
 import org.unidal.test.browser.BrowserManager;
 

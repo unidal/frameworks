@@ -1,4 +1,4 @@
-package org.unidal.lookup.logger;
+package org.unidal.lookup.logging;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -10,8 +10,6 @@ import java.text.MessageFormat;
 import java.util.Date;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.codehaus.plexus.logging.AbstractLogger;
-import org.codehaus.plexus.logging.Logger;
 import org.unidal.helper.Properties;
 import org.unidal.helper.Threads;
 

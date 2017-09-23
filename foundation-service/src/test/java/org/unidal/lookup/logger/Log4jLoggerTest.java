@@ -1,9 +1,9 @@
 package org.unidal.lookup.logger;
 
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.LoggerManager;
 import org.junit.Test;
 import org.unidal.lookup.ComponentTestCase;
+import org.unidal.lookup.logging.Logger;
+import org.unidal.lookup.logging.LoggerManager;
 
 public class Log4jLoggerTest extends ComponentTestCase {
    @Test

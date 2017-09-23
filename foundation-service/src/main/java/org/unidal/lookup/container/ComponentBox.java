@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.unidal.helper.Reflects;
 import org.unidal.helper.Splitters;
+import org.unidal.lookup.ComponentLookupException;
 import org.unidal.lookup.container.lifecycle.ComponentLifecycle;
 import org.unidal.lookup.container.model.entity.ComponentModel;
 

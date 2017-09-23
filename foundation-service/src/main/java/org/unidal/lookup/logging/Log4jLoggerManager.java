@@ -1,9 +1,9 @@
-package org.unidal.lookup.logger;
+package org.unidal.lookup.logging;
 
-import static org.codehaus.plexus.logging.Logger.LEVEL_DEBUG;
-import static org.codehaus.plexus.logging.Logger.LEVEL_ERROR;
-import static org.codehaus.plexus.logging.Logger.LEVEL_INFO;
-import static org.codehaus.plexus.logging.Logger.LEVEL_WARN;
+import static org.unidal.lookup.logging.Logger.LEVEL_DEBUG;
+import static org.unidal.lookup.logging.Logger.LEVEL_ERROR;
+import static org.unidal.lookup.logging.Logger.LEVEL_INFO;
+import static org.unidal.lookup.logging.Logger.LEVEL_WARN;
 
 import java.io.File;
 import java.net.URL;
@@ -16,12 +16,9 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.xml.DOMConfigurator;
-import org.codehaus.plexus.logging.AbstractLogger;
-import org.codehaus.plexus.logging.AbstractLoggerManager;
-import org.codehaus.plexus.logging.LoggerManager;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.unidal.helper.Properties;
+import org.unidal.lookup.extension.Initializable;
+import org.unidal.lookup.extension.InitializationException;
 
 public class Log4jLoggerManager extends AbstractLoggerManager implements LoggerManager, Initializable {
 	private String m_configurationFile = "log4j.xml";
@@ -29,7 +26,7 @@ public class Log4jLoggerManager extends AbstractLoggerManager implements LoggerM
 	private String m_baseDirRef;
 
 	@Override
-	protected org.codehaus.plexus.logging.AbstractLogger createLogger(String name) {
+	protected org.unidal.lookup.logging.AbstractLogger createLogger(String name) {
 		Logger logger = LogManager.getLogger(name);
 		LevelAdapter level = new LevelAdapter(logger.getLevel());
 

@@ -7,12 +7,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.LoggerManager;
+import org.unidal.lookup.ComponentLookupException;
+import org.unidal.lookup.PlexusContainer;
 import org.unidal.lookup.container.lifecycle.ComponentLifecycle;
 import org.unidal.lookup.container.model.entity.ComponentModel;
+import org.unidal.lookup.logging.Logger;
+import org.unidal.lookup.logging.LoggerManager;
 
 public class ComponentManager {
 	// component cache

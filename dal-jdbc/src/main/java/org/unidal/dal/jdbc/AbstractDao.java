@@ -1,9 +1,9 @@
 package org.unidal.dal.jdbc;
 
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.unidal.dal.jdbc.entity.EntityInfoManager;
 import org.unidal.lookup.ContainerHolder;
+import org.unidal.lookup.extension.Initializable;
+import org.unidal.lookup.extension.InitializationException;
 
 public abstract class AbstractDao extends ContainerHolder implements Initializable {
    private QueryEngine m_queryEngine;

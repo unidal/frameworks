@@ -2,7 +2,6 @@ package org.unidal.lookup;
 
 import java.io.InputStream;
 
-import org.codehaus.plexus.PlexusContainer;
 import org.unidal.lookup.container.MyPlexusContainer;
 
 public class ContainerLoader {

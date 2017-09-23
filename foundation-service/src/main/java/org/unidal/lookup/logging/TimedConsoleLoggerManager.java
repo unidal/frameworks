@@ -1,12 +1,8 @@
-package org.unidal.lookup.logger;
+package org.unidal.lookup.logging;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import org.codehaus.plexus.logging.AbstractLogger;
-import org.codehaus.plexus.logging.AbstractLoggerManager;
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.LoggerManager;
 import org.unidal.lookup.annotation.Named;
 
 @Named(type = LoggerManager.class)

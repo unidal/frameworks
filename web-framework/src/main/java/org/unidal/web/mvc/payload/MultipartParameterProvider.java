@@ -20,11 +20,11 @@ import org.apache.commons.fileupload.FileUploadBase.SizeLimitExceededException;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.codehaus.plexus.logging.LogEnabled;
-import org.codehaus.plexus.logging.Logger;
 import org.unidal.helper.Joiners;
 import org.unidal.lookup.annotation.InjectAttribute;
 import org.unidal.lookup.annotation.Named;
+import org.unidal.lookup.logging.LogEnabled;
+import org.unidal.lookup.logging.Logger;
 
 @Named(type = ParameterProvider.class, value = "multipart/form-data", instantiationStrategy = Named.PER_LOOKUP)
 public class MultipartParameterProvider implements ParameterProvider, LogEnabled {

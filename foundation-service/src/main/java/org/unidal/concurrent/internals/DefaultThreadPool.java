@@ -3,13 +3,13 @@ package org.unidal.concurrent.internals;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.plexus.logging.LogEnabled;
-import org.codehaus.plexus.logging.Logger;
 import org.unidal.concurrent.Stage;
 import org.unidal.concurrent.StageConfiguration;
 import org.unidal.concurrent.StageStatus;
 import org.unidal.helper.Threads;
 import org.unidal.lookup.annotation.Named;
+import org.unidal.lookup.logging.LogEnabled;
+import org.unidal.lookup.logging.Logger;
 
 @Named(type = ThreadPool.class, instantiationStrategy = Named.PER_LOOKUP)
 public class DefaultThreadPool implements ThreadPool, LogEnabled {

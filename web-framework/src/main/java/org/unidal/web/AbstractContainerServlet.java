@@ -4,11 +4,11 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.logging.Logger;
+import org.unidal.lookup.ComponentLookupException;
 import org.unidal.lookup.ContainerLoader;
 import org.unidal.lookup.LookupException;
+import org.unidal.lookup.PlexusContainer;
+import org.unidal.lookup.logging.Logger;
 
 public abstract class AbstractContainerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;

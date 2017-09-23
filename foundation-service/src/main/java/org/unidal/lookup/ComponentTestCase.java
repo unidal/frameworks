@@ -1,6 +1,5 @@
 package org.unidal.lookup;
 
-import org.codehaus.plexus.PlexusContainer;
 import org.junit.After;
 import org.junit.Before;
 import org.unidal.lookup.container.model.entity.Any;

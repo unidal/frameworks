@@ -3,9 +3,7 @@ package org.unidal.lookup;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
+import org.unidal.lookup.extension.Contextualizable;
 
 public abstract class ContainerHolder implements Contextualizable {
 	private PlexusContainer m_container;

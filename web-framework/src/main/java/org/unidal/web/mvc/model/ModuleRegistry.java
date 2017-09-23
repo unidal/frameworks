@@ -2,9 +2,9 @@ package org.unidal.web.mvc.model;
 
 import java.util.List;
 
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.unidal.lookup.ContainerHolder;
+import org.unidal.lookup.extension.Initializable;
+import org.unidal.lookup.extension.InitializationException;
 import org.unidal.web.mvc.Module;
 
 public class ModuleRegistry extends ContainerHolder implements Initializable {

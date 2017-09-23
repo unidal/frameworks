@@ -13,10 +13,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
 
-import org.codehaus.plexus.logging.LogEnabled;
-import org.codehaus.plexus.logging.Logger;
 import org.unidal.lookup.annotation.Named;
-import org.unidal.lookup.logger.TimedConsoleLoggerManager;
+import org.unidal.lookup.logging.LogEnabled;
+import org.unidal.lookup.logging.Logger;
+import org.unidal.lookup.logging.TimedConsoleLoggerManager;
 
 public class Threads {
    private static volatile Manager s_manager = new Manager();

@@ -1,6 +1,6 @@
 package org.unidal.lookup.container.lifecycle;
 
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.unidal.lookup.ComponentLookupException;
 
 public interface LifecycleHandler {
    public void handleStart(LifecycleContext ctx) throws ComponentLookupException;

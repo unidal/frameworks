@@ -1,6 +1,5 @@
 package org.unidal.lookup;
 
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.junit.Assert;
 import org.junit.Test;
 

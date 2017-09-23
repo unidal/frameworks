@@ -2,9 +2,9 @@ package org.unidal.web.mvc.lifecycle;
 
 import static org.unidal.lookup.util.ReflectUtils.invokeMethod;
 
-import org.codehaus.plexus.logging.LogEnabled;
-import org.codehaus.plexus.logging.Logger;
 import org.unidal.lookup.annotation.Named;
+import org.unidal.lookup.logging.LogEnabled;
+import org.unidal.lookup.logging.Logger;
 import org.unidal.web.mvc.ActionContext;
 import org.unidal.web.mvc.ActionException;
 import org.unidal.web.mvc.model.entity.OutboundActionModel;

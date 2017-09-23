@@ -3,12 +3,12 @@ package org.unidal.initialization;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
+import org.unidal.lookup.ComponentLookupException;
+import org.unidal.lookup.PlexusContainer;
 import org.unidal.lookup.annotation.Named;
-import org.unidal.lookup.logger.TimedConsoleLoggerManager;
+import org.unidal.lookup.extension.Contextualizable;
+import org.unidal.lookup.logging.Logger;
+import org.unidal.lookup.logging.TimedConsoleLoggerManager;
 
 @Named(type = ModuleContext.class)
 public class DefaultModuleContext implements ModuleContext, Contextualizable {

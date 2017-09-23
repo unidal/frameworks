@@ -5,6 +5,7 @@ import java.io.File;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.unidal.lookup.logging.TimedConsoleLogger;
 
 @Ignore
 public class TimedConsoleLoggerTest {

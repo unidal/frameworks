@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.unidal.dal.jdbc.DalRuntimeException;
 import org.unidal.dal.jdbc.QueryType;
 import org.unidal.dal.jdbc.engine.QueryContext;
@@ -18,6 +16,8 @@ import org.unidal.dal.jdbc.query.token.resolver.TokenResolver;
 import org.unidal.lookup.ContainerHolder;
 import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.annotation.Named;
+import org.unidal.lookup.extension.Initializable;
+import org.unidal.lookup.extension.InitializationException;
 
 @Named(type = QueryResolver.class)
 public class MysqlQueryResolver extends ContainerHolder implements QueryResolver, Initializable {

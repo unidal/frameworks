@@ -3,19 +3,19 @@ package org.unidal.lookup.container;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.logging.LogEnabled;
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.LoggerManager;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.unidal.lookup.PlexusContainer;
 import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.annotation.Named;
+import org.unidal.lookup.extension.Contextualizable;
+import org.unidal.lookup.extension.Initializable;
+import org.unidal.lookup.extension.InitializationException;
 import org.unidal.lookup.extension.RoleHintEnabled;
+import org.unidal.lookup.logging.LogEnabled;
+import org.unidal.lookup.logging.Logger;
+import org.unidal.lookup.logging.LoggerManager;
 
 public class MyPlexusContainerTest {
 	private MyPlexusContainer m_container;

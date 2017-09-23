@@ -1,6 +1,5 @@
 package org.unidal.lookup;
 
-import org.codehaus.plexus.PlexusContainer;
 import org.junit.Assert;
 import org.junit.Test;
 
