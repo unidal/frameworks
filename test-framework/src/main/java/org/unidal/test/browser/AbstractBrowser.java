@@ -2,80 +2,74 @@ package org.unidal.test.browser;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 
-import org.codehaus.plexus.util.cli.CommandLineUtils;
-import org.codehaus.plexus.util.cli.CommandLineUtils.StringStreamConsumer;
+import org.unidal.helper.Files;
 import org.unidal.lookup.logging.LogEnabled;
 import org.unidal.lookup.logging.Logger;
-import org.codehaus.plexus.util.cli.Commandline;
 
 public abstract class AbstractBrowser implements Browser, LogEnabled {
-   private Logger m_logger;
+	private Logger m_logger;
 
-   public void display(String html) {
-      display(html, "utf-8");
-   }
+	public void display(String html) {
+		display(html, "utf-8");
+	}
 
-   public void display(String html, String charset) {
-      URL url = saveToTemporaryFile(html, false, charset);
+	public void display(String html, String charset) {
+		URL url = saveToTemporaryFile(html, false, charset);
 
-      display(url);
-   }
+		display(url);
+	}
 
-   public abstract String[] getCommandLine(String url);
+	public abstract String[] getCommandLine(String url);
 
-   public void display(URL url) {
-      if (!isAvailable()) {
-         throw new RuntimeException(getId() + " is unavailable.");
-      }
+	public void display(URL url) {
+		if (!isAvailable()) {
+			throw new RuntimeException(getId() + " is unavailable.");
+		}
 
-      try {
-         String[] commandLine = getCommandLine(url.toExternalForm());
-         Commandline cmdLine = new Commandline();
-         StringStreamConsumer consumer = new StringStreamConsumer();
+		try {
+			String[] commandLine = getCommandLine(url.toExternalForm());
+			Process process = new ProcessBuilder(commandLine).start();
+			InputStream in = process.getInputStream();
+			String output = Files.forIO().readUtf8String(in);
 
-         cmdLine.addArguments(commandLine);
+			if (output != null && output.length() > 0) {
+				m_logger.info(output);
+			}
+		} catch (RuntimeException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new RuntimeException("Error when display page(" + url.toExternalForm() + ")", e);
+		}
+	}
 
-         CommandLineUtils.executeCommandLine(cmdLine, consumer, consumer);
+	private URL saveToTemporaryFile(String html, boolean deleteOnExit, String charset) {
+		try {
+			File tempFile = File.createTempFile("test", ".html");
 
-         String output = consumer.getOutput();
+			if (deleteOnExit) {
+				tempFile.deleteOnExit();
+			}
 
-         if (output != null && output.length() > 0) {
-            m_logger.info(output);
-         }
-      } catch (RuntimeException e) {
-         throw e;
-      } catch (Exception e) {
-         throw new RuntimeException("Error when display page(" + url.toExternalForm() + ")", e);
-      }
-   }
+			OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(tempFile), charset);
 
-   private URL saveToTemporaryFile(String html, boolean deleteOnExit, String charset) {
-      try {
-         File tempFile = File.createTempFile("test", ".html");
+			out.write(html);
+			out.close();
 
-         if (deleteOnExit) {
-            tempFile.deleteOnExit();
-         }
+			return tempFile.getCanonicalFile().toURI().toURL();
+		} catch (Exception e) {
+			throw new RuntimeException("Error when writing to temporary file: " + e.getMessage(), e);
+		}
+	}
 
-         OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(tempFile), charset);
+	public void enableLogging(Logger logger) {
+		m_logger = logger;
+	}
 
-         out.write(html);
-         out.close();
-
-         return tempFile.getCanonicalFile().toURI().toURL();
-      } catch (Exception e) {
-         throw new RuntimeException("Error when writing to temporary file: " + e.getMessage(), e);
-      }
-   }
-
-   public void enableLogging(Logger logger) {
-      m_logger = logger;
-   }
-
-   protected Logger getLogger() {
-      return m_logger;
-   }
+	protected Logger getLogger() {
+		return m_logger;
+	}
 }

@@ -127,7 +127,9 @@ public abstract class JettyServer extends ComponentTestCase {
    }
 
    protected void stopServer() throws Exception {
-      m_server.stop();
+      if (m_server != null) {
+         m_server.stop();
+      }
    }
 
    @After
