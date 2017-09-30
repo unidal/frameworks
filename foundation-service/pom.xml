@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.unidal.framework</groupId>
       <artifactId>parent</artifactId>
-      <version>4.0.0-SNAPSHOT</version>
+      <version>4.0.0</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
    <modelVersion>4.0.0</modelVersion>
@@ -12,10 +12,12 @@
    <artifactId>foundation-service</artifactId>
    <name>Foundation Service</name>
    <dependencies>
-      <dependency>
+<!--
+       <dependency>
          <groupId>org.codehaus.plexus</groupId>
          <artifactId>plexus-container-default</artifactId>
       </dependency>
+ -->
       <dependency>
          <groupId>log4j</groupId>
          <artifactId>log4j</artifactId>
