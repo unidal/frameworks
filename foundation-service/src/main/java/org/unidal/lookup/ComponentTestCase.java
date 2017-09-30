@@ -30,7 +30,7 @@ public abstract class ComponentTestCase extends ContainerHolder {
          model.setRoleHint(roleHint);
       }
 
-      m_container.addComponentModel(model);
+      getContainer().addComponentModel(model);
       return new ComponentDefinition<T>(model);
    }
 

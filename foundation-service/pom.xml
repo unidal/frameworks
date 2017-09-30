@@ -47,6 +47,22 @@
             </configuration>
             <!-- regenerate the mode in the command line using command "mvn codegen:dal-model" -->
          </plugin>
+         <plugin>
+            <groupId>org.unidal.maven.plugins</groupId>
+            <artifactId>plexus-maven-plugin</artifactId>
+            <executions>
+               <execution>
+                  <id>generate plexus component descriptor</id>
+                  <phase>process-classes</phase>
+                  <goals>
+                     <goal>plexus</goal>
+                  </goals>
+                  <configuration>
+                     <className>org.unidal.build.ComponentsConfigurator</className>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
       </plugins>
    </build>
 </project>

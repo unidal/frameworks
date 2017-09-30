@@ -36,25 +36,32 @@ public class ComponentModelManager {
 
 	public ComponentModel getComponentModel(ComponentKey key) {
 		ComponentModel model = m_cache.get(key);
+		boolean found = false;
 
-		if (model == null) {
+		if (!found) {
 			for (ComponentModel component : m_model.getComponents()) {
 				if (key.matches(component.getRole(), component.getHint())) {
 					model = component;
+					found = true;
 					m_cache.put(key, component);
 					break;
 				}
 			}
 		}
 
-		if (model == null) {
+		if (!found) {
 			for (PlexusModel plexus : m_models) {
 				for (ComponentModel component : plexus.getComponents()) {
 					if (key.matches(component.getRole(), component.getHint())) {
 						model = component;
+						found = true;
 						m_cache.put(key, component);
 						break;
 					}
+				}
+				
+				if (found) {
+					break;
 				}
 			}
 		}

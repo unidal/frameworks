@@ -12,7 +12,9 @@
       <module>eunit-testfwk</module>
       <module>type-converter</module>
       <module>java-fragment</module>
+<!--
       <module>plexus-container-default</module>
+-->
       <module>foundation-service</module>
       <module>dal-jdbc</module>
       <module>test-framework</module>
@@ -187,6 +189,11 @@
          <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlets</artifactId>
+            <version>${jetty.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-jsp</artifactId>
             <version>${jetty.version}</version>
          </dependency>
          <dependency>

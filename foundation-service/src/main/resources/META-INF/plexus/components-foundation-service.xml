@@ -2,8 +2,8 @@
 <plexus>
 	<components>
 		<component>
-			<role>org.codehaus.plexus.logging.LoggerManager</role>
-			<implementation>org.unidal.lookup.logger.TimedConsoleLoggerManager</implementation>
+			<role>org.unidal.lookup.logging.LoggerManager</role>
+			<implementation>org.unidal.lookup.logging.TimedConsoleLoggerManager</implementation>
 		</component>
 		<component>
 			<role>org.unidal.initialization.ModuleManager</role>

@@ -24,19 +24,22 @@ public class MVC extends AbstractContainerServlet {
 
    @Override
    protected void initComponents(ServletConfig config) throws Exception {
-      String contextPath = config.getServletContext().getContextPath();
-      String path = contextPath == null || contextPath.length() == 0 ? "/" : contextPath;
+      if (m_handler == null) {
+         String contextPath = config.getServletContext().getContextPath();
+         String path = contextPath == null || contextPath.length() == 0 ? "/" : contextPath;
 
-      getLogger().info("MVC is starting at " + path);
+         getLogger().info("MVC is starting at " + path);
 
-      initializeCat(config);
-      initializeModules(config);
+         initializeCat(config);
+         initializeModules(config);
 
-      m_handler = lookup(RequestLifecycle.class, "mvc");
-      m_handler.setServletContext(config.getServletContext());
+         m_handler = lookup(RequestLifecycle.class, "mvc");
+         m_handler.setServletContext(config.getServletContext());
 
-      config.getServletContext().setAttribute(ID, this);
-      getLogger().info("MVC started at " + path);
+         config.getServletContext().setAttribute(ID, this);
+
+         getLogger().info("MVC started at " + path);
+      }
    }
 
    private void initializeCat(ServletConfig config) {
@@ -73,7 +76,7 @@ public class MVC extends AbstractContainerServlet {
             ctx.setAttribute("servlet-config", config);
             ctx.setAttribute("servlet-context", config.getServletContext());
             ctx.setAttribute("context-path", config.getServletContext().getContextPath());
-            
+
             initializer.execute(ctx);
          } catch (Exception e) {
             throw new ServletException(e);
@@ -82,8 +85,8 @@ public class MVC extends AbstractContainerServlet {
    }
 
    @Override
-   protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException,
-         IOException {
+   protected void service(HttpServletRequest request, HttpServletResponse response)
+         throws ServletException, IOException {
       if (request.getCharacterEncoding() == null) {
          request.setCharacterEncoding("UTF-8");
       }

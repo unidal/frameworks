@@ -106,13 +106,13 @@
 			<implementation>org.unidal.lookup.container.MyPlexusContainerTest$C26</implementation>
 			<requirements>
 				<requirement>
-					<role>org.codehaus.plexus.PlexusContainer</role>
+					<role>org.unidal.lookup.PlexusContainer</role>
 				</requirement>
 				<requirement>
-					<role>org.codehaus.plexus.logging.LoggerManager</role>
+					<role>org.unidal.lookup.logging.LoggerManager</role>
 				</requirement>
 				<requirement>
-					<role>org.codehaus.plexus.logging.Logger</role>
+					<role>org.unidal.lookup.logging.Logger</role>
 				</requirement>
 			</requirements>
 		</component>

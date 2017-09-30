@@ -176,10 +176,6 @@ public class JavaFragmentCompiler implements Compilable {
 
             m_outputDir = new File(tmpDir, "JavaFragment");
 
-            if (!m_outputDir.canRead()) {
-               m_outputDir = new File("/opt/data/tmp"); // hack
-            }
-
             if (!m_outputDir.exists()) {
                if (!m_outputDir.mkdirs()) {
                   throw new IllegalStateException("Unable to create directory: " + m_outputDir);
