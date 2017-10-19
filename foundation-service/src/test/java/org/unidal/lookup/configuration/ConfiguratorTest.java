@@ -31,7 +31,7 @@ public class ConfiguratorTest {
       }
 
       String expected = Files.forIO().readFrom(in, "utf-8");
-      String actual = Configurators.forPlexus().generateXmlConfiguration(components);
+      String actual = Configurators.forPlexus().generateXmlConfiguration(configurator, components);
 
       Assert.assertEquals(resource, expected.replace("\r\n", "\n"), actual.replace("\r\n", "\n"));
    }
