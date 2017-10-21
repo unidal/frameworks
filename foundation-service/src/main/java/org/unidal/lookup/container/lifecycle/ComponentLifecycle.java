@@ -90,6 +90,11 @@ public class ComponentLifecycle {
          return m_manager.lookup(new ComponentKey(role, roleHint));
       }
 
+      @Override
+      public List<Object> lookupList(String role) throws ComponentLookupException {
+         return m_manager.lookupList(role);
+      }
+
       public ComponentContext setComponentModel(ComponentModel model) {
          m_model = model;
          return this;

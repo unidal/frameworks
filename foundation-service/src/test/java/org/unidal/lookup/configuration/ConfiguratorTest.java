@@ -3,7 +3,9 @@ package org.unidal.lookup.configuration;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -72,6 +74,10 @@ public class ConfiguratorTest {
 
       @Named(type = AT1.class, value = "secondary")
       public static class AC12 implements AT1 {
+      }
+
+      @Named(type = AT1.class, value = "third", instantiationStrategy = Named.PER_LOOKUP)
+      public static class AC13 implements AT1 {
       }
 
       @Named(type = AT3.class)
@@ -162,16 +168,52 @@ public class ConfiguratorTest {
 
       @Named(type = AT3.class, value = "third")
       public static class AC33 implements AT3, Initializable {
-         @Inject({ "default", "secondary" })
+         @Inject
          private List<AT1> m_list;
-
-         public List<AT1> getList() {
-            return m_list;
-         }
 
          @Override
          public void initialize() throws InitializationException {
-            Assert.assertEquals(2, m_list.size());
+            Assert.assertEquals(3, m_list.size());
+         }
+      }
+
+      @Named(type = AT3.class, value = "forth")
+      public static class AC34 implements AT3, Initializable {
+         @Inject
+         private List<AT1> m_list;
+
+         @Inject
+         private Set<AT1> m_set;
+
+         @Inject
+         private Collection<AT1> m_collection;
+
+         @Inject
+         private AT1[] m_array;
+
+         @Inject({ "default", "secondary" })
+         private List<AT1> m_list2;
+
+         @Inject({ "default", "secondary" })
+         private Set<AT1> m_set2;
+
+         @Inject({ "default", "secondary" })
+         private Collection<AT1> m_collection2;
+
+         @Inject({ "default", "secondary" })
+         private AT1[] m_array2;
+
+         @Override
+         public void initialize() throws InitializationException {
+            Assert.assertEquals(3, m_list.size());
+            Assert.assertEquals(3, m_set.size());
+            Assert.assertEquals(3, m_collection.size());
+            Assert.assertEquals(3, m_array.length);
+
+            Assert.assertEquals(2, m_list2.size());
+            Assert.assertEquals(2, m_set2.size());
+            Assert.assertEquals(2, m_collection2.size());
+            Assert.assertEquals(2, m_array2.length);
          }
       }
 
@@ -191,10 +233,12 @@ public class ConfiguratorTest {
 
             all.add(A(AC11.class));
             all.add(A(AC12.class));
+            all.add(A(AC13.class));
             all.add(A(AT2.class));
             all.add(A(AC31.class));
             all.add(A(AC32.class));
             all.add(A(AC33.class));
+            all.add(A(AC34.class));
             all.add(A(AC41.class));
 
             for (AC42 value : AC42.values()) {

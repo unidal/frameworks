@@ -93,7 +93,7 @@ public class DefaultSaxParser extends DefaultHandler {
       if (obj instanceof String) {
          String str = (String) obj;
 
-         if (str.charAt(0) == 0xFEFF) {
+         if (str.length() != 0 && str.charAt(0) == 0xFEFF) {
             return (T) str.substring(1);
          } else {
             return obj;

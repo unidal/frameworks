@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <parent>
       <groupId>org.unidal.framework</groupId>
       <artifactId>parent</artifactId>
@@ -12,12 +11,6 @@
    <artifactId>foundation-service</artifactId>
    <name>Foundation Service</name>
    <dependencies>
-<!--
-       <dependency>
-         <groupId>org.codehaus.plexus</groupId>
-         <artifactId>plexus-container-default</artifactId>
-      </dependency>
- -->
       <dependency>
          <groupId>log4j</groupId>
          <artifactId>log4j</artifactId>
@@ -50,18 +43,10 @@
          <plugin>
             <groupId>org.unidal.maven.plugins</groupId>
             <artifactId>plexus-maven-plugin</artifactId>
-            <executions>
-               <execution>
-                  <id>generate plexus component descriptor</id>
-                  <phase>process-classes</phase>
-                  <goals>
-                     <goal>plexus</goal>
-                  </goals>
-                  <configuration>
-                     <className>org.unidal.build.ComponentsConfigurator</className>
-                  </configuration>
-               </execution>
-            </executions>
+            <configuration>
+               <className>org.unidal.build.ComponentsConfigurator</className>
+            </configuration>
+            <!-- regenerate the mode in the command line using command "mvn plexus:process-classes" -->
          </plugin>
       </plugins>
    </build>

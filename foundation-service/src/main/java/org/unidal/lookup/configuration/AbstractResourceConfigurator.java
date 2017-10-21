@@ -129,42 +129,30 @@ public abstract class AbstractResourceConfigurator implements Configurator {
          Class<?> role = inject.type();
          String[] roleHints = inject.value();
          Class<?> type = field.getType();
+         Class<?> elementType = getElementType(field);
 
-         if (role != Inject.Default.class) {
-            if (roleHints.length <= 1 && !role.isAssignableFrom(type)) {
-               throw new IllegalStateException(String.format("Field(%s) of %s can only be injected " + //
-                     "by subclass of %s instead of %s.", field.getName(), clazz, role.getName(), type.getName()));
-            }
-         } else {
-            if (roleHints.length <= 1) {
-               role = field.getType();
-            } else {
-               role = getElementType(field.getGenericType(), field);
-            }
+         if (role == Inject.Default.class) {
+            role = elementType;
          }
 
-         if (roleHints.length <= 1) {
-            List<Pair<Object, String>> require = requires.get(role);
-
-            if (require == null) {
-               require = new ArrayList<Pair<Object, String>>(3);
-               requires.put(role, require);
-            }
+         if (type == elementType) { // normal simple case
+            List<Pair<Object, String>> require = findOrCreateList(requires, role);
 
             if (roleHints.length == 0) {
                require.add(new Pair<Object, String>("default", field.getName()));
             } else if (roleHints.length == 1) {
                require.add(new Pair<Object, String>(roleHints[0], field.getName()));
+            } else {
+               require.add(new Pair<Object, String>(roleHints, field.getName()));
             }
-         } else {
-            List<Pair<Object, String>> require = requires.get(role);
+         } else { // List, Set or Array
+            List<Pair<Object, String>> require = findOrCreateList(requires, role);
 
-            if (require == null) {
-               require = new ArrayList<Pair<Object, String>>(3);
-               requires.put(role, require);
+            if (roleHints.length == 0) {
+               require.add(new Pair<Object, String>(new String[0], field.getName()));
+            } else {
+               require.add(new Pair<Object, String>(roleHints, field.getName()));
             }
-
-            require.add(new Pair<Object, String>(roleHints, field.getName()));
          }
       }
 
@@ -202,6 +190,17 @@ public abstract class AbstractResourceConfigurator implements Configurator {
       return new Configuration(name);
    }
 
+   private static <S, T> List<T> findOrCreateList(Map<S, List<T>> map, S key) {
+      List<T> list = map.get(key);
+
+      if (list == null) {
+         list = new ArrayList<T>(3);
+         map.put(key, list);
+      }
+
+      return list;
+   }
+
    protected static void generatePlexusComponentsXmlFile(AbstractResourceConfigurator rc) {
       File file = rc.getConfigurationFile();
 
@@ -215,13 +214,17 @@ public abstract class AbstractResourceConfigurator implements Configurator {
       }
    }
 
-   private static Class<?> getElementType(Type type, Field field) {
+   private static Class<?> getElementType(Field field) {
+      Type type = field.getGenericType();
+      Class<?> clazz = field.getType();
+
       if (type instanceof ParameterizedType) {
          return (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[0];
+      } else if (clazz.isArray()) {
+         return clazz.getComponentType();
+      } else {
+         return field.getType();
       }
-
-      throw new IllegalStateException(String.format("Unsupported type(%s) of field(%s) of %s, use List instead!", type,
-            field.getName(), field.getDeclaringClass()));
    }
 
    protected File getBaseDir() {
