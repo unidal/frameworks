@@ -3,8 +3,12 @@ package org.unidal.test.user.dal;
 import org.unidal.dal.jdbc.DalException;
 import org.unidal.dal.jdbc.QueryEngine;
 import org.unidal.dal.jdbc.Readset;
+import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
 
+@Named
 public class UserDao {
+   @Inject
 	private QueryEngine m_queryEngine;
 
 	public User createLocal() {

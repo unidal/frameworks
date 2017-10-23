@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.unidal.lookup.annotation.Named;
 
-@Named(type = TableProvider.class)
+@Named(type = TableProvider.class, value="undefined")
 public class SimpleTableProvider implements TableProvider {
    private String m_dataSourceName;
 

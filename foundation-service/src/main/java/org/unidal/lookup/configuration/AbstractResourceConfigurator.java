@@ -33,7 +33,7 @@ public abstract class AbstractResourceConfigurator implements Configurator {
    }
 
    @SuppressWarnings("unchecked")
-   protected static <T> Component A(Class<T> clazz, String enumField) {
+   protected static <T> Component A(Class<T> clazz, String roleHint) {
       Named named = clazz.getAnnotation(Named.class);
 
       if (named == null) {
@@ -42,7 +42,6 @@ public abstract class AbstractResourceConfigurator implements Configurator {
       }
 
       Class<?> role = named.type();
-      String roleHint = named.value();
 
       if (role == Named.Default.class) {
          role = clazz;
@@ -53,19 +52,19 @@ public abstract class AbstractResourceConfigurator implements Configurator {
          }
       }
 
-      if (enumField != null) {
-         roleHint = enumField;
-      } else if (roleHint.length() == 0) {
+      if (roleHint != null && roleHint.length() == 0) {
          roleHint = null;
       }
 
       Component component = new Component((Class<Object>) role, roleHint, clazz);
 
-      if (enumField != null) {
+      if (roleHint != null) {
          if (clazz.isEnum()) {
             component.is(ENUM);
          }
-      } else if (named.instantiationStrategy().length() > 0) {
+      }
+
+      if (named.instantiationStrategy().length() > 0) {
          component.is(named.instantiationStrategy());
       }
 
@@ -108,18 +107,18 @@ public abstract class AbstractResourceConfigurator implements Configurator {
 
       return component;
    }
-//
-//   protected static <T> Component C(Class<T> role) {
-//      return new Component(role);
-//   }
-//
-//   protected static <T> Component C(Class<T> role, Class<? extends T> implementationClass) {
-//      return new Component(role, implementationClass);
-//   }
-//
-//   protected static <T> Component C(Class<T> role, Object roleHint, Class<? extends T> implementationClass) {
-//      return new Component(role, roleHint, implementationClass);
-//   }
+   //
+   // protected static <T> Component C(Class<T> role) {
+   // return new Component(role);
+   // }
+   //
+   // protected static <T> Component C(Class<T> role, Class<? extends T> implementationClass) {
+   // return new Component(role, implementationClass);
+   // }
+   //
+   // protected static <T> Component C(Class<T> role, Object roleHint, Class<? extends T> implementationClass) {
+   // return new Component(role, roleHint, implementationClass);
+   // }
 
    private static void collectField(Class<?> clazz, Field field, Map<Class<?>, List<Pair<Object, String>>> requires,
          Map<String, String> attributes) {

@@ -2,10 +2,12 @@ package org.unidal.dal.jdbc;
 
 import org.unidal.dal.jdbc.entity.EntityInfoManager;
 import org.unidal.lookup.ContainerHolder;
+import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.extension.Initializable;
 import org.unidal.lookup.extension.InitializationException;
 
 public abstract class AbstractDao extends ContainerHolder implements Initializable {
+   @Inject
    private QueryEngine m_queryEngine;
 
    protected QueryEngine getQueryEngine() {
