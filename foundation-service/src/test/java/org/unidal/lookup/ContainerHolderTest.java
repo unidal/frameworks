@@ -12,11 +12,37 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
 import org.unidal.lookup.extension.RoleHintEnabled;
 
 public class ContainerHolderTest extends ComponentTestCase {
+   @Before
+   public void before() throws Exception {
+      define(MockContainer.class);
+      define(MockObject.class);
+      define(MockObject2.class);
+      define(MockObject3.class);
+
+      define(MockRoleHintObject.class, "a");
+      define(MockRoleHintObject.class, "b");
+      define(MockRoleHintObject.class, "c");
+
+      for (MockEnum value : MockEnum.values()) {
+         define(MockEnum.class, value.name());
+      }
+
+      define(BadObject.class);
+      define(BadObjectHolder.class);
+
+      defineComponent(Queue.class, "non-blocking", LinkedList.class);
+      defineComponent(Queue.class, "blocking", LinkedBlockingQueue.class);
+      defineComponent(List.class, "array", ArrayList.class);
+      defineComponent(Map.class, "hash", HashMap.class);
+   }
+
    @Test
    public void testBadObject() {
       try {
@@ -112,8 +138,9 @@ public class ContainerHolderTest extends ComponentTestCase {
       MockInterface o3 = container.lookup(MockInterface.class, "third");
       Map<String, MockInterface> map = container.lookupMap(MockInterface.class);
 
-      Assert.assertEquals("{default=MockObject, secondary=MockObject2, third=MockObject3,"
-            + " FIELD1=FIELD1, FIELD2=FIELD2}", map.toString());
+      Assert.assertEquals(
+            "{default=MockObject, secondary=MockObject2, third=MockObject3," + " FIELD1=FIELD1, FIELD2=FIELD2}",
+            map.toString());
       Assert.assertSame(o1, map.get("default"));
       Assert.assertSame(o2, map.get("secondary"));
       Assert.assertSame(o3, map.get("third"));
@@ -147,12 +174,14 @@ public class ContainerHolderTest extends ComponentTestCase {
       }
    }
 
+   @Named
    public static class BadObject {
       public BadObject() {
          throw new IllegalStateException("Unkown reason!");
       }
    }
 
+   @Named
    public static class BadObjectHolder {
       @Inject
       private BadObject m_badObject;
@@ -162,9 +191,11 @@ public class ContainerHolderTest extends ComponentTestCase {
       }
    }
 
+   @Named
    public static class MockContainer extends ContainerHolder {
    }
 
+   @Named(type = MockInterface.class)
    public enum MockEnum implements MockInterface, RoleHintEnabled {
       FIELD1,
 
@@ -192,6 +223,7 @@ public class ContainerHolderTest extends ComponentTestCase {
    public static interface MockInterface {
    }
 
+   @Named(type = MockInterface.class)
    public static class MockObject implements MockInterface {
       @Override
       public String toString() {
@@ -199,6 +231,7 @@ public class ContainerHolderTest extends ComponentTestCase {
       }
    }
 
+   @Named(type = MockInterface.class, value = "secondary")
    public static class MockObject2 implements MockInterface {
       @Override
       public String toString() {
@@ -206,6 +239,7 @@ public class ContainerHolderTest extends ComponentTestCase {
       }
    }
 
+   @Named(type = MockInterface.class, value = "third")
    public static class MockObject3 implements MockInterface {
       @Override
       public String toString() {
@@ -213,6 +247,7 @@ public class ContainerHolderTest extends ComponentTestCase {
       }
    }
 
+   @Named
    public static class MockRoleHintObject implements MockInterface, RoleHintEnabled {
       private String m_roleHint;
 

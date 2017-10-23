@@ -273,15 +273,20 @@ public class ConfiguratorTest {
    }
 
    interface LegacyCases {
+      @Named(type = LT1.class)
       public static class LC11 implements LT1 {
       }
 
+      @Named(type = LT1.class, value = "secondary")
       public static class LC12 implements LT1 {
       }
 
+      @Named(type = LT3.class)
       public static class LC31 implements LT3, Initializable {
+         @Inject
          private LT1 m_lt1;
 
+         @Inject
          private LT2 m_lt2;
 
          public LT1 getLt1() {
@@ -299,9 +304,12 @@ public class ConfiguratorTest {
          }
       }
 
+      @Named(type = LT3.class, value = "secondary")
       public static class LC32 implements LT3, RoleHintEnabled, Initializable {
+         @Inject
          private LT1 m_first;
 
+         @Inject("secondary")
          private LT1 m_second;
 
          private String m_type;
@@ -357,7 +365,9 @@ public class ConfiguratorTest {
          }
       }
 
+      @Named(type = LT3.class, value = "third")
       public static class LC33 implements LT3, Initializable {
+         @Inject({ "default", "secondary" })
          private List<LT1> m_list;
 
          public List<LT1> getList() {
@@ -370,9 +380,11 @@ public class ConfiguratorTest {
          }
       }
 
+      @Named(type = LT4.class, value = Named.PER_LOOKUP, instantiationStrategy = Named.PER_LOOKUP)
       public static class LC41 implements LT4 {
       }
 
+      @Named(type = LT4.class)
       public enum LC42 implements LT4 {
          E1, E2;
       }
@@ -382,21 +394,16 @@ public class ConfiguratorTest {
          public List<Component> defineComponents() {
             List<Component> all = new ArrayList<Component>();
 
-            all.add(C(LT1.class, LC11.class));
-            all.add(C(LT1.class, "secondary", LC12.class));
-            all.add(C(LT2.class));
-            all.add(C(LT3.class, LC31.class) //
-                  .req(LT1.class, LT2.class));
-            all.add(C(LT3.class, "secondary", LC32.class) //
-                  .req(LT1.class, "default", "m_first") //
-                  .req(LT1.class, "secondary", "m_second") //
-                  .config(E("type").value("test"), E("verbose").value("true")));
-            all.add(C(LT3.class, "third", LC33.class) //
-                  .req(LT1.class, new String[] { "default", "secondary" }, "m_list"));
-            all.add(C(LT4.class, PER_LOOKUP, LC41.class).is(PER_LOOKUP));
+            all.add(A(LC11.class));
+            all.add(A(LC12.class));
+            all.add(A(LT2.class));
+            all.add(A(LC31.class));
+            all.add(A(LC32.class).config(E("type").value("test"), E("verbose").value("true")));
+            all.add(A(LC33.class));
+            all.add(A(LC41.class));
 
             for (LC42 value : LC42.values()) {
-               all.add(C(LT4.class, value.name(), LC42.class).is(ENUM));
+               all.add(A(LC42.class, value.name()));
             }
 
             return all;
@@ -406,6 +413,7 @@ public class ConfiguratorTest {
       public interface LT1 {
       }
 
+      @Named
       public static class LT2 {
       }
 

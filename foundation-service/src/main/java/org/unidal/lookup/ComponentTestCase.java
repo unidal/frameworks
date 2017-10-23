@@ -75,6 +75,8 @@ public abstract class ComponentTestCase extends ContainerHolder {
 
       if (named.instantiationStrategy().length() > 0) {
          component.is(named.instantiationStrategy());
+      } else if (implementation.isEnum()) {
+         component.is(Named.ENUM);
       }
 
       defineDependencies(component, implementation);
