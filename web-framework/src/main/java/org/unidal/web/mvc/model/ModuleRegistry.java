@@ -3,10 +3,12 @@ package org.unidal.web.mvc.model;
 import java.util.List;
 
 import org.unidal.lookup.ContainerHolder;
+import org.unidal.lookup.annotation.Named;
 import org.unidal.lookup.extension.Initializable;
 import org.unidal.lookup.extension.InitializationException;
 import org.unidal.web.mvc.Module;
 
+@Named
 public class ModuleRegistry extends ContainerHolder implements Initializable {
    private String m_defaultModuleName;
 

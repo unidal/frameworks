@@ -290,6 +290,11 @@
 		<component>
 			<role>org.unidal.dal.jdbc.raw.RawDao</role>
 			<implementation>org.unidal.dal.jdbc.raw.RawDao</implementation>
+			<requirements>
+				<requirement>
+					<role>org.unidal.dal.jdbc.QueryEngine</role>
+				</requirement>
+			</requirements>
 		</component>
 		<component>
 			<role>org.unidal.dal.jdbc.test.TableSchemaBuilder</role>

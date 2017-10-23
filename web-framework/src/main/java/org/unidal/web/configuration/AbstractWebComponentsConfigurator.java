@@ -19,7 +19,7 @@ import org.unidal.web.mvc.model.ModuleRegistry;
 
 public abstract class AbstractWebComponentsConfigurator extends AbstractResourceConfigurator {
    protected void defineInjectableComponent(List<Component> all, Class<?> clazz) {
-      Component component = C(clazz);
+      Component component = A(clazz);
 
       if (!shouldAutoConfigure(clazz) || all.contains(component)) {
          return;
@@ -64,7 +64,7 @@ public abstract class AbstractWebComponentsConfigurator extends AbstractResource
    }
 
    protected void defineModule(List<Component> all, Class<? extends Module> moduleClass) {
-      Component module = C(Module.class, moduleClass.getName(), moduleClass);
+      Component module = A(moduleClass);
       List<Class<?>> injectableClasses = new ArrayList<Class<?>>();
       ModulePagesMeta pagesMeta = moduleClass.getAnnotation(ModulePagesMeta.class);
 
@@ -94,9 +94,9 @@ public abstract class AbstractWebComponentsConfigurator extends AbstractResource
    protected void defineModuleRegistry(List<Component> all, Class<? extends Module> defaultModuleClass,
          Class<? extends Module>... moduleClasses) {
       if (defaultModuleClass != null) {
-         all.add(C(ModuleRegistry.class).config(E("defaultModule").value(defaultModuleClass.getName())));
+         all.add(A(ModuleRegistry.class).config(E("defaultModule").value(defaultModuleClass.getName())));
       } else {
-         all.add(C(ModuleRegistry.class));
+         all.add(A(ModuleRegistry.class));
       }
 
       for (Class<? extends Module> moduleClass : moduleClasses) {
