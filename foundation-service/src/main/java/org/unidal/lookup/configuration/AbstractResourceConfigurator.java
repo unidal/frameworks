@@ -7,11 +7,17 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.unidal.helper.Files;
+import org.unidal.helper.Reflects;
+import org.unidal.helper.Reflects.IMemberFilter;
 import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.annotation.InjectAttribute;
 import org.unidal.lookup.annotation.Named;
@@ -173,7 +179,19 @@ public abstract class AbstractResourceConfigurator implements Configurator {
 
    private static void collectFields(Class<?> clazz, Map<Class<?>, List<Pair<Object, String>>> requires,
          Map<String, String> attributes) {
-      Field[] fields = clazz.getDeclaredFields();
+      List<Field> fields = Reflects.forField().getDeclaredFields(clazz, new IMemberFilter<Field>() {
+         @Override
+         public boolean filter(Field member) {
+            return member.isAnnotationPresent(Inject.class) || member.isAnnotationPresent(InjectAttribute.class);
+         }
+      });
+
+      Collections.sort(fields, new Comparator<Field>() {
+         @Override
+         public int compare(Field o1, Field o2) {
+            return o1.getName().compareTo(o2.getName());
+         }
+      });
 
       for (Field field : fields) {
          collectField(clazz, field, requires, attributes);
@@ -218,13 +236,25 @@ public abstract class AbstractResourceConfigurator implements Configurator {
       Type type = field.getGenericType();
       Class<?> clazz = field.getType();
 
-      if (type instanceof ParameterizedType) {
-         return (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[0];
-      } else if (clazz.isArray()) {
+      if (clazz.isArray()) {
          return clazz.getComponentType();
       } else {
-         return field.getType();
+         if (type instanceof ParameterizedType) {
+            Type[] args = ((ParameterizedType) type).getActualTypeArguments();
+
+            if (clazz == List.class || clazz == Set.class || clazz == Collection.class) {
+               if (args.length == 1) {
+                  return (Class<?>) args[0];
+               }
+            } else if (clazz == Map.class) {
+               if (args.length == 2) {
+                  return (Class<?>) args[1];
+               }
+            }
+         }
       }
+
+      return field.getType();
    }
 
    protected File getBaseDir() {

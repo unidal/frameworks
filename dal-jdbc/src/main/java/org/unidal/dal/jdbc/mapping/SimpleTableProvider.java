@@ -2,6 +2,9 @@ package org.unidal.dal.jdbc.mapping;
 
 import java.util.Map;
 
+import org.unidal.lookup.annotation.Named;
+
+@Named(type = TableProvider.class)
 public class SimpleTableProvider implements TableProvider {
    private String m_dataSourceName;
 

@@ -13,6 +13,7 @@ import org.unidal.dal.jdbc.engine.QueryContext;
 import org.unidal.dal.jdbc.entity.EntityInfoManager;
 import org.unidal.dal.jdbc.query.QueryExecutor;
 import org.unidal.lookup.ComponentTestCase;
+import org.unidal.lookup.annotation.Named;
 import org.unidal.test.user.dal.User;
 import org.unidal.test.user.dal.UserDao;
 import org.unidal.test.user.dal.UserEntity;
@@ -27,8 +28,8 @@ public class TableProviderTest extends ComponentTestCase {
 
    @Test
    public void testUser() throws Exception {
-      defineComponent(TableProvider.class, "user", MockUserTableProvider.class);
-      defineComponent(QueryExecutor.class, MockQueryExecutor.class);
+      define(MockUserTableProvider.class);
+      define(MockQueryExecutor.class);
 
       EntityInfoManager manager = lookup(EntityInfoManager.class);
       UserDao dao = lookup(UserDao.class);
@@ -43,6 +44,7 @@ public class TableProviderTest extends ComponentTestCase {
             executor.getSql());
    }
 
+   @Named(type = QueryExecutor.class)
    public static class MockQueryExecutor implements QueryExecutor {
       private String m_sql;
 
@@ -71,6 +73,7 @@ public class TableProviderTest extends ComponentTestCase {
       }
    }
 
+   @Named(type = TableProvider.class, value = "user")
    public static class MockUserTableProvider implements TableProvider {
       private String m_dataSourceName = "user";
 

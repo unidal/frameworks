@@ -1,17 +1,13 @@
 package org.unidal.lookup.container.model.transform;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import org.xml.sax.Attributes;
-
 import org.unidal.lookup.container.model.entity.Any;
 import org.unidal.lookup.container.model.entity.ComponentModel;
 import org.unidal.lookup.container.model.entity.ConfigurationModel;
 import org.unidal.lookup.container.model.entity.PlexusModel;
 import org.unidal.lookup.container.model.entity.RequirementModel;
+import org.xml.sax.Attributes;
 
 public class DefaultSaxMaker implements IMaker<Attributes> {
-
    @Override
    public Any buildAny(Attributes attributes) {
       throw new UnsupportedOperationException("Not needed!");

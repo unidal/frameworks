@@ -12,7 +12,9 @@ import org.unidal.dal.jdbc.datasource.DataSource;
 import org.unidal.dal.jdbc.datasource.DataSourceDescriptor;
 import org.unidal.dal.jdbc.datasource.DataSourceManager;
 import org.unidal.dal.jdbc.datasource.JdbcDataSourceDescriptor;
+import org.unidal.lookup.annotation.Named;
 
+@Named(type = DataSourceManager.class)
 public class TestDataSourceManager implements DataSourceManager {
    private Map<String, TestDataSource> m_dataSources = new LinkedHashMap<String, TestDataSource>();
 

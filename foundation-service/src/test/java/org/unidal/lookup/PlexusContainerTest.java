@@ -2,14 +2,16 @@ package org.unidal.lookup;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
 
 @SuppressWarnings("unused")
 public class PlexusContainerTest extends ComponentTestCase {
    @Test
    public void testAmbiguousFields() throws Exception {
-      defineComponent(A.class).req(B.class);
-      defineComponent(B.class).req(C.class);
-      defineComponent(C.class);
+      define(A.class).req(B.class);
+      define(B.class).req(C.class);
+      define(C.class);
 
       try {
          lookup(A.class);
@@ -28,11 +30,10 @@ public class PlexusContainerTest extends ComponentTestCase {
 
    @Test
    public void testBadRequirement() throws Exception {
-      defineComponent(C.class);
-      defineComponent(A.class).req(C.class);
+      define(C.class).req(D.class);
 
       try {
-         lookup(A.class);
+         lookup(C.class);
       } catch (Exception e) {
          Throwable cause = e.getCause();
 
@@ -48,7 +49,7 @@ public class PlexusContainerTest extends ComponentTestCase {
 
    @Test
    public void testMissingRequirement() throws Exception {
-      defineComponent(A.class).req(B.class);
+      define(A.class);
 
       try {
          lookup(A.class);
@@ -65,19 +66,26 @@ public class PlexusContainerTest extends ComponentTestCase {
       }
    }
 
+   @Named
    public static class A {
+      @Inject
       private B m_b;
    }
 
+   @Named
    public static class B {
+      @Inject
       private C m_c1;
 
+      @Inject
       private C m_c2;
-
-      public B() {
-      }
    }
 
+   @Named
    public static class C {
+   }
+   
+   @Named
+   public static class D {
    }
 }

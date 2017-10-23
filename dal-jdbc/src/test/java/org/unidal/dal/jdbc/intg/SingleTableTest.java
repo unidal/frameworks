@@ -10,7 +10,6 @@ import org.unidal.dal.jdbc.QueryEngine;
 import org.unidal.dal.jdbc.datasource.DataSourceException;
 import org.unidal.dal.jdbc.entity.EntityInfoManager;
 import org.unidal.dal.jdbc.mapping.SimpleTableProvider;
-import org.unidal.dal.jdbc.mapping.TableProvider;
 import org.unidal.dal.jdbc.test.JdbcTestCase;
 import org.unidal.test.user.address.dal.UserAddressEntity;
 import org.unidal.test.user.dal.User;
@@ -20,7 +19,7 @@ import org.unidal.test.user.dal.UserEntity;
 public class SingleTableTest extends JdbcTestCase {
    @Before
    public void before() throws Exception {
-      defineComponent(TableProvider.class, "user", SimpleTableProvider.class) //
+      define(SimpleTableProvider.class, "user") //
             .config("data-source-name", "user") //
             .config("physical-table-name", "user");
 

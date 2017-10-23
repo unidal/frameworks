@@ -9,16 +9,16 @@ import org.unidal.formatter.FormatterException;
 import org.unidal.initialization.ModuleInitializer;
 import org.unidal.initialization.ModuleManager;
 import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
 
 public class ComponentTestCaseTest extends ComponentTestCase {
    @Test
    public void testComponentOverride() throws Exception {
-      defineComponent(Formatter.class, Date.class.getName(), MockFormatter.class);
+      define(MockFormatter.class);
 
       Assert.assertEquals(MockFormatter.class, lookup(Formatter.class, Date.class.getName()).getClass());
 
-      defineComponent(MockComponent.class) //
-            .req(Formatter.class, Date.class.getName()) //
+      define(MockComponent.class) //
             .config("name", "mock") //
             .config("verbose", "true");
 
@@ -47,8 +47,9 @@ public class ComponentTestCaseTest extends ComponentTestCase {
       Assert.assertSame(this, lookup(getClass()));
    }
 
+   @Named
    public static class MockComponent {
-      @Inject
+      @Inject("java.util.Date")
       private Formatter<Date> m_formatter;
 
       private boolean m_verbose;
@@ -76,6 +77,7 @@ public class ComponentTestCaseTest extends ComponentTestCase {
       }
    }
 
+   @Named(type = Formatter.class, value = "java.util.Date")
    public static class MockFormatter implements Formatter<Date> {
       @Override
       public String format(String format, Date object) throws FormatterException {

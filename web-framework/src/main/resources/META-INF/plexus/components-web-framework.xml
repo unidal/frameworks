@@ -53,10 +53,10 @@
 			<implementation>org.unidal.web.mvc.lifecycle.DefaultRequestLifecycle</implementation>
 			<requirements>
 				<requirement>
-					<role>org.unidal.web.mvc.lifecycle.RequestContextBuilder</role>
+					<role>org.unidal.web.mvc.lifecycle.ActionHandlerManager</role>
 				</requirement>
 				<requirement>
-					<role>org.unidal.web.mvc.lifecycle.ActionHandlerManager</role>
+					<role>org.unidal.web.mvc.lifecycle.RequestContextBuilder</role>
 				</requirement>
 			</requirements>
 		</component>
@@ -92,13 +92,13 @@
 			<requirements>
 				<requirement>
 					<role>org.unidal.web.mvc.view.model.ModelBuilder</role>
-					<role-hint>xml</role-hint>
-					<field-name>m_xmlBuilder</field-name>
+					<role-hint>json</role-hint>
+					<field-name>m_jsonBuilder</field-name>
 				</requirement>
 				<requirement>
 					<role>org.unidal.web.mvc.view.model.ModelBuilder</role>
-					<role-hint>json</role-hint>
-					<field-name>m_jsonBuilder</field-name>
+					<role-hint>xml</role-hint>
+					<field-name>m_xmlBuilder</field-name>
 				</requirement>
 			</requirements>
 		</component>

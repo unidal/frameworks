@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -189,6 +190,9 @@ public class ConfiguratorTest {
          private Collection<AT1> m_collection;
 
          @Inject
+         private Map<String, AT1> m_map;
+
+         @Inject
          private AT1[] m_array;
 
          @Inject({ "default", "secondary" })
@@ -201,6 +205,9 @@ public class ConfiguratorTest {
          private Collection<AT1> m_collection2;
 
          @Inject({ "default", "secondary" })
+         private Map<String, AT1> m_map2;
+
+         @Inject({ "default", "secondary" })
          private AT1[] m_array2;
 
          @Override
@@ -208,11 +215,13 @@ public class ConfiguratorTest {
             Assert.assertEquals(3, m_list.size());
             Assert.assertEquals(3, m_set.size());
             Assert.assertEquals(3, m_collection.size());
+            Assert.assertEquals(3, m_map.size());
             Assert.assertEquals(3, m_array.length);
 
             Assert.assertEquals(2, m_list2.size());
             Assert.assertEquals(2, m_set2.size());
             Assert.assertEquals(2, m_collection2.size());
+            Assert.assertEquals(2, m_map2.size());
             Assert.assertEquals(2, m_array2.length);
          }
       }

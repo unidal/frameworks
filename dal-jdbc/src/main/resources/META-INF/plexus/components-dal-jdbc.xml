@@ -21,10 +21,10 @@
 			<implementation>org.unidal.dal.jdbc.query.mysql.MysqlReadHandler</implementation>
 			<requirements>
 				<requirement>
-					<role>org.unidal.dal.jdbc.transaction.TransactionManager</role>
+					<role>org.unidal.dal.jdbc.entity.DataObjectAssembly</role>
 				</requirement>
 				<requirement>
-					<role>org.unidal.dal.jdbc.entity.DataObjectAssembly</role>
+					<role>org.unidal.dal.jdbc.transaction.TransactionManager</role>
 				</requirement>
 				<requirement>
 					<role>org.unidal.dal.jdbc.entity.DataObjectAccessor</role>
@@ -61,10 +61,10 @@
 					<role>org.unidal.dal.jdbc.query.QueryExecutor</role>
 				</requirement>
 				<requirement>
-					<role>org.unidal.dal.jdbc.transaction.TransactionManager</role>
+					<role>org.unidal.dal.jdbc.query.QueryResolver</role>
 				</requirement>
 				<requirement>
-					<role>org.unidal.dal.jdbc.query.QueryResolver</role>
+					<role>org.unidal.dal.jdbc.transaction.TransactionManager</role>
 				</requirement>
 			</requirements>
 		</component>
@@ -130,10 +130,10 @@
 			<implementation>org.unidal.dal.jdbc.transaction.DefaultTransactionManager</implementation>
 			<requirements>
 				<requirement>
-					<role>org.unidal.dal.jdbc.mapping.TableProviderManager</role>
+					<role>org.unidal.dal.jdbc.datasource.DataSourceManager</role>
 				</requirement>
 				<requirement>
-					<role>org.unidal.dal.jdbc.datasource.DataSourceManager</role>
+					<role>org.unidal.dal.jdbc.mapping.TableProviderManager</role>
 				</requirement>
 			</requirements>
 		</component>
@@ -190,10 +190,10 @@
 			<implementation>org.unidal.dal.jdbc.query.token.resolver.FieldTokenResolver</implementation>
 			<requirements>
 				<requirement>
-					<role>org.unidal.dal.jdbc.entity.EntityInfoManager</role>
+					<role>org.unidal.dal.jdbc.query.token.resolver.ExpressionResolver</role>
 				</requirement>
 				<requirement>
-					<role>org.unidal.dal.jdbc.query.token.resolver.ExpressionResolver</role>
+					<role>org.unidal.dal.jdbc.entity.EntityInfoManager</role>
 				</requirement>
 				<requirement>
 					<role>org.unidal.dal.jdbc.query.QueryNaming</role>
@@ -206,10 +206,10 @@
 			<implementation>org.unidal.dal.jdbc.query.token.resolver.FieldsTokenResolver</implementation>
 			<requirements>
 				<requirement>
-					<role>org.unidal.dal.jdbc.entity.EntityInfoManager</role>
+					<role>org.unidal.dal.jdbc.query.token.resolver.ExpressionResolver</role>
 				</requirement>
 				<requirement>
-					<role>org.unidal.dal.jdbc.query.token.resolver.ExpressionResolver</role>
+					<role>org.unidal.dal.jdbc.entity.EntityInfoManager</role>
 				</requirement>
 				<requirement>
 					<role>org.unidal.dal.jdbc.query.QueryNaming</role>

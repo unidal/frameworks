@@ -4,8 +4,11 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.unidal.converter.ConverterManager;
@@ -279,7 +282,7 @@ public enum ComponentHandlers implements LifecycleHandler {
          List<String> roleHints = hints.getValue();
          Object value;
 
-         if (type.isAssignableFrom(ArrayList.class)) { // List
+         if (type == List.class || type == Collection.class) { // List or Collection
             if (roleHints.isEmpty()) {
                value = new ArrayList<Object>(ctx.lookupList(role));
             } else {
@@ -318,7 +321,21 @@ public enum ComponentHandlers implements LifecycleHandler {
 
                value = dependencies;
             }
-         } else if (type.isAssignableFrom(HashSet.class)) { // Set
+         } else if (type == Map.class) { // Map
+            if (roleHints.isEmpty()) {
+               value = ctx.lookupMap(role);
+            } else {
+               Map<String, Object> dependencies = new LinkedHashMap<String, Object>();
+
+               for (String hint : roleHints) {
+                  Object dependency = ctx.lookup(role, hint);
+
+                  dependencies.put(hint, dependency);
+               }
+
+               value = dependencies;
+            }
+         } else if (type == Set.class) { // Set
             if (roleHints.isEmpty()) {
                value = new HashSet<Object>(ctx.lookupList(role));
             } else {

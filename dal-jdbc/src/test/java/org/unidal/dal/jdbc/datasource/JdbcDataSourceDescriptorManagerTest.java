@@ -9,11 +9,12 @@ import org.unidal.dal.jdbc.datasource.model.entity.DataSourceDef;
 import org.unidal.dal.jdbc.datasource.model.entity.DataSourcesDef;
 import org.unidal.dal.jdbc.datasource.model.entity.PropertiesDef;
 import org.unidal.lookup.ComponentTestCase;
+import org.unidal.lookup.annotation.Named;
 
 public class JdbcDataSourceDescriptorManagerTest extends ComponentTestCase {
    private void checkNames(JdbcDataSourceDescriptorManager manager, String... expected) {
       List<String> actual = manager.getDataSourceNames();
-      
+
       Assert.assertEquals(Arrays.asList(expected).toString(), actual.toString());
    }
 
@@ -25,8 +26,8 @@ public class JdbcDataSourceDescriptorManagerTest extends ComponentTestCase {
 
    @Test
    public void testDynamic() throws Exception {
-      defineComponent(DataSourceProvider.class, "overwrite", OverwriteMockDataSourceProvider.class);
-      defineComponent(DataSourceProvider.class, "mock", MockDataSourceProvider.class);
+      define(OverwriteMockDataSourceProvider.class);
+      define(MockDataSourceProvider.class);
 
       JdbcDataSourceDescriptorManager manager = lookup(JdbcDataSourceDescriptorManager.class);
       JdbcDataSourceDescriptor mock1 = manager.getDescriptor("mock1");
@@ -56,6 +57,7 @@ public class JdbcDataSourceDescriptorManagerTest extends ComponentTestCase {
       checkNames(manager, "jdbc-dal", "user", "history");
    }
 
+   @Named(type = DataSourceProvider.class, value = "mock")
    public static class MockDataSourceProvider implements DataSourceProvider {
       @Override
       public DataSourcesDef defineDatasources() {
@@ -71,6 +73,7 @@ public class JdbcDataSourceDescriptorManagerTest extends ComponentTestCase {
       }
    }
 
+   @Named(type = DataSourceProvider.class, value = "overwrite")
    public static class OverwriteMockDataSourceProvider implements DataSourceProvider {
       @Override
       public DataSourcesDef defineDatasources() {

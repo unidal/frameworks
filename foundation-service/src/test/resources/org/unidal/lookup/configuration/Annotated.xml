@@ -71,23 +71,11 @@
 			<requirements>
 				<requirement>
 					<role>org.unidal.lookup.configuration.ConfiguratorTest$AnnotatedCases$AT1</role>
-					<field-name>m_list</field-name>
-				</requirement>
-				<requirement>
-					<role>org.unidal.lookup.configuration.ConfiguratorTest$AnnotatedCases$AT1</role>
-					<field-name>m_set</field-name>
-				</requirement>
-				<requirement>
-					<role>org.unidal.lookup.configuration.ConfiguratorTest$AnnotatedCases$AT1</role>
-					<field-name>m_collection</field-name>
-				</requirement>
-				<requirement>
-					<role>org.unidal.lookup.configuration.ConfiguratorTest$AnnotatedCases$AT1</role>
 					<field-name>m_array</field-name>
 				</requirement>
 				<requirement>
 					<role>org.unidal.lookup.configuration.ConfiguratorTest$AnnotatedCases$AT1</role>
-					<field-name>m_list2</field-name>
+					<field-name>m_array2</field-name>
 					<role-hints>
 						<role-hint>default</role-hint>
 						<role-hint>secondary</role-hint>
@@ -95,11 +83,7 @@
 				</requirement>
 				<requirement>
 					<role>org.unidal.lookup.configuration.ConfiguratorTest$AnnotatedCases$AT1</role>
-					<field-name>m_set2</field-name>
-					<role-hints>
-						<role-hint>default</role-hint>
-						<role-hint>secondary</role-hint>
-					</role-hints>
+					<field-name>m_collection</field-name>
 				</requirement>
 				<requirement>
 					<role>org.unidal.lookup.configuration.ConfiguratorTest$AnnotatedCases$AT1</role>
@@ -111,7 +95,35 @@
 				</requirement>
 				<requirement>
 					<role>org.unidal.lookup.configuration.ConfiguratorTest$AnnotatedCases$AT1</role>
-					<field-name>m_array2</field-name>
+					<field-name>m_list</field-name>
+				</requirement>
+				<requirement>
+					<role>org.unidal.lookup.configuration.ConfiguratorTest$AnnotatedCases$AT1</role>
+					<field-name>m_list2</field-name>
+					<role-hints>
+						<role-hint>default</role-hint>
+						<role-hint>secondary</role-hint>
+					</role-hints>
+				</requirement>
+				<requirement>
+					<role>org.unidal.lookup.configuration.ConfiguratorTest$AnnotatedCases$AT1</role>
+					<field-name>m_map</field-name>
+				</requirement>
+				<requirement>
+					<role>org.unidal.lookup.configuration.ConfiguratorTest$AnnotatedCases$AT1</role>
+					<field-name>m_map2</field-name>
+					<role-hints>
+						<role-hint>default</role-hint>
+						<role-hint>secondary</role-hint>
+					</role-hints>
+				</requirement>
+				<requirement>
+					<role>org.unidal.lookup.configuration.ConfiguratorTest$AnnotatedCases$AT1</role>
+					<field-name>m_set</field-name>
+				</requirement>
+				<requirement>
+					<role>org.unidal.lookup.configuration.ConfiguratorTest$AnnotatedCases$AT1</role>
+					<field-name>m_set2</field-name>
 					<role-hints>
 						<role-hint>default</role-hint>
 						<role-hint>secondary</role-hint>
