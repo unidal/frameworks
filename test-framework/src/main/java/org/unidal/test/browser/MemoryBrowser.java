@@ -4,7 +4,9 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import org.unidal.helper.Files;
+import org.unidal.lookup.annotation.Named;
 
+@Named(type = Browser.class, value = "memory", instantiationStrategy = Named.PER_LOOKUP)
 public class MemoryBrowser implements Browser {
    private StringBuilder m_content = new StringBuilder();
 
@@ -58,7 +60,7 @@ public class MemoryBrowser implements Browser {
    public String getContent() {
       return m_content.toString();
    }
-   
+
    @Override
    public String toString() {
       return m_content.toString();

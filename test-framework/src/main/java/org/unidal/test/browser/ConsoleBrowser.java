@@ -4,7 +4,9 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import org.unidal.helper.Files;
+import org.unidal.lookup.annotation.Named;
 
+@Named(type = Browser.class, value = "console")
 public class ConsoleBrowser implements Browser {
    private boolean m_silent;
 

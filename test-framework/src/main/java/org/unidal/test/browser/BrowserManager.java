@@ -3,7 +3,9 @@ package org.unidal.test.browser;
 import java.net.URL;
 
 import org.unidal.lookup.ContainerHolder;
+import org.unidal.lookup.annotation.Named;
 
+@Named
 public class BrowserManager extends ContainerHolder {
 	public void display(String html) {
 		display(html, "utf-8", BrowserType.DEFAULT);

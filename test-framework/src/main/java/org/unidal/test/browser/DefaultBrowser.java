@@ -1,7 +1,9 @@
 package org.unidal.test.browser;
 
+import org.unidal.lookup.annotation.Named;
 import org.unidal.test.env.Platform;
 
+@Named(type = Browser.class, value = "default")
 public class DefaultBrowser extends AbstractBrowser {
    @Override
    public String[] getCommandLine(String url) {

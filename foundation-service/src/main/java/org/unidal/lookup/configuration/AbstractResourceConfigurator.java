@@ -52,7 +52,11 @@ public abstract class AbstractResourceConfigurator implements Configurator {
          }
       }
 
-      if (roleHint != null && roleHint.length() == 0) {
+      if (roleHint == null) {
+         roleHint = named.value();
+      }
+
+      if (roleHint.length() == 0) {
          roleHint = null;
       }
 

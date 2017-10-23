@@ -5,9 +5,7 @@ import java.util.List;
 
 import org.unidal.lookup.configuration.AbstractResourceConfigurator;
 import org.unidal.lookup.configuration.Component;
-import org.unidal.test.browser.Browser;
 import org.unidal.test.browser.BrowserManager;
-import org.unidal.test.browser.BrowserType;
 import org.unidal.test.browser.ConsoleBrowser;
 import org.unidal.test.browser.DefaultBrowser;
 import org.unidal.test.browser.FirefoxBrowser;
@@ -24,13 +22,13 @@ public class ComponentsConfigurator extends AbstractResourceConfigurator {
    public List<Component> defineComponents() {
       List<Component> all = new ArrayList<Component>();
 
-      all.add(C(BrowserManager.class));
-      all.add(C(Browser.class, BrowserType.DEFAULT.getId(), DefaultBrowser.class));
-      all.add(C(Browser.class, BrowserType.MEMORY.getId(), MemoryBrowser.class).is(PER_LOOKUP));
-      all.add(C(Browser.class, BrowserType.CONSOLE.getId(), ConsoleBrowser.class));
-      all.add(C(Browser.class, BrowserType.FIREFOX.getId(), FirefoxBrowser.class));
-      all.add(C(Browser.class, BrowserType.INTERNET_EXPLORER.getId(), InternetExplorerBrowser.class));
-      all.add(C(Browser.class, BrowserType.OPERA.getId(), OperaBrowser.class));
+      all.add(A(BrowserManager.class));
+      all.add(A(DefaultBrowser.class));
+      all.add(A(MemoryBrowser.class));
+      all.add(A(ConsoleBrowser.class));
+      all.add(A(FirefoxBrowser.class));
+      all.add(A(InternetExplorerBrowser.class));
+      all.add(A(OperaBrowser.class));
 
       return all;
    }
