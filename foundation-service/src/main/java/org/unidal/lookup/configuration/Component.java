@@ -141,4 +141,9 @@ public class Component {
       m_model.addRequirement(requirement);
       return this;
    }
+   
+   @Override
+   public String toString() {
+      return m_model.toString();
+   }
 }

@@ -111,18 +111,18 @@ public abstract class AbstractResourceConfigurator implements Configurator {
 
       return component;
    }
-   //
-   // protected static <T> Component C(Class<T> role) {
-   // return new Component(role);
-   // }
-   //
-   // protected static <T> Component C(Class<T> role, Class<? extends T> implementationClass) {
-   // return new Component(role, implementationClass);
-   // }
-   //
-   // protected static <T> Component C(Class<T> role, Object roleHint, Class<? extends T> implementationClass) {
-   // return new Component(role, roleHint, implementationClass);
-   // }
+
+   protected static <T> Component C(Class<T> role) {
+      return new Component(role);
+   }
+
+   protected static <T> Component C(Class<T> role, Class<? extends T> implementationClass) {
+      return new Component(role, implementationClass);
+   }
+
+   protected static <T> Component C(Class<T> role, Object roleHint, Class<? extends T> implementationClass) {
+      return new Component(role, roleHint, implementationClass);
+   }
 
    private static void collectField(Class<?> clazz, Field field, Map<Class<?>, List<Pair<Object, String>>> requires,
          Map<String, String> attributes) {
