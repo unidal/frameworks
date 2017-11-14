@@ -45,6 +45,10 @@ public class Threads {
       s_manager.removeListener(listener);
    }
 
+   public static void reset() {
+      s_manager.reset();
+   }
+
    public static abstract class AbstractThreadListener implements ThreadListener {
       @Override
       public void onThreadGroupCreated(ThreadGroup group, String name) {
@@ -183,6 +187,15 @@ public class Threads {
          } catch (Throwable e) {
             // in case of system shutting down, runtime could be null
          }
+      }
+
+      public void reset() {
+         for (ThreadGroupManager groupManager : m_groupManagers.values()) {
+            groupManager.shutdown();
+         }
+
+         m_groupManagers.clear();
+         m_listeners.clear();
       }
 
       public void addListener(ThreadListener listener) {
@@ -602,6 +615,8 @@ public class Threads {
                // ignore it
             }
          }
+
+         m_services.clear();
       }
    }
 }

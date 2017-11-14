@@ -11,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.unidal.helper.Reflects;
 import org.unidal.helper.Reflects.IMemberFilter;
+import org.unidal.helper.Threads;
 import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.annotation.Named;
 import org.unidal.lookup.container.model.entity.Any;
@@ -168,6 +169,7 @@ public abstract class ComponentTestCase extends ContainerHolder {
    @After
    public void tearDown() throws Exception {
       ContainerLoader.destroy();
+      Threads.reset();
       m_container = null;
    }
 

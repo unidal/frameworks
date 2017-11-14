@@ -1,233 +1,107 @@
 package org.unidal.lookup.logging;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.Date;
-import java.util.concurrent.locks.ReentrantLock;
 
-import org.unidal.helper.Properties;
 import org.unidal.helper.Threads;
 
 public class TimedConsoleLogger extends AbstractLogger implements Logger {
-	private MessageFormat m_format;
+   private MessageFormat m_format;
 
-	private ReentrantLock m_lock = new ReentrantLock();
+   private boolean m_showClass;
 
-	private String m_logFilePattern;
+   public TimedConsoleLogger(int threshold, String name, String dateFormat, boolean showClass) {
+      super(threshold, name);
 
-	private BufferedWriter m_writer;
+      String pattern;
 
-	private MessageFormat m_logFileFormat;
+      if (showClass) {
+         pattern = "[{0,date," + dateFormat + "}] [{1}] [{3}] {2}";
+      } else {
+         pattern = "[{0,date," + dateFormat + "}] [{1}] {2}";
+      }
 
-	private String m_lastPath;
+      m_showClass = showClass;
+      m_format = new MessageFormat(pattern);
+   }
 
-	private boolean m_showClass;
+   @Override
+   public void debug(String message, Throwable throwable) {
+      if (isDebugEnabled()) {
+         out("DEBUG", message, throwable);
+      }
+   }
 
-	private boolean m_devMode;
+   @Override
+   public void error(String message, Throwable throwable) {
+      if (isErrorEnabled()) {
+         out("ERROR", message, throwable);
+      }
+   }
 
-	private String m_baseDirRef;
+   private String getCallerClassName() {
+      String caller = Threads.getCallerClass();
 
-	private String m_defaultBaseDir;
+      if (caller != null) {
+         return caller;
+      }
 
-	public TimedConsoleLogger(int threshold, String name, String dateFormat, String logFilePattern, boolean showClass,
-	      boolean devMode) {
-		super(threshold, name);
+      StackTraceElement[] elements = new Exception().getStackTrace();
 
-		String pattern;
+      if (elements.length > 5) {
+         for (int i = 5; i < elements.length; i++) {
+            String className = elements[i].getClassName();
 
-		if (showClass) {
-			pattern = "[{0,date," + dateFormat + "}] [{1}] [{3}] {2}";
-		} else {
-			pattern = "[{0,date," + dateFormat + "}] [{1}] {2}";
-		}
+            if (TimedConsoleLoggerManager.shouldSkipClass(className)) {
+               continue;
+            }
 
-		m_showClass = showClass;
-		m_format = new MessageFormat(pattern);
-		m_logFilePattern = logFilePattern;
-		m_devMode = devMode;
+            int pos = className.lastIndexOf('$');
 
-		if (logFilePattern != null && logFilePattern.indexOf("{0,") >= 0) {
-			m_logFileFormat = new MessageFormat(logFilePattern);
+            if (pos < 0) {
+               pos = className.lastIndexOf('.');
+            }
 
-			// IllegalArgumentException will be thrown for invalid pattern
-			m_logFileFormat.format(new Object[] { new Date() });
-		}
-	}
+            if (pos > 0) {
+               return className.substring(pos + 1);
+            } else {
+               return className;
+            }
+         }
+      }
 
-	@Override
-	public void debug(String message, Throwable throwable) {
-		if (isDebugEnabled()) {
-			out("DEBUG", message, throwable);
-		}
-	}
+      return "N/A";
+   }
 
-	@Override
-	public void error(String message, Throwable throwable) {
-		if (isErrorEnabled()) {
-			out("ERROR", message, throwable);
-		}
-	}
+   private String getTimedMessage(String level, String message) {
+      if (m_showClass) {
+         return m_format.format(new Object[] { new Date(), level, message, getCallerClassName() });
+      } else {
+         return m_format.format(new Object[] { new Date(), level, message });
+      }
+   }
 
-	private String getCallerClassName() {
-		String caller = Threads.getCallerClass();
+   @Override
+   public void info(String message, Throwable throwable) {
+      if (isInfoEnabled()) {
+         out("INFO", message, throwable);
+      }
+   }
 
-		if (caller != null) {
-			return caller;
-		}
+   private void out(String severity, String message, Throwable throwable) {
+      String timedMessage = getTimedMessage(severity, message);
 
-		StackTraceElement[] elements = new Exception().getStackTrace();
+      System.out.println(timedMessage);
 
-		if (elements.length > 5) {
-			for (int i = 5; i < elements.length; i++) {
-				String className = elements[i].getClassName();
+      if (throwable != null) {
+         throwable.printStackTrace(System.out);
+      }
+   }
 
-				if (TimedConsoleLoggerManager.shouldSkipClass(className)) {
-					continue;
-				}
-
-				int pos = className.lastIndexOf('$');
-
-				if (pos < 0) {
-					pos = className.lastIndexOf('.');
-				}
-
-				if (pos > 0) {
-					return className.substring(pos + 1);
-				} else {
-					return className;
-				}
-			}
-		}
-
-		return "N/A";
-	}
-
-	private File getFilePath(String path) throws IOException {
-		File file = new File(path);
-		String baseDir = Properties.forString().fromSystem().fromEnv().getProperty(m_baseDirRef, m_defaultBaseDir);
-
-		if (baseDir != null) {
-			file = new File(baseDir, path);
-		}
-
-		return file.getCanonicalFile();
-	}
-
-	private String getTimedMessage(String level, String message) {
-		if (m_showClass) {
-			return m_format.format(new Object[] { new Date(), level, message, getCallerClassName() });
-		} else {
-			return m_format.format(new Object[] { new Date(), level, message });
-		}
-	}
-
-	private BufferedWriter getWriter() throws IOException {
-		if (m_logFileFormat != null) {
-			String path = m_logFileFormat.format(new Object[] { new Date() });
-
-			if (!path.equals(m_lastPath)) {
-				// close last one
-				if (m_writer != null) {
-					try {
-						m_writer.close();
-					} catch (IOException e) {
-						// ignore it
-					}
-				}
-
-				File file = getFilePath(path);
-
-				file.getParentFile().mkdirs();
-
-				FileOutputStream fos = new FileOutputStream(file, true);
-
-				System.out.println("Logger file " + file.getPath());
-				m_writer = new BufferedWriter(new OutputStreamWriter(fos, "utf-8"));
-				m_lastPath = path;
-			}
-		} else if (m_writer == null) {
-			File file = getFilePath(m_logFilePattern);
-
-			file.getParentFile().mkdirs();
-
-			FileOutputStream fos = new FileOutputStream(file, true);
-
-			System.out.println("Logger file " + file.getPath());
-			m_writer = new BufferedWriter(new OutputStreamWriter(fos, "utf-8"));
-			m_lastPath = m_logFilePattern;
-		}
-
-		return m_writer;
-	}
-
-	@Override
-	public void info(String message, Throwable throwable) {
-		if (isInfoEnabled()) {
-			out("INFO", message, throwable);
-		}
-	}
-
-	private boolean isDevMode() {
-		// override by command line
-		String mode = System.getProperty("devMode", "false");
-
-		if ("true".equals(mode)) {
-			return true;
-		} else {
-			return m_devMode;
-		}
-	}
-
-	private void out(String severity, String message, Throwable throwable) {
-		m_lock.lock();
-
-		try {
-			String timedMessage = getTimedMessage(severity, message);
-
-			if (isDevMode() || m_logFilePattern == null || m_logFilePattern.length() == 0) {
-				System.out.println(timedMessage);
-
-				if (throwable != null) {
-					throwable.printStackTrace(System.out);
-				}
-			} else {
-				try {
-					BufferedWriter writer = getWriter();
-
-					writer.write(timedMessage);
-					writer.newLine();
-
-					if (throwable != null) {
-						throwable.printStackTrace(new PrintWriter(writer));
-					}
-
-					writer.flush();
-				} catch (Exception e) {
-					System.out.println(getTimedMessage("ERROR", e.toString()));
-				}
-			}
-		} finally {
-			m_lock.unlock();
-		}
-	}
-
-	public void setBaseDirRef(String baseDirRef) {
-		m_baseDirRef = baseDirRef;
-	}
-
-	public void setDefaultBaseDir(String defaultBaseDir) {
-		m_defaultBaseDir = defaultBaseDir;
-	}
-
-	@Override
-	public void warn(String message, Throwable throwable) {
-		if (isWarnEnabled()) {
-			out("WARN", message, throwable);
-		}
-	}
+   @Override
+   public void warn(String message, Throwable throwable) {
+      if (isWarnEnabled()) {
+         out("WARN", message, throwable);
+      }
+   }
 }

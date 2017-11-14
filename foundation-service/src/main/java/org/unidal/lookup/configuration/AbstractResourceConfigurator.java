@@ -287,6 +287,11 @@ public abstract class AbstractResourceConfigurator implements Configurator {
          file = new File(baseDir, "src/main/resources/META-INF/plexus/components.xml");
       } else {
          String projectName = baseDir.getName();
+         int pos = projectName.indexOf('.');
+
+         if (pos > 0) {
+            projectName = projectName.substring(0, pos);
+         }
 
          file = new File(baseDir, String.format("src/main/resources/META-INF/plexus/components-%s.xml", projectName));
       }

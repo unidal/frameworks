@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,481 +25,486 @@ import org.unidal.helper.Objects;
 import org.unidal.web.mvc.lifecycle.RequestContext;
 
 public abstract class ActionContext<T extends ActionPayload<? extends Page, ? extends Action>> {
-	private ActionContext<?> m_parent;
+   private static final Charset UTF_8 = Charset.forName("utf-8");
 
-	private RequestContext m_requestContext;
+   private ActionContext<?> m_parent;
 
-	private HttpServletRequest m_httpServletRequest;
+   private RequestContext m_requestContext;
 
-	private HttpServletResponse m_httpServletResponse;
+   private HttpServletRequest m_httpServletRequest;
 
-	private String m_inboundPage;
+   private HttpServletResponse m_httpServletResponse;
 
-	private String m_outboundPage;
+   private String m_inboundPage;
 
-	private T m_payload;
+   private String m_outboundPage;
 
-	private boolean m_processStopped;
+   private T m_payload;
 
-	private boolean m_skipAction;
+   private boolean m_processStopped;
 
-	private List<ErrorObject> m_errors = new ArrayList<ErrorObject>();
+   private boolean m_skipAction;
 
-	private Throwable m_exception;
+   private List<ErrorObject> m_errors = new ArrayList<ErrorObject>();
 
-	private ServletContext m_servletContext;
+   private Throwable m_exception;
 
-	private int m_htmlId;
+   private ServletContext m_servletContext;
 
-	private Map<String, Object> m_attributes;
+   private int m_htmlId;
 
-	public void addCookie(Cookie cookie) {
-		m_httpServletResponse.addCookie(cookie);
-	}
+   private Map<String, Object> m_attributes;
 
-	public void addError(ErrorObject error) {
-		m_errors.add(error);
-	}
+   public void addCookie(Cookie cookie) {
+      m_httpServletResponse.addCookie(cookie);
+   }
 
-	public ErrorObject addError(String id) {
-		ErrorObject error = new ErrorObject(id);
+   public void addError(ErrorObject error) {
+      m_errors.add(error);
+   }
 
-		m_errors.add(error);
-		return error;
-	}
+   public ErrorObject addError(String id) {
+      ErrorObject error = new ErrorObject(id);
 
-	public ErrorObject addError(String id, Exception e) {
-		ErrorObject error = new ErrorObject(id, e);
+      m_errors.add(error);
+      return error;
+   }
 
-		m_errors.add(error);
-		return error;
-	}
+   public ErrorObject addError(String id, Exception e) {
+      ErrorObject error = new ErrorObject(id, e);
 
-	@SuppressWarnings("unchecked")
-	public <S> S getAttribute(String name) {
-		if (m_attributes == null) {
-			return null;
-		} else {
-			return (S) m_attributes.get(name);
-		}
-	}
+      m_errors.add(error);
+      return error;
+   }
 
-	public Cookie getCookie(String name) {
-		Cookie[] cookies = m_httpServletRequest.getCookies();
+   @SuppressWarnings("unchecked")
+   public <S> S getAttribute(String name) {
+      if (m_attributes == null) {
+         return null;
+      } else {
+         return (S) m_attributes.get(name);
+      }
+   }
 
-		if (cookies != null) {
-			for (Cookie cookie : cookies) {
-				if (cookie.getName().equals(name)) {
-					return cookie;
-				}
-			}
-		}
+   public Cookie getCookie(String name) {
+      Cookie[] cookies = m_httpServletRequest.getCookies();
 
-		return null;
-	}
+      if (cookies != null) {
+         for (Cookie cookie : cookies) {
+            if (cookie.getName().equals(name)) {
+               return cookie;
+            }
+         }
+      }
 
-	public String getCurrentHtmlId() {
-		return "id-" + m_htmlId;
-	}
+      return null;
+   }
 
-	public List<ErrorObject> getErrors() {
-		return m_errors;
-	}
+   public String getCurrentHtmlId() {
+      return "id-" + m_htmlId;
+   }
 
-	public Throwable getException() {
-		return m_exception;
-	}
+   public List<ErrorObject> getErrors() {
+      return m_errors;
+   }
 
-	public HttpServletRequest getHttpServletRequest() {
-		return m_httpServletRequest;
-	}
+   public Throwable getException() {
+      return m_exception;
+   }
 
-	public HttpServletResponse getHttpServletResponse() {
-		return m_httpServletResponse;
-	}
+   public HttpServletRequest getHttpServletRequest() {
+      return m_httpServletRequest;
+   }
 
-	public String getInboundAction() {
-		return m_inboundPage;
-	}
+   public HttpServletResponse getHttpServletResponse() {
+      return m_httpServletResponse;
+   }
 
-	public String getNextHtmlId() {
-		return "id-" + (++m_htmlId);
-	}
+   public String getInboundAction() {
+      return m_inboundPage;
+   }
 
-	public String getOutboundAction() {
-		return m_outboundPage;
-	}
-
-	public ActionContext<?> getParent() {
-		return m_parent;
-	}
-
-	public T getPayload() {
-		return m_payload;
-	}
-
-	public Query getQuery() {
-		return new Query(getHttpServletRequest(), true);
-	}
-
-	public RequestContext getRequestContext() {
-		return m_requestContext;
-	}
-
-	public ServletContext getServletContext() {
-		return m_servletContext;
-	}
-
-	public boolean hasAttribute(String name) {
-		return m_attributes != null && m_attributes.containsKey(name);
-	}
-
-	public boolean hasErrors() {
-		return !m_errors.isEmpty();
-	}
-
-	public void initialize(HttpServletRequest request, HttpServletResponse response) {
-		m_httpServletRequest = request;
-		m_httpServletResponse = response;
-	}
-
-	public boolean isProcessStopped() {
-		return m_processStopped;
-	}
-
-	public boolean isSkipAction() {
-		return m_skipAction;
-	}
-
-	private ActionContext<T> jsonKey(StringBuilder sb, String name) {
-		sb.append('"').append(name).append("\": ");
-		return this;
-	}
-
-	private ActionContext<T> jsonValue(StringBuilder sb, Object obj) {
-		sb.append(Objects.forJson().from(obj));
-		return this;
-	}
-
-	public void redirect(Page page, String queryString) {
-		String pageUri = m_requestContext.getActionUri(page.getPath());
-
-		if (queryString == null) {
-			redirect(pageUri);
-		} else {
-			redirect(pageUri + "?" + queryString);
-		}
-	}
-
-	public void redirect(String uri) {
-		HttpServletResponse response = getHttpServletResponse();
-
-		response.setHeader("location", uri);
-		response.setStatus(HttpServletResponse.SC_FOUND);
-		stopProcess();
-	}
-
-	public void sendError(int status, String message) throws IOException {
-		m_httpServletResponse.sendError(status, message);
-		m_processStopped = true;
-	}
-
-	public void sendJson(Object... pairs) throws IOException {
-		if (pairs.length % 2 != 0) {
-			throw new IllegalArgumentException("Arguments must be paired!");
-		}
-
-		String json = toJson(pairs);
-
-		m_httpServletResponse.setContentType("application/json; charset=utf-8");
-		m_httpServletResponse.getWriter().write(json);
-		m_processStopped = true;
-	}
-
-	public void sendJsonResponse(String status, Object data, Object message) throws IOException {
-		StringBuilder sb = new StringBuilder(2048);
-
-		sb.append('{');
-
-		if (status != null) {
-			jsonKey(sb, "status").jsonValue(sb, status);
-			sb.append(',');
-		}
-
-		if (data != null) {
-			jsonKey(sb, "data").jsonValue(sb, data);
-			sb.append(',');
-		}
-
-		if (message != null) {
-			if (message instanceof Throwable) {
-				Throwable t = (Throwable) message;
-				StringWriter writer = new StringWriter(1024);
-
-				jsonKey(sb, "exception");
-				sb.append('{');
-				jsonKey(sb, "name").jsonValue(sb, t.getClass().getName());
-
-				if (t.getMessage() != null) {
-					sb.append(',');
-					jsonKey(sb, "message").jsonValue(sb, t.getMessage());
-				}
-
-				if (t.getStackTrace() != null) {
-					sb.append(',');
-					t.printStackTrace(new PrintWriter(writer));
-					jsonKey(sb, "stackTrace").jsonValue(sb, writer.toString());
-				}
-
-				sb.append('}');
-			} else {
-				jsonKey(sb, "message").jsonValue(sb, message);
-			}
+   public String getNextHtmlId() {
+      return "id-" + (++m_htmlId);
+   }
+
+   public String getOutboundAction() {
+      return m_outboundPage;
+   }
+
+   public ActionContext<?> getParent() {
+      return m_parent;
+   }
+
+   public T getPayload() {
+      return m_payload;
+   }
+
+   public Query getQuery() {
+      return new Query(getHttpServletRequest(), true);
+   }
+
+   public RequestContext getRequestContext() {
+      return m_requestContext;
+   }
+
+   public ServletContext getServletContext() {
+      return m_servletContext;
+   }
+
+   public boolean hasAttribute(String name) {
+      return m_attributes != null && m_attributes.containsKey(name);
+   }
+
+   public boolean hasErrors() {
+      return !m_errors.isEmpty();
+   }
+
+   public void initialize(HttpServletRequest request, HttpServletResponse response) {
+      m_httpServletRequest = request;
+      m_httpServletResponse = response;
+   }
+
+   public boolean isProcessStopped() {
+      return m_processStopped;
+   }
+
+   public boolean isSkipAction() {
+      return m_skipAction;
+   }
+
+   private ActionContext<T> jsonKey(StringBuilder sb, String name) {
+      sb.append('"').append(name).append("\": ");
+      return this;
+   }
+
+   private ActionContext<T> jsonValue(StringBuilder sb, Object obj) {
+      sb.append(Objects.forJson().from(obj));
+      return this;
+   }
+
+   public void redirect(Page page, String queryString) {
+      String pageUri = m_requestContext.getActionUri(page.getPath());
+
+      if (queryString == null) {
+         redirect(pageUri);
+      } else {
+         redirect(pageUri + "?" + queryString);
+      }
+   }
+
+   public void redirect(String uri) {
+      HttpServletResponse response = getHttpServletResponse();
+
+      response.setHeader("location", uri);
+      response.setStatus(HttpServletResponse.SC_FOUND);
+      stopProcess();
+   }
+
+   public void sendContent(String contentType, String content) throws IOException {
+      byte[] data = content.getBytes(UTF_8);
+
+      m_httpServletResponse.setContentLengthLong(data.length);
+      m_httpServletResponse.setContentType(contentType);
+      m_httpServletResponse.getOutputStream().write(data);
+      m_processStopped = true;
+   }
+
+   public void sendError(int status, String message) throws IOException {
+      m_httpServletResponse.sendError(status, message);
+      m_processStopped = true;
+   }
+
+   public void sendJson(Object... pairs) throws IOException {
+      if (pairs.length % 2 != 0) {
+         throw new IllegalArgumentException("Arguments must be paired!");
+      }
+
+      String json = toJson(pairs);
+
+      sendContent("application/json; charset=utf-8", json);
+   }
+
+   public void sendJsonResponse(String status, Object data, Object message) throws IOException {
+      StringBuilder sb = new StringBuilder(2048);
+
+      sb.append('{');
+
+      if (status != null) {
+         jsonKey(sb, "status").jsonValue(sb, status);
+         sb.append(',');
+      }
+
+      if (data != null) {
+         jsonKey(sb, "data").jsonValue(sb, data);
+         sb.append(',');
+      }
+
+      if (message != null) {
+         if (message instanceof Throwable) {
+            Throwable t = (Throwable) message;
+            StringWriter writer = new StringWriter(1024);
 
-			sb.append(',');
-		}
+            jsonKey(sb, "exception");
+            sb.append('{');
+            jsonKey(sb, "name").jsonValue(sb, t.getClass().getName());
 
-		int len = sb.length();
+            if (t.getMessage() != null) {
+               sb.append(',');
+               jsonKey(sb, "message").jsonValue(sb, t.getMessage());
+            }
 
-		if (len >= 1 && sb.charAt(len - 1) == ',') {
-			sb.setLength(len - 1); // remove trail comma
-		}
+            if (t.getStackTrace() != null) {
+               sb.append(',');
+               t.printStackTrace(new PrintWriter(writer));
+               jsonKey(sb, "stackTrace").jsonValue(sb, writer.toString());
+            }
 
-		sb.append('}');
+            sb.append('}');
+         } else {
+            jsonKey(sb, "message").jsonValue(sb, message);
+         }
 
-		m_httpServletResponse.setContentType("application/json; charset=utf-8");
-		m_httpServletResponse.getWriter().write(sb.toString());
-		m_processStopped = true;
-	}
+         sb.append(',');
+      }
 
-	public void sendPlainText(String text) throws IOException {
-		m_httpServletResponse.setContentType("text/plain");
-		m_httpServletResponse.getWriter().write(text);
-		m_processStopped = true;
-	}
+      int len = sb.length();
 
-	public void setAttribute(String name, Object value) {
-		if (m_attributes == null) {
-			m_attributes = new HashMap<String, Object>();
-		}
+      if (len >= 1 && sb.charAt(len - 1) == ',') {
+         sb.setLength(len - 1); // remove trail comma
+      }
 
-		m_attributes.put(name, value);
-	}
+      sb.append('}');
 
-	public void setException(Throwable exception) {
-		m_exception = exception;
-	}
+      sendContent("application/json; charset=utf-8", sb.toString());
+   }
 
-	public void setInboundPage(String inboundPage) {
-		m_inboundPage = inboundPage;
-	}
+   public void sendPlainText(String text) throws IOException {
+      sendContent("text/plain", text);
+   }
 
-	public void setOutboundPage(String outboundPage) {
-		m_outboundPage = outboundPage;
-	}
+   public void setAttribute(String name, Object value) {
+      if (m_attributes == null) {
+         m_attributes = new HashMap<String, Object>();
+      }
 
-	public void setParent(ActionContext<?> parent) {
-		m_parent = parent;
-	}
+      m_attributes.put(name, value);
+   }
 
-	public void setPayload(T payload) {
-		m_payload = payload;
-	}
+   public void setException(Throwable exception) {
+      m_exception = exception;
+   }
 
-	public void setRequestContext(RequestContext requestContext) {
-		m_requestContext = requestContext;
-	}
+   public void setInboundPage(String inboundPage) {
+      m_inboundPage = inboundPage;
+   }
 
-	public void setServletContext(ServletContext servletContext) {
-		m_servletContext = servletContext;
-	}
+   public void setOutboundPage(String outboundPage) {
+      m_outboundPage = outboundPage;
+   }
 
-	public void skipAction() {
-		m_skipAction = true;
-	}
+   public void setParent(ActionContext<?> parent) {
+      m_parent = parent;
+   }
 
-	public void stopProcess() {
-		m_processStopped = true;
-	}
+   public void setPayload(T payload) {
+      m_payload = payload;
+   }
 
-	String toJson(Object... pairs) {
-		StringBuilder sb = new StringBuilder(2048);
-
-		sb.append('{');
-
-		for (int i = 0; i < pairs.length; i += 2) {
-			Object key = pairs[i];
-			Object value = pairs[i + 1];
-
-			sb.append('"').append(key).append("\": ");
-			sb.append(Objects.forJson().from(value));
-			sb.append(", ");
-		}
-
-		int length = sb.length();
-
-		if (length >= 2 && sb.charAt(length - 2) == ',' && sb.charAt(length - 1) == ' ') {
-			sb.setLength(length - 2); // remove trail comma
-		}
-
-		sb.append('}');
-		return sb.toString();
-	}
-
-	public void write(String data) throws IOException {
-		Writer writer = m_httpServletResponse.getWriter();
-
-		writer.write(data);
-	}
-
-	public static class Query extends AbstractMap<Object, Query> {
-		private boolean m_compact;
-
-		private Map<String, String> m_map = new LinkedHashMap<String, String>();
-
-		private String m_key;
-
-		private boolean m_inKey;
-
-		private String m_webapp;
-
-		private String m_uri;
-
-		public Query(HttpServletRequest req, boolean compact) {
-			m_compact = compact;
-			m_webapp = req.getContextPath();
-
-			Enumeration<String> names = req.getParameterNames();
-
-			while (names.hasMoreElements()) {
-				String name = names.nextElement();
-				String value = req.getParameter(name);
-
-				if (!compact || value != null && value.length() > 0) {
-					m_map.put(name, value);
-				}
-			}
-		}
-
-		@Override
-		public boolean containsKey(Object key) {
-			return true;
-		}
-
-		public Query empty() {
-			m_map.clear();
-			return this;
-		}
-
-		@Override
-		public Set<Map.Entry<Object, Query>> entrySet() {
-			throw new UnsupportedOperationException("Not implemented!");
-		}
-
-		@Override
-		public Query get(Object key) {
-			String str = String.valueOf(key);
-
-			if (!m_inKey) {
-				m_key = str;
-				m_inKey = true;
-			} else {
-				if (m_compact && (str == null || str.length() == 0)) {
-					m_map.remove(m_key);
-				} else {
-					m_map.put(m_key, str);
-				}
-
-				m_key = null;
-				m_inKey = false;
-			}
-
-			return this;
-		}
-
-		/**
-		 * Keeps parameters given by <code>keys</code>, and deletes all others.
-		 * 
-		 * @param keys
-		 *           to be kept
-		 * @return Query
-		 */
-		public Query keep(Collection<String> keys) {
-			Map<String, String> map = new LinkedHashMap<String, String>();
-
-			for (String key : keys) {
-				String value = m_map.get(key);
-
-				if (value != null) {
-					map.put(key, value);
-				}
-			}
-
-			m_map = map;
-			return this;
-		}
-
-		/**
-		 * Keeps parameters given by <code>keys</code>, and deletes all others.
-		 * 
-		 * @param keys
-		 *           to be kept
-		 * @return Query
-		 */
-		public Query keep(String... keys) {
-			Map<String, String> map = new LinkedHashMap<String, String>();
-
-			for (String key : keys) {
-				String value = m_map.get(key);
-
-				if (value != null) {
-					map.put(key, value);
-				}
-			}
-
-			m_map = map;
-			return this;
-		}
-
-		@Override
-		public String toString() {
-			StringBuilder sb = new StringBuilder(256);
-
-			if (m_uri != null) {
-				if (m_webapp != null) {
-					sb.append(m_webapp);
-				}
-
-				sb.append(m_uri);
-				sb.append('?');
-			}
-
-			boolean first = true;
-
-			for (Map.Entry<String, String> e : m_map.entrySet()) {
-				if (first) {
-					first = false;
-				} else {
-					sb.append('&');
-				}
-
-				sb.append(e.getKey()).append('=').append(urlEncode(e.getValue()));
-			}
-
-			return sb.toString();
-		}
-
-		public Query uri(String uri) {
-			m_uri = uri;
-			return this;
-		}
-
-		private String urlEncode(String value) {
-			try {
-				return URLEncoder.encode(value, "utf-8");
-			} catch (Exception e) {
-				return value;
-			}
-		}
-	}
+   public void setRequestContext(RequestContext requestContext) {
+      m_requestContext = requestContext;
+   }
+
+   public void setServletContext(ServletContext servletContext) {
+      m_servletContext = servletContext;
+   }
+
+   public void skipAction() {
+      m_skipAction = true;
+   }
+
+   public void stopProcess() {
+      m_processStopped = true;
+   }
+
+   String toJson(Object... pairs) {
+      StringBuilder sb = new StringBuilder(2048);
+
+      sb.append('{');
+
+      for (int i = 0; i < pairs.length; i += 2) {
+         Object key = pairs[i];
+         Object value = pairs[i + 1];
+
+         sb.append('"').append(key).append("\": ");
+         sb.append(Objects.forJson().from(value));
+         sb.append(", ");
+      }
+
+      int length = sb.length();
+
+      if (length >= 2 && sb.charAt(length - 2) == ',' && sb.charAt(length - 1) == ' ') {
+         sb.setLength(length - 2); // remove trail comma
+      }
+
+      sb.append('}');
+      return sb.toString();
+   }
+
+   public void write(String data) throws IOException {
+      Writer writer = m_httpServletResponse.getWriter();
+
+      writer.write(data);
+   }
+
+   public static class Query extends AbstractMap<Object, Query> {
+      private boolean m_compact;
+
+      private Map<String, String> m_map = new LinkedHashMap<String, String>();
+
+      private String m_key;
+
+      private boolean m_inKey;
+
+      private String m_webapp;
+
+      private String m_uri;
+
+      public Query(HttpServletRequest req, boolean compact) {
+         m_compact = compact;
+         m_webapp = req.getContextPath();
+
+         Enumeration<String> names = req.getParameterNames();
+
+         while (names.hasMoreElements()) {
+            String name = names.nextElement();
+            String value = req.getParameter(name);
+
+            if (!compact || value != null && value.length() > 0) {
+               m_map.put(name, value);
+            }
+         }
+      }
+
+      @Override
+      public boolean containsKey(Object key) {
+         return true;
+      }
+
+      public Query empty() {
+         m_map.clear();
+         return this;
+      }
+
+      @Override
+      public Set<Map.Entry<Object, Query>> entrySet() {
+         throw new UnsupportedOperationException("Not implemented!");
+      }
+
+      @Override
+      public Query get(Object key) {
+         String str = String.valueOf(key);
+
+         if (!m_inKey) {
+            m_key = str;
+            m_inKey = true;
+         } else {
+            if (m_compact && (str == null || str.length() == 0)) {
+               m_map.remove(m_key);
+            } else {
+               m_map.put(m_key, str);
+            }
+
+            m_key = null;
+            m_inKey = false;
+         }
+
+         return this;
+      }
+
+      /**
+       * Keeps parameters given by <code>keys</code>, and deletes all others.
+       * 
+       * @param keys
+       *           to be kept
+       * @return Query
+       */
+      public Query keep(Collection<String> keys) {
+         Map<String, String> map = new LinkedHashMap<String, String>();
+
+         for (String key : keys) {
+            String value = m_map.get(key);
+
+            if (value != null) {
+               map.put(key, value);
+            }
+         }
+
+         m_map = map;
+         return this;
+      }
+
+      /**
+       * Keeps parameters given by <code>keys</code>, and deletes all others.
+       * 
+       * @param keys
+       *           to be kept
+       * @return Query
+       */
+      public Query keep(String... keys) {
+         Map<String, String> map = new LinkedHashMap<String, String>();
+
+         for (String key : keys) {
+            String value = m_map.get(key);
+
+            if (value != null) {
+               map.put(key, value);
+            }
+         }
+
+         m_map = map;
+         return this;
+      }
+
+      @Override
+      public String toString() {
+         StringBuilder sb = new StringBuilder(256);
+
+         if (m_uri != null) {
+            if (m_webapp != null) {
+               sb.append(m_webapp);
+            }
+
+            sb.append(m_uri);
+            sb.append('?');
+         }
+
+         boolean first = true;
+
+         for (Map.Entry<String, String> e : m_map.entrySet()) {
+            if (first) {
+               first = false;
+            } else {
+               sb.append('&');
+            }
+
+            sb.append(e.getKey()).append('=').append(urlEncode(e.getValue()));
+         }
+
+         return sb.toString();
+      }
+
+      public Query uri(String uri) {
+         m_uri = uri;
+         return this;
+      }
+
+      private String urlEncode(String value) {
+         try {
+            return URLEncoder.encode(value, "utf-8");
+         } catch (Exception e) {
+            return value;
+         }
+      }
+   }
 }

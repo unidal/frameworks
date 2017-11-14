@@ -7,71 +7,44 @@ import org.unidal.lookup.annotation.Named;
 
 @Named(type = LoggerManager.class)
 public class TimedConsoleLoggerManager extends AbstractLoggerManager {
-	private static Set<String> s_skipedClassNames = new HashSet<String>();
+   private static Set<String> s_skipedClassNames = new HashSet<String>();
 
-	private String m_dateFormat = "MM-dd HH:mm:ss.SSS";
+   private String m_dateFormat = "MM-dd HH:mm:ss.SSS";
 
-	private String m_logFilePattern;
+   private boolean m_showClass = true;
 
-	private String m_baseDirRef;
+   private int m_threshold = Logger.LEVEL_INFO;
 
-	private boolean m_showClass = true;
+   private AbstractLogger m_logger;
 
-	private boolean m_devMode;
+   public static boolean shouldSkipClass(String className) {
+      return s_skipedClassNames.contains(className);
+   }
 
-	private String m_defaultBaseDir;
+   public static void skipClass(Class<?> clazz) {
+      s_skipedClassNames.add(clazz.getName());
+   }
 
-	private int m_threshold = Logger.LEVEL_INFO;
+   @Override
+   public AbstractLogger createLogger(String name) {
+      if (m_logger == null) {
+         synchronized (this) {
+            if (m_logger == null) {
+               TimedConsoleLogger logger = new TimedConsoleLogger(m_threshold, name, m_dateFormat, m_showClass);
 
-	private AbstractLogger m_logger;
+               m_logger = logger;
+            }
+         }
+      }
 
-	public static boolean shouldSkipClass(String className) {
-		return s_skipedClassNames.contains(className);
-	}
+      return m_logger;
+   }
 
-	public static void skipClass(Class<?> clazz) {
-		s_skipedClassNames.add(clazz.getName());
-	}
+   public void setDateFormat(String dateFormat) {
+      m_dateFormat = dateFormat;
+   }
 
-	@Override
-	public AbstractLogger createLogger(String name) {
-		if (m_logger == null) {
-			synchronized (this) {
-				if (m_logger == null) {
-					TimedConsoleLogger logger = new TimedConsoleLogger(m_threshold, name, m_dateFormat, m_logFilePattern,
-					      m_showClass, m_devMode);
-
-					logger.setBaseDirRef(m_baseDirRef);
-					logger.setDefaultBaseDir(m_defaultBaseDir);
-					m_logger = logger;
-				}
-			}
-		}
-
-		return m_logger;
-	}
-
-	public void setBaseDirRef(String baseDirRef) {
-		m_baseDirRef = baseDirRef;
-	}
-
-	public void setDateFormat(String dateFormat) {
-		m_dateFormat = dateFormat;
-	}
-
-	public void setDefaultBaseDir(String defaultBaseDir) {
-		m_defaultBaseDir = defaultBaseDir;
-	}
-
-	public void setDevMode(boolean devMode) {
-		m_devMode = devMode;
-	}
-
-	public void setLogFilePattern(String logFilePattern) {
-		m_logFilePattern = logFilePattern;
-	}
-
-	public void setShowClass(boolean showClass) {
-		m_showClass = showClass;
-	}
+   public void setShowClass(boolean showClass) {
+      m_showClass = showClass;
+   }
 }
