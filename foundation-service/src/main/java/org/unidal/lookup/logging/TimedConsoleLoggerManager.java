@@ -47,4 +47,16 @@ public class TimedConsoleLoggerManager extends AbstractLoggerManager {
    public void setShowClass(boolean showClass) {
       m_showClass = showClass;
    }
+
+   @Deprecated
+   public void setLogFilePattern(String logFilePattern) {
+   }
+
+   @Deprecated
+   public void setBaseDirRef(String baseDirRef) {
+   }
+
+   @Deprecated
+   public void setDefaultBaseDir(String defaultBaseDir) {
+   }
 }

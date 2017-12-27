@@ -204,7 +204,7 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
    public void sendContent(String contentType, String content) throws IOException {
       byte[] data = content.getBytes(UTF_8);
 
-      m_httpServletResponse.setContentLengthLong(data.length);
+      m_httpServletResponse.setContentLength(data.length);
       m_httpServletResponse.setContentType(contentType);
       m_httpServletResponse.getOutputStream().write(data);
       m_processStopped = true;
@@ -225,7 +225,7 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
       sendContent("application/json; charset=utf-8", json);
    }
 
-   public void sendJsonResponse(String status, Object data, Object message) throws IOException {
+   public void sendJsonRaw(String status, String json, Object message) throws IOException {
       StringBuilder sb = new StringBuilder(2048);
 
       sb.append('{');
@@ -235,8 +235,9 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
          sb.append(',');
       }
 
-      if (data != null) {
-         jsonKey(sb, "data").jsonValue(sb, data);
+      if (json != null) {
+         jsonKey(sb, "data");
+         sb.append(json);
          sb.append(',');
       }
 
