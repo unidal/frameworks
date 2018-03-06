@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
 import javax.servlet.ServletOutputStream;
-import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 
 public class HttpServletResponseWrapper extends javax.servlet.http.HttpServletResponseWrapper {
@@ -71,15 +70,6 @@ public class HttpServletResponseWrapper extends javax.servlet.http.HttpServletRe
          @Override
          public void write(int b) throws IOException {
             m_output.write(b);
-         }
-
-         @Override
-         public boolean isReady() {
-            return false;
-         }
-
-         @Override
-         public void setWriteListener(WriteListener paramWriteListener) {
          }
       };
    }

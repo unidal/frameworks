@@ -109,7 +109,7 @@ public abstract class ComponentTestCase extends ContainerHolder {
    }
 
    private <T> void defineDependencies(ComponentDefinition<T> component, Class<T> implementation) {
-      List<Field> fields = Reflects.forField().getDeclaredFields(implementation, new IMemberFilter<Field>() {
+      List<Field> fields = Reflects.forField().getAllDeclaredFields(implementation, new IMemberFilter<Field>() {
          @Override
          public boolean filter(Field member) {
             return member.isAnnotationPresent(Inject.class);

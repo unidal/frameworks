@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
 
@@ -47,6 +48,32 @@ public class Threads {
 
    public static void reset() {
       s_manager.reset();
+   }
+
+   /**
+    * Sleep for a total <code>timeoutInMillis</code> milli-seconds while <code>when</code> is <code>null</code> or
+    * <code>true</code>.
+    * 
+    * @param when
+    *           optional. true to make sleep happen, false to break
+    * @param timeoutInMillis
+    *           max time to sleep if <code>when</code> condition is null or met
+    * @throws InterruptedException
+    */
+   public static void sleep(AtomicBoolean when, long timeoutInMillis) throws InterruptedException {
+      if (when != null && !when.get() || timeoutInMillis <= 0) {
+         return;
+      }
+
+      long deadline = System.currentTimeMillis() + timeoutInMillis;
+
+      while (when == null || when.get()) {
+         TimeUnit.MILLISECONDS.sleep(1);
+
+         if (System.currentTimeMillis() >= deadline) {
+            break;
+         }
+      }
    }
 
    public static abstract class AbstractThreadListener implements ThreadListener {
