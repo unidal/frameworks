@@ -25,6 +25,7 @@ public class ComponentLifecycle {
       m_handlers.add(ComponentHandlers.CONTEXTUALIZABLE);
       m_handlers.add(ComponentHandlers.CONFIGURATION);
       m_handlers.add(ComponentHandlers.INITIALIZABLE);
+      m_handlers.add(ComponentHandlers.DISPOSABLE);
    }
 
    public void addHandle(LifecycleHandler handler) {

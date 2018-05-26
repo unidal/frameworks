@@ -345,11 +345,22 @@ public class Scanners {
       }
 
       public List<URL> scan(String resourceBase, final ResourceMatcher matcher) throws IOException {
-         Enumeration<URL> resources = getClass().getClassLoader().getResources(resourceBase);
          final List<URL> urls = new ArrayList<URL>();
 
-         while (resources.hasMoreElements()) {
-            final URL url = resources.nextElement();
+         // try to load from current class's classloader
+         Enumeration<URL> r1 = getClass().getClassLoader().getResources(resourceBase);
+
+         while (r1.hasMoreElements()) {
+            URL url = r1.nextElement();
+
+            scan(urls, url, matcher);
+         }
+
+         // try to load from current context's classloader
+         Enumeration<URL> r2 = Thread.currentThread().getContextClassLoader().getResources(resourceBase);
+
+         while (r2.hasMoreElements()) {
+            URL url = r2.nextElement();
 
             scan(urls, url, matcher);
          }

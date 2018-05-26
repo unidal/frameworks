@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.unidal.cat.Cat;
 import org.unidal.dal.jdbc.DalException;
 import org.unidal.dal.jdbc.raw.RawDao;
 import org.unidal.dal.jdbc.raw.RawDataObject;
@@ -15,8 +16,6 @@ import org.unidal.dal.jdbc.test.data.entity.TableModel;
 import org.unidal.dal.jdbc.test.data.transform.BaseVisitor2;
 import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.annotation.Named;
-
-import com.dianping.cat.Cat;
 
 @Named
 public class DatabaseDumper {

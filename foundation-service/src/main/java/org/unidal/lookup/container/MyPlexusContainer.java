@@ -42,7 +42,6 @@ public class MyPlexusContainer implements PlexusContainer {
 	@Override
 	public void dispose() {
 		m_manager.destroy();
-		m_context.clear();
 	}
 
 	@Override

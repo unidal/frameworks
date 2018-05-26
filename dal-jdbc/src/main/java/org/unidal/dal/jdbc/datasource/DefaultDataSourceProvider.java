@@ -3,6 +3,7 @@ package org.unidal.dal.jdbc.datasource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.unidal.dal.jdbc.datasource.model.entity.DataSourcesDef;
@@ -28,16 +29,14 @@ public class DefaultDataSourceProvider implements DataSourceProvider, LogEnabled
    public DataSourcesDef defineDatasources() {
       if (m_def == null) {
          if (m_datasourceFile != null) {
-            InputStream is = null;
-
             // check configuration file from file system for most case
             File file;
+            InputStream is = null;
 
             if (m_datasourceFile.startsWith("/")) {
                file = new File(m_datasourceFile);
             } else {
-               String baseDir = Properties.forString().fromEnv().fromSystem()
-                     .getProperty(m_baseDirRef, m_defaultBaseDir);
+               String baseDir = Properties.forString().fromEnv().fromSystem().getProperty(m_baseDirRef, m_defaultBaseDir);
 
                if (baseDir != null) {
                   file = new File(baseDir, m_datasourceFile);
@@ -46,6 +45,12 @@ public class DefaultDataSourceProvider implements DataSourceProvider, LogEnabled
                }
             }
 
+            try {
+               file = file.getCanonicalFile();
+            } catch (IOException e1) {
+               // ignore it
+            }
+            
             if (file.canRead()) {
                m_logger.info(String.format("Loading data sources from %s ...", file));
 
@@ -55,10 +60,8 @@ public class DefaultDataSourceProvider implements DataSourceProvider, LogEnabled
                   // ignore it
                }
             } else {
-               m_logger.warn(String.format("Data sources configuration(%s) is not found!", file, m_datasourceFile));
-
                // check configuration file from classpath for hadoop map-reduce jobs etc.
-               // since it's distributed everywhere and no configuration file during runtime environment
+               // since it could be distributed everywhere and there is no configuration file available during runtime environment
                is = Thread.currentThread().getContextClassLoader().getResourceAsStream(m_datasourceFile);
 
                if (is == null) {
@@ -67,6 +70,8 @@ public class DefaultDataSourceProvider implements DataSourceProvider, LogEnabled
 
                if (is != null) {
                   m_logger.info(String.format("Loading data sources from resource(%s)", m_datasourceFile));
+               } else {
+                  m_logger.warn(String.format("Data sources configuration(%s) is not found!", file));
                }
             }
 

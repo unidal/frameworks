@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
+import org.unidal.cat.Cat;
 import org.unidal.helper.Codes;
 import org.unidal.helper.Splitters;
 import org.unidal.lookup.annotation.Named;
@@ -11,7 +12,6 @@ import org.unidal.lookup.extension.Disposable;
 import org.unidal.lookup.logging.LogEnabled;
 import org.unidal.lookup.logging.Logger;
 
-import com.dianping.cat.Cat;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 @Named(type = DataSource.class, value = "jdbc", instantiationStrategy = Named.PER_LOOKUP)

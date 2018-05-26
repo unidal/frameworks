@@ -3,6 +3,7 @@ package org.unidal.dal.jdbc.transaction;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.unidal.cat.Cat;
 import org.unidal.dal.jdbc.DalRuntimeException;
 import org.unidal.dal.jdbc.datasource.DataSource;
 import org.unidal.dal.jdbc.datasource.DataSourceManager;
@@ -13,8 +14,6 @@ import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.annotation.Named;
 import org.unidal.lookup.logging.LogEnabled;
 import org.unidal.lookup.logging.Logger;
-
-import com.dianping.cat.Cat;
 
 @Named(type = TransactionManager.class)
 public class DefaultTransactionManager implements TransactionManager, LogEnabled {

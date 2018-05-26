@@ -2,15 +2,14 @@ package org.unidal.web.mvc.lifecycle;
 
 import static org.unidal.lookup.util.ReflectUtils.invokeMethod;
 
+import org.unidal.cat.Cat;
+import org.unidal.cat.message.Transaction;
 import org.unidal.lookup.annotation.Named;
 import org.unidal.lookup.logging.LogEnabled;
 import org.unidal.lookup.logging.Logger;
 import org.unidal.web.mvc.ActionContext;
 import org.unidal.web.mvc.ActionException;
 import org.unidal.web.mvc.model.entity.OutboundActionModel;
-
-import com.dianping.cat.Cat;
-import com.dianping.cat.message.Transaction;
 
 @Named(type = OutboundActionHandler.class, instantiationStrategy = Named.PER_LOOKUP)
 public class DefaultOutboundActionHandler implements OutboundActionHandler, LogEnabled {

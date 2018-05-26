@@ -3,6 +3,8 @@ package org.unidal.dal.jdbc.query.mysql;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import org.unidal.cat.Cat;
+import org.unidal.cat.message.Transaction;
 import org.unidal.dal.jdbc.DalException;
 import org.unidal.dal.jdbc.DataObject;
 import org.unidal.dal.jdbc.QueryType;
@@ -12,9 +14,6 @@ import org.unidal.dal.jdbc.query.WriteHandler;
 import org.unidal.dal.jdbc.transaction.TransactionManager;
 import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.annotation.Named;
-
-import com.dianping.cat.Cat;
-import com.dianping.cat.message.Transaction;
 
 @Named(type = WriteHandler.class, value = "mysql")
 public class MysqlWriteHandler extends MysqlBaseHandler implements WriteHandler {

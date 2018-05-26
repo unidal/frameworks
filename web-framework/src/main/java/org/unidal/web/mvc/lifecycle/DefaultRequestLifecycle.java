@@ -8,6 +8,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.unidal.cat.Cat;
+import org.unidal.cat.message.Transaction;
+import org.unidal.cat.message.tree.NullMessage;
 import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.annotation.Named;
 import org.unidal.lookup.logging.LogEnabled;
@@ -22,13 +25,12 @@ import org.unidal.web.mvc.model.entity.ModuleModel;
 import org.unidal.web.mvc.model.entity.OutboundActionModel;
 import org.unidal.web.mvc.model.entity.TransitionModel;
 
-import com.dianping.cat.Cat;
-import com.dianping.cat.CatConstants;
-import com.dianping.cat.message.Transaction;
-import com.dianping.cat.message.internal.NullMessage;
-
 @Named(type = RequestLifecycle.class, value = "mvc")
 public class DefaultRequestLifecycle implements RequestLifecycle, LogEnabled {
+   public static final String CAT_STATE = "cat-state";
+
+   public static final String CAT_PAGE_URI = "cat-page-uri";
+
    @Inject
    private RequestContextBuilder m_builder;
 
@@ -90,7 +92,7 @@ public class DefaultRequestLifecycle implements RequestLifecycle, LogEnabled {
       }
 
       if (!actionContext.isProcessStopped()) {
-         request.setAttribute(CatConstants.CAT_STATE, e.getClass().getSimpleName());
+         request.setAttribute(CAT_STATE, e.getClass().getSimpleName());
          Cat.logError(e);
 
          if (e instanceof RuntimeException) {
@@ -160,13 +162,13 @@ public class DefaultRequestLifecycle implements RequestLifecycle, LogEnabled {
       ModuleModel module = requestContext.getModule();
       InboundActionModel inboundAction = requestContext.getInboundAction();
       ActionContext<?> actionContext = createActionContext(request, response, requestContext, inboundAction);
-      Transaction t = Cat.getManager().getPeekTransaction();
+      Transaction t = Cat.getPeekTransaction();
 
       if (t == null) { // in case of no CatFilter is configured
          t = NullMessage.TRANSACTION;
       }
 
-      request.setAttribute(CatConstants.CAT_PAGE_URI,
+      request.setAttribute(CAT_PAGE_URI,
             actionContext.getRequestContext().getActionUri(inboundAction.getActionName()));
 
       try {

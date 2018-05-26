@@ -1,6 +1,5 @@
 package org.unidal.web;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 
@@ -9,11 +8,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.unidal.cat.Cat;
 import org.unidal.initialization.ModuleContext;
 import org.unidal.initialization.ModuleInitializer;
 import org.unidal.web.lifecycle.RequestLifecycle;
-
-import com.dianping.cat.Cat;
 
 public class MVC extends AbstractContainerServlet {
    public static final String ID = "mvc-servlet";
@@ -43,18 +41,7 @@ public class MVC extends AbstractContainerServlet {
    }
 
    private void initializeCat(ServletConfig config) {
-      String catClientXml = config.getInitParameter("cat-client-xml");
-      File clientXmlFile;
-
-      if (catClientXml == null) {
-         clientXmlFile = new File(Cat.getCatHome(), "config/client.xml");
-      } else if (catClientXml.startsWith("/")) {
-         clientXmlFile = new File(catClientXml);
-      } else {
-         clientXmlFile = new File(Cat.getCatHome(), catClientXml);
-      }
-
-      Cat.initialize(getContainer(), clientXmlFile);
+      //Cat.CAT2.getCatHome(); // bring cat up
    }
 
    private void initializeModules(ServletConfig config) throws ServletException {

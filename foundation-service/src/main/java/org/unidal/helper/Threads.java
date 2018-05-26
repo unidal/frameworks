@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -332,6 +333,8 @@ public class Threads {
 
       private String m_caller;
 
+      private CountDownLatch m_latch = new CountDownLatch(1);
+
       public RunnableThread(ThreadGroup threadGroup, Runnable target, String name, UncaughtExceptionHandler handler) {
          super(threadGroup, target, name);
 
@@ -377,10 +380,15 @@ public class Threads {
          return m_target;
       }
 
+      public void await() throws InterruptedException {
+         m_latch.await();
+      }
+
       @Override
       public void run() {
          m_callerThreadLocal.set(m_caller);
          s_manager.onThreadStarting(this, getName());
+         m_latch.countDown();
          super.run();
          s_manager.onThreadStopped(this, getName());
          m_callerThreadLocal.remove();
@@ -489,6 +497,15 @@ public class Threads {
 
          thread.setDaemon(deamon);
          thread.start();
+
+         if (thread instanceof RunnableThread) {
+            try {
+               ((RunnableThread) thread).await();
+            } catch (InterruptedException e) {
+               // ignore it
+            }
+         }
+
          return thread;
       }
    }

@@ -109,8 +109,8 @@
          </dependency>
    
          <dependency>
-            <groupId>com.dianping.cat</groupId>
-            <artifactId>cat-client</artifactId>
+            <groupId>org.unidal.cat</groupId>
+            <artifactId>cat</artifactId>
             <version>${cat.version}</version>
          </dependency>
          <dependency>

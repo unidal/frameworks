@@ -12,6 +12,8 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.unidal.cat.Cat;
+import org.unidal.cat.message.Message;
 import org.unidal.dal.jdbc.DataField;
 import org.unidal.dal.jdbc.DataObject;
 import org.unidal.dal.jdbc.QueryDef;
@@ -25,9 +27,6 @@ import org.unidal.dal.jdbc.query.Parameter;
 import org.unidal.helper.Files;
 import org.unidal.helper.Stringizers;
 import org.unidal.lookup.annotation.Inject;
-
-import com.dianping.cat.Cat;
-import com.dianping.cat.message.Message;
 
 public abstract class MysqlBaseHandler {
    @Inject

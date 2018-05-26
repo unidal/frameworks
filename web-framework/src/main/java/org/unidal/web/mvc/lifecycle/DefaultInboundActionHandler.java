@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.unidal.cat.Cat;
+import org.unidal.cat.message.Transaction;
 import org.unidal.lookup.ContainerHolder;
 import org.unidal.lookup.annotation.Named;
 import org.unidal.lookup.logging.LogEnabled;
@@ -19,9 +21,6 @@ import org.unidal.web.mvc.PayloadProvider;
 import org.unidal.web.mvc.Validator;
 import org.unidal.web.mvc.model.entity.InboundActionModel;
 import org.unidal.web.mvc.payload.annotation.PayloadProviderMeta;
-
-import com.dianping.cat.Cat;
-import com.dianping.cat.message.Transaction;
 
 @Named(type = InboundActionHandler.class, instantiationStrategy = Named.PER_LOOKUP)
 @SuppressWarnings({ "unchecked", "rawtypes" })

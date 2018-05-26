@@ -4,16 +4,12 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.unidal.lookup.annotation.Inject;
-import org.unidal.lookup.annotation.InjectAttribute;
 import org.unidal.lookup.annotation.Named;
 
 @Named(type = ModuleInitializer.class)
 public class DefaultModuleInitializer implements ModuleInitializer {
    @Inject
    private ModuleManager m_manager;
-
-   @InjectAttribute
-   private boolean m_verbose;
 
    private int m_index = 1;
 
@@ -57,7 +53,7 @@ public class DefaultModuleInitializer implements ModuleInitializer {
       // set flag to avoid re-entrance
       module.setInitialized(true);
 
-      info(ctx, index + " ------ " + module.getClass().getName());
+      info(ctx, index + " ------ " + module.getClass().getName() + " ...");
 
       // execute itself after its dependencies
       module.initialize(ctx);
@@ -83,12 +79,11 @@ public class DefaultModuleInitializer implements ModuleInitializer {
    }
 
    private void info(ModuleContext ctx, String message) {
-      if (m_verbose) {
+      // either -DdevMode or -DdevMode=true is okay
+      String devMode = System.getProperty("devMode", null);
+
+      if (devMode != null && (devMode.length() == 0 || "true".equals(devMode))) {
          ctx.info(message);
       }
-   }
-
-   public void setVerbose(boolean verbose) {
-      m_verbose = verbose;
    }
 }

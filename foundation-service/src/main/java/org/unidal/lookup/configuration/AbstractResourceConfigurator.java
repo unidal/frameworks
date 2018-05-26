@@ -35,14 +35,25 @@ public abstract class AbstractResourceConfigurator implements Configurator {
    @SuppressWarnings("unchecked")
    protected static <T> Component A(Class<T> clazz, String roleHint) {
       Named named = clazz.getAnnotation(Named.class);
+      Class<?> role = null;
 
       if (named == null) {
-         throw new IllegalStateException(
-               String.format("Class(%s) is not annotated by %s.", clazz.getName(), Named.class.getName()));
+         String legacyMode = System.getProperty("LegacyMode");
+
+         if ("true".equals(legacyMode)) {
+            if (clazz.getSimpleName().equals("Handler") || clazz.getSimpleName().equals("JspViewer")) {
+               role = Named.Default.class;
+            }
+         }
+         
+         if (role == null) {
+            throw new IllegalStateException(
+                  String.format("Class(%s) is not annotated by %s.", clazz.getName(), Named.class.getName()));
+         }
+      } else {
+         role = named.type();
       }
-
-      Class<?> role = named.type();
-
+      
       if (role == Named.Default.class) {
          role = clazz;
       } else {
@@ -52,11 +63,11 @@ public abstract class AbstractResourceConfigurator implements Configurator {
          }
       }
 
-      if (roleHint == null) {
+      if (roleHint == null && named != null) {
          roleHint = named.value();
       }
 
-      if (roleHint.length() == 0) {
+      if (roleHint != null && roleHint.length() == 0) {
          roleHint = null;
       }
 
@@ -68,7 +79,7 @@ public abstract class AbstractResourceConfigurator implements Configurator {
          }
       }
 
-      if (named.instantiationStrategy().length() > 0) {
+      if (named != null && named.instantiationStrategy().length() > 0) {
          component.is(named.instantiationStrategy());
       }
 
