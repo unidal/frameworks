@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.unidal.framework</groupId>
       <artifactId>parent</artifactId>
-      <version>4.0.2</version>
+      <version>4.0.3</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
    <modelVersion>4.0.0</modelVersion>
@@ -17,8 +17,8 @@
          <artifactId>foundation-service</artifactId>
       </dependency>
       <dependency>
-         <groupId>com.dianping.cat</groupId>
-         <artifactId>cat-client</artifactId>
+         <groupId>org.unidal.cat</groupId>
+         <artifactId>cat</artifactId>
       </dependency>
       <dependency>
          <groupId>commons-fileupload</groupId>
