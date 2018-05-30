@@ -391,7 +391,7 @@ public class Scanners {
                   return Direction.DOWN;
                }
             });
-         } else if ("jar".equals(protocol)) {
+         } else if ("jar".equals(protocol) || "wasjar".equals(protocol)) { // wasjar for WAS
             List<String> parts = Splitters.by('!').split(url.toExternalForm());
             int len = parts.size();
             String prefix = parts.remove(len - 1).substring(1);
