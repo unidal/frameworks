@@ -11,7 +11,9 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
@@ -73,38 +75,29 @@ public class Scanners {
 
                relativePath.append(item);
 
-               if (matcher.isDirEligible() && child.isDirectory()) {
-                  IMatcher.Direction direction = matcher.matches(base, relativePath.toString());
+               IMatcher.Direction direction = matcher.matches(base, relativePath.toString());
 
-                  switch (direction) {
-                  case MATCHED:
+               if (direction == null) {
+                  direction = Direction.NEXT;
+               }
+
+               switch (direction) {
+               case MATCHED:
+                  if (matcher.isDirEligible() && child.isDirectory()) {
                      files.add(child);
-                     break;
-                  case DOWN:
-                     // for sub-folders
-                     scanForFiles(base, relativePath, matcher, foundFirst, files);
-                     break;
-                  default:
-                     break;
                   }
-               } else if (matcher.isFileElegible()) {
-                  IMatcher.Direction direction = matcher.matches(base, relativePath.toString());
 
-                  switch (direction) {
-                  case MATCHED:
-                     if (child.isFile()) {
-                        files.add(child);
-                     }
-                     break;
-                  case DOWN:
-                     if (child.isDirectory()) {
-                        // for sub-folders
-                        scanForFiles(base, relativePath, matcher, foundFirst, files);
-                     }
-                     break;
-                  default:
-                     break;
+                  if (matcher.isFileElegible() && child.isFile()) {
+                     files.add(child);
                   }
+
+                  break;
+               case DOWN:
+                  // for sub-folders
+                  scanForFiles(base, relativePath, matcher, foundFirst, files);
+                  break;
+               default:
+                  break;
                }
 
                relativePath.setLength(len); // reset
@@ -329,7 +322,7 @@ public class Scanners {
          return true;
       }
 
-      public abstract Direction matches(URL url, String path);
+      public abstract Direction matches(URL base, String path);
    }
 
    public enum ResourceScanner {
@@ -345,7 +338,8 @@ public class Scanners {
       }
 
       public List<URL> scan(String resourceBase, final ResourceMatcher matcher) throws IOException {
-         final List<URL> urls = new ArrayList<URL>();
+         List<URL> urls = new ArrayList<URL>();
+         Set<URL> done = new HashSet<URL>();
 
          // try to load from current class's classloader
          Enumeration<URL> r1 = getClass().getClassLoader().getResources(resourceBase);
@@ -353,7 +347,7 @@ public class Scanners {
          while (r1.hasMoreElements()) {
             URL url = r1.nextElement();
 
-            scan(urls, url, matcher);
+            scan(done, urls, url, resourceBase, matcher);
          }
 
          // try to load from current context's classloader
@@ -362,7 +356,7 @@ public class Scanners {
          while (r2.hasMoreElements()) {
             URL url = r2.nextElement();
 
-            scan(urls, url, matcher);
+            scan(done, urls, url, resourceBase, matcher);
          }
 
          return urls;
