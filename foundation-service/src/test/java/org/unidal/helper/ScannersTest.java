@@ -1,6 +1,7 @@
 package org.unidal.helper;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.unidal.helper.Scanners.DirMatcher;
 import org.unidal.helper.Scanners.FileMatcher;
+import org.unidal.helper.Scanners.ResourceMatcher;
 
 public class ScannersTest {
    @Test
@@ -97,6 +99,29 @@ public class ScannersTest {
       });
 
       Assert.assertEquals(true, all.contains("helper"));
+      Assert.assertEquals(0, result.size());
+   }
+
+   @Test
+   public void testResourceFileForDown() throws IOException {
+      final List<String> all = new ArrayList<String>();
+      List<URL> result = Scanners.forResource().scan("META-INF/plexus", new ResourceMatcher() {
+         @Override
+         public Direction matches(URL base, String path) {
+            Assert.assertEquals(true, base.getPath().endsWith("META-INF/plexus"));
+
+            File file = new File(base.getFile(), path);
+
+            if (base.getProtocol().equals("file")) { // file only
+               all.add(path);
+               Assert.assertEquals(true, file.exists());
+            }
+
+            return Direction.DOWN;
+         }
+      });
+
+      Assert.assertEquals(true, all.contains("components-foundation-service.xml"));
       Assert.assertEquals(0, result.size());
    }
 }

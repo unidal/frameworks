@@ -337,44 +337,48 @@ public class Scanners {
          }
       }
 
-      public List<URL> scan(String resourceBase, final ResourceMatcher matcher) throws IOException {
+      public List<URL> scan(String base, final ResourceMatcher matcher) throws IOException {
          List<URL> urls = new ArrayList<URL>();
          Set<URL> done = new HashSet<URL>();
 
          // try to load from current class's classloader
-         Enumeration<URL> r1 = getClass().getClassLoader().getResources(resourceBase);
+         Enumeration<URL> r1 = getClass().getClassLoader().getResources(base);
 
          while (r1.hasMoreElements()) {
-            URL url = r1.nextElement();
-
-            scan(done, urls, url, resourceBase, matcher);
+            scan(done, urls, r1.nextElement(), matcher);
          }
 
          // try to load from current context's classloader
-         Enumeration<URL> r2 = Thread.currentThread().getContextClassLoader().getResources(resourceBase);
+         Enumeration<URL> r2 = Thread.currentThread().getContextClassLoader().getResources(base);
 
          while (r2.hasMoreElements()) {
-            URL url = r2.nextElement();
-
-            scan(done, urls, url, resourceBase, matcher);
+            scan(done, urls, r2.nextElement(), matcher);
          }
 
          return urls;
       }
 
-      private void scan(final List<URL> urls, final URL url, final ResourceMatcher matcher) throws IOException {
-         String protocol = url.getProtocol();
+      private void scan(Set<URL> done, final List<URL> urls, final URL base, final ResourceMatcher matcher) throws IOException {
+         if (done.contains(base)) {
+            return;
+         } else {
+            done.add(base);
+         }
+
+         String protocol = base.getProtocol();
 
          if ("file".equals(protocol)) {
-            DirScanner.INSTANCE.scan(new File(decode(url.getPath())), new FileMatcher() {
+            File baseDir = new File(decode(base.getPath()));
+            DirScanner.INSTANCE.scan(baseDir, new FileMatcher() {
                @Override
-               public Direction matches(File base, String path) {
+               public Direction matches(File dir, String path) {
                   try {
-                     URL u = new URL(url, path);
-                     Direction d = matcher.matches(u, path);
+                     Direction d = matcher.matches(base, path);
 
                      if (d.isMatched()) {
-                        urls.add(u);
+                        URL url = new URL(base, path);
+
+                        urls.add(url);
                      }
 
                      return d;
