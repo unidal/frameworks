@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.zip.ZipEntry;
 
 import org.eclipse.jetty.util.resource.FileResource;
 import org.eclipse.jetty.util.resource.Resource;
@@ -17,6 +18,7 @@ import org.eclipse.jetty.util.resource.URLResource;
 import org.unidal.helper.Scanners;
 import org.unidal.helper.Scanners.FileMatcher;
 import org.unidal.helper.Scanners.JarScanner;
+import org.unidal.helper.Scanners.ZipEntryMatcher;
 
 public class WebModuleManager {
    private Map<String, URL> m_urls = new HashMap<String, URL>();
@@ -73,9 +75,9 @@ public class WebModuleManager {
          final String prefix = path.substring(pos + 2) + "/";
          JarScanner scanner = Scanners.forJar();
 
-         List<String> entries = scanner.scan(base, new FileMatcher() {
+         List<String> entries = scanner.scan(base, new ZipEntryMatcher() {
             @Override
-            public Direction matches(File base, String path) {
+            public Direction matches(ZipEntry entry, String path) {
                if (path.startsWith(prefix)) {
                   return Direction.MATCHED;
                }

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.unidal.helper.Scanners.IMatcher.Direction;
@@ -218,21 +219,30 @@ public class Scanners {
          return getEntry(jarFileName, name) != null;
       }
 
-      public List<String> scan(File base, IMatcher<File> matcher) {
-         List<String> files = new ArrayList<String>();
-         scanForFiles(base, matcher, false, files);
-
-         return files;
+      public List<String> scan(File jarFile, IMatcher<ZipEntry> matcher) throws ZipException, IOException {
+         return scan(new ZipFile(jarFile), matcher);
       }
 
       public List<String> scan(ZipFile zipFile, IMatcher<ZipEntry> matcher) {
          List<String> files = new ArrayList<String>();
-         scanForEntries(zipFile, matcher, false, files);
 
+         scanZipFile(zipFile, matcher, false, files);
          return files;
       }
 
-      private void scanForEntries(ZipFile zipFile, IMatcher<ZipEntry> matcher, boolean foundFirst, List<String> names) {
+      public String scanForOne(File jarFile, IMatcher<ZipEntry> matcher) throws ZipException, IOException {
+         List<String> files = new ArrayList<String>(1);
+
+         scanZipFile(new ZipFile(jarFile), matcher, false, files);
+
+         if (files.isEmpty()) {
+            return null;
+         } else {
+            return files.get(0);
+         }
+      }
+
+      private void scanZipFile(ZipFile zipFile, IMatcher<ZipEntry> matcher, boolean foundFirst, List<String> names) {
          Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
          while (entries.hasMoreElements()) {
@@ -256,55 +266,6 @@ public class Scanners {
             if (foundFirst && names.size() > 0) {
                break;
             }
-         }
-      }
-
-      private void scanForFiles(File jarFile, IMatcher<File> matcher, boolean foundFirst, List<String> names) {
-         ZipFile zipFile = null;
-
-         try {
-            zipFile = new ZipFile(jarFile);
-         } catch (IOException e) {
-            // ignore it
-         }
-
-         if (zipFile != null) {
-            Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-            while (entries.hasMoreElements()) {
-               ZipEntry entry = entries.nextElement();
-               String name = entry.getName();
-
-               if (matcher.isDirEligible() && entry.isDirectory()) {
-                  IMatcher.Direction direction = matcher.matches(jarFile, name);
-
-                  if (direction.isMatched()) {
-                     names.add(name);
-                  }
-               } else if (matcher.isFileElegible() && !entry.isDirectory()) {
-                  IMatcher.Direction direction = matcher.matches(jarFile, name);
-
-                  if (direction.isMatched()) {
-                     names.add(name);
-                  }
-               }
-
-               if (foundFirst && names.size() > 0) {
-                  break;
-               }
-            }
-         }
-      }
-
-      public String scanForOne(File jarFile, IMatcher<File> matcher) {
-         List<String> files = new ArrayList<String>(1);
-
-         scanForFiles(jarFile, matcher, true, files);
-
-         if (files.isEmpty()) {
-            return null;
-         } else {
-            return files.get(0);
          }
       }
    }
@@ -343,10 +304,12 @@ public class Scanners {
 
          String protocol = base.getProtocol();
 
-         if ("file".equals(protocol)) {
+         if ("file".equals(protocol)) { // local file folder
             scanFile(urls, base, matcher);
-         } else if ("jar".equals(protocol)) {
+         } else if ("jar".equals(protocol)) { // normal jar
             scanJar(urls, base, resourceBase, matcher);
+         } else if ("wsjar".equals(protocol)) { // websphere jar, zip file
+            scanWsjar(urls, base, resourceBase, matcher);
          }
       }
 
@@ -439,6 +402,38 @@ public class Scanners {
                }
             }
          }
+      }
+
+      private void scanWsjar(final List<URL> urls, final URL base, final String resourceBase, final ResourceMatcher matcher)
+            throws IOException {
+         String path = base.getPath();
+         int pos = path.lastIndexOf("!/");
+         File jarFile = new File(path.substring("file:".length(), pos));
+         final String prefix = resourceBase + "/";
+
+         JarScanner.INSTANCE.scan(jarFile, new ZipEntryMatcher() {
+            @Override
+            public Direction matches(ZipEntry entry, String path) {
+               if (path.startsWith(prefix)) {
+                  try {
+                     String p = path.substring(prefix.length());
+                     Direction d = matcher.matches(base, p);
+
+                     if (d.isMatched()) {
+                        URL url = new URL(base.toExternalForm() + "/" + p);
+
+                        urls.add(url);
+                     }
+
+                     return d;
+                  } catch (MalformedURLException e) {
+                     // ignore it
+                  }
+               }
+
+               return Direction.DOWN;
+            }
+         });
       }
    }
 
