@@ -1,6 +1,5 @@
 package org.unidal.helper;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,15 +7,14 @@ import java.io.UnsupportedEncodingException;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.jar.JarInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -321,8 +319,6 @@ public class Scanners {
       public boolean isFileElegible() {
          return true;
       }
-
-      public abstract Direction matches(URL base, String path);
    }
 
    public enum ResourceScanner {
@@ -337,28 +333,8 @@ public class Scanners {
          }
       }
 
-      public List<URL> scan(String base, final ResourceMatcher matcher) throws IOException {
-         List<URL> urls = new ArrayList<URL>();
-         Set<URL> done = new HashSet<URL>();
-
-         // try to load from current class's classloader
-         Enumeration<URL> r1 = getClass().getClassLoader().getResources(base);
-
-         while (r1.hasMoreElements()) {
-            scan(done, urls, r1.nextElement(), matcher);
-         }
-
-         // try to load from current context's classloader
-         Enumeration<URL> r2 = Thread.currentThread().getContextClassLoader().getResources(base);
-
-         while (r2.hasMoreElements()) {
-            scan(done, urls, r2.nextElement(), matcher);
-         }
-
-         return urls;
-      }
-
-      private void scan(Set<URL> done, final List<URL> urls, final URL base, final ResourceMatcher matcher) throws IOException {
+      private void scan(Set<URL> done, final List<URL> urls, final URL base, String resourceBase, final ResourceMatcher matcher)
+            throws IOException {
          if (done.contains(base)) {
             return;
          } else {
@@ -368,101 +344,98 @@ public class Scanners {
          String protocol = base.getProtocol();
 
          if ("file".equals(protocol)) {
-            File baseDir = new File(decode(base.getPath()));
-            DirScanner.INSTANCE.scan(baseDir, new FileMatcher() {
-               @Override
-               public Direction matches(File dir, String path) {
-                  try {
-                     Direction d = matcher.matches(base, path);
+            scanFile(urls, base, matcher);
+         } else if ("jar".equals(protocol)) {
+            scanJar(urls, base, resourceBase, matcher);
+         }
+      }
 
-                     if (d.isMatched()) {
-                        URL url = new URL(base, path);
+      public List<URL> scan(String resourceBase, final ResourceMatcher matcher) throws IOException {
+         List<URL> urls = new ArrayList<URL>();
+         Set<URL> done = new HashSet<URL>();
 
-                        urls.add(url);
-                     }
+         // try to load from current class's classloader
+         Enumeration<URL> e1 = getClass().getClassLoader().getResources(resourceBase);
 
-                     return d;
-                  } catch (MalformedURLException e) {
-                     // ignore it
+         while (e1.hasMoreElements()) {
+            scan(done, urls, e1.nextElement(), resourceBase, matcher);
+         }
+
+         // try to load from current context's classloader
+         Enumeration<URL> e2 = Thread.currentThread().getContextClassLoader().getResources(resourceBase);
+
+         while (e2.hasMoreElements()) {
+            scan(done, urls, e2.nextElement(), resourceBase, matcher);
+         }
+
+         return urls;
+      }
+
+      private void scanFile(final List<URL> urls, final URL base, final ResourceMatcher matcher) {
+         File baseDir = new File(decode(base.getPath()));
+
+         DirScanner.INSTANCE.scan(baseDir, new FileMatcher() {
+            @Override
+            public Direction matches(File dir, String path) {
+               try {
+                  Direction d = matcher.matches(base, path);
+
+                  if (d.isMatched()) {
+                     URL url = new URL(base.toExternalForm() + "/" + path);
+
+                     urls.add(url);
                   }
 
-                  return Direction.DOWN;
+                  return d;
+               } catch (MalformedURLException e) {
+                  // ignore it
                }
-            });
-         } else if ("jar".equals(protocol) || "wasjar".equals(protocol)) { // wasjar for WAS
-            List<String> parts = Splitters.by('!').split(url.toExternalForm());
-            int len = parts.size();
-            String prefix = parts.remove(len - 1).substring(1);
-            JarInputStream jis = null;
 
-            for (int i = 0; i < len - 1; i++) {
-               String part = parts.get(i);
-               String nextPart = i + 1 < len - 1 ? parts.get(i + 1).substring(1) : null;
+               return Direction.DOWN;
+            }
+         });
+      }
 
-               if (i == 0) {
-                  URL top = new URL(part + "!/");
-                  JarURLConnection conn = (JarURLConnection) top.openConnection();
-                  JarFile jarFile = conn.getJarFile();
-                  Enumeration<JarEntry> jarEntries = jarFile.entries();
+      private void scanJar(final List<URL> urls, final URL base, String resourceBase, final ResourceMatcher matcher)
+            throws IOException {
+         String url = base.toExternalForm();
+         int pos = url.lastIndexOf("!/");
+         final URL u = new URL(url.substring(0, pos + 2));
+         URLConnection conn = u.openConnection();
 
-                  while (jarEntries.hasMoreElements()) {
-                     JarEntry jarEntry = jarEntries.nextElement();
-                     String name = jarEntry.getName();
+         if (conn instanceof JarURLConnection) {
+            JarFile jarFile = ((JarURLConnection) conn).getJarFile();
+            final String prefix = resourceBase + "/";
 
-                     if (nextPart == null && name.startsWith(prefix)) {
-                        String p = name.substring(prefix.length());
-                        URL u = new URL(url, p);
-                        Direction d = matcher.matches(u, p);
-
-                        if (d.isMatched()) {
-                           urls.add(u);
-                        }
-                     } else if (name.equals(nextPart)) {
-                        int size = (int) jarEntry.getSize();
-                        byte[] data = Files.forIO().readFrom(jarFile.getInputStream(jarEntry), size);
-
-                        jis = new JarInputStream(new ByteArrayInputStream(data));
-                        break;
-                     }
-                  }
-
-                  jarFile.close();
-               } else if (jis != null) {
-                  JarInputStream newJis = null;
-
-                  while (true) {
-                     JarEntry e = (JarEntry) jis.getNextEntry();
-
-                     if (e == null) {
-                        break;
-                     } else if (!e.isDirectory()) {
-                        String name = e.getName();
-
-                        if (nextPart == null && name.startsWith(prefix)) {
-                           String p = name.substring(prefix.length());
-                           URL u = new URL(url, p);
-                           Direction d = matcher.matches(u, p);
+            try {
+               JarScanner.INSTANCE.scan(jarFile, new ZipEntryMatcher() {
+                  @Override
+                  public Direction matches(ZipEntry entry, String path) {
+                     if (path.startsWith(prefix)) {
+                        try {
+                           String p = path.substring(prefix.length());
+                           Direction d = matcher.matches(base, p);
 
                            if (d.isMatched()) {
-                              urls.add(u);
-                           }
-                        } else if (name.equals(nextPart)) {
-                           int size = (int) e.getSize();
-                           byte[] data = new byte[size];
-                           int off = 0;
+                              URL url = new URL(base.toExternalForm() + "/" + p);
 
-                           while (off < size) {
-                              off += jis.read(data, off, size);
+                              urls.add(url);
                            }
 
-                           newJis = new JarInputStream(new ByteArrayInputStream(data));
-                           break;
+                           return d;
+                        } catch (MalformedURLException e) {
+                           // ignore it
                         }
                      }
-                  }
 
-                  jis.close();
-                  jis = newJis;
+                     return Direction.DOWN;
+                  }
+               });
+            } finally {
+               try {
+                  jarFile.close();
+               } catch (Throwable e) {
+                  // ignore it
                }
             }
          }

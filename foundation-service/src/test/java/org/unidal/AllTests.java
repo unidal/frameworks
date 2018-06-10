@@ -67,8 +67,6 @@ MyPlexusContainerTest.class,
 
 Log4jLoggerTest.class,
 
-TimedConsoleLoggerTest.class,
-
 })
 public class AllTests {
 

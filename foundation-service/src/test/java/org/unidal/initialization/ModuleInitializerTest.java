@@ -15,6 +15,7 @@ public class ModuleInitializerTest extends ComponentTestCase {
    @Test
    public void test() {
       ModuleInitializer initializer = lookup(ModuleInitializer.class);
+      ModuleContext ctx = lookup(ModuleContext.class);
       Module m1 = new MockModule("m1", "m11", "m12");
       Module m2 = new MockModule("m2", "m21");
 
@@ -56,7 +57,7 @@ public class ModuleInitializerTest extends ComponentTestCase {
             "";
 
       m_sb.setLength(0);
-      initializer.execute(new DefaultModuleContext(), m1, m2);
+      initializer.execute(ctx, m1, m2);
 
       Assert.assertEquals(expected, m_sb.toString());
    }
