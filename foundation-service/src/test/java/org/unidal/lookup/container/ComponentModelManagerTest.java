@@ -13,7 +13,5 @@ public class ComponentModelManagerTest {
       List<URL> urls = manager.scanComponents();
 
       Assert.assertEquals(1, urls.size());
-
-      // System.out.println(urls);
    }
 }

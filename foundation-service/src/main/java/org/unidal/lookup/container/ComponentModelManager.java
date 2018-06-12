@@ -148,7 +148,7 @@ public class ComponentModelManager {
    List<URL> scanComponents() throws IOException {
       final List<URL> components = new ArrayList<URL>();
 
-      Scanners.forResource().scan("META-INF/plexus/", new ResourceMatcher() {
+      Scanners.forResource().scan("META-INF/plexus", new ResourceMatcher() {
          @Override
          public Direction matches(URL base, String path) {
             if (!path.endsWith(".xml")) {
