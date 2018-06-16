@@ -344,9 +344,16 @@ public class Scanners {
                   Direction d = matcher.matches(base, path);
 
                   if (d.isMatched()) {
-                     URL url = new URL(base.toExternalForm() + "/" + path);
+                     String baseUrl = base.toExternalForm();
+                     String url;
 
-                     urls.add(url);
+                     if (baseUrl.endsWith("/")) {
+                        url = baseUrl + path;
+                     } else {
+                        url = baseUrl + "/" + path;
+                     }
+
+                     urls.add(new URL(url));
                   }
 
                   return d;

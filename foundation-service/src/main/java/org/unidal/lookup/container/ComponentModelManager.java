@@ -162,7 +162,16 @@ public class ComponentModelManager {
 
             if (path.equals("plexus.xml") || path.equals("components.xml") || path.startsWith("components-")) {
                try {
-                  components.add(new URL(base.toExternalForm() + "/" + path));
+                  String baseUrl = base.toExternalForm();
+                  String url;
+
+                  if (baseUrl.endsWith("/")) {
+                     url = baseUrl + path;
+                  } else {
+                     url = baseUrl + "/" + path;
+                  }
+
+                  components.add(new URL(url));
                } catch (Throwable e) {
                   // ignore it
                }
