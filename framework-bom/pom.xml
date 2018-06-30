@@ -6,6 +6,7 @@
    <version>4.1.0</version>
    <packaging>pom</packaging>
    <name>Framework BOM</name>
+   <description>Unidal Framework BOM</description>
    <properties>
       <!-- dal-jdbc -->
       <cat-client.version>2.0.0</cat-client.version>
@@ -93,21 +94,30 @@
          </dependency>
       </dependencies>
    </dependencyManagement>
+   <url>https://github.com/unidal/frameworks</url>
    <organization>
        <name>Unidal Organization</name>
        <url>http://www.unidal.org</url>
    </organization>
    <scm>
-      <url>https://github.com/unidal/frameworks</url>
       <connection>scm:git:git://github.com/unidal/frameworks.git</connection>
       <developerConnection>scm:git:ssh://git@github.com/unidal/frameworks.git</developerConnection>
+      <url>https://github.com/unidal/frameworks/tree/master</url>
       <tag>HEAD</tag>
    </scm>
+   <licenses>
+      <license>
+         <name>The Apache License, Version 2.0</name>
+         <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      </license>
+   </licenses>
    <developers>
       <developer>
-         <email>qmwu2000@gmail.com</email>
          <name>Frankie Wu</name>
+         <email>qmwu2000@gmail.com</email>
          <timezone>Asia/Shanghai</timezone>
+         <organization>Unidal.org</organization>
+         <organizationUrl>http://unidal.org</organizationUrl>
       </developer>
    </developers>
    <build>
