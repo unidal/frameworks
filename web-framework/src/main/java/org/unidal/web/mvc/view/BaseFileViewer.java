@@ -19,9 +19,11 @@ public abstract class BaseFileViewer<P extends Page, A extends Action, S extends
 	 * return file name to be shown in browser download dialog.
 	 * <p>
 	 * 
-	 * Note: This method will be ignore if the {@link #process(S, T, byte[])}
+	 * Note: This method will be ignore if the <code>process(S, T, byte[])</code>
 	 * return null.
 	 * 
+	 * @param ctx action context
+	 * @param model view model
 	 * @return file name to be shown in browser download dialog.
 	 */
 	protected abstract String getFileName(S ctx, T model);
@@ -31,9 +33,11 @@ public abstract class BaseFileViewer<P extends Page, A extends Action, S extends
 	 * for further process.
 	 * <p>
 	 * 
-	 * Note: This method will be ignore if the {@link #process(S, T, byte[])}
+	 * Note: This method will be ignore if the <code>process(S, T, byte[])</code>
 	 * return null.
 	 * 
+    * @param ctx action context
+    * @param model view model
 	 * @return JSP file path (relative to warRoot) to forward.
 	 */
 	protected abstract String getJspFilePath(S ctx, T model);
@@ -42,14 +46,19 @@ public abstract class BaseFileViewer<P extends Page, A extends Action, S extends
 	 * return mime-type for file to be downloaded.
 	 * <p>
 	 * 
-	 * Note: This method will be ignore if the {@link #process(S, T, byte[])}
+	 * Note: This method will be ignore if the <code>process(S, T, byte[])</code>
 	 * return null.
 	 * 
+    * @param ctx action context
+    * @param model view model
 	 * @return mime-type. for example, text/html, text/xml, application/pdf etc.
 	 */
 	protected abstract String getMimeType(S ctx, T model);
 
 	/**
+    * @param ctx action context
+    * @param model view model
+    * @param content rendered content
 	 * @return processed content, null returned will stop further flush
 	 */
 	protected abstract byte[] process(S ctx, T model, byte[] content);

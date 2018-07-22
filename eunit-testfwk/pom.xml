@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.unidal.framework</groupId>
       <artifactId>parent</artifactId>
-      <version>4.1.1</version>
+      <version>5.0.0</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
    <modelVersion>4.0.0</modelVersion>
@@ -12,7 +12,7 @@
    <name>Eunit Test Framework</name>
    <dependencies>
       <dependency>
-         <groupId>org.unidal.framework</groupId>
+         <groupId>org.unidal.foundation</groupId>
          <artifactId>foundation-service</artifactId>
       </dependency>
       <dependency>

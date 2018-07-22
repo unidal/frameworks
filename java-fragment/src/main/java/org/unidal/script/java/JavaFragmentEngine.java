@@ -13,20 +13,21 @@ import javax.script.SimpleBindings;
 
 /**
  * Java Fragment engine to compile and execute Java source code on the fly.
- * <p>
  * 
- * <ul>
  * Following use cases are supported
+ * <ul>
  * <li>a piece of java code</li>
+ * <li>one java method</li>
+ * <li>one java class</li>
  * </ul>
  * 
- * @author Frankie Wu <qmwu2000@gmail.com>
+ * @author Frankie Wu
  * @since March 17, 2012
  * @version 0.1.0
  */
 public class JavaFragmentEngine extends AbstractScriptEngine {
    public static final String OUTPUT_DIRECTORY = "java.fragment.output.directory";
-   
+
    private ScriptEngineFactory m_factory;
 
    private JavaFragmentCompiler m_compiler;

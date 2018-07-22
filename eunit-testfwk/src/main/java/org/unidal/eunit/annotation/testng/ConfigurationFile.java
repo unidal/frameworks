@@ -10,6 +10,8 @@ import java.lang.annotation.Target;
 public @interface ConfigurationFile {
    /**
     * XML configuration file in the classpath.
+    * 
+    * @return XML configuration file in the classpath
     */
    String value();
 }

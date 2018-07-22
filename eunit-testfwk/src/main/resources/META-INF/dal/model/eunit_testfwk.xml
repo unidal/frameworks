@@ -32,7 +32,7 @@
    <entity name="eunit-parameter">
       <attribute name="type" value-type="Class" />
       <attribute name="id" value-type="String" />
-      <attribute name="index" value-type="int" render="false" />
+      <attribute name="index" value-type="Integer" render="false" />
       <attribute name="eunit-method" value-type="EunitMethod" render="false" />
       <element name="annotation" value-type="java.lang.annotation.Annotation" type="list" names="annotations" render="false" />
    </entity>

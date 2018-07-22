@@ -9,7 +9,7 @@ import org.unidal.dal.jdbc.query.token.TokenType;
 import org.unidal.lookup.annotation.Named;
 
 /**
- * &lt;IN&gt;...&lt/IN&gt;
+ * &lt;IN&gt;...&lt;/IN&gt;
  */
 @Named(type = TokenResolver.class, value = "IN")
 public class InTokenResolver implements TokenResolver {

@@ -8,13 +8,16 @@ import java.io.InputStream;
 
 import org.unidal.dal.jdbc.datasource.model.entity.DataSourcesDef;
 import org.unidal.dal.jdbc.datasource.model.transform.DefaultSaxParser;
+import org.unidal.helper.Files;
 import org.unidal.helper.Properties;
 import org.unidal.lookup.annotation.Named;
+import org.unidal.lookup.extension.Initializable;
+import org.unidal.lookup.extension.InitializationException;
 import org.unidal.lookup.logging.LogEnabled;
 import org.unidal.lookup.logging.Logger;
 
 @Named(type = DataSourceProvider.class)
-public class DefaultDataSourceProvider implements DataSourceProvider, LogEnabled {
+public class DefaultDataSourceProvider implements DataSourceProvider, Initializable, LogEnabled {
    private String m_datasourceFile;
 
    private String m_baseDirRef;
@@ -25,65 +28,51 @@ public class DefaultDataSourceProvider implements DataSourceProvider, LogEnabled
 
    private DataSourcesDef m_def;
 
+   private String m_dataSource;
+
    @Override
    public DataSourcesDef defineDatasources() {
       if (m_def == null) {
-         if (m_datasourceFile != null) {
-            // check configuration file from file system for most case
-            File file;
-            InputStream is = null;
+         File file = new File(m_dataSource);
 
-            if (m_datasourceFile.startsWith("/")) {
-               file = new File(m_datasourceFile);
-            } else {
-               String baseDir = Properties.forString().fromEnv().fromSystem().getProperty(m_baseDirRef, m_defaultBaseDir);
+         try {
+            file = file.getCanonicalFile();
+         } catch (IOException e1) {
+            // ignore it
+         }
 
-               if (baseDir != null) {
-                  file = new File(baseDir, m_datasourceFile);
-               } else {
-                  file = new File(m_datasourceFile);
-               }
-            }
+         InputStream in = null;
 
+         if (file.canRead()) {
             try {
-               file = file.getCanonicalFile();
-            } catch (IOException e1) {
+               in = new FileInputStream(file);
+               m_logger.info(String.format("Loading data sources from %s ...", file));
+            } catch (FileNotFoundException e) {
                // ignore it
             }
-            
-            if (file.canRead()) {
-               m_logger.info(String.format("Loading data sources from %s ...", file));
+         } else {
+            // check configuration file from classpath for hadoop map-reduce jobs etc.
+            // since it could be distributed everywhere and there is no configuration file available during runtime environment
+            in = Thread.currentThread().getContextClassLoader().getResourceAsStream(m_datasourceFile);
 
-               try {
-                  is = new FileInputStream(file);
-               } catch (FileNotFoundException e) {
-                  // ignore it
-               }
-            } else {
-               // check configuration file from classpath for hadoop map-reduce jobs etc.
-               // since it could be distributed everywhere and there is no configuration file available during runtime environment
-               is = Thread.currentThread().getContextClassLoader().getResourceAsStream(m_datasourceFile);
-
-               if (is == null) {
-                  is = getClass().getResourceAsStream(m_datasourceFile);
-               }
-
-               if (is != null) {
-                  m_logger.info(String.format("Loading data sources from resource(%s)", m_datasourceFile));
-               } else {
-                  m_logger.warn(String.format("Data sources configuration(%s) is not found!", file));
-               }
+            if (in == null) {
+               in = getClass().getResourceAsStream(m_datasourceFile);
             }
 
-            if (is != null) {
-               try {
-                  m_def = DefaultSaxParser.parse(is);
-               } catch (Exception e) {
-                  throw new IllegalStateException("Error when loading data sources file: " + file, e);
-               }
-            } else {
-               m_def = new DataSourcesDef();
+            if (in != null) {
+               m_logger.info(String.format("Loading data sources from resource(%s)", m_datasourceFile));
             }
+         }
+
+         if (in != null) {
+            try {
+               m_def = DefaultSaxParser.parse(in);
+            } catch (Exception e) {
+               throw new IllegalStateException("Error when loading data sources file: " + file, e);
+            }
+         } else {
+            m_logger.warn(String.format("Data sources configuration(%s) is not found!", file));
+            m_def = new DataSourcesDef();
          }
       }
 
@@ -97,6 +86,17 @@ public class DefaultDataSourceProvider implements DataSourceProvider, LogEnabled
 
    public String getDatasourceFile() {
       return m_datasourceFile;
+   }
+
+   @Override
+   public void initialize() throws InitializationException {
+      String baseDir = Properties.forString().fromEnv().fromSystem().getProperty(m_baseDirRef, m_defaultBaseDir);
+
+      if (baseDir != null) {
+         baseDir = Files.forDir().getAbsoluteFile(baseDir);
+      }
+
+      m_dataSource = Files.forDir().getAbsoluteFile(baseDir, m_datasourceFile);
    }
 
    public void setBaseDirRef(String baseDirRef) {

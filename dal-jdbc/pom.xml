@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.unidal.framework</groupId>
       <artifactId>parent</artifactId>
-      <version>4.1.1</version>
+      <version>5.0.0</version>
    </parent>
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.unidal.framework</groupId>
@@ -11,7 +11,7 @@
    <name>DAL JDBC</name>
    <dependencies>
       <dependency>
-         <groupId>org.unidal.framework</groupId>
+         <groupId>org.unidal.foundation</groupId>
          <artifactId>foundation-service</artifactId>
       </dependency>
       <dependency>
@@ -59,7 +59,7 @@
                   </configuration>
                </execution>
                <execution>
-                  <id>generate dal jdbc model</id>
+                  <id>generate dal jdbc files</id>
                   <phase>generate-sources</phase>
                   <goals>
                      <goal>dal-jdbc</goal>

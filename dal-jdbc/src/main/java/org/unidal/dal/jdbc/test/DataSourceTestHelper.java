@@ -23,14 +23,6 @@ import org.unidal.lookup.container.model.entity.RequirementModel;
 import org.unidal.lookup.logging.LogEnabled;
 import org.unidal.lookup.logging.Logger;
 
-/**
- * <xmp>
- * 
- * <dependency> <groupId>com.h2database</groupId> <artifactId>h2</artifactId> <version>1.4.186</version> <scope>test</scope>
- * </dependency>
- * 
- * </xmp>
- */
 public class DataSourceTestHelper extends ContainerHolder implements LogEnabled {
    private String m_dataSource;
 

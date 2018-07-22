@@ -21,19 +21,19 @@ import org.unidal.web.mvc.ErrorObject;
  * 
  * Sample usage:<br>
  * 
- * <%@ taglib prefix="w" uri="http://www.unidal.org/web/core"%>
+ * <pre>
+ * &lt;%@ taglib prefix="w" uri="http://www.unidal.org/web/core"%&gt;
  * 
- * <xmp>
- * <w:errors> 
- *    <w:error code="dal.user.add">Error while inserting user(\${userId}) to database. Exception: \${exception}</w:error> 
- *    <w:error code="biz.user.add">Error while adding user(\${userId}).</w:error> 
- *    <w:error code="*" enabled="true">Error(\${code}) occurred.<br></w:error> 
- * </w:errors>
+ * &lt;w:errors&gt; 
+ *    &lt;w:error code="dal.user.add"&gt;Error while inserting user(\${userId}) to database. Exception: \${exception}&lt;/w:error&gt; 
+ *    &lt;w:error code="biz.user.add"&gt;Error while adding user(\${userId}).&lt;/w:error&gt; 
+ *    &lt;w:error code="*" enabled="true"&gt;Error(\${code}) occurred.&lt;br&gt;&lt;/w:error&gt; 
+ * &lt;/w:errors&gt;
  * 
- * <w:errors bundle="/META-INF/error_en_US.properties"> 
- *    <w:error code="*" enabled="true"/> 
- * </w:errors> 
- * </xmp>
+ * &lt;w:errors bundle="/META-INF/error_en_US.properties"&gt; 
+ *    &lt;w:error code="*" enabled="true"/&gt; 
+ * &lt;/w:errors&gt; 
+ * </pre>
  * 
  * @see ErrorsTag
  */

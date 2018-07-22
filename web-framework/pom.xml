@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.unidal.framework</groupId>
       <artifactId>parent</artifactId>
-      <version>4.1.1</version>
+      <version>5.0.0</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
    <modelVersion>4.0.0</modelVersion>
@@ -13,7 +13,7 @@
    <name>Web Framework</name>
    <dependencies>
       <dependency>
-         <groupId>org.unidal.framework</groupId>
+         <groupId>org.unidal.foundation</groupId>
          <artifactId>foundation-service</artifactId>
       </dependency>
       <dependency>
@@ -25,11 +25,6 @@
          <artifactId>commons-fileupload</artifactId>
       </dependency>
       <dependency>
-         <groupId>org.unidal.framework</groupId>
-         <artifactId>test-framework</artifactId>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
          <groupId>javax.servlet</groupId>
          <artifactId>javax.servlet-api</artifactId>
          <scope>provided</scope>
@@ -39,6 +34,11 @@
          <artifactId>javax.servlet.jsp-api</artifactId>
          <scope>provided</scope>
       </dependency>
+      <dependency>
+         <groupId>org.unidal.framework</groupId>
+         <artifactId>test-framework</artifactId>
+         <scope>test</scope>
+      </dependency>
    </dependencies>
    <build>
       <plugins>
@@ -47,7 +47,7 @@
             <artifactId>codegen-maven-plugin</artifactId>
             <executions>
                <execution>
-                  <id>generate mvc model</id>
+                  <id>generate dal model files</id>
                   <phase>generate-sources</phase>
                   <goals>
                      <goal>dal-model</goal>

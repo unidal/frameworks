@@ -16,18 +16,6 @@ import org.unidal.helper.Reflects.MethodFilter;
 import org.unidal.lookup.ContainerHolder;
 import org.unidal.lookup.logging.Logger;
 
-/**
- * <xmp>
- * 
- * <dependency>
- *    <groupId>com.h2database</groupId>
- *    <artifactId>h2</artifactId>
- *    <version>1.4.186</version>
- *    <scope>test</scope>
- * </dependency>
- * 
- * </xmp>
- */
 public class JdbcTestHelper extends ContainerHolder {
 	public void createTables(String dataSource, String group) throws Exception {
 		String resource = String.format("/META-INF/dal/jdbc/%s-codegen.xml", group);
