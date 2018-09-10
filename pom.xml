@@ -8,7 +8,7 @@
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.unidal.framework</groupId>
    <artifactId>parent</artifactId>
-   <version>5.0.0</version>
+   <version>5.0.1</version>
    <packaging>pom</packaging>
    <name>Framework</name>
    <description>Unidal Framework</description>
@@ -51,8 +51,8 @@
       <spring.version>4.2.7.RELEASE</spring.version>
 
       <!-- plugin version -->
-      <codegen.plugin.version>4.0.0</codegen.plugin.version>
-      <plexus.plugin.version>4.0.0</plexus.plugin.version>
+      <codegen.plugin.version>4.0.1</codegen.plugin.version>
+      <plexus.plugin.version>4.0.1</plexus.plugin.version>
    </properties>
    <dependencyManagement>
       <dependencies>

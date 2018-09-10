@@ -29,8 +29,14 @@ public abstract class ViewModel<P extends Page, A extends Action, M extends Acti
 
 	public abstract A getDefaultAction();
 
+	public String getModule() {
+	   RequestContext requestContext = m_actionContext.getRequestContext();
+	   
+		return requestContext.getModule().getModuleName();
+	}
+	
 	public String getModuleUri() {
-		return buildPageUri(null, null);
+	   return buildPageUri(null, null);
 	}
 
 	public P getPage() {
