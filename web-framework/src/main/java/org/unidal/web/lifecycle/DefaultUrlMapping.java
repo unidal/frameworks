@@ -9,20 +9,21 @@ public class DefaultUrlMapping implements UrlMapping {
 
    private String m_action;
 
+   private String m_rawModule;
+
+   private String m_rawAction;
+
    private String m_pathInfo;
 
    private String m_queryString;
 
-   public DefaultUrlMapping() {
-   }
-
    public DefaultUrlMapping(String[] sections) {
       int index = 0;
 
-      m_contextPath = sections[index++];
-      m_servletPath = sections[index++];
-      m_module = trim(sections[index++]);
-      m_action = trim(sections[index++]);
+      m_contextPath = trim(sections[index++]);
+      m_servletPath = trim(sections[index++]);
+      m_rawModule = trim(sections[index++]);
+      m_rawAction = trim(sections[index++]);
       m_pathInfo = trim(sections[index++]);
       m_queryString = sections[index++];
    }
@@ -30,36 +31,63 @@ public class DefaultUrlMapping implements UrlMapping {
    public DefaultUrlMapping(UrlMapping urlMapping) {
       m_contextPath = urlMapping.getContextPath();
       m_servletPath = urlMapping.getServletPath();
+      m_rawModule = urlMapping.getRawModule();
+      m_rawAction = urlMapping.getRawAction();
       m_module = urlMapping.getModule();
       m_action = urlMapping.getAction();
       m_pathInfo = urlMapping.getPathInfo();
       m_queryString = urlMapping.getQueryString();
    }
 
+   @Override
    public String getAction() {
-      return m_action;
+      if (m_action != null) {
+         return m_action;
+      } else {
+         return m_rawAction;
+      }
    }
 
+   @Override
    public String getContextPath() {
       return m_contextPath;
    }
 
+   @Override
    public String getModule() {
-      return m_module;
+      if (m_module != null) {
+         return m_module;
+      } else {
+         return m_rawModule;
+      }
    }
 
+   @Override
    public String getPathInfo() {
       return m_pathInfo;
    }
 
+   @Override
    public String getQueryString() {
       return m_queryString;
    }
 
+   @Override
+   public String getRawAction() {
+      return m_rawAction;
+   }
+
+   @Override
+   public String getRawModule() {
+      return m_rawModule;
+   }
+
+   @Override
    public String getServletPath() {
       return m_servletPath;
    }
 
+   @Override
    public void setAction(String action) {
       m_action = action;
    }
@@ -95,7 +123,7 @@ public class DefaultUrlMapping implements UrlMapping {
       if (str != null) {
          int pos = str.indexOf(';');
 
-         if (pos > 0) {
+         if (pos >= 0) {
             return str.substring(0, pos);
          }
       }

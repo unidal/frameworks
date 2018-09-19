@@ -24,10 +24,10 @@ public class DefaultActionResolver implements ActionResolver {
 
          if (action != null) {
             sb.append('/').append(action);
-         }
-
-         if (pathInfo != null) {
-            sb.append('/').append(pathInfo);
+            
+            if (pathInfo != null) {
+               sb.append('/').append(pathInfo);
+            }
          }
       }
 

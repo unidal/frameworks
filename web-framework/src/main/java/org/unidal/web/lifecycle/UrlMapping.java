@@ -11,7 +11,13 @@ public interface UrlMapping {
 
    public String getQueryString();
 
+   public String getRawAction();
+
+   public String getRawModule();
+
    public String getServletPath();
+
+   public void setAction(String action);
 
    public void setModule(String module);
 }

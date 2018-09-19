@@ -38,7 +38,10 @@ public class DefaultRequestContextBuilder extends ContainerHolder implements Req
       RequestContext context = new RequestContext();
       ModuleModel module = m_modelManager.getModule(requestModuleName, action);
 
+      // real module and action
       urlMapping.setModule(module.getModuleName());
+      urlMapping.setAction(inboundAction.getActionName());
+
       context.setActionResolver(actionResolver);
       context.setParameterProvider(provider);
       context.setUrlMapping(urlMapping);

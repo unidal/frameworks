@@ -40,15 +40,19 @@ public class RequestContext {
    }
 
    public String getActionUri(String action) {
-      return getActionUri(action, null);
+      return getActionUri(action, null, null);
    }
 
    public String getActionUri(String action, String pathInfo) {
+      return getActionUri(action, pathInfo, null);
+   }
+
+   public String getActionUri(String action, String pathInfo, String queryString) {
       DefaultUrlMapping urlMapping = new DefaultUrlMapping(m_urlMapping);
 
       urlMapping.setAction(action);
       urlMapping.setPathInfo(pathInfo);
-      urlMapping.setQueryString(null);
+      urlMapping.setQueryString(queryString);
       return m_actionResolver.buildUrl(m_parameterProvider, urlMapping);
    }
 
@@ -63,18 +67,30 @@ public class RequestContext {
    public ModuleModel getModule() {
       return m_module;
    }
+   
+   public String getModuleUri() {
+      return getModuleUri(m_module.getModuleName(), null, null, null);
+   }
+
+   public String getModuleUri(String module) {
+      return getModuleUri(module, null, null, null);
+   }
 
    public String getModuleUri(String module, String action) {
-      return getModuleUri(module, action, null);
+      return getModuleUri(module, action, null, null);
    }
 
    public String getModuleUri(String module, String action, String pathInfo) {
+      return getModuleUri(module, action, pathInfo, null);
+   }
+
+   public String getModuleUri(String module, String action, String pathInfo, String queryString) {
       DefaultUrlMapping urlMapping = new DefaultUrlMapping(m_urlMapping);
 
       urlMapping.setModule(module);
       urlMapping.setAction(action);
       urlMapping.setPathInfo(pathInfo);
-      urlMapping.setQueryString(null);
+      urlMapping.setQueryString(queryString);
       return m_actionResolver.buildUrl(m_parameterProvider, urlMapping);
    }
 
