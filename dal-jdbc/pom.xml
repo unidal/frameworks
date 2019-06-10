@@ -16,7 +16,7 @@
       </dependency>
       <dependency>
          <groupId>org.unidal.cat</groupId>
-         <artifactId>cat</artifactId>
+         <artifactId>cat-client</artifactId>
       </dependency>
       <dependency>
          <groupId>com.mchange</groupId>

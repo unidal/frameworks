@@ -18,7 +18,7 @@
       </dependency>
       <dependency>
          <groupId>org.unidal.cat</groupId>
-         <artifactId>cat</artifactId>
+         <artifactId>cat-client</artifactId>
       </dependency>
       <dependency>
          <groupId>commons-fileupload</groupId>

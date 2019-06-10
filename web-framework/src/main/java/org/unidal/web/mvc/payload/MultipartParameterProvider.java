@@ -237,6 +237,11 @@ public class MultipartParameterProvider implements ParameterProvider, LogEnabled
          return m_stream.read(b, off, len);
       }
 
+      @Override
+      public String toString() {
+         return m_file.getName();
+      }
+
       public void write(File file) throws Exception {
          m_file.write(file);
       }

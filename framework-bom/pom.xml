@@ -64,7 +64,7 @@
          <!-- 3rd party artifacts -->
          <dependency>
             <groupId>org.unidal.cat</groupId>
-            <artifactId>cat</artifactId>
+            <artifactId>cat-client</artifactId>
             <version>${cat.version}</version>
          </dependency>
          <dependency>
