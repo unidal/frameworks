@@ -115,19 +115,17 @@ public class DefaultRequestLifecycle implements RequestLifecycle, LogEnabled {
       OutboundActionModel outboundAction = module.getOutbounds().get(outboundActionName);
 
       if (outboundAction == null) {
-         throw new ActionException("No method annotated by @" + OutboundActionMeta.class.getSimpleName() + "("
-               + outboundActionName + ") found in " + module.getModuleClass());
+         throw new ActionException("No method annotated by @" + OutboundActionMeta.class.getSimpleName() + "(" + outboundActionName
+               + ") found in " + module.getModuleClass());
       } else {
-         OutboundActionHandler outboundActionHandler = m_actionHandlerManager.getOutboundActionHandler(module,
-               outboundAction);
+         OutboundActionHandler outboundActionHandler = m_actionHandlerManager.getOutboundActionHandler(module, outboundAction);
 
          outboundActionHandler.handle(actionContext);
       }
    }
 
-   private boolean handlePreActions(final HttpServletRequest request, final HttpServletResponse response,
-         ModuleModel module, RequestContext requestContext, InboundActionModel inboundAction,
-         ActionContext<?> actionContext) {
+   private boolean handlePreActions(final HttpServletRequest request, final HttpServletResponse response, ModuleModel module,
+         RequestContext requestContext, InboundActionModel inboundAction, ActionContext<?> actionContext) {
       if (inboundAction.getPreActionNames() != null) {
          for (String actionName : inboundAction.getPreActionNames()) {
             InboundActionModel action = module.getInbounds().get(actionName);
@@ -157,8 +155,8 @@ public class DefaultRequestLifecycle implements RequestLifecycle, LogEnabled {
       return true;
    }
 
-   private void handleRequest(final HttpServletRequest request, final HttpServletResponse response,
-         RequestContext requestContext) throws IOException {
+   private void handleRequest(final HttpServletRequest request, final HttpServletResponse response, RequestContext requestContext)
+         throws IOException {
       ModuleModel module = requestContext.getModule();
       InboundActionModel inboundAction = requestContext.getInboundAction();
       ActionContext<?> actionContext = createActionContext(request, response, requestContext, inboundAction);
@@ -168,8 +166,7 @@ public class DefaultRequestLifecycle implements RequestLifecycle, LogEnabled {
          t = NullMessage.TRANSACTION;
       }
 
-      request.setAttribute(CAT_PAGE_URI,
-            actionContext.getRequestContext().getActionUri(inboundAction.getActionName()));
+      request.setAttribute(CAT_PAGE_URI, actionContext.getRequestContext().getActionUri(inboundAction.getActionName()));
 
       try {
          InboundActionHandler handler = m_actionHandlerManager.getInboundActionHandler(module, inboundAction);
@@ -194,7 +191,9 @@ public class DefaultRequestLifecycle implements RequestLifecycle, LogEnabled {
 
          t.addData("out", actionContext.getOutboundAction());
          handleOutboundAction(module, actionContext);
+         ActionContext.logHttpStatus(HttpServletResponse.SC_OK);
       } catch (Throwable e) {
+         ActionContext.logHttpStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
          handleException(request, e, actionContext);
       }
    }
@@ -212,6 +211,7 @@ public class DefaultRequestLifecycle implements RequestLifecycle, LogEnabled {
    }
 
    private void showPageNotFound(HttpServletRequest request, HttpServletResponse response) throws IOException {
+      ActionContext.logHttpStatus(HttpServletResponse.SC_NOT_FOUND);
       response.sendError(HttpServletResponse.SC_NOT_FOUND, "Not found");
    }
 }

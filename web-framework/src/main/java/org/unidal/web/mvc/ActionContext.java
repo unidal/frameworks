@@ -21,7 +21,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.unidal.cat.Cat;
 import org.unidal.helper.Objects;
+import org.unidal.helper.Splitters;
 import org.unidal.web.mvc.lifecycle.RequestContext;
 
 public abstract class ActionContext<T extends ActionPayload<? extends Page, ? extends Action>> {
@@ -31,9 +33,9 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
 
    private RequestContext m_requestContext;
 
-   private HttpServletRequest m_httpServletRequest;
+   private HttpServletRequest m_request;
 
-   private HttpServletResponse m_httpServletResponse;
+   private HttpServletResponse m_response;
 
    private String m_inboundPage;
 
@@ -55,8 +57,12 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
 
    private Map<String, Object> m_attributes;
 
+   public static void logHttpStatus(int status) {
+      Cat.logEvent("URL.Status", String.valueOf(status));
+   }
+
    public void addCookie(Cookie cookie) {
-      m_httpServletResponse.addCookie(cookie);
+      m_response.addCookie(cookie);
    }
 
    public void addError(ErrorObject error) {
@@ -86,8 +92,38 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
       }
    }
 
+   public String getClientIP() {
+      String ip = null;
+
+      if (ip == null) {
+         String forwardedFor = m_request.getHeader("x-forwarded-for");
+
+         if (forwardedFor != null && forwardedFor.length() > 0 && !"unknown".equalsIgnoreCase(forwardedFor)) {
+            List<String> ips = Splitters.by(',').trim().split(forwardedFor);
+
+            if (ips.size() > 0) {
+               ip = ips.get(0);
+            }
+         }
+      }
+
+      if (ip == null) {
+         String realIp = m_request.getHeader("x-real-ip");
+
+         ip = realIp;
+      }
+
+      if (ip == null) {
+         String remoteAddr = m_request.getRemoteAddr();
+
+         ip = remoteAddr;
+      }
+
+      return ip;
+   }
+
    public Cookie getCookie(String name) {
-      Cookie[] cookies = m_httpServletRequest.getCookies();
+      Cookie[] cookies = m_request.getCookies();
 
       if (cookies != null) {
          for (Cookie cookie : cookies) {
@@ -113,11 +149,11 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
    }
 
    public HttpServletRequest getHttpServletRequest() {
-      return m_httpServletRequest;
+      return m_request;
    }
 
    public HttpServletResponse getHttpServletResponse() {
-      return m_httpServletResponse;
+      return m_response;
    }
 
    public String getInboundAction() {
@@ -161,8 +197,8 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
    }
 
    public void initialize(HttpServletRequest request, HttpServletResponse response) {
-      m_httpServletRequest = request;
-      m_httpServletResponse = response;
+      m_request = request;
+      m_response = response;
    }
 
    public boolean isProcessStopped() {
@@ -198,20 +234,23 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
 
       response.setHeader("location", uri);
       response.setStatus(HttpServletResponse.SC_FOUND);
+      logHttpStatus(HttpServletResponse.SC_FOUND);
       stopProcess();
    }
 
    public void sendContent(String contentType, String content) throws IOException {
       byte[] data = content.getBytes(UTF_8);
 
-      m_httpServletResponse.setContentLength(data.length);
-      m_httpServletResponse.setContentType(contentType);
-      m_httpServletResponse.getOutputStream().write(data);
+      logHttpStatus(HttpServletResponse.SC_OK);
+      m_response.setContentLength(data.length);
+      m_response.setContentType(contentType);
+      m_response.getOutputStream().write(data);
       m_processStopped = true;
    }
 
    public void sendError(int status, String message) throws IOException {
-      m_httpServletResponse.sendError(status, message);
+      logHttpStatus(status);
+      m_response.sendError(status, message);
       m_processStopped = true;
    }
 
@@ -353,7 +392,7 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
    }
 
    public void write(String data) throws IOException {
-      Writer writer = m_httpServletResponse.getWriter();
+      Writer writer = m_response.getWriter();
 
       writer.write(data);
    }

@@ -128,7 +128,13 @@ public class DefaultInboundActionHandler extends ContainerHolder implements Inbo
       m_postValidators = new ArrayList<Validator<ActionContext<?>>>();
 
       for (Class<?> validatorClass : inboundAction.getValidationClasses()) {
-         Validator<ActionContext<?>> validator = createInstance(validatorClass);
+         Validator<ActionContext<?>> validator;
+
+         if (hasComponent(validatorClass)) {
+            validator = (Validator<ActionContext<?>>) lookup(validatorClass);
+         } else {
+            validator = createInstance(validatorClass);
+         }
 
          m_validators.add(validator);
       }

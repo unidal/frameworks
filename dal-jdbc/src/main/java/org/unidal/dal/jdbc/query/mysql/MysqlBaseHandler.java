@@ -64,13 +64,18 @@ public abstract class MysqlBaseHandler {
       DataSource ds = m_dataSourceManager.getDataSource(ctx.getDataSourceName());
       String url = ds.getDescriptor().getProperty("url", "no-url");
       String params = ctx.getParameterValues() == null ? null : Stringizers.forJson().from(ctx.getParameterValues());
+      int pos = url.indexOf('?');
 
       Cat.logEvent("SQL.Method", ctx.getQuery().getType().name(), Message.SUCCESS, params);
-      Cat.logEvent("SQL.Database", url);
+
+      if (pos > 0) {
+         Cat.logEvent("SQL.Database", url.substring(0, pos), url);
+      } else {
+         Cat.logEvent("SQL.Database", url);
+      }
    }
 
-   protected void retrieveGeneratedKeys(QueryContext ctx, ResultSet generatedKeys, DataObject proto)
-         throws SQLException {
+   protected void retrieveGeneratedKeys(QueryContext ctx, ResultSet generatedKeys, DataObject proto) throws SQLException {
       EntityInfo entityInfo = ctx.getEntityInfo();
       DataField field = entityInfo.getAutoIncrementField();
 
@@ -81,8 +86,7 @@ public abstract class MysqlBaseHandler {
       }
    }
 
-   protected void retrieveGeneratedKeys(QueryContext ctx, ResultSet generatedKeys, DataObject[] protos)
-         throws SQLException {
+   protected void retrieveGeneratedKeys(QueryContext ctx, ResultSet generatedKeys, DataObject[] protos) throws SQLException {
       EntityInfo entityInfo = ctx.getEntityInfo();
       DataField field = entityInfo.getAutoIncrementField();
 
