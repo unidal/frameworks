@@ -113,8 +113,11 @@ public class DefaultTransactionManager implements TransactionManager, LogEnabled
          if (exception != null) {
             closeConnection(connection);
 
-            m_logger.warn(String.format("Iffy database(%s) connection closed, try to reconnect.", dataSourceName),
-                  exception);
+            if (exception.getMessage().equals("An attempt by a client to checkout a Connection has timed out.")) {
+               m_logger.warn(String.format("Database(%s) connection is timeout, try to reconnect.", dataSourceName));
+            } else {
+               m_logger.warn(String.format("Iffy database(%s) connection closed, try to reconnect.", dataSourceName), exception);
+            }
 
             try {
                connection = dataSource.getConnection();
@@ -127,8 +130,8 @@ public class DefaultTransactionManager implements TransactionManager, LogEnabled
          }
 
          if (exception != null) {
-            throw new DalRuntimeException("Error when getting connection from DataSource(" + dataSourceName
-                  + "), message: " + exception, exception);
+            throw new DalRuntimeException(
+                  "Error when getting connection from DataSource(" + dataSourceName + "), message: " + exception, exception);
          } else {
             trxInfo.setConnection(connection);
             trxInfo.setDataSourceName(dataSourceName);
@@ -170,8 +173,7 @@ public class DefaultTransactionManager implements TransactionManager, LogEnabled
       TransactionInfo trxInfo = m_threadLocalData.get();
 
       if (trxInfo.isInTransaction()) {
-         throw new DalRuntimeException(
-               "Can't start transaction while another transaction has not been committed or rollbacked!");
+         throw new DalRuntimeException("Can't start transaction while another transaction has not been committed or rollbacked!");
       } else {
          DataSource ds = m_dataSourceManager.getDataSource(datasource);
          Connection connection = null;
@@ -184,8 +186,7 @@ public class DefaultTransactionManager implements TransactionManager, LogEnabled
             trxInfo.setInTransaction(true);
          } catch (SQLException e) {
             closeConnection(connection);
-            throw new DalRuntimeException("Error when getting connection from DataSource(" + datasource
-                  + "), message: " + e, e);
+            throw new DalRuntimeException("Error when getting connection from DataSource(" + datasource + "), message: " + e, e);
          }
       }
    }
