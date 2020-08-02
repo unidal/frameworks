@@ -8,7 +8,7 @@
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.unidal.framework</groupId>
    <artifactId>framework-bom</artifactId>
-   <version>5.0.2</version>
+   <version>5.0.3</version>
    <packaging>pom</packaging>
    <name>Framework BOM</name>
    <description>Unidal Framework BOM</description>
@@ -16,6 +16,7 @@
       <!-- dal-jdbc -->
       <cat.version>2.0.0</cat.version>
       <c3p0.version>0.9.5.2</c3p0.version>
+      <shiro.version>1.4.2</shiro.version>
       <mchange-commons-java.version>0.2.12</mchange-commons-java.version>
 
       <!-- test-framework -->
@@ -53,6 +54,11 @@
          <dependency>
             <groupId>org.unidal.framework</groupId>
             <artifactId>web-framework</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.unidal.framework</groupId>
+            <artifactId>web-extension</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
