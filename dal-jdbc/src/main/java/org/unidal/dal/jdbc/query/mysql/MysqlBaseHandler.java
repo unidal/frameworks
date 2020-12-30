@@ -79,7 +79,7 @@ public abstract class MysqlBaseHandler {
       EntityInfo entityInfo = ctx.getEntityInfo();
       DataField field = entityInfo.getAutoIncrementField();
 
-      if (generatedKeys != null && generatedKeys.next()) {
+      if (field != null && generatedKeys != null && generatedKeys.next()) {
          Object key = generatedKeys.getObject(1);
 
          m_accessor.setFieldValue(proto, field, key);
@@ -91,7 +91,7 @@ public abstract class MysqlBaseHandler {
       DataField field = entityInfo.getAutoIncrementField();
 
       for (DataObject proto : protos) {
-         if (generatedKeys != null && generatedKeys.next()) {
+         if (field != null && generatedKeys != null && generatedKeys.next()) {
             Object key = generatedKeys.getObject(1);
 
             m_accessor.setFieldValue(proto, field, key);
