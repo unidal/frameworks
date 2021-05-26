@@ -40,13 +40,13 @@
             <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.unidal.framework</groupId>
+            <groupId>org.unidal.test</groupId>
             <artifactId>test-framework</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
          </dependency>
          <dependency>
-            <groupId>org.unidal.framework</groupId>
+            <groupId>org.unidal.test</groupId>
             <artifactId>eunit-testfwk</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>

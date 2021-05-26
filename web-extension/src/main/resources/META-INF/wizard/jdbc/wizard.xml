@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wizard package="org.unidal.web.admin">
+   <jdbc package="org.unidal.web.admin.dal" name="config">
+      <datasource>
+         <driver>com.mysql.jdbc.Driver</driver>
+         <url>jdbc:mysql://localhost:3306/config</url>
+         <user>root</user>
+         <password>~{e4d4d660c0d0c0d0d0c2b4644e017}</password>
+         <properties>useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true&amp;useSSL=false</properties>
+      </datasource>
+      <group name="config" package="org.unidal.web.admin.dal.config">
+         <table name="config"/>
+      </group>
+   </jdbc>
+</wizard>

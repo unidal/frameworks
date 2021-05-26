@@ -13,11 +13,10 @@
    <name>Framework</name>
    <description>Unidal Framework</description>
    <modules>
-      <module>eunit-testfwk</module>
-      <module>java-fragment</module>
-      <module>test-framework</module>
       <module>dal-jdbc</module>
       <module>web-framework</module>
+      <module>java-fragment</module>
+      <module>web-extension</module>
       <module>framework-bom</module>
    </modules>
    <url>https://github.com/unidal/frameworks</url>
@@ -38,7 +37,8 @@
       <c3p0.version>0.9.5.2</c3p0.version>
       <h2.version>1.4.192</h2.version>
       <mysql.version>5.1.46</mysql.version>
-      
+      <shiro.version>1.4.2</shiro.version>
+
       <jetty.version>8.1.22.v20160922</jetty.version>
 
       <servlet-api.version>3.0.1</servlet-api.version>
@@ -51,26 +51,15 @@
       <spring.version>4.2.7.RELEASE</spring.version>
 
       <!-- plugin version -->
-      <codegen.plugin.version>4.0.1</codegen.plugin.version>
-      <plexus.plugin.version>4.0.1</plexus.plugin.version>
+      <codegen.plugin.version>4.0.6</codegen.plugin.version>
+      <plexus.plugin.version>4.0.6</plexus.plugin.version>
    </properties>
    <dependencyManagement>
       <dependencies>
          <dependency>
-            <groupId>org.unidal.foundation</groupId>
-            <artifactId>foundation-service</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
             <groupId>org.unidal.framework</groupId>
             <artifactId>dal-jdbc</artifactId>
             <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.unidal.framework</groupId>
-            <artifactId>test-framework</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
          </dependency>
          <dependency>
             <groupId>org.unidal.framework</groupId>
@@ -79,7 +68,23 @@
          </dependency>
          <dependency>
             <groupId>org.unidal.framework</groupId>
+            <artifactId>web-extension</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.unidal.framework</groupId>
             <artifactId>java-fragment</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+
+         <dependency>
+            <groupId>org.unidal.foundation</groupId>
+            <artifactId>foundation-service</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.unidal.test</groupId>
+            <artifactId>test-framework</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>

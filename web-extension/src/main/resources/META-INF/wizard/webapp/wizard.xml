@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wizard package="org.unidal.web.admin">
+   <webapp package="org.unidal.web.admin" module="true" plugin-management="false">
+      <module name="user" path="user" default="false" package="org.unidal.web.admin.user">
+         <page name="login" title="Login" default="true" package="org.unidal.web.admin.user.login" path="login">
+            <description>Login</description>
+         </page>
+      </module>
+      <module name="config" path="config" default="false" package="org.unidal.web.admin.config">
+         <page name="home" title="Home" default="true" package="org.unidal.web.admin.config.home" path="home">
+            <description>Home</description>
+         </page>
+         <page name="refresh" title="Refresh" package="org.unidal.web.admin.config.refresh" path="refresh">
+            <description>Refresh</description>
+         </page>
+      </module>
+   </webapp>
+</wizard>

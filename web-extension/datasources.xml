@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-sources>
+   <data-source id="config">
+      <maximum-pool-size>3</maximum-pool-size>
+      <connection-timeout>1s</connection-timeout>
+      <idle-timeout>1m</idle-timeout>
+      <statement-cache-size>1000</statement-cache-size>
+      <properties>
+         <driver>com.mysql.jdbc.Driver</driver>
+         <url><![CDATA[jdbc:mysql://localhost:3306/config]]></url>
+         <user>root</user>
+         <password>~{e4d4d660c0d0c0d0d0c2b4644e017}</password>
+         <connectionProperties><![CDATA[useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false]]></connectionProperties>
+      </properties>
+   </data-source>
+</data-sources>

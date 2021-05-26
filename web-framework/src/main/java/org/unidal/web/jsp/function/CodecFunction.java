@@ -5,8 +5,8 @@ import java.io.UnsupportedEncodingException;
 import org.unidal.web.jsp.annotation.FunctionMeta;
 
 public class CodecFunction {
-	@FunctionMeta(description = "HTML encode", example = "${w:htmlEncode(str)}")
-	public static String htmlEncode(String str) {
+   @FunctionMeta(description = "HTML encode", example = "${w:htmlEncode(str)}")
+   public static String htmlEncode(String str) {
       int len = str == null ? 0 : str.length();
       StringBuilder sb = new StringBuilder(len + 16);
 
@@ -31,9 +31,9 @@ public class CodecFunction {
 
       return sb.toString();
    }
-	
-	@FunctionMeta(description = "URL decode", example = "${w:urlDecode(str)}")
-	public static String urlDecode(String str) {
+
+   @FunctionMeta(description = "URL decode", example = "${w:urlDecode(str)}")
+   public static String urlDecode(String str) {
       if (str == null) {
          return null;
       }
@@ -59,8 +59,8 @@ public class CodecFunction {
       return sb.toString();
    }
 
-	@FunctionMeta(description = "URL encode", example = "${w:urlEncode(str)}")
-	public static String urlEncode(String str) {
+   @FunctionMeta(description = "URL encode", example = "${w:urlEncode(str)}")
+   public static String urlEncode(String str) {
       if (str == null) {
          return null;
       }
@@ -81,7 +81,9 @@ public class CodecFunction {
          if (b == 0x20) {
             sb.append('+');
          } else if (b < 0x30 || b > 0x7E || !Character.isLetterOrDigit(b)) {
-            sb.append('%').append(Integer.toHexString(b));
+            sb.append('%');
+            sb.append(Integer.toHexString(((b >> 4) & 0x0F)));
+            sb.append(Integer.toHexString((b & 0x0F)));
          } else {
             sb.append((char) b);
          }

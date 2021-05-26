@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wizard package="org.unidal.tulip.service">
+   <model package="org.unidal.web.security.authorization" name="authorization">
+      <sample-model>src/test/resources/org/unidal/web/security/authorization/authorization.xml</sample-model>
+   </model>
+</wizard>

@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.unidal.cat.Cat;
 import org.unidal.helper.Objects;
 import org.unidal.helper.Splitters;
+import org.unidal.web.json.Response;
 import org.unidal.web.mvc.lifecycle.RequestContext;
 
 public abstract class ActionContext<T extends ActionPayload<? extends Page, ? extends Action>> {
@@ -81,6 +82,10 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
 
       m_errors.add(error);
       return error;
+   }
+
+   public Response error(String code) {
+      return Response.of(this, code);
    }
 
    @SuppressWarnings("unchecked")
@@ -264,6 +269,12 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
       sendContent("application/json; charset=utf-8", json);
    }
 
+   public void sendJson(Object object) throws IOException {
+      String json = Objects.forJson().from(object);
+
+      sendContent("application/json; charset=utf-8", json);
+   }
+
    public void sendJsonRaw(String status, String json, Object message) throws IOException {
       StringBuilder sb = new StringBuilder(2048);
 
@@ -365,6 +376,10 @@ public abstract class ActionContext<T extends ActionPayload<? extends Page, ? ex
 
    public void stopProcess() {
       m_processStopped = true;
+   }
+
+   public Response success() {
+      return Response.of(this, "200");
    }
 
    String toJson(Object... pairs) {

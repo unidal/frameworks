@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entities do-package="org.unidal.web.admin.dal.config" do-class-suffix="Do" gen="true">
+  <entity name="config" table="config" alias="c">
+    <member name="id" field="id" value-type="int" length="10" nullable="false" key="true" auto-increment="true" />
+    <member name="category" field="category" value-type="String" length="64" nullable="false" />
+    <member name="name" field="name" value-type="String" length="64" nullable="false" />
+    <member name="description" field="description" value-type="String" length="256" nullable="false" />
+    <member name="status" field="status" value-type="int" length="10" nullable="false" />
+    <member name="details" field="details" value-type="byte[]" length="65535" nullable="false" />
+    <member name="creation-date" field="creation_date" value-type="Date" nullable="false" insert-expr="NOW()" />
+    <member name="last-modified-date" field="last_modified_date" value-type="Date" nullable="false" insert-expr="NOW()" update-expr="NOW()" />
+    <var name="key-id" value-type="int" key-member="id" />
+    <primary-key name="PRIMARY" members="id" />
+    <index name="category_name" members="category ASC, name ASC" />
+    <readsets>
+      <readset name="CATEGORY">
+         <member name="category"/>
+      </readset>
+    </readsets>
+    <query-defs>
+       <query name="upsert" type="INSERT">
+        <statement><![CDATA[
+        INSERT INTO <TABLE/>(<FIELDS/>)
+        VALUES(<VALUES/>)
+        ON DUPLICATE KEY UPDATE
+        	  <FIELD name='description'/> = ${description},
+        	  <FIELD name='details'/> = ${details},
+           <FIELD name='last-modified-date'/> = NOW()
+        ]]></statement>
+      </query>
+      <query name="find-all" type="SELECT" multiple="true">
+        <statement><![CDATA[
+        SELECT <FIELDS/>
+        FROM <TABLE/>
+        ]]></statement>
+      </query>
+      <query name="find-all-by-category" type="SELECT" multiple="true">
+        <param name="category" />
+        <statement><![CDATA[
+        SELECT <FIELDS/>
+        FROM <TABLE/>
+        WHERE <FIELD name='category'/> = ${category}
+        ]]></statement>
+      </query>
+      <query name="find-by-category-and-name" type="SELECT">
+        <param name="category" />
+        <param name="name" />
+        <statement><![CDATA[
+        SELECT <FIELDS/>
+        FROM <TABLE/>
+        WHERE <FIELD name='category'/> = ${category}
+           AND <FIELD name='name'/> = ${name}
+        ]]></statement>
+      </query>
+    </query-defs>
+  </entity>
+</entities>
+

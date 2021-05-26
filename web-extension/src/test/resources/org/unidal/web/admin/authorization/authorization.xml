@@ -1,0 +1,61 @@
+<authorization>
+	<applications>
+		<application id="10001" enabled="true">
+			<host>192.168.31.251</host>
+			<host>127.0.0.1</host>
+			<role>cat</role>
+			<role>role2</role>
+		</application>
+		<application id="10002">
+			<host>127.0.0.1</host>
+			<role>role3</role>
+		</application>
+		<application id="*" enabled="true">
+			<host>*</host>
+			<role>*</role>
+		</application>
+	</applications>
+	<users>
+		<user id="wuqimin703" credential="~{d3b7b4fe878341bdc6b4b760b0b0a0b0b23e7c1a8e3d8}" enabled="true">
+			<role>entity</role>
+			<role>admin</role>
+		</user>
+		<user id="xiongchangjiang391" credential="~{d3b6c64693625528ae00b0b030b0b0a665c1d1732}" enabled="true">
+			<role>entity</role>
+			<role>admin</role>
+		</user>
+		<user id="Unknown" credential="~{b2712b8ce6cb8d22c0667af61590707066afab25ab3}" enabled="true">
+			<role>entity</role>
+		</user>
+	</users>
+	<role-defs>
+		<role-def id="entity" enabled="true">
+			<permission>entity:home</permission>
+			<permission>entity:meta</permission>
+			<permission>entity:scenario</permission>
+			<permission>entity:graphql</permission>
+			<permission>entity:event</permission>
+		</role-def>
+		<role-def id="admin" enabled="true">
+			<permission>admin:home</permission>
+			<permission>admin:meta</permission>
+			<permission>admin:scenario</permission>
+			<permission>admin:graphql</permission>
+			<permission>admin:config</permission>
+		</role-def>
+		<role-def id="cat" enabled="true">
+			<permission>scenario:app_for_cat</permission>
+			<permission>scenario:org_for_cat</permission>
+			<permission>graphql:app_for_cat</permission>
+		</role-def>
+		<role-def id="role2" enabled="false">
+			<permission>graphql:org_for_cat</permission>
+		</role-def>
+		<role-def id="role3">
+			<permission>graphql:org_for_cat</permission>
+		</role-def>
+		<role-def id="*" enabled="true">
+			<permission>*:*</permission>
+		</role-def>
+	</role-defs>
+</authorization>

@@ -45,8 +45,8 @@ public class ModelManager extends ContainerHolder implements Initializable {
 
    private void assertErrorExists(ModuleModel module, String errorActionName) {
       if (!module.getErrors().containsKey(errorActionName)) {
-         throw new IllegalArgumentException("No method is annotated by @" + ErrorActionMeta.class.getSimpleName()
-               + "(name = \"" + errorActionName + "\") defined in " + module.getModuleClass());
+         throw new IllegalArgumentException("No method is annotated by @" + ErrorActionMeta.class.getSimpleName() + "(name = \""
+               + errorActionName + "\") defined in " + module.getModuleClass());
       }
    }
 
@@ -56,15 +56,15 @@ public class ModelManager extends ContainerHolder implements Initializable {
       if (parameters.length != 1) {
          throw new IllegalArgumentException("Only one parameter is allowed by " + method);
       } else if (!ActionContext.class.isAssignableFrom(parameters[0])) {
-         throw new IllegalArgumentException("Parameter(" + parameters[0] + ") of " + method + " msut be subclass of "
-               + ActionContext.class);
+         throw new IllegalArgumentException(
+               "Parameter(" + parameters[0] + ") of " + method + " msut be subclass of " + ActionContext.class);
       }
    }
 
    private void assertTransitionExists(ModuleModel module, String transitionName) {
       if (!module.getTransitions().containsKey(transitionName)) {
-         throw new IllegalArgumentException("No method is annotated by @" + TransitionMeta.class.getSimpleName()
-               + "(name = \"" + transitionName + "\") in " + module.getModuleClass());
+         throw new IllegalArgumentException("No method is annotated by @" + TransitionMeta.class.getSimpleName() + "(name = \""
+               + transitionName + "\") in " + module.getModuleClass());
       }
    }
 
@@ -95,8 +95,8 @@ public class ModelManager extends ContainerHolder implements Initializable {
    private InboundActionModel buildInbound(ModuleModel module, Method method, InboundActionMeta inMeta,
          PreInboundActionMeta preInMeta) {
       if (preInMeta != null && inMeta == null) {
-         throw new RuntimeException(PreInboundActionMeta.class + " can only be used with " + InboundActionMeta.class
-               + " for " + method);
+         throw new RuntimeException(
+               PreInboundActionMeta.class + " can only be used with " + InboundActionMeta.class + " for " + method);
       }
 
       InboundActionModel existing = module.getInbounds().get(inMeta.name());
@@ -107,9 +107,9 @@ public class ModelManager extends ContainerHolder implements Initializable {
             return existing;
          }
 
-         throw new RuntimeException(String.format("Duplicated name(%s) found between %s.%s() and %s.%s()",
-               inMeta.name(), method.getDeclaringClass().getName(), method.getName(), existing.getActionMethod()
-                     .getDeclaringClass().getName(), existing.getActionMethod().getName()));
+         throw new RuntimeException(String.format("Duplicated name(%s) found between %s.%s() and %s.%s()", inMeta.name(),
+               method.getDeclaringClass().getName(), method.getName(), existing.getActionMethod().getDeclaringClass().getName(),
+               existing.getActionMethod().getName()));
       }
 
       assertParameter(method);
@@ -118,8 +118,7 @@ public class ModelManager extends ContainerHolder implements Initializable {
 
       inbound.setActionName(inMeta.name());
       inbound.setTransitionName(isEmpty(inMeta.transition()) ? module.getDefaultTransitionName() : inMeta.transition());
-      inbound.setErrorActionName(isEmpty(inMeta.errorAction()) ? module.getDefaultErrorActionName() : inMeta
-            .errorAction());
+      inbound.setErrorActionName(isEmpty(inMeta.errorAction()) ? module.getDefaultErrorActionName() : inMeta.errorAction());
       inbound.setActionMethod(method);
       inbound.setContextClass(method.getParameterTypes()[0]);
 
@@ -131,7 +130,7 @@ public class ModelManager extends ContainerHolder implements Initializable {
       if (payloadMeta != null) {
          inbound.setPayloadClass(payloadMeta.value());
       }
-      
+
       ValidationMeta moduleValidationMeta = module.getModuleClass().getAnnotation(ValidationMeta.class);
       if (moduleValidationMeta != null) {
          for (Class<?> validationClass : moduleValidationMeta.value()) {
@@ -312,6 +311,16 @@ public class ModelManager extends ContainerHolder implements Initializable {
       return m_defaultModule;
    }
 
+   public List<ModuleModel> getModules() {
+      List<ModuleModel> result = new ArrayList<ModuleModel>();
+
+      for (List<ModuleModel> modules : m_modules.values()) {
+         result.addAll(modules);
+      }
+
+      return result;
+   }
+
    public void initialize() throws InitializationException {
       Module defaultModule = m_registry.getDefaultModule();
       List<Module> modules = m_registry.getModules();
@@ -371,8 +380,8 @@ public class ModelManager extends ContainerHolder implements Initializable {
             if (transition != null) {
                inbound.setTransitionName("default");
             } else {
-               throw new IllegalArgumentException("Please specify transition() of @"
-                     + InboundActionMeta.class.getSimpleName() + " of " + inbound.getActionMethod());
+               throw new IllegalArgumentException("Please specify transition() of @" + InboundActionMeta.class.getSimpleName()
+                     + " of " + inbound.getActionMethod());
             }
          } else {
             assertTransitionExists(module, inbound.getTransitionName());
@@ -384,8 +393,8 @@ public class ModelManager extends ContainerHolder implements Initializable {
             if (error != null) {
                inbound.setErrorActionName("default");
             } else {
-               throw new IllegalArgumentException("Please specify error() of @"
-                     + InboundActionMeta.class.getSimpleName() + " of " + inbound.getActionMethod());
+               throw new IllegalArgumentException(
+                     "Please specify error() of @" + InboundActionMeta.class.getSimpleName() + " of " + inbound.getActionMethod());
             }
          } else {
             assertErrorExists(module, inbound.getErrorActionName());
