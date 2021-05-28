@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.unidal.framework</groupId>
       <artifactId>parent</artifactId>
-      <version>5.0.3</version>
+      <version>6.0.0</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
    <modelVersion>4.0.0</modelVersion>
@@ -11,11 +11,11 @@
    <name>Web Extension</name>
    <dependencies>
       <dependency>
-         <groupId>org.unidal.framework</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>web-framework</artifactId>
       </dependency>
       <dependency>
-         <groupId>org.unidal.framework</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>dal-jdbc</artifactId>
       </dependency>
       <dependency>
@@ -27,11 +27,6 @@
          <groupId>javax.servlet</groupId>
          <artifactId>javax.servlet-api</artifactId>
          <scope>provided</scope>
-      </dependency>
-      <dependency>
-         <groupId>junit</groupId>
-         <artifactId>junit</artifactId>
-         <scope>test</scope>
       </dependency>
       <dependency>
          <groupId>org.unidal.test</groupId>

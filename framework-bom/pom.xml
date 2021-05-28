@@ -3,18 +3,18 @@
    <parent>
       <groupId>org.unidal</groupId>
       <artifactId>parent</artifactId>
-      <version>1.0.0</version>
+      <version>2.0.0</version>
    </parent>
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.unidal.framework</groupId>
    <artifactId>framework-bom</artifactId>
-   <version>5.0.3</version>
+   <version>6.0.0</version>
    <packaging>pom</packaging>
    <name>Framework BOM</name>
    <description>Unidal Framework BOM</description>
    <properties>
       <!-- dal-jdbc -->
-      <cat.version>2.0.0</cat.version>
+      <cat2.version>1.0.0</cat2.version>
       <c3p0.version>0.9.5.2</c3p0.version>
       <shiro.version>1.4.2</shiro.version>
       <mchange-commons-java.version>0.2.12</mchange-commons-java.version>
@@ -30,13 +30,29 @@
       <dependencies>
          <!-- framework artifacts -->
          <dependency>
-            <groupId>org.unidal.foundation</groupId>
-            <artifactId>foundation-service</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>dal-jdbc</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.unidal.framework</groupId>
-            <artifactId>dal-jdbc</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>web-framework</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>web-extension</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>java-fragment</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+
+         <dependency>
+            <groupId>org.unidal.foundation</groupId>
+            <artifactId>foundation-service</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
@@ -51,27 +67,12 @@
             <version>${project.version}</version>
             <scope>test</scope>
          </dependency>
-         <dependency>
-            <groupId>org.unidal.framework</groupId>
-            <artifactId>web-framework</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.unidal.framework</groupId>
-            <artifactId>web-extension</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.unidal.framework</groupId>
-            <artifactId>java-fragment</artifactId>
-            <version>${project.version}</version>
-         </dependency>
          
          <!-- 3rd party artifacts -->
          <dependency>
-            <groupId>org.unidal.cat</groupId>
+            <groupId>org.unidal.cat2</groupId>
             <artifactId>cat-client</artifactId>
-            <version>${cat.version}</version>
+            <version>${cat2.version}</version>
          </dependency>
          <dependency>
             <groupId>org.codehaus.plexus</groupId>

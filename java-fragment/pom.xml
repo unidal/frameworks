@@ -3,22 +3,21 @@
    <parent>
       <groupId>org.unidal.framework</groupId>
       <artifactId>parent</artifactId>
-      <version>5.0.3</version>
+      <version>6.0.0</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
    <modelVersion>4.0.0</modelVersion>
-   <groupId>org.unidal.framework</groupId>
    <artifactId>java-fragment</artifactId>
    <name>Java Fragment Script Engine</name>
    <dependencies>
       <dependency>
-         <groupId>junit</groupId>
-         <artifactId>junit</artifactId>
+         <groupId>org.unidal.foundation</groupId>
+         <artifactId>foundation-service</artifactId>
          <scope>test</scope>
       </dependency>
       <dependency>
-         <groupId>org.unidal.foundation</groupId>
-         <artifactId>foundation-service</artifactId>
+         <groupId>org.unidal.test</groupId>
+         <artifactId>test-framework</artifactId>
          <scope>test</scope>
       </dependency>
    </dependencies>

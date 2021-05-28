@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.unidal.framework</groupId>
       <artifactId>parent</artifactId>
-      <version>5.0.3</version>
+      <version>6.0.0</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
    <modelVersion>4.0.0</modelVersion>
@@ -17,7 +17,7 @@
          <artifactId>foundation-service</artifactId>
       </dependency>
       <dependency>
-         <groupId>org.unidal.cat</groupId>
+         <groupId>org.unidal.cat2</groupId>
          <artifactId>cat-client</artifactId>
       </dependency>
       <dependency>

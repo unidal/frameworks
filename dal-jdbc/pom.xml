@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.unidal.framework</groupId>
       <artifactId>parent</artifactId>
-      <version>5.0.3</version>
+      <version>6.0.0</version>
    </parent>
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.unidal.framework</groupId>
@@ -15,7 +15,7 @@
          <artifactId>foundation-service</artifactId>
       </dependency>
       <dependency>
-         <groupId>org.unidal.cat</groupId>
+         <groupId>org.unidal.cat2</groupId>
          <artifactId>cat-client</artifactId>
       </dependency>
       <dependency>
@@ -35,7 +35,13 @@
       <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
+         <version>${junit.version}</version>
          <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.unidal.test</groupId>
+         <artifactId>test-framework</artifactId>
+         <scope>test</scope>
       </dependency>
    </dependencies>
    <build>
