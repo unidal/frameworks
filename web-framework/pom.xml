@@ -21,6 +21,10 @@
          <artifactId>cat-client</artifactId>
       </dependency>
       <dependency>
+         <groupId>org.thymeleaf</groupId>
+         <artifactId>thymeleaf</artifactId>
+      </dependency>
+      <dependency>
          <groupId>commons-fileupload</groupId>
          <artifactId>commons-fileupload</artifactId>
       </dependency>

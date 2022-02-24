@@ -112,5 +112,9 @@
 			<role-hint>json</role-hint>
 			<implementation>org.unidal.web.mvc.view.model.JsonModelBuilder</implementation>
 		</component>
+		<component>
+			<role>org.unidal.web.mvc.view.HtmlTemplate</role>
+			<implementation>org.unidal.web.mvc.view.HtmlTemplate</implementation>
+		</component>
 	</components>
 </plexus>
