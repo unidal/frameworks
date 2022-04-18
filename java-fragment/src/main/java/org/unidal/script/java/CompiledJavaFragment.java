@@ -82,7 +82,7 @@ public class CompiledJavaFragment extends CompiledScript implements Invocable {
       try {
          Class<?> clazz = m_classLoader.loadClass(m_source.getClassName());
 
-         return call(clazz, name, clazz.newInstance(), args);
+         return call(clazz, name, clazz.getConstructor().newInstance(), args);
       } catch (NoSuchMethodException e) {
          throw e;
       } catch (ScriptException e) {

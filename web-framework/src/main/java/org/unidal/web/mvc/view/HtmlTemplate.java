@@ -2,6 +2,7 @@ package org.unidal.web.mvc.view;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Date;
 
 import javax.servlet.ServletException;
@@ -24,36 +25,11 @@ public class HtmlTemplate implements Initializable {
 
    private TemplateEngine m_engine;
 
-   public void render(String template, ActionContext<?> ctx, ViewModel<?, ?, ?> model)
-         throws ServletException, IOException {
-      HttpServletRequest req = ctx.getHttpServletRequest();
-      HttpServletResponse res = ctx.getHttpServletResponse();
-
-      req.setAttribute("ctx", ctx);
-      req.setAttribute("payload", ctx.getPayload());
-      req.setAttribute("model", model);
-
-      if (!ctx.isProcessStopped()) {
-         try {
-            WebContext context = new WebContext(req, res, ctx.getServletContext());
-
-            m_engine.process(template, context, res.getWriter());
-            ctx.stopProcess();
-         } catch (EOFException e) {
-            // Caused by: java.net.SocketException: Broken pipe
-            // ignore it
-            System.out.println(String.format("[%s] HTTP request(%s) stopped by client(%s) explicitly!", new Date(),
-                  req.getRequestURI(), req.getRemoteAddr()));
-         }
-      }
-   }
-
    @Override
    public void initialize() throws InitializationException {
       ClassLoaderTemplateResolver resolver = new ClassLoaderTemplateResolver();
 
       resolver.setPrefix("/META-INF/resources/html/");
-      resolver.setSuffix(".html");
       resolver.setCharacterEncoding("UTF-8");
       resolver.setTemplateMode(TemplateMode.HTML);
       resolver.setCheckExistence(true);
@@ -76,5 +52,42 @@ public class HtmlTemplate implements Initializable {
 
       m_engine = new TemplateEngine();
       m_engine.addTemplateResolver(resolver);
+   }
+
+   public void render(String template, ActionContext<?> ctx, ViewModel<?, ?, ?> model)
+         throws ServletException, IOException {
+      HttpServletRequest req = ctx.getHttpServletRequest();
+      HttpServletResponse res = ctx.getHttpServletResponse();
+
+      req.setAttribute("ctx", ctx);
+      req.setAttribute("payload", ctx.getPayload());
+      req.setAttribute("model", model);
+
+      if (!ctx.isProcessStopped()) {
+         try {
+            m_engine.process(template, new WebContext(req, res, ctx.getServletContext()), res.getWriter());
+            ctx.stopProcess();
+         } catch (EOFException e) {
+            // Caused by: java.net.SocketException: Broken pipe
+            // ignore it
+            System.out.println(String.format("[%s] HTTP request(%s) stopped by client(%s) explicitly!", new Date(),
+                  req.getRequestURI(), req.getRemoteAddr()));
+         }
+      }
+   }
+
+   public void render(String template, ActionContext<?> ctx, ViewModel<?, ?, ?> model, Writer writer)
+         throws ServletException, IOException {
+      HttpServletRequest req = ctx.getHttpServletRequest();
+      HttpServletResponse res = ctx.getHttpServletResponse();
+
+      req.setAttribute("ctx", ctx);
+      req.setAttribute("payload", ctx.getPayload());
+      req.setAttribute("model", model);
+
+      if (!ctx.isProcessStopped()) {
+         m_engine.process(template, new WebContext(req, res, ctx.getServletContext()), writer);
+         ctx.stopProcess();
+      }
    }
 }
