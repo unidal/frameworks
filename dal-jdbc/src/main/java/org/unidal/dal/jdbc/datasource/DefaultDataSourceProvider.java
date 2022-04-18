@@ -6,8 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.unidal.dal.jdbc.datasource.model.DataSourcesDefHelper;
 import org.unidal.dal.jdbc.datasource.model.entity.DataSourcesDef;
-import org.unidal.dal.jdbc.datasource.model.transform.DefaultSaxParser;
 import org.unidal.helper.Files;
 import org.unidal.helper.Properties;
 import org.unidal.lookup.annotation.Named;
@@ -66,7 +66,7 @@ public class DefaultDataSourceProvider implements DataSourceProvider, Initializa
 
          if (in != null) {
             try {
-               m_def = DefaultSaxParser.parse(in);
+               m_def = DataSourcesDefHelper.fromXml(in);
             } catch (Exception e) {
                throw new IllegalStateException("Error when loading data sources file: " + file, e);
             }

@@ -8,8 +8,8 @@ import java.util.List;
 import org.unidal.dal.jdbc.DalException;
 import org.unidal.dal.jdbc.raw.RawDao;
 import org.unidal.dal.jdbc.raw.RawDataObject;
+import org.unidal.dal.jdbc.test.data.DatabaseModelHelper;
 import org.unidal.dal.jdbc.test.data.entity.DatabaseModel;
-import org.unidal.dal.jdbc.test.data.transform.DefaultSaxParser;
 import org.unidal.helper.Files;
 import org.unidal.helper.Reflects;
 import org.unidal.helper.Reflects.MethodFilter;
@@ -57,7 +57,7 @@ public class JdbcTestHelper extends ContainerHolder {
 
 				if (base.exists()) {
 					String xml = Files.forIO().readFrom(base, "utf-8");
-					DatabaseModel baseModel = DefaultSaxParser.parse(xml);
+					DatabaseModel baseModel = DatabaseModelHelper.fromXml(xml);
 
 					model = dumper.dump(baseModel, dataSource, tables);
 				} else {

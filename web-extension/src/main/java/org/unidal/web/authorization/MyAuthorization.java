@@ -16,12 +16,12 @@ import org.unidal.web.config.ConfigEvent;
 import org.unidal.web.config.ConfigEventListener;
 import org.unidal.web.config.ConfigException;
 import org.unidal.web.config.ConfigService;
+import org.unidal.web.security.authorization.AuthorizationModelHelper;
 import org.unidal.web.security.authorization.entity.ApplicationModel;
 import org.unidal.web.security.authorization.entity.AuthorizationModel;
 import org.unidal.web.security.authorization.entity.RoleDef;
 import org.unidal.web.security.authorization.entity.UserModel;
 import org.unidal.web.security.authorization.transform.BaseVisitor;
-import org.unidal.web.security.authorization.transform.DefaultSaxParser;
 import org.xml.sax.SAXException;
 
 @Named
@@ -95,7 +95,7 @@ public class MyAuthorization implements Initializable {
       String xml = m_configService.getString(ConfigService.CATEGORY_SECURITY, AUTHORIZATION_XML, null);
 
       if (xml != null) {
-         AuthorizationModel authorization = DefaultSaxParser.parse(xml);
+         AuthorizationModel authorization = AuthorizationModelHelper.fromXml(xml);
 
          authorization.accept(new Verification());
          return authorization;

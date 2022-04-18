@@ -15,7 +15,6 @@ import org.unidal.web.authorization.ApplicationAuthenticationToken;
 import org.unidal.web.authorization.MyApplication;
 import org.unidal.web.authorization.MyAuthorization;
 import org.unidal.web.authorization.MyRealm;
-import org.unidal.web.security.authorization.transform.DefaultSaxParser;
 
 public class TulipRealmTest extends ComponentTestCase {
    @Before
@@ -69,7 +68,7 @@ public class TulipRealmTest extends ComponentTestCase {
          try {
             InputStream in = getClass().getResourceAsStream("authorization.xml");
 
-            m_authorization = DefaultSaxParser.parse(in);
+            m_authorization = AuthorizationModelHelper.fromXml(in);
             m_authorization.accept(new Verification());
          } catch (Exception e) {
             throw new InitializationException("Error when reading resource authorization.xml!", e);
@@ -84,7 +83,7 @@ public class TulipRealmTest extends ComponentTestCase {
          try {
             InputStream in = getClass().getResourceAsStream("authorization.xml");
 
-            m_authorization = DefaultSaxParser.parse(in);
+            m_authorization = AuthorizationModelHelper.fromXml(in);
             m_authorization.accept(new Verification());
          } catch (Exception e) {
             throw new InitializationException("Error when reading resource authorization.xml!", e);
