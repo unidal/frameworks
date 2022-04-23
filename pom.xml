@@ -40,7 +40,7 @@
       <shiro.version>1.4.2</shiro.version>
       <thymeleaf.version>3.0.15.RELEASE</thymeleaf.version>
 
-      <servlet-api.version>3.0.1</servlet-api.version>
+      <servlet-api.version>3.1.0</servlet-api.version>
       <jsp-api.version>2.2.1</jsp-api.version>
 
       <junit.version>4.12</junit.version>

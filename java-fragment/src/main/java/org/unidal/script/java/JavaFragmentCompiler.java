@@ -35,7 +35,16 @@ public class JavaFragmentCompiler implements Compilable {
    }
 
    private void buildClasspathEntries(ClassLoader loader, Set<File> files) {
-      if (loader instanceof URLClassLoader) {
+      if (loader == null) {
+         String classpath = System.getProperty("java.class.path", "");
+         String[] entries = classpath.split(Pattern.quote(File.pathSeparator));
+
+         for (String entry : entries) {
+            if (entry.length() > 0) {
+               files.add(new File(entry));
+            }
+         }
+      } else if (loader instanceof URLClassLoader) {
          URL[] urLs = ((URLClassLoader) loader).getURLs();
 
          if (urLs.length == 0) {
@@ -57,15 +66,6 @@ public class JavaFragmentCompiler implements Compilable {
          }
 
          buildClasspathEntries(loader.getParent(), files);
-      } else if (loader == null) {
-         String classpath = System.getProperty("java.class.path", "");
-         String[] entries = classpath.split(Pattern.quote(File.pathSeparator));
-
-         for (String entry : entries) {
-            if (entry.length() > 0) {
-               files.add(new File(entry));
-            }
-         }
       } else {
          System.err.println("[WARN] Unrecognized classloader: " + loader.getClass().getName());
       }
@@ -138,15 +138,14 @@ public class JavaFragmentCompiler implements Compilable {
       outputDir.mkdirs();
 
       try {
-         manager.setLocation(StandardLocation.CLASS_PATH, getClasspathEntries());
          manager.setLocation(StandardLocation.CLASS_OUTPUT, Arrays.asList(outputDir.getCanonicalFile()));
 
          Boolean result = compiler.getTask(null, manager, diagnostics, null, null, Arrays.asList(source)).call();
 
          if (!Boolean.TRUE.equals(result)) {
             for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
-               throw new ScriptException(diagnostic.getMessage(locale), script, (int) diagnostic.getLineNumber()
-                     - source.getLineOffset(), (int) diagnostic.getColumnNumber());
+               throw new ScriptException(diagnostic.getMessage(locale), script,
+                     (int) diagnostic.getLineNumber() - source.getLineOffset(), (int) diagnostic.getColumnNumber());
             }
          }
 
@@ -158,10 +157,11 @@ public class JavaFragmentCompiler implements Compilable {
       }
    }
 
-   private Set<File> getClasspathEntries() {
+   protected Set<File> getClasspathEntries() {
       Set<File> files = new HashSet<File>(64);
 
       buildClasspathEntries(Thread.currentThread().getContextClassLoader(), files);
+
       return files;
    }
 
