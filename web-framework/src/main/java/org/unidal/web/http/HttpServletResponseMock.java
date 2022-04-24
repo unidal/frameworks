@@ -124,6 +124,10 @@ public class HttpServletResponseMock implements HttpServletResponse {
    public void setContentLength(int len) {
    }
 
+   @Override
+   public void setContentLengthLong(long len) {
+   }
+
    public void setContentType(String type) {
       m_contentType = type;
    }

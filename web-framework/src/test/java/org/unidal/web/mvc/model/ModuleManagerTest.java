@@ -17,7 +17,7 @@ public class ModuleManagerTest extends ComponentTestCase {
 	@Test
 	public void testBuild() throws Exception {
 		ModelManager manager = lookup(ModelManager.class);
-		ModuleModel module = manager.build(TestModule2.class.newInstance());
+		ModuleModel module = manager.build(TestModule2.class.getConstructor().newInstance());
 
 		Assert.assertEquals("test2", module.getModuleName());
 		Assert.assertEquals("action1", module.getDefaultInboundActionName());

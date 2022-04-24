@@ -21,6 +21,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Part;
 
 public class HttpServletRequestMock implements HttpServletRequest {
@@ -29,6 +30,11 @@ public class HttpServletRequestMock implements HttpServletRequest {
    @Override
    public boolean authenticate(HttpServletResponse arg0) throws IOException, ServletException {
       return false;
+   }
+
+   @Override
+   public String changeSessionId() {
+      return null;
    }
 
    @Override
@@ -53,6 +59,11 @@ public class HttpServletRequestMock implements HttpServletRequest {
    }
 
    public int getContentLength() {
+      return 0;
+   }
+
+   @Override
+   public long getContentLengthLong() {
       return 0;
    }
 
@@ -296,6 +307,11 @@ public class HttpServletRequestMock implements HttpServletRequest {
 
    @Override
    public AsyncContext startAsync(ServletRequest arg0, ServletResponse arg1) throws IllegalStateException {
+      return null;
+   }
+
+   @Override
+   public <T extends HttpUpgradeHandler> T upgrade(Class<T> handlerClass) throws IOException, ServletException {
       return null;
    }
 }

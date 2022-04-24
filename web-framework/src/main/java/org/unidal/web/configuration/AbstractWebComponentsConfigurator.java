@@ -91,6 +91,7 @@ public abstract class AbstractWebComponentsConfigurator extends AbstractResource
       }
    }
 
+   @SuppressWarnings("unchecked")
    protected void defineModuleRegistry(List<Component> all, Class<? extends Module> defaultModuleClass,
          Class<? extends Module>... moduleClasses) {
       if (defaultModuleClass != null) {

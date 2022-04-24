@@ -339,7 +339,7 @@ public class ModelManager extends ContainerHolder implements Initializable {
    }
 
    void register(Class<? extends Module> moduleClass) throws Exception {
-      register(moduleClass.newInstance(), false);
+      register(moduleClass.getConstructor().newInstance(), false);
    }
 
    void register(Module module, boolean defaultModule) {

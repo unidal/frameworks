@@ -217,7 +217,7 @@ public class DefaultPlexusConfiguration
 
         try
         {
-            child = getClass().newInstance();
+            child = getClass().getConstructor().newInstance();
 
             child.setName( name );
         }

@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 
 public class HttpServletResponseWrapper extends javax.servlet.http.HttpServletResponseWrapper {
@@ -34,16 +35,6 @@ public class HttpServletResponseWrapper extends javax.servlet.http.HttpServletRe
       m_interceptionMode = interceptionMode;
    }
 
-   public String getString() {
-      byte[] ba = getByteArray();
-
-      try {
-         return new String(ba, m_charset);
-      } catch (UnsupportedEncodingException e) {
-         return new String(ba);
-      }
-   }
-
    public byte[] getByteArray() {
       if (m_interceptionMode) {
          try {
@@ -68,10 +59,29 @@ public class HttpServletResponseWrapper extends javax.servlet.http.HttpServletRe
 
       return new ServletOutputStream() {
          @Override
+         public boolean isReady() {
+            return true;
+         }
+
+         @Override
+         public void setWriteListener(WriteListener writeListener) {
+         }
+
+         @Override
          public void write(int b) throws IOException {
             m_output.write(b);
          }
       };
+   }
+
+   public String getString() {
+      byte[] ba = getByteArray();
+
+      try {
+         return new String(ba, m_charset);
+      } catch (UnsupportedEncodingException e) {
+         return new String(ba);
+      }
    }
 
    @Override

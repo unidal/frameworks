@@ -18,7 +18,7 @@ import org.unidal.web.mvc.view.annotation.PojoMeta;
 @Named(type = ModelBuilder.class, value = XmlModelBuilder.ID)
 public class XmlModelBuilder implements ModelBuilder {
    public static final String ID = "xml";
-   
+
    @Override
    public String build(ModelDescriptor descriptor, Object model) {
       StringBuilder sb = new StringBuilder(8192);
@@ -157,14 +157,12 @@ public class XmlModelBuilder implements ModelBuilder {
 
    private Object getFieldValue(Field field, Object instance) {
       try {
-         if (!field.isAccessible()) {
-            field.setAccessible(true);
-         }
+         field.setAccessible(true);
 
          return field.get(instance);
       } catch (Exception e) {
-         throw new RuntimeException(String.format("Error when getting value of field(%s) of %s", field.getName(),
-               instance.getClass()));
+         throw new RuntimeException(
+               String.format("Error when getting value of field(%s) of %s", field.getName(), instance.getClass()));
       }
    }
 

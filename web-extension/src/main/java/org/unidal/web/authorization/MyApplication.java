@@ -37,11 +37,11 @@ public class MyApplication implements Initializable {
 
    private boolean m_clientIpEnabled;
 
-   private String m_clietIpEntityName;
+   protected String m_clietIpEntityName;
 
-   private String m_clientIpParamField;
+   protected String m_clientIpParamField;
 
-   private String m_clientIpResultField;
+   protected String m_clientIpResultField;
 
    @Override
    public void initialize() throws InitializationException {

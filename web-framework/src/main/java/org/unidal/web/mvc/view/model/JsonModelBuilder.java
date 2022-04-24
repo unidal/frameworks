@@ -93,9 +93,8 @@ public class JsonModelBuilder implements ModelBuilder {
                      }
                   }
                } else {
-                  throw new UnsupportedOperationException(String.format(
-                        "%s(multiple=true) is not support for type(%s)", ElementMeta.class.getSimpleName(),
-                        value.getClass()));
+                  throw new UnsupportedOperationException(String.format("%s(multiple=true) is not support for type(%s)",
+                        ElementMeta.class.getSimpleName(), value.getClass()));
                }
 
                sb.trimComma();
@@ -146,9 +145,8 @@ public class JsonModelBuilder implements ModelBuilder {
                      }
                   }
                } else {
-                  throw new UnsupportedOperationException(String.format(
-                        "%s(multiple=true) is not support for type(%s)", EntityMeta.class.getSimpleName(),
-                        value.getClass()));
+                  throw new UnsupportedOperationException(String.format("%s(multiple=true) is not support for type(%s)",
+                        EntityMeta.class.getSimpleName(), value.getClass()));
                }
 
                sb.trimComma();
@@ -176,14 +174,12 @@ public class JsonModelBuilder implements ModelBuilder {
 
    private Object getFieldValue(Field field, Object instance) {
       try {
-         if (!field.isAccessible()) {
-            field.setAccessible(true);
-         }
+         field.setAccessible(true);
 
          return field.get(instance);
       } catch (Exception e) {
-         throw new RuntimeException(String.format("Error when getting value of field(%s) of %s", field.getName(),
-               instance.getClass()));
+         throw new RuntimeException(
+               String.format("Error when getting value of field(%s) of %s", field.getName(), instance.getClass()));
       }
    }
 
