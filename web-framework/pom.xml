@@ -18,7 +18,7 @@
       </dependency>
       <dependency>
          <groupId>org.unidal.cat2</groupId>
-         <artifactId>cat-client</artifactId>
+         <artifactId>cat</artifactId>
       </dependency>
       <dependency>
          <groupId>org.thymeleaf</groupId>
