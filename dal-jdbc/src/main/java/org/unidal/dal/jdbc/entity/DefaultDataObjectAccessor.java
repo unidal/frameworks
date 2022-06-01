@@ -74,6 +74,8 @@ public class DefaultDataObjectAccessor implements DataObjectAccessor, LogEnabled
             return value;
          } else if (value instanceof Timestamp) {
             return value;
+         } else if (value.getClass().getName().equals("java.time.LocalDateTime")) { // for MySQL 5.8 && JDK 1.8
+         	return Date.from(((java.time.LocalDateTime)value).atZone(java.time.ZoneId.systemDefault()).toInstant());
          }
       } else if (clazz == byte[].class) {
          if (value instanceof Blob) {
