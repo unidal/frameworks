@@ -1,10 +1,4 @@
 /ws/*
-/*/bin/*
-/target/*
-/*/target/*
-/*/.*
-/*/*/target/*
-/*/*/.*
-/*/*/*/target/*
-/*/*/*/.*
-/*/deprecated/*
+/**/bin/*
+/**/target/*
+/**/.*

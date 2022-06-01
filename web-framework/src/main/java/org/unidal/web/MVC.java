@@ -1,6 +1,5 @@
 package org.unidal.web;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 
@@ -13,94 +12,76 @@ import org.unidal.initialization.ModuleContext;
 import org.unidal.initialization.ModuleInitializer;
 import org.unidal.web.lifecycle.RequestLifecycle;
 
-import com.dianping.cat.Cat;
-
 public class MVC extends AbstractContainerServlet {
-   public static final String ID = "mvc-servlet";
+	public static final String ID = "mvc-servlet";
 
-   private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-   private RequestLifecycle m_handler;
+	private RequestLifecycle m_handler;
 
-   @Override
-   protected void initComponents(ServletConfig config) throws Exception {
-      String contextPath = config.getServletContext().getContextPath();
-      String path = contextPath == null || contextPath.length() == 0 ? "/" : contextPath;
+	@Override
+	protected void initComponents(ServletConfig config) throws Exception {
+		String contextPath = config.getServletContext().getContextPath();
+		String path = contextPath == null || contextPath.length() == 0 ? "/" : contextPath;
 
-      getLogger().info("MVC is starting at " + path);
+		getLogger().info("MVC is starting at " + path);
 
-      initializeCat(config);
-      initializeModules(config);
+		initializeModules(config);
 
-      m_handler = lookup(RequestLifecycle.class, "mvc");
-      m_handler.setServletContext(config.getServletContext());
+		m_handler = lookup(RequestLifecycle.class, "mvc");
+		m_handler.setServletContext(config.getServletContext());
 
-      config.getServletContext().setAttribute(ID, this);
-      getLogger().info("MVC started at " + path);
-   }
+		config.getServletContext().setAttribute(ID, this);
+		getLogger().info("MVC started at " + path);
+	}
 
-   private void initializeCat(ServletConfig config) {
-      String catClientXml = config.getInitParameter("cat-client-xml");
-      File clientXmlFile;
+	@SuppressWarnings("unchecked")
+	private void initializeModules(ServletConfig config) throws ServletException {
+		String initModules = config.getInitParameter("init-modules");
 
-      if (catClientXml == null) {
-         clientXmlFile = new File(Cat.getCatHome(), "client.xml");
-      } else if (catClientXml.startsWith("/")) {
-         clientXmlFile = new File(catClientXml);
-      } else {
-         clientXmlFile = new File(Cat.getCatHome(), catClientXml);
-      }
+		if (!"false".equals(initModules)) {
+			try {
+				ModuleContext ctx = getContainer().lookup(ModuleContext.class);
+				ModuleInitializer initializer = ctx.lookup(ModuleInitializer.class);
+				Enumeration<String> names = config.getInitParameterNames();
 
-      Cat.getBootstrap().initialize(clientXmlFile);
-   }
+				while (names.hasMoreElements()) {
+					String name = names.nextElement();
+					String value = config.getInitParameter(name);
 
-   @SuppressWarnings("unchecked")
-   private void initializeModules(ServletConfig config) throws ServletException {
-      String initModules = config.getInitParameter("init-modules");
+					ctx.setAttribute(name, value);
+				}
 
-      if (!"false".equals(initModules)) {
-         try {
-            ModuleContext ctx = getContainer().lookup(ModuleContext.class);
-            ModuleInitializer initializer = ctx.lookup(ModuleInitializer.class);
-            Enumeration<String> names = config.getInitParameterNames();
+				ctx.setAttribute("servlet-config", config);
+				ctx.setAttribute("servlet-context", config.getServletContext());
+				ctx.setAttribute("context-path", config.getServletContext().getContextPath());
 
-            while (names.hasMoreElements()) {
-               String name = names.nextElement();
-               String value = config.getInitParameter(name);
+				initializer.execute(ctx);
+			} catch (Exception e) {
+				throw new ServletException(e);
+			}
+		}
+	}
 
-               ctx.setAttribute(name, value);
-            }
+	@Override
+	protected void service(HttpServletRequest request, HttpServletResponse response)
+	      throws ServletException, IOException {
+		if (request.getCharacterEncoding() == null) {
+			request.setCharacterEncoding("UTF-8");
+		}
 
-            ctx.setAttribute("servlet-config", config);
-            ctx.setAttribute("servlet-context", config.getServletContext());
-            ctx.setAttribute("context-path", config.getServletContext().getContextPath());
-            
-            initializer.execute(ctx);
-         } catch (Exception e) {
-            throw new ServletException(e);
-         }
-      }
-   }
+		response.setContentType("text/html;charset=UTF-8");
 
-   @Override
-   protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException,
-         IOException {
-      if (request.getCharacterEncoding() == null) {
-         request.setCharacterEncoding("UTF-8");
-      }
+		try {
+			m_handler.handle(request, response);
+		} catch (Throwable t) {
+			String message = "Error occured when handling uri: " + request.getRequestURI();
 
-      response.setContentType("text/html;charset=UTF-8");
+			getLogger().error(message, t);
 
-      try {
-         m_handler.handle(request, response);
-      } catch (Throwable t) {
-         String message = "Error occured when handling uri: " + request.getRequestURI();
-
-         getLogger().error(message, t);
-
-         if (!response.isCommitted()) {
-            response.sendError(500, message);
-         }
-      }
-   }
+			if (!response.isCommitted()) {
+				response.sendError(500, message);
+			}
+		}
+	}
 }
