@@ -13,8 +13,8 @@ import org.unidal.dal.jdbc.datasource.DataSourceManager;
 import org.unidal.dal.jdbc.datasource.JdbcDataSourceDescriptorManager;
 import org.unidal.dal.jdbc.raw.RawDao;
 import org.unidal.dal.jdbc.raw.RawDataObject;
+import org.unidal.dal.jdbc.test.data.DatabaseModelHelper;
 import org.unidal.dal.jdbc.test.data.entity.DatabaseModel;
-import org.unidal.dal.jdbc.test.data.transform.DefaultSaxParser;
 import org.unidal.dal.jdbc.test.function.StringFunction;
 import org.unidal.helper.Files;
 import org.unidal.helper.Reflects;
@@ -77,7 +77,7 @@ public class DataSourceTestHelper extends ContainerHolder implements LogEnabled 
 
             if (base.exists()) {
                String xml = Files.forIO().readFrom(base, "utf-8");
-               DatabaseModel baseModel = DefaultSaxParser.parse(xml);
+               DatabaseModel baseModel = DatabaseModelHelper.fromXml(xml);
 
                model = dumper.dump(baseModel, ds, tables);
             } else {

@@ -7,8 +7,8 @@ import java.io.InputStream;
 
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
+import org.unidal.dal.jdbc.datasource.model.DataSourcesDefHelper;
 import org.unidal.dal.jdbc.datasource.model.entity.DataSourcesDef;
-import org.unidal.dal.jdbc.datasource.model.transform.DefaultSaxParser;
 import org.unidal.helper.Properties;
 import org.unidal.lookup.annotation.Named;
 
@@ -72,7 +72,7 @@ public class DefaultDataSourceProvider implements DataSourceProvider, LogEnabled
 
             if (is != null) {
                try {
-                  m_def = DefaultSaxParser.parse(is);
+                  m_def = DataSourcesDefHelper.fromXml(is);
                } catch (Exception e) {
                   throw new IllegalStateException("Error when loading data sources file: " + file, e);
                }

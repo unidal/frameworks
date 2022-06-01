@@ -4,12 +4,12 @@ import java.io.InputStream;
 
 import org.unidal.dal.jdbc.DalException;
 import org.unidal.dal.jdbc.raw.RawDao;
+import org.unidal.dal.jdbc.test.data.DatabaseModelHelper;
 import org.unidal.dal.jdbc.test.data.entity.ColModel;
 import org.unidal.dal.jdbc.test.data.entity.DatabaseModel;
 import org.unidal.dal.jdbc.test.data.entity.RowModel;
 import org.unidal.dal.jdbc.test.data.entity.TableModel;
 import org.unidal.dal.jdbc.test.data.transform.BaseVisitor2;
-import org.unidal.dal.jdbc.test.data.transform.DefaultSaxParser;
 import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.annotation.Named;
 
@@ -61,7 +61,7 @@ public class TableLoader extends BaseVisitor2 {
    }
 
    public void loadFrom(String ds, InputStream in) throws Exception {
-      DatabaseModel database = DefaultSaxParser.parse(in);
+      DatabaseModel database = DatabaseModelHelper.fromXml(in);
 
       m_ds = ds;
       database.accept(this);

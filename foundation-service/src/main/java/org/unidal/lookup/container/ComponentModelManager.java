@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.unidal.helper.Files;
+import org.unidal.lookup.container.model.PlexusModelHelper;
 import org.unidal.lookup.container.model.entity.ComponentModel;
 import org.unidal.lookup.container.model.entity.PlexusModel;
-import org.unidal.lookup.container.model.transform.DefaultSaxParser;
 import org.xml.sax.SAXException;
 
 public class ComponentModelManager {
@@ -23,7 +23,7 @@ public class ComponentModelManager {
 
    public ComponentModelManager(InputStream in) throws Exception {
       if (in != null) {
-         PlexusModel model = DefaultSaxParser.parse(in);
+         PlexusModel model = PlexusModelHelper.fromXml(in);
 
          m_models.add(model);
       }
@@ -90,15 +90,9 @@ public class ComponentModelManager {
 
          InputStream in = url.openStream();
          String xml = Files.forIO().readFrom(in, "utf-8");
+         PlexusModel model = PlexusModelHelper.fromXml(xml);
 
-         try {
-            PlexusModel model = DefaultSaxParser.parse(xml);
-
-            m_models.add(model);
-         } catch (SAXException e) {
-            System.err.println(String.format("Bad plexus resource(%s): ", url) + xml);
-            throw e;
-         }
+         m_models.add(model);
       }
    }
 

@@ -44,14 +44,14 @@ public class MVC extends AbstractContainerServlet {
       File clientXmlFile;
 
       if (catClientXml == null) {
-         clientXmlFile = new File(Cat.getCatHome(), "config/client.xml");
+         clientXmlFile = new File(Cat.getCatHome(), "client.xml");
       } else if (catClientXml.startsWith("/")) {
          clientXmlFile = new File(catClientXml);
       } else {
          clientXmlFile = new File(Cat.getCatHome(), catClientXml);
       }
 
-      Cat.initialize(getContainer(), clientXmlFile);
+      Cat.getBootstrap().initialize(clientXmlFile);
    }
 
    @SuppressWarnings("unchecked")

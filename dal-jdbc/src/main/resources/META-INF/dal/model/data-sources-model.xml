@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<model model-package="org.unidal.dal.jdbc.datasource.model" enable-sax-parser="true">
+<model model-package="org.unidal.dal.jdbc.datasource.model" enable-xml="true">
    <entity name="data-sources" root="true" class-name="DataSourcesDef">
       <entity-ref name="data-source" type="map" names="data-sources-map" />
    </entity>
