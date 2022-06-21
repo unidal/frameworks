@@ -34,7 +34,7 @@
       <netty-all.version>4.1.27.Final</netty-all.version>
 
       <c3p0.version>0.9.5.4</c3p0.version>
-      <h2.version>1.4.192</h2.version>
+      <h2.version>2.1.210</h2.version>
       <junit.version>4.13.2</junit.version>
       <mysql.version>8.0.28</mysql.version>
 
