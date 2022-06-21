@@ -15,7 +15,7 @@
    <properties>
       <!-- dal-jdbc -->
       <cat2.version>1.0.0</cat2.version>
-      <c3p0.version>0.9.5.2</c3p0.version>
+      <c3p0.version>0.9.5.4</c3p0.version>
       <shiro.version>1.4.2</shiro.version>
       <mchange-commons-java.version>0.2.12</mchange-commons-java.version>
 
