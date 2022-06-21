@@ -36,7 +36,7 @@
 
       <c3p0.version>0.9.5.2</c3p0.version>
       <h2.version>1.4.192</h2.version>
-      <mysql.version>5.1.46</mysql.version>
+      <mysql.version>8.0.28</mysql.version>
       <shiro.version>1.4.2</shiro.version>
       <thymeleaf.version>3.0.15.RELEASE</thymeleaf.version>
 
