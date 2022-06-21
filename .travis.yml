@@ -12,7 +12,7 @@ branches:
     - master
 
 install:
-  mvn install -Dmaven.test.skip -B -fae -s settings.xml
+  mvn -T 1C install -Dmaven.test.skip -B -fae -s settings.xml
 
 script:
-  mvn test -B -fae -s settings.xml
+  mvn -T 1C test -B -fae -s settings.xml
