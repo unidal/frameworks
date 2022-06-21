@@ -23,8 +23,9 @@ import org.unidal.web.mvc.model.entity.OutboundActionModel;
 import org.unidal.web.mvc.model.entity.TransitionModel;
 
 import com.dianping.cat.Cat;
-import com.dianping.cat.CatConstants;
+import com.dianping.cat.CatClientConstants;
 import com.dianping.cat.message.Transaction;
+import com.dianping.cat.message.context.MessageContextHelper;
 import com.dianping.cat.message.internal.NullMessage;
 
 @Named(type = RequestLifecycle.class, value = "mvc")
@@ -90,7 +91,7 @@ public class DefaultRequestLifecycle implements RequestLifecycle, LogEnabled {
       }
 
       if (!actionContext.isProcessStopped()) {
-         request.setAttribute(CatConstants.CAT_STATE, e.getClass().getSimpleName());
+         request.setAttribute(CatClientConstants.CAT_STATE, e.getClass().getSimpleName());
          Cat.logError(e);
 
          if (e instanceof RuntimeException) {
@@ -160,13 +161,13 @@ public class DefaultRequestLifecycle implements RequestLifecycle, LogEnabled {
       ModuleModel module = requestContext.getModule();
       InboundActionModel inboundAction = requestContext.getInboundAction();
       ActionContext<?> actionContext = createActionContext(request, response, requestContext, inboundAction);
-      Transaction t = Cat.getManager().getPeekTransaction();
+      Transaction t = MessageContextHelper.threadLocal().peekTransaction();
 
       if (t == null) { // in case of no CatFilter is configured
          t = NullMessage.TRANSACTION;
       }
 
-      request.setAttribute(CatConstants.CAT_PAGE_URI,
+      request.setAttribute(CatClientConstants.CAT_PAGE_URI,
             actionContext.getRequestContext().getActionUri(inboundAction.getActionName()));
 
       try {
