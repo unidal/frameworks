@@ -25,7 +25,7 @@ import org.unidal.web.mvc.model.entity.TransitionModel;
 import com.dianping.cat.Cat;
 import com.dianping.cat.CatClientConstants;
 import com.dianping.cat.message.Transaction;
-import com.dianping.cat.message.context.MessageContextHelper;
+import com.dianping.cat.message.context.TraceContextHelper;
 import com.dianping.cat.message.internal.NullMessage;
 
 @Named(type = RequestLifecycle.class, value = "mvc")
@@ -161,7 +161,7 @@ public class DefaultRequestLifecycle implements RequestLifecycle, LogEnabled {
       ModuleModel module = requestContext.getModule();
       InboundActionModel inboundAction = requestContext.getInboundAction();
       ActionContext<?> actionContext = createActionContext(request, response, requestContext, inboundAction);
-      Transaction t = MessageContextHelper.threadLocal().peekTransaction();
+      Transaction t = TraceContextHelper.threadLocal().peekTransaction();
 
       if (t == null) { // in case of no CatFilter is configured
          t = NullMessage.TRANSACTION;
