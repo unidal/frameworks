@@ -12,7 +12,7 @@
    <name>Foundation Service</name>
    <dependencies>
       <dependency>
-         <groupId>org.codehaus.plexus</groupId>
+         <groupId>org.unidal.plexus</groupId>
          <artifactId>plexus-container-default</artifactId>
       </dependency>
       <dependency>
